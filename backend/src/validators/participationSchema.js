@@ -34,6 +34,7 @@ const stillSchema = z.object({
         .string()
         .trim()
         .min(1, "File name cannot be empty")
+        .max(100, "Filename too long")
 });
 
 // validation de toutes les entrées du formulaire 
@@ -110,7 +111,6 @@ const participationSchema = z.object({
     realisator_firstname: firstname,
     realisator_lastname: lastname,
     realisator_civility: z
-        .string()
         .enum(["Mr", "Mrs", "Other"], {errorMap: () => ({ message: "Civility must be Mr, Mrs, or Other" })
     }),
 
@@ -124,16 +124,20 @@ const participationSchema = z.object({
     mobile_number: z
         .string({ required_error: "Mobile number is required" })
         .trim()
+        .max(20, "Phone number too long")
         .regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number starting with '+' and your country code (e.g., +33612345678)"),
     // ADDRESSE 
     address: z
         .string({ required_error: "Address is required" })
         .trim()
-        .min(5, "Please enter a complete address (minimum 5 characters)"),
+        .min(5, "Please enter a complete address (minimum 5 characters)")
+        .max(255, "Address too long (max 255)"),
     
+    // LIEN DES RESEAUX SOCIAUX
     social_media_links_json: z
         .string({ required_error: "Social media links are required" })
         .min(1, "Social media links cannot be empty")
+        .max(1000, "JSON data too large (max 1000 chars)")
         // refine permet de créer une règle de validation sur mesure 
         .refine((val) => {
             try {
@@ -146,7 +150,58 @@ const participationSchema = z.object({
             }
         }, "Social media links must be a valid JSON object"),
 
-})
+    
+    // COVER
+    cover: z
+        .string({ required_error: "Cover image is required" })
+        .trim()
+        .min(5, "Filename too short")
+        .max(100, "Filename is too long (max 100 characters)")
+        .regex(/\.(jpg|jpeg|png|webp)$/i, "Cover must be an image (jpg, png, webp)"),
+
+    // VIDEO
+    video_file_name: z
+        .string({ required_error: "Video file is required" })
+        .trim()
+        .min(5, "Filename too short")
+        .max(100, "Filename too long")
+        .regex(/\.(mp4|mov|avi|mkv)$/i, "Invalid video format"),
+    
+    // FICHIER SOUS-TITRES 
+    srt_file_name: z
+        .string()
+        .max(100, "Filename too long")
+        .trim()
+        .regex(/\.(srt|vtt)$/i, "Invalid subtitle format (.srt or .vtt)")
+        .optional()
+        .or(z.literal("")),
+
+    // URL YOUTUBE
+    youtube_url: z
+        .url("Invalid URL format")
+        .max(255, "URL is too long")
+        .regex(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/, "Must be a valid YouTube URL")
+        .optional(), // optional pour éviter tout blocage, on ne l'a peut-être pas encore lors de la soumission 
+
+    // RELATION 
+    contributor: z
+        .array(contributorSchema)
+        .min(1, "At least one contributor required")
+        .max(50, "Too many contributors"),
+
+    tag: z
+        .array(tagSchema)
+        .min(1, "At least one tag required")
+        .max(20, "Too many tags"),
+
+    still: z
+        .array(stillSchema)
+        .optional()
+        .or(z.array(z.any()).max(10, "Too many stills")),
+
+    acquisition_source_id: id,
+
+}).strict();
 
 
 
