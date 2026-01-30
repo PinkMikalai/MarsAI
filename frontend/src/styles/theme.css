@@ -1,0 +1,42 @@
+/* src/styles/theme.css - Design tokens MarsAI (Tailwind v4) */
+
+@theme {
+  /* Backgrounds */
+  --color-mars-bg: #050505;
+  --color-mars-form: #1B1B1B;
+  --color-mars-field: #626262;
+  --color-mars-field-rgba: rgba(98, 98, 98, 0.5);
+
+  /* Borders */
+  --color-mars-border: rgba(242, 242, 242, 0.2);
+  --color-mars-border-light: rgba(158, 158, 158, 0.61);
+  --color-mars-navbar-border: rgba(255, 255, 255, 0.1);
+  --color-mars-navbar-bg: rgba(255, 255, 255, 0.05);
+
+  /* Accents */
+  --color-mars-purple: #C27AFF;
+  --color-mars-pink: #F6339A;
+  --color-mars-blue: #2B7FFF;
+  --color-mars-blue-light: #51A2FF;
+  --color-mars-violet: #9810FA;
+
+  /* Buttons */
+  --color-mars-yellow: #FBC700;
+  --color-mars-yellow-mid: #F0B100;
+  --color-mars-yellow-dark: #D08700;
+
+  /* Text */
+  --color-mars-white: #FFFFFF;
+  --color-mars-muted: rgba(255, 255, 255, 0.25);
+  --color-mars-orange: #F0B100;
+  --color-mars-glow: rgba(255, 255, 255, 0.2);
+  --color-mars-muted-40: rgba(255, 255, 255, 0.4);
+  --color-mars-muted-30: rgba(255, 255, 255, 0.3);
+  --color-mars-muted-20: rgba(255, 255, 255, 0.2);
+
+  /* Shadows */
+  --shadow-mars-navbar: 0px 20px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-mars-form: 2px 4px 25px 3px rgba(43, 127, 255, 0.7);
+  --shadow-mars-field: 0px 2px 4px #626262;
+  --shadow-mars-btn: 0px 2px 5px #000000;
+}
