@@ -1,6 +1,9 @@
-async function createVideo(req, res) {
-    console.log("test creation de video");
 
+
+
+async function createVideo(req, res) {
+
+    
 }
 
 module.exports = {
