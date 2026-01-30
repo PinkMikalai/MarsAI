@@ -1,0 +1,7 @@
+/* src/styles/base.css */
+@import "tailwindcss";
+@import "./theme.css";
+@import "./deposit.css";
+@import "./components.css";
+@import "./pages/public/home.css";
+@import "./pages/users/login-register.css";
