@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // configuration de la route
-app.use("/api", router);
+app.use("/marsai", router);
 //test
 
 module.exports = app;
