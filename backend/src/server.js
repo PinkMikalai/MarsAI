@@ -14,6 +14,7 @@ if (!PORT){
 
     // en cas si le port n est pas retouvee le proces d exEcution s arrete
     process.exit(1);
+
 }
 
 app.listen(PORT,async ()=>{
