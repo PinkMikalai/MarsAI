@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require('cors');
 const morgan = require('morgan');
 const router = require("./routes");
+const error = require("./middlewares/errorMiddleware");
 
 // creation de l application express
 const app = express();
@@ -13,7 +14,8 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 // configuration de la route
-app.use("/api", router);
-//test
+app.use("/marsai", router);
+
+app.use(error);
 
 module.exports = app;
