@@ -1,0 +1,19 @@
+/* login-register.css - Styles de la page connexion/inscription */
+.login-register-page {
+  padding: 40px;
+  text-align: center;
+}
+
+.login-register-title {
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.login-register-desc {
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-register-actions {
+  margin-top: 20px;
+}
