@@ -8,12 +8,13 @@ const inviteUser = async (req, res, next) => {
         // Génération du token 
         const token = await createInvitationToken({ email, role });
 
-        // 2. On passe le token au service de mail pour l'envoyer
-        await sendInvitationEmail({ email, token });
+        // le token est tranféré au mailService pour envoi dans le heder du message d'invitation
+        await sendInvitationEmail({ email, token, role });
 
         res.status(200).json({
             status: "success",
-            message: `Invitation envoyée avec succès à ${email}`
+            message: `Invitation envoyée avec succès à ${email}`,
+            token : token
         });
     } catch (error) {
         //vers le errorMiddleware

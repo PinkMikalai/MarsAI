@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getInviteController, loginController } = require('../controllers/authController.js');
+const { getInviteController, registerController ,loginController } = require('../controllers/authController.js');
 const inviteUserController  = require('../controllers/adminController.js');
 
 
-router.post('/admin/invit', inviteUserController);
+router.post('/admin/invite', inviteUserController);
+
+router.get('/invitation', getInviteController)
+
+router.post('/register', registerController );
 
 router.post('/login' , loginController);
 

@@ -15,7 +15,6 @@ app.use(morgan('dev'));
 
 // configuration de la route
 app.use("/marsai", router);
-
-app.use(error);
+//test
 
 module.exports = app;
