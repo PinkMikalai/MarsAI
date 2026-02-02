@@ -1,0 +1,470 @@
+/**
+ * home/sections.css
+ * Sections homepage : container, titres, cartes, grilles (features, films, objectifs, etc.).
+ * Uniquement des styles — aucun mélange avec la logique composants.
+ */
+
+/* ---------- CONTAINER & SECTIONS ---------- */
+.home-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 28px;
+  box-sizing: border-box;
+}
+
+.home-section {
+  padding: 48px 0;
+  width: 100%;
+}
+
+/* Dégradés entre les sections */
+.home-features {
+  background: linear-gradient(180deg, #050505 0%, #120a1c 40%, #080510 100%);
+}
+
+.home-films {
+  background: linear-gradient(180deg, #080510 0%, #0a1020 50%, #080a18 100%);
+}
+
+.home-objectifs {
+  background: linear-gradient(180deg, #080a18 0%, #0e0a20 50%, #0a0818 100%);
+}
+
+.home-protocole {
+  background: linear-gradient(180deg, #0a0818 0%, #100a24 50%, #080614 100%);
+}
+
+.home-conferences {
+  background: linear-gradient(180deg, #080614 0%, #0c0a20 50%, #0a0814 100%);
+}
+
+.home-mars-night {
+  background: linear-gradient(180deg, #0a0814 0%, #140818 50%, #0c0818 100%);
+}
+
+.home-plateforme {
+  background: linear-gradient(180deg, #0c0818 0%, #0a1022 50%, #080c18 100%);
+}
+
+.home-chiffres {
+  background: linear-gradient(180deg, #080c18 0%, #0e0a1e 50%, #080610 100%);
+}
+
+.home-sponsors {
+  background: linear-gradient(180deg, #080610 0%, #050505 100%);
+}
+
+/* ---------- TITRES & TEXTES SECTION ---------- */
+.home-section-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.25rem, 3.5vw, 1.75rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0 0 0.65rem;
+  letter-spacing: 0.02em;
+}
+
+.home-section-title-accent {
+  background: linear-gradient(135deg, #51a2ff 0%, #ad46ff 50%, #ff2b7f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-section-title-pink {
+  color: #ff2b7f;
+}
+
+.home-section-title-blue {
+  background: linear-gradient(135deg, #51a2ff 0%, #2b7fff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-section-title--outline {
+  text-shadow: 0 0 20px rgba(81, 162, 255, 0.6);
+  color: #ffffff;
+}
+
+.home-section-desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 0.75rem;
+  max-width: 640px;
+}
+
+.home-section-subtitle {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 0.5rem;
+}
+
+.home-section-link {
+  display: inline-block;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: opacity 0.2s;
+}
+
+.home-section-link:hover {
+  opacity: 0.85;
+}
+
+/* ---------- CARDS ---------- */
+.home-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.15rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.home-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.home-card--dark {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.home-card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.65rem;
+  color: #ffffff;
+}
+
+.home-card--purple .home-card-icon { background: linear-gradient(135deg, #6b21a8 0%, #ad46ff 100%); }
+.home-card--green .home-card-icon { background: linear-gradient(135deg, #059669 0%, #34d399 100%); }
+.home-card--pink .home-card-icon { background: linear-gradient(135deg, #be185d 0%, #ff2b7f 100%); }
+.home-card--blue .home-card-icon { background: linear-gradient(135deg, #1d4ed8 0%, #51a2ff 100%); }
+.home-card--teal .home-card-icon { background: linear-gradient(135deg, #0d9488 0%, #2dd4bf 100%); }
+
+.home-card-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin: 0 0 0.25rem;
+}
+
+.home-card-desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* ---------- FEATURES ---------- */
+.home-features-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .home-features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  .home-features-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- FILMS ---------- */
+.home-films-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.home-film-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.home-film-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.home-film-card-image {
+  height: 120px;
+  background: linear-gradient(135deg, #6b21a8 0%, #0d9488 100%);
+}
+
+.home-film-card:nth-child(2) .home-film-card-image {
+  background: linear-gradient(135deg, #be185d 0%, #1d4ed8 100%);
+}
+
+.home-film-card:nth-child(3) .home-film-card-image {
+  background: linear-gradient(135deg, #1d4ed8 0%, #eab308 100%);
+}
+
+.home-film-card-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin: 0;
+  padding: 0.65rem 0.75rem 0;
+}
+
+.home-film-card-desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.35rem 0.75rem 0.85rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .home-films-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- OBJECTIFS ---------- */
+.home-objectifs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .home-objectifs-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- PROTOCOLE ---------- */
+.home-protocole-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.home-protocole-value {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.home-btn-gradient {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  border: none;
+  border-radius: 9999px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.home-btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(173, 70, 255, 0.4);
+}
+
+@media (max-width: 768px) {
+  .home-protocole-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- CONFÉRENCES ---------- */
+.home-conferences-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.home-conf-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.15rem;
+}
+
+.home-conf-card--highlight {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(173, 70, 255, 0.3);
+}
+
+.home-conf-card--highlight .home-conf-card-icon {
+  color: #ad46ff;
+}
+
+.home-conf-card-icon {
+  margin-bottom: 0.65rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.home-conf-card-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin: 0 0 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .home-conferences-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- MARS A.I. NIGHT ---------- */
+.home-mars-night-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.home-mars-night-content {
+  flex: 1 1 300px;
+}
+
+.home-mars-night-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.35rem;
+  min-width: 200px;
+}
+
+.home-mars-night-date {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.9rem;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ff2b7f;
+}
+
+.home-mars-night-date svg {
+  flex-shrink: 0;
+}
+
+/* ---------- LA PLATEFORME ---------- */
+.home-plateforme-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.home-map-wrap {
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-map-placeholder {
+  height: 200px;
+  background: rgba(255, 255, 255, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 600px) {
+  .home-plateforme-cards { grid-template-columns: 1fr; }
+}
+
+/* ---------- CHIFFRES ---------- */
+.home-chiffres-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.home-chiffre-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.4rem;
+  text-align: center;
+}
+
+.home-chiffre-value {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #ffffff;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+@media (max-width: 500px) {
+  .home-chiffres-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------- SPONSORS ---------- */
+.home-sponsors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.75rem;
+}
+
+.home-sponsor-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+.home-sponsor-name {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.8);
+}
