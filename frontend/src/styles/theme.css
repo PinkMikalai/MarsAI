@@ -40,3 +40,10 @@
   --shadow-mars-field: 0px 2px 4px #626262;
   --shadow-mars-btn: 0px 2px 5px #000000;
 }
+
+/* Logo "AI" : fondu peinture entre bleu, violet, rose */
+@keyframes marsai-logo-fade {
+  0%, 100% { background-position: 0% 50%; }
+  33% { background-position: 50% 50%; }
+  66% { background-position: 100% 50%; }
+}

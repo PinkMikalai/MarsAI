@@ -1,0 +1,16 @@
+/**
+ * home/index.css
+ * Point d'entrée des styles de la page d'accueil.
+ * Tous les styles home sont dans src/styles/pages/public/home/ — aucun mélange ailleurs.
+ *
+ * Structure :
+ *   _variables.css  — tokens (optionnel)
+ *   hero.css        — hero, vidéo, navbar flottante, CTA
+ *   sections.css    — container, sections, cartes, grilles
+ *   footer.css      — overrides footer homepage
+ */
+
+@import "./_variables.css";
+@import "./hero.css";
+@import "./sections.css";
+@import "./footer.css";
