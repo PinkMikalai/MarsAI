@@ -8,7 +8,10 @@ import {
   FiLock,
   FiChevronDown,
   FiChevronUp,
+  FiChevronLeft,
+  FiChevronRight,
   FiAward,
+  FiGlobe,
 } from 'react-icons/fi';
 
 const iconSize = 20;
@@ -29,7 +32,11 @@ export const Icons = {
   Lock: () => <FiLock {...iconProps} />,
   ChevronDown: () => <FiChevronDown {...iconProps} />,
   ChevronUp: () => <FiChevronUp {...iconProps} />,
+  ChevronLeft: () => <FiChevronLeft {...iconProps} />,
+  ChevronRight: () => <FiChevronRight {...iconProps} />,
   Award: () => <FiAward {...iconProps} />,
+  Trophy: () => <FiAward {...iconProps} />,
+  Globe: () => <FiGlobe {...iconProps} />,
   Upload: UploadSvg,
 };
 

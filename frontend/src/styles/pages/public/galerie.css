@@ -1,0 +1,210 @@
+/**
+ * galerie.css — Page Galerie des Films (sans filtres, avec parallaxe)
+ * Style aligné sur la homepage : thème sombre, dégradés MARS.A.I.
+ */
+
+/* ---------- PAGE & PARALLAX ---------- */
+.galerie-page {
+  min-height: 100vh;
+  background: var(--color-mars-bg, #050505);
+  position: relative;
+  overflow-x: hidden;
+}
+
+.galerie-parallax-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.galerie-parallax-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.25;
+}
+
+.galerie-parallax-shape--1 {
+  width: 60vw;
+  height: 60vw;
+  max-width: 500px;
+  max-height: 500px;
+  top: -20%;
+  left: -10%;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 50%, transparent 70%);
+}
+
+.galerie-parallax-shape--2 {
+  width: 40vw;
+  height: 40vw;
+  max-width: 350px;
+  max-height: 350px;
+  top: 40%;
+  right: -15%;
+  background: linear-gradient(135deg, #9810FA 0%, #FF2B7F 50%, transparent 70%);
+}
+
+.galerie-parallax-shape--3 {
+  width: 35vw;
+  height: 35vw;
+  max-width: 280px;
+  max-height: 280px;
+  bottom: -10%;
+  left: 30%;
+  background: linear-gradient(135deg, #51A2FF 0%, #AD46FF 40%, transparent 70%);
+}
+
+/* ---------- HEADER ---------- */
+.galerie-header {
+  position: relative;
+  z-index: 2;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- MAIN ---------- */
+.galerie-main {
+  position: relative;
+  z-index: 1;
+  max-width: 1128px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.galerie-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  text-align: center;
+  margin: 0 0 2.5rem;
+}
+
+.galerie-title-accent {
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 50%, #FF2B7F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---------- GRID ---------- */
+.galerie-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+@media (max-width: 900px) {
+  .galerie-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .galerie-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- CARD ---------- */
+.galerie-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.galerie-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.galerie-card-image {
+  height: 140px;
+  width: 100%;
+}
+
+.galerie-card-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin: 0;
+  padding: 0.75rem;
+}
+
+/* ---------- PAGINATION ---------- */
+.galerie-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.galerie-pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.galerie-pagination-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.galerie-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.galerie-pagination-num {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.galerie-pagination-num:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.galerie-pagination-num--current {
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  border-color: transparent;
+  color: #ffffff;
+}
+
+.galerie-pagination-info {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  margin: 0;
+}
