@@ -1,2 +1,74 @@
-/* login-admin.css - Styles de la page login admin */
+/* login-admin.css - Styles de la page login admin / sélectionneurs */
 
+.admin-login-page {
+  min-height: 100vh;
+  background: #050505;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.admin-login-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin: 0 0 0.75rem;
+}
+
+.admin-login-desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 1.5rem;
+}
+
+.admin-login-placeholder {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 1.5rem;
+}
+
+.admin-login-inscription {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  color: #51A2FF;
+  text-decoration: none;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.admin-login-inscription:hover {
+  color: #7ab8ff;
+}
+
+.admin-login-back {
+  display: inline-block;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.admin-login-back:hover {
+  color: #ffffff;
+}
