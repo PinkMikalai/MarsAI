@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../../../express/express_auth"
+		},
+		{
+			"path": "../../../frontend"
+		}
+	],
+	"settings": {}
+}
