@@ -52,7 +52,7 @@ async function getAllVideos(req, res) {
 
 // get video by id
 async function getVideoById(req, res) {
-    console.log("test getVideoById");
+    // console.log("test getVideoById");
 
     try {
         //recuperer la video
@@ -61,15 +61,28 @@ async function getVideoById(req, res) {
         
         //recuperer les tags de la video depuis video_tag
         const tags = await getVideoTagsService(req.params.id);
+
+        //afficher les tags de la video sur le cmder
         console.log("tags de la video", tags);
         
-        res.status(200).json({
-            message: "Video recuperée avec succès",
-            video: video,
-            tags: tags,
-            status: "success"
-        });
+
+        // si le video n est pas trouvee affiche l erreur
+        if (!video || !tags) {
+
+            console.log("Video non trouvée, 404");
+            return res.status(404).json({
+                message: "Video non trouvée",
+                status: false
+            });
         
+        }else{
+            res.status(200).json({
+                message: "Video recuperée avec succès",
+                video: video,
+                tags: tags,
+                status: true
+            });
+        }
     } catch (error) {
         console.error("Erreur getVideoById:", error);
         res.status(500).json({

@@ -4,17 +4,16 @@ const router = express.Router();
 //imports des routes
 const videosRoutes = require("./videosRoutes");
 const tagRoutes = require("./tagRoutes");
-const videoRoutes = require("./videoRoutes");
 const participationRoutes = require("./participationRoutes");
+const sponsorsRoutes = require("./sponsorsRoutes");
 
 
 
 //Nos routes
 router.use("/videos", videosRoutes);
 router.use("/tags", tagRoutes);
-router.use('/video', videoRoutes); 
 router.use('/participation', participationRoutes);
-
+router.use('/sponsors', sponsorsRoutes);
 
 
 module.exports = router;
