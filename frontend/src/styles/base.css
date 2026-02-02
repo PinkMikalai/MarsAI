@@ -1,7 +1,25 @@
-/* src/styles/base.css */
+/**
+ * base.css — Point d'entrée des styles de l'application
+ *
+ * ARCHITECTURE FACTORISÉE (certification) :
+ * - Tous les styles sont dans src/styles/ — aucun style inline ni mélange dans les composants.
+ * - theme.css     : tokens (couleurs, ombres)
+ * - layout.css    : Navbar + Footer (partagés Home / Dépôt)
+ * - deposit.css   : page formulaire Dépôt uniquement
+ * - components.css: composants UI réutilisables
+ * - pages/public/home/ : page d'accueil (hero, sections, footer home) via index.css
+ * - pages/users/login-register.css : page login/register
+ *
+ * Les composants n'utilisent que des className ; aucun style={} ni CSS-in-JS.
+ */
+
 @import "tailwindcss";
 @import "./theme.css";
+@import "./layout.css";
 @import "./deposit.css";
 @import "./components.css";
-@import "./pages/public/home.css";
+@import "./pages/public/home/index.css";
+@import "./pages/public/galerie.css";
 @import "./pages/users/login-register.css";
+@import "./pages/admin/login-admin.css";
+@import "./pages/admin/inscription-admin.css";

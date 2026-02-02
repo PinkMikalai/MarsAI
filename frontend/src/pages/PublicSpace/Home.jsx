@@ -1,22 +1,30 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ROUTES } from '../../constants/routes';
-import Button from '../../components/ui/Button';
+import Hero from '../../components/home/Hero';
+import Features from '../../components/home/Features';
+import FilmsCompetition from '../../components/home/FilmsCompetition';
+import ObjectifsFestival from '../../components/home/ObjectifsFestival';
+import ProtocoleTemporel from '../../components/home/ProtocoleTemporel';
+import ConferencesGratuites from '../../components/home/ConferencesGratuites';
+import MarsAINight from '../../components/home/MarsAINight';
+import LaPlateforme from '../../components/home/LaPlateforme';
+import ChiffresProjetes from '../../components/home/ChiffresProjetes';
+import Sponsors from '../../components/home/Sponsors';
+import Footer from '../../components/layout/Footer';
 
 const Home = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="home-page">
-      <h1 className="home-title">
-        Bienvenue sur MarsAI
-      </h1>
-      <p className="home-description">
-        L'intelligence artificielle au service de votre créativité cinématographique.
-      </p>
-      <Button onClick={() => navigate(ROUTES.DEPOSER_UN_FILM)}>
-        DÉPOSER UN FILM
-      </Button>
+      <Hero />
+      <Features />
+      <FilmsCompetition />
+      <ObjectifsFestival />
+      <ProtocoleTemporel />
+      <ConferencesGratuites />
+      <MarsAINight />
+      <LaPlateforme />
+      <ChiffresProjetes />
+      <Sponsors />
+      <Footer />
     </div>
   );
 };

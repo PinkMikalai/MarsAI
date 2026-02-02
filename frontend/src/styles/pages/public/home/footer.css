@@ -1,0 +1,101 @@
+/**
+ * home/footer.css
+ * Overrides du footer sur la page d'accueil (colonnes, newsletter, logo gradient).
+ * Uniquement des styles — aucun mélange avec la logique composants.
+ */
+
+.home-footer {
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 48px !important;
+}
+
+.home-footer .deposit-footer-brand-ai {
+  background: linear-gradient(90deg, #51A2FF, #AD46FF, #FF2B7F, #51A2FF);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: marsai-logo-fade 6s ease-in-out infinite;
+}
+
+.home-footer-grid {
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
+@media (max-width: 1100px) {
+  .home-footer-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.home-footer-connect {
+  grid-column: span 1;
+}
+
+.home-footer-socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.home-footer-social {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.home-footer-social:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.home-footer-newsletter {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.home-footer-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  outline: none;
+}
+
+.home-footer-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.home-footer-go {
+  padding: 10px 20px;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.home-footer-go:hover {
+  opacity: 0.9;
+}

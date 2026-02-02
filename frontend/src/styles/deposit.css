@@ -13,7 +13,7 @@
 /* ---------- LAYOUT PAGE ---------- */
 .deposit-page {
   min-height: 100vh;
-  background: #050505;
+  background: linear-gradient(180deg, #050505 0%, #080510 30%, #050508 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -28,114 +28,6 @@
   flex-direction: column;
   align-items: center;
   gap: 40px;
-}
-
-/* ---------- NAVBAR ---------- */
-.deposit-navbar {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  gap: 10px;
-  width: 100%;
-  max-width: 1128px;
-  height: 64px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0px 20px 50px -12px rgba(0, 0, 0, 0.5);
-  border-radius: 60px;
-}
-
-.deposit-navbar-logo {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 4px;
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 22px;
-  letter-spacing: -0.5px;
-  text-transform: uppercase;
-}
-
-.deposit-navbar-logo-mars {
-  color: #FFFFFF;
-}
-
-.deposit-navbar-logo-ai {
-  background: linear-gradient(180deg, #51A2FF 0%, #AD46FF 50%, #FF2B7F 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.deposit-navbar-links {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-}
-
-.deposit-navbar-link {
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 15px;
-  text-align: center;
-  letter-spacing: 0.2px;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  text-decoration: none;
-}
-
-.deposit-navbar-link {
-  transition: opacity var(--deposit-duration-fast) var(--deposit-ease);
-}
-
-.deposit-navbar-link:hover {
-  opacity: 0.85;
-}
-
-.deposit-navbar-actions {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-}
-
-.deposit-btn-inscription {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 8px 16px;
-  height: 32px;
-  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
-  border-radius: 9999px;
-  border: none;
-  cursor: pointer;
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 11px;
-  line-height: 15px;
-  letter-spacing: 0.2px;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  transition: transform var(--deposit-duration-fast) var(--deposit-ease),
-    opacity var(--deposit-duration-fast) var(--deposit-ease),
-    box-shadow var(--deposit-duration) var(--deposit-ease);
-}
-
-.deposit-btn-inscription:hover {
-  opacity: 0.95;
-  transform: translateY(-2px);
-}
-
-.deposit-btn-inscription:active {
-  transform: translateY(0) scale(0.98);
 }
 
 /* ---------- HEADER PAGE ---------- */
@@ -157,7 +49,10 @@
   font-size: 14px;
   line-height: 18px;
   text-transform: uppercase;
-  color: #F6339A;
+  background: linear-gradient(90deg, #51A2FF, #FF2B7F);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .deposit-title {
@@ -174,8 +69,9 @@
 .deposit-form-zone {
   width: 100%;
   max-width: 1188px;
-  background: #1B1B1B;
-  box-shadow: 2px 4px 25px 3px rgba(43, 127, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(173, 70, 255, 0.08);
   border-radius: 20px;
   padding: 28px 40px 24px;
   display: flex;
@@ -273,8 +169,8 @@
 .deposit-step-title-icon {
   width: 6px;
   height: 20px;
-  background: #C27AFF;
-  border-radius: 1px;
+  background: linear-gradient(180deg, #51A2FF 0%, #AD46FF 50%, #FF2B7F 100%);
+  border-radius: 2px;
 }
 
 .deposit-step-title-text {
@@ -283,7 +179,10 @@
   font-size: 17px;
   line-height: 22px;
   text-transform: uppercase;
-  color: #C27AFF;
+  background: linear-gradient(90deg, #51A2FF, #AD46FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ---------- CONDITIONS (étape consentement) ---------- */
@@ -337,12 +236,12 @@
   width: 38px;
   height: 38px;
   flex-shrink: 0;
-  border: 1.5px solid #2B7FFF;
+  border: 1.5px solid rgba(173, 70, 255, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2B7FFF;
+  color: #AD46FF;
 }
 
 .deposit-info-box-icon svg,
@@ -411,8 +310,8 @@
 }
 
 .deposit-field-wrap:focus-within {
-  border-color: rgba(43, 127, 255, 0.5);
-  box-shadow: 0 0 0 2px rgba(43, 127, 255, 0.15);
+  border-color: rgba(173, 70, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(173, 70, 255, 0.12);
 }
 
 .deposit-input {
@@ -878,122 +777,6 @@
   color: #e8e8e8;
 }
 
-/* ---------- FOOTER ---------- */
-.deposit-footer {
-  width: 100%;
-  max-width: 1174px;
-  padding-top: 81px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 80px;
-}
-
-.deposit-footer-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 48px;
-}
-
-.deposit-footer-brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 18px;
-  line-height: 24px;
-  letter-spacing: -0.4px;
-  text-transform: uppercase;
-  margin-bottom: 24px;
-}
-
-.deposit-footer-brand-mars {
-  color: #FFFFFF;
-}
-
-.deposit-footer-brand-ai {
-  color: #2B7FFF;
-}
-
-.deposit-footer-tagline {
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 18px;
-  color: rgba(255, 255, 255, 0.3);
-  max-width: 181px;
-}
-
-.deposit-footer-col-title {
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 9px;
-  line-height: 14px;
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.2);
-  margin-bottom: 18px;
-}
-
-.deposit-footer-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.deposit-footer-link {
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 18px;
-  color: rgba(255, 255, 255, 0.4);
-  text-decoration: none;
-  transition: color var(--deposit-duration-fast) var(--deposit-ease);
-}
-
-.deposit-footer-link:hover {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.deposit-footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  opacity: 0.7;
-}
-
-.deposit-footer-copyright {
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 9px;
-  line-height: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #FFFFFF;
-}
-
-.deposit-footer-socials {
-  display: flex;
-  gap: 48px;
-}
-
-.deposit-footer-social {
-  font-family: 'Arimo', sans-serif;
-  font-weight: 400;
-  font-size: 9px;
-  line-height: 14px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #FFFFFF;
-  text-decoration: none;
-}
-
 /* ---------- GRID FORM ---------- */
 .deposit-grid-2 {
   display: grid;
@@ -1121,9 +904,6 @@
   .deposit-grid-2,
   .deposit-grid-4 {
     grid-template-columns: 1fr;
-  }
-  .deposit-footer-grid {
-    grid-template-columns: 1fr 1fr;
   }
   .deposit-title {
     font-size: 22px;

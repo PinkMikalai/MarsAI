@@ -1,0 +1,7 @@
+/**
+ * home/_variables.css
+ * Variables et tokens pour la page d'accueil (optionnel, réutilise theme.css).
+ * Les couleurs dégradés home sont définies dans les fichiers concernés.
+ */
+
+/* Réutilisation des tokens theme.css (--color-mars-*) et deposit (--deposit-ease). */
