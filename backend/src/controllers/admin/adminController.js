@@ -1,5 +1,5 @@
-const { createInvitationToken } = require('../services/authService');
-const { sendInvitationEmail } = require('../services/mailService');
+const { createInvitationToken } = require('../../services/user/authService');
+const { sendInvitationEmail } = require('../../services/admin/mailService');
 
 const inviteUser = async (req, res, next) => {
     try {
@@ -13,7 +13,7 @@ const inviteUser = async (req, res, next) => {
 
         res.status(200).json({
             status: "success",
-            message: `Invitation envoyée avec succès à ${email}`,
+            message: `Invitation send to ${email}, with success`,
             token : token
         });
     } catch (error) {
