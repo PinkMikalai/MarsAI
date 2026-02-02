@@ -2,8 +2,12 @@
 // JURY - MODEL
 // =====================================================
 
+//ici mes imports
+const { pool } = require("../db/index.js");
+
+
 // create jury
-async function createJury(juryData) {
+async function createJuryModel(juryData) {
     const [result] = await pool.execute(
         'INSERT INTO jury (name, description, image) VALUES (?, ?, ?)',
         [juryData.name, juryData.description, juryData.image]
@@ -11,15 +15,17 @@ async function createJury(juryData) {
     return result.affectedRows > 0;
 }
 
-// get all juries
-async function getAllJuries() {
+//get all juries
+async function getAllJuriesModel() {
     const [rows] = await pool.execute(
         'SELECT * FROM jury'
     );
     return rows;
 }
-// get jury by id
-async function getJuryById(id) {
+
+
+//get jury by id
+async function getJuryByIdModel(id) {
     const [rows] = await pool.execute(
         'SELECT * FROM jury WHERE id = ?',
         [id]    );
@@ -27,7 +33,7 @@ async function getJuryById(id) {
 }
 
 // update jury
-async function updateJury(id, juryData) {
+async function updateJuryModel(id, juryData) {
     const [result] = await pool.execute(
         'UPDATE jury SET name = ?, description = ?, image = ? WHERE id = ?',
         [juryData.name, juryData.description, juryData.image, id]
@@ -36,7 +42,7 @@ async function updateJury(id, juryData) {
 }
 
 // delete jury
-async function deleteJury(id) {
+async function deleteJuryModel(id) {
     const [result] = await pool.execute(
         'DELETE FROM jury WHERE id = ?',
         [id]
@@ -45,9 +51,9 @@ async function deleteJury(id) {
 }
 
 module.exports = {
-    createJury,     
-    getAllJuries,
-    getJuryById,
-    updateJury,
-    deleteJury,
+    createJuryModel,     
+    getAllJuriesModel,
+    getJuryByIdModel,
+    updateJuryModel,
+    deleteJuryModel ,
 };
