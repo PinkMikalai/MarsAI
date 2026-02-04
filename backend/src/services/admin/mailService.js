@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 const sendInvitationEmail = async ({ email, token ,role }) => {
     const frontendUrl = process.env.FRONT_URL || 'http://localhost:5173';
     // Le lien que l'utilisateur recevra dans sa boîte Mailtrap
-    const invitationLink = `${frontendUrl}/finaliser-inscription?token=${token}`;
+    const invitationLink = `${frontendUrl}/register_user?token=${token}`;
 
     const mailOptions = {
         from: '"MarsAI Staff" <no-reply@marsai-festival.com>',
