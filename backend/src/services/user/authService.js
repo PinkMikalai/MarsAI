@@ -44,6 +44,7 @@ export async function register({ token, firstname, lastname, password }) {
 
     //Vérification du token d'invitation
     const decoded = await decodeInvitationToken(token);
+    console.log("Contenu du token aprés decode :", decoded);
 
      // Vérification de l'existence de l'utilisateur
     const existing = await getUserByEmailModel(decoded.email);
@@ -59,7 +60,7 @@ export async function register({ token, firstname, lastname, password }) {
     const roleMapping = {
         'Admin': 1,
         'Selector': 2,
-        'Super_admin': 3
+        'Super-admin': 3
     };
     const roleId = roleMapping[decoded.role] || 2; // Par défaut selector
   
@@ -89,16 +90,28 @@ export async function register({ token, firstname, lastname, password }) {
 export async function login({ email, password }) {
 
     const user = await getUserByEmailModel(email);
+    console.log("Objet user récupéré :", user);
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
         const error = new Error('Invalid credentials');
         error.status = 401;
         throw error;
     }
+   const idDuRole = user.role_id || user.ROLE_ID || user.roleId;
+    const roleNames = {
+        1: 'Admin',
+        2: 'Selector',
+        3: 'Super-admin'
+    };
+
+    // On récupère le nom du rôle via l'ID
+   const roleLabel = roleNames[idDuRole];
+
+   console.log(`VERIFICATION FINALE : ID trouvé = ${idDuRole} -> Nom = ${roleLabel}`);
 
     // Génération du token de session 
     return jwt.sign(
-        { sub: user.id, email: user.email, role: user.role_id },
+        { sub: user.id, email: user.email, role: roleLabel },
         JWT_SECRET,
         { expiresIn: '12h' }
     );
@@ -131,12 +144,12 @@ export async function updateUser(userId, updateData) {
 export async function deleteUser(id) {
     const result = await deleteUserModel(id);
     if (!result) {
-        const error = new Error('User not found or impossible delation');
+        const error = new Error('User not found or impossible deletion');
         error.status = 404;
         throw error;
     }
     return {
         status : "success",
-        message: `Profile ${id} updated successfully`
+        message: `Profile ${id} deleted successfully`
     }
 }
