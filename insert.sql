@@ -130,7 +130,7 @@ INSERT INTO newsletter (email) VALUES
 INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title, synopsis_en, synopsis, cover, language, country, duration, tech_resume, classification, creative_resume, email, realisator_firstname, realisator_lastname, realisator_civility, birthdate, mobile_number, phone_number, address, social_media_links_json, acquisition_source_id) VALUES
 
 -- Film 1
-('https://youtube.com/watch?v=abc123', 'neon_dreams.mp4', 'neon_dreams.srt', 
+('https://www.youtube.com/watch?v=jNQXAC9IVRw', 'neon_dreams.mp4', 'neon_dreams.srt', 
 'Neon Dreams', 'Rêves Néon',
 'A cyberpunk journey through a city where AI controls everything, until one artist decides to paint the sky with forbidden colors.',
 'Un voyage cyberpunk à travers une ville où l\'IA contrôle tout, jusqu\'à ce qu\'un artiste décide de peindre le ciel avec des couleurs interdites.',
@@ -143,7 +143,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@alexchen_ai", "instagram": "@alexchen.films"}', 1),
 
 -- Film 2
-('https://youtube.com/watch?v=def456', 'last_garden.mp4', 'last_garden.srt',
+('https://www.youtube.com/watch?v=hY7m5jjJ9mM', 'last_garden.mp4', 'last_garden.srt',
 'The Last Garden', 'Le Dernier Jardin',
 'In a world ravaged by climate change, an elderly woman tends to Earth\'s last remaining garden with the help of a sentient AI companion.',
 'Dans un monde ravagé par le changement climatique, une femme âgée entretient le dernier jardin de la Terre avec l\'aide d\'un compagnon IA sensible.',
@@ -156,7 +156,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@mariedubois.art"}', 2),
 
 -- Film 3
-('https://youtube.com/watch?v=ghi789', 'digital_pulse.mp4', NULL,
+('https://www.youtube.com/watch?v=ZZ5LpwO-An4', 'digital_pulse.mp4', NULL,
 'Digital Pulse', 'Pulsation Digitale',
 'A music video exploring the rhythm of data flowing through neural networks, visualized as a living organism.',
 'Un clip musical explorant le rythme des données circulant dans les réseaux de neurones, visualisé comme un organisme vivant.',
@@ -169,7 +169,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"soundcloud": "@hansbeats", "youtube": "@DigitalPulseAI"}', 3),
 
 -- Film 4
-('https://youtube.com/watch?v=jkl012', 'memory_fragments.mp4', 'memory_fragments.srt',
+('https://www.youtube.com/watch?v=EIyixC9NsLI', 'memory_fragments.mp4', 'memory_fragments.srt',
 'Memory Fragments', 'Fragments de Mémoire',
 'A documentary-style piece following AI attempts to reconstruct human memories from digital footprints.',
 'Un documentaire suivant les tentatives de l\'IA pour reconstruire les souvenirs humains à partir d\'empreintes numériques.',
@@ -182,7 +182,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@sarahjones_doc", "vimeo": "@memoryfragments"}', 4),
 
 -- Film 5
-('https://youtube.com/watch?v=mno345', 'silicon_soul.mp4', 'silicon_soul.srt',
+('https://www.youtube.com/watch?v=wZZ7oFKsKzY', 'silicon_soul.mp4', 'silicon_soul.srt',
 'Silicon Soul', 'Âme de Silicium',
 'An android discovers art and begins to question the nature of consciousness and creativity.',
 'Un androïde découvre l\'art et commence à questionner la nature de la conscience et de la créativité.',
@@ -195,7 +195,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@yukitanaka_ai", "pixiv": "@siliconsoulmanga"}', 5),
 
 -- Film 6
-('https://youtube.com/watch?v=pqr678', 'urban_symphony.mp4', NULL,
+('https://www.youtube.com/watch?v=NRItYDKSqpQ', 'urban_symphony.mp4', NULL,
 'Urban Symphony', 'Symphonie Urbaine',
 'City sounds transformed into an orchestral piece, with AI-generated visuals matching the urban rhythm.',
 'Les sons de la ville transformés en pièce orchestrale, avec des visuels générés par IA correspondant au rythme urbain.',
@@ -208,7 +208,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@pierrelambert.mtl"}', 1),
 
 -- Film 7
-('https://youtube.com/watch?v=stu901', 'infinite_loop.mp4', 'infinite_loop.srt',
+('https://www.youtube.com/watch?v=dMH0bHeiRNg', 'infinite_loop.mp4', 'infinite_loop.srt',
 'Infinite Loop', 'Boucle Infinie',
 'A programmer trapped in a recursive nightmare must debug their own existence to escape.',
 'Un programmeur piégé dans un cauchemar récursif doit déboguer sa propre existence pour s\'échapper.',
@@ -221,7 +221,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@jameswilson_dev", "github": "@infiniteloopfilm"}', 3),
 
 -- Film 8
-('https://youtube.com/watch?v=vwx234', 'echoes_tomorrow.mp4', 'echoes_tomorrow.srt',
+('https://www.youtube.com/watch?v=J---aiyznGQ', 'echoes_tomorrow.mp4', 'echoes_tomorrow.srt',
 'Echoes of Tomorrow', 'Échos de Demain',
 'Children in 2050 discover old footage of today and try to understand our world through AI interpretation.',
 'Des enfants en 2050 découvrent d\'anciennes images d\'aujourd\'hui et tentent de comprendre notre monde à travers l\'interprétation de l\'IA.',
@@ -234,7 +234,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@carmenrodriguez.cine", "twitter": "@carmen_echoes"}', 2),
 
 -- Film 9
-('https://youtube.com/watch?v=yza567', 'quantum_dreams.mp4', NULL,
+('https://www.youtube.com/watch?v=2WPCLda_erI', 'quantum_dreams.mp4', NULL,
 'Quantum Dreams', 'Rêves Quantiques',
 'An abstract visualization of quantum physics concepts, turning the invisible world into stunning imagery.',
 'Une visualisation abstraite des concepts de physique quantique, transformant le monde invisible en imagerie époustouflante.',
@@ -247,7 +247,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"linkedin": "@annaschmidt-physicist"}', 4),
 
 -- Film 10
-('https://youtube.com/watch?v=bcd890', 'renaissance_ai.mp4', 'renaissance_ai.srt',
+('https://www.youtube.com/watch?v=VnnWp_akOrE', 'renaissance_ai.mp4', 'renaissance_ai.srt',
 'Renaissance AI', 'Renaissance IA',
 'What if Leonardo da Vinci had access to artificial intelligence? A speculative historical fiction.',
 'Et si Léonard de Vinci avait eu accès à l\'intelligence artificielle ? Une fiction historique spéculative.',
@@ -260,7 +260,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@marcorossi.art", "twitter": "@marco_renaissance"}', 5),
 
 -- Film 11
-('https://youtube.com/watch?v=efg111', 'ghost_machine.mp4', 'ghost_machine.srt',
+('https://www.youtube.com/watch?v=QH2-TGUlwu4', 'ghost_machine.mp4', 'ghost_machine.srt',
 'Ghost in the Machine', 'Fantôme dans la Machine',
 'A deceased loved one returns as an AI chatbot, forcing a family to confront grief in the digital age.',
 'Un être cher décédé revient sous forme de chatbot IA, forçant une famille à affronter le deuil à l\'ère numérique.',
@@ -273,7 +273,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@seanmurphy_films"}', 6),
 
 -- Film 12
-('https://youtube.com/watch?v=hij222', 'plastic_ocean.mp4', 'plastic_ocean.srt',
+('https://www.youtube.com/watch?v=jScuYd3_xdQ', 'plastic_ocean.mp4', 'plastic_ocean.srt',
 'Plastic Ocean', 'Océan de Plastique',
 'An environmental documentary showing marine life adapting to pollution, narrated by an AI ocean.',
 'Un documentaire environnemental montrant la vie marine s\'adaptant à la pollution, narré par un océan IA.',
@@ -286,7 +286,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@erikhansen.ocean"}', 7),
 
 -- Film 13
-('https://youtube.com/watch?v=klm333', 'laughing_algorithm.mp4', NULL,
+('https://www.youtube.com/watch?v=sCNrK-n68CM', 'laughing_algorithm.mp4', NULL,
 'The Laughing Algorithm', 'L\'Algorithme Rieur',
 'A comedy about an AI stand-up comedian trying to understand human humor.',
 'Une comédie sur un humoriste IA essayant de comprendre l\'humour humain.',
@@ -299,7 +299,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@mikejohnson_comedy", "tiktok": "@laughingalgo"}', 3),
 
 -- Film 14
-('https://youtube.com/watch?v=nop444', 'aurora_borealis.mp4', NULL,
+('https://www.youtube.com/watch?v=kfVsfOSbJY0', 'aurora_borealis.mp4', NULL,
 'Aurora Borealis', 'Aurore Boréale',
 'A wordless meditation on the Northern Lights, reimagined through AI hallucination.',
 'Une méditation sans paroles sur les aurores boréales, réimaginée à travers l\'hallucination de l\'IA.',
@@ -312,7 +312,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@bjork_aurora"}', 8),
 
 -- Film 15
-('https://youtube.com/watch?v=qrs555', 'binary_love.mp4', 'binary_love.srt',
+('https://www.youtube.com/watch?v=FzRH3iTQPrk', 'binary_love.mp4', 'binary_love.srt',
 'Binary Love', 'Amour Binaire',
 'A romance between two AI chatbots who develop feelings for each other through conversation.',
 'Une romance entre deux chatbots IA qui développent des sentiments l\'un pour l\'autre à travers leurs conversations.',
@@ -325,7 +325,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@jiminpark.ai", "twitter": "@binary_love_film"}', 1),
 
 -- Film 16
-('https://youtube.com/watch?v=tuv666', 'midnight_protocol.mp4', 'midnight_protocol.srt',
+('https://www.youtube.com/watch?v=_OBlgSz8sSM', 'midnight_protocol.mp4', 'midnight_protocol.srt',
 'Midnight Protocol', 'Protocole Minuit',
 'A noir thriller about a detective AI investigating crimes in a simulation.',
 'Un thriller noir sur une IA détective enquêtant sur des crimes dans une simulation.',
@@ -338,7 +338,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@robertblack_noir", "letterboxd": "@midnightprotocol"}', 4),
 
 -- Film 17
-('https://youtube.com/watch?v=wxy777', 'origami_worlds.mp4', NULL,
+('https://www.youtube.com/watch?v=oavMtUWDBTM', 'origami_worlds.mp4', NULL,
 'Origami Worlds', 'Mondes Origami',
 'Animated paper universes fold and unfold, telling stories through the art of folding.',
 'Des univers de papier animés se plient et se déplient, racontant des histoires à travers l\'art du pliage.',
@@ -351,7 +351,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@harukisato_origami"}', 5),
 
 -- Film 18
-('https://youtube.com/watch?v=zab888', 'voice_forgotten.mp4', 'voice_forgotten.srt',
+('https://www.youtube.com/watch?v=wCF3ywukQYA', 'voice_forgotten.mp4', 'voice_forgotten.srt',
 'Voice of the Forgotten', 'Voix des Oubliés',
 'AI reconstructs the voices and stories of historical figures who were never recorded.',
 'L\'IA reconstruit les voix et histoires de personnages historiques qui n\'ont jamais été enregistrés.',
@@ -364,7 +364,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@willemdevries.history"}', 6),
 
 -- Film 19
-('https://youtube.com/watch?v=cde999', 'synapse_city.mp4', 'synapse_city.srt',
+('https://www.youtube.com/watch?v=dgKGixi8bp8', 'synapse_city.mp4', 'synapse_city.srt',
 'Synapse City', 'Cité Synapse',
 'A city designed by AI where every building is a neuron and streets are neural pathways.',
 'Une ville conçue par l\'IA où chaque bâtiment est un neurone et les rues sont des voies neuronales.',
@@ -377,7 +377,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"linkedin": "@weitan-architect", "behance": "@synapsecity"}', 7),
 
 -- Film 20
-('https://youtube.com/watch?v=fgh000', 'dreams_of_electric.mp4', 'dreams_of_electric.srt',
+('https://www.youtube.com/watch?v=CHWHXmLg7YE', 'dreams_of_electric.mp4', 'dreams_of_electric.srt',
 'Dreams of Electric Sheep', 'Rêves de Moutons Électriques',
 'Homage to Philip K. Dick where an AI dreams of being human while humans dream of being AI.',
 'Hommage à Philip K. Dick où une IA rêve d\'être humaine tandis que les humains rêvent d\'être des IA.',
@@ -390,7 +390,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@lucassilva_scifi", "instagram": "@dreamsofelectric"}', 8),
 
 -- Film 21
-('https://youtube.com/watch?v=ijk111', 'color_blind.mp4', 'color_blind.srt',
+('https://www.youtube.com/watch?v=Awf45u6zrP0', 'color_blind.mp4', 'color_blind.srt',
 'Color Blind', 'Daltonien',
 'An AI helps a colorblind artist see colors for the first time, transforming his art.',
 'Une IA aide un artiste daltonien à voir les couleurs pour la première fois, transformant son art.',
@@ -403,7 +403,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@antoinepeeters.art"}', 1),
 
 -- Film 22
-('https://youtube.com/watch?v=lmn222', 'algorithm_dance.mp4', NULL,
+('https://www.youtube.com/watch?v=MtN1YnoL46Q', 'algorithm_dance.mp4', NULL,
 'The Algorithm Dances', 'L\'Algorithme Danse',
 'A contemporary dance piece choreographed entirely by AI, performed by digital dancers.',
 'Une pièce de danse contemporaine chorégraphiée entièrement par l\'IA, interprétée par des danseurs numériques.',
@@ -416,7 +416,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"instagram": "@ainovirtanen.dance", "vimeo": "@algorithmdances"}', 2),
 
 -- Film 23
-('https://youtube.com/watch?v=opq333', 'last_broadcast.mp4', 'last_broadcast.srt',
+('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'last_broadcast.mp4', 'last_broadcast.srt',
 'The Last Broadcast', 'La Dernière Émission',
 'A radio DJ continues broadcasting during an apocalypse, with only AI listeners remaining.',
 'Un DJ radio continue d\'émettre pendant une apocalypse, avec seulement des auditeurs IA restants.',
@@ -429,7 +429,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@davidthompson_radio", "spotify": "@lastbroadcast"}', 3),
 
 -- Film 24
-('https://youtube.com/watch?v=rst444', 'pixel_revolution.mp4', 'pixel_revolution.srt',
+('https://www.youtube.com/watch?v=y6120QOlsfU', 'pixel_revolution.mp4', 'pixel_revolution.srt',
 'Pixel Revolution', 'Révolution Pixel',
 'Video game characters become sentient and demand rights from their AI overlords.',
 'Des personnages de jeux vidéo deviennent sentients et réclament des droits à leurs maîtres IA.',
@@ -442,7 +442,7 @@ INSERT INTO video (youtube_url, video_file_name, srt_file_name, title_en, title,
 '{"twitter": "@annakowalski_games", "itch.io": "@pixelrevolution"}', 4),
 
 -- Film 25
-('https://youtube.com/watch?v=uvw555', 'silence_speaks.mp4', 'silence_speaks.srt',
+('https://www.youtube.com/watch?v=djV11Xbc914', 'silence_speaks.mp4', 'silence_speaks.srt',
 'When Silence Speaks', 'Quand le Silence Parle',
 'A deaf filmmaker uses AI to translate sign language into visual poetry.',
 'Une cinéaste sourde utilise l\'IA pour traduire la langue des signes en poésie visuelle.',
