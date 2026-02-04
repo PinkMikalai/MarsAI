@@ -1,31 +1,27 @@
-const {z}= require ( 'zod')
-const {email, firstname, lastname} = require ('./commonSchema')
+/* src/validators/authSchema.js */
+const { z } = require('zod');
+const { email, passwordBase, firstname, lastname } = require('./commonSchema');
 
-const authSchema = {
-    // validation des inscription au compte suite à l'invitation de l'admin
-    inviteSchema: z.object({
-    body: z.object({
-      email,
-      firstname,
-      lastname
+// 1. inviteSchema doit être plat
+const inviteSchema = z.object({
+    email,
+    firstname,
+    lastname,
+    role: z.enum(['Admin', 'Selector', 'Super-admin'], {
+        errorMap: () => ({ message: 'invalid role' })
     })
-  }),
-// Génération du mot de passe
-  PasswordSchema: z.object({
-    body: z.object({
-      token: z.string().min(1),
-      password:z
-    .string()
-    .min(6, "")
-    .regex(/[0-9]/, "At least one number is required"),
-      confirmPassword: z.string()
-    })
-  }).refine((data) => data.body.password === data.body.confirmPassword, {
+});
+
+// 2. passwordSchema doit être plat aussi
+const passwordSchema = z.object({
+    token: z.string().min(1),
+    firstname: firstname, 
+    lastname: lastname,
+    password: passwordBase,
+    confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["body", "confirmPassword"] // ciblage le champ dans le body
-  }),
+    path: ["confirmPassword"]
+});
 
-
-};
-
-module.exports = authSchema
+module.exports = { inviteSchema, passwordSchema };

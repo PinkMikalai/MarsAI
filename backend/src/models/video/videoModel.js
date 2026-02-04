@@ -1,13 +1,10 @@
 const { pool } = require("../../db/index.js"); 
-// =====================================================
-// VIDEO - MODEL
-// =====================================================
 
-
-
-// create video
+// create video : créer une nouvelle entrée dans la table 'video' 
+// videoData : données validées provenant du controller (req.body)
 async function createVideoModel(videoData) {
     try {
+        // la requête SQL avec des "placeholders" (?) pour la sécurité (évite les injections SQL)
         const query = `
             INSERT INTO video (
                 youtube_url, video_file_name, srt_file_name,
@@ -21,7 +18,9 @@ async function createVideoModel(videoData) {
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         
+        // pool.execute envoie la requête et les données séparément au serveur 
         const [result] = await pool.execute(query, [
+            // on utilise || null pour s'assurer que si la donnée est absente, MySQL reçoive NULL et non 'undefined' pour ne pas faire planter la requete 
             videoData.youtube_url || null,
             videoData.video_file_name,
             videoData.srt_file_name || null,
@@ -39,15 +38,17 @@ async function createVideoModel(videoData) {
             videoData.email,
             videoData.realisator_firstname || null,
             videoData.realisator_lastname || null,
-            videoData.realisator_civility || 'Mrs',
+            videoData.realisator_civility || 'Mrs', // valeur par défaut si non renseigné 
             videoData.birthdate || null,
             videoData.mobile_number,
             videoData.phone_number || null,
             videoData.address,
+            // conversion de l'objet JS en chaîne de caractères JSON pour le stockage 
             videoData.social_media_links_json ? JSON.stringify(videoData.social_media_links_json) : null,
             videoData.acquisition_source_id || null
         ]);
         
+        // on retourne l'identifiant unique que MySQL vient de créer pour cette vidéo 
         return result.insertId;
     } catch (error) {
         console.error('erreur lors de la creation de la video: ', error);

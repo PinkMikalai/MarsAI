@@ -8,6 +8,11 @@ const commonSchema = {
     .email({ message: "Invalid email format" })
     .lowercase(),
 
+  // shéma de validation des mot de passe en général (sans génération de token)
+   passwordBase: z
+   .string().min(6, "At least 6 characters")
+   .regex(/[0-9]/, "At least one number is required"),
+
  // schéma de validation des ID
   id: z
     .string()

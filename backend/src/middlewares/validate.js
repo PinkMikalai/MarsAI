@@ -57,6 +57,7 @@ const validate = (schema, source = 'body') => (req, res, next) => {
     return res.status(400).json({
       message: 'Data validation error',
       error: error.message || 'Unknown error',
+
     });
   }
 };
