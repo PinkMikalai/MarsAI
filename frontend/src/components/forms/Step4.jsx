@@ -41,7 +41,7 @@ const Step4 = () => {
         <div className="deposit-certificate-icon" aria-hidden>🔒</div>
         <h3 className="deposit-certificate-title">Certificat de Propriété</h3>
         <p className="deposit-certificate-text">
-          En soumettant ce dossier, vous certifiez sur l&apos;honneur être l&apos;auteur original de l&apos;œuvre et détenir l&apos;intégralité des droits de diffusion. Vous acceptez que MARS.A.I utilise ces éléments pour la promotion du festival.
+          En soumettant ce dossier, vous certifiez sur l&apos;honneur être l'&apos;'auteur original de l&apos;œuvre et détenir l&apos;intégralité des droits de diffusion. Vous acceptez que MARS.A.I utilise ces éléments pour la promotion du festival.
         </p>
       </div>
     </FormCard>

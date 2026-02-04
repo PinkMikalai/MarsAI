@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { videosService, getCoverImageUrl } from '../../service/galerieService';
+import TagFilter from '../../components/ui/TagFilter';
 import { FILMS_PER_PAGE } from '../../constants/galerieData';
 import Icons from '../../components/ui/Icons';
 
@@ -9,8 +10,34 @@ const GalerieFilms = () => {
   const [scrollY, setScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [videos, setVideos] = useState([]);
+  const [videosWithTags, setVideosWithTags] = useState([]);
+  const [selectedFilterTags, setSelectedFilterTags] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingTags, setLoadingTags] = useState(false);
   const [error, setError] = useState(null);
+
+  // Fonction pour charger les tags de toutes les vidéos
+  const loadVideoTags = useCallback(async (videosList) => {
+    try {
+      setLoadingTags(true);
+      const videosWithTagsPromises = videosList.map(async (video) => {
+        const tags = await videosService.getVideoTags(video.id);
+        return {
+          ...video,
+          tags: tags.map(t => t.name?.toLowerCase() || t.toLowerCase())
+        };
+      });
+      
+      const videosWithTagsData = await Promise.all(videosWithTagsPromises);
+      setVideosWithTags(videosWithTagsData);
+    } catch (error) {
+      console.error('Erreur lors du chargement des tags:', error);
+      // En cas d'erreur, on garde les vidéos sans tags
+      setVideosWithTags(videosList.map(v => ({ ...v, tags: [] })));
+    } finally {
+      setLoadingTags(false);
+    }
+  }, []);
 
   // Fetch des 25 vidéos depuis la base de données (insert.sql)
   useEffect(() => {
@@ -27,6 +54,12 @@ const GalerieFilms = () => {
           console.log('✅ GalerieFilms: Nombre de vidéos:', res.data.length);
           console.log('✅ GalerieFilms: Première vidéo:', res.data[0]);
           setVideos(res.data);
+          
+          // Charger les tags pour chaque vidéo
+          if (res.data.length > 0) {
+            setLoadingTags(true);
+            loadVideoTags(res.data);
+          }
         } else if (!cancelled) {
           console.warn('⚠️ GalerieFilms: Réponse invalide:', res);
           setVideos([]);
@@ -48,7 +81,7 @@ const GalerieFilms = () => {
       });
     
     return () => { cancelled = true; };
-  }, []);
+  }, [loadVideoTags]);
 
   useEffect(() => {
     let ticking = false;
@@ -65,9 +98,27 @@ const GalerieFilms = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const totalPages = Math.max(1, Math.ceil(videos.length / FILMS_PER_PAGE));
+  // Filtrer les vidéos selon les tags sélectionnés
+  const filteredVideos = useMemo(() => {
+    if (selectedFilterTags.length === 0) {
+      return videosWithTags.length > 0 ? videosWithTags : videos;
+    }
+
+    return (videosWithTags.length > 0 ? videosWithTags : videos).filter((video) => {
+      const videoTags = video.tags || [];
+      // Une vidéo correspond si elle a au moins un des tags sélectionnés
+      return selectedFilterTags.some(tag => videoTags.includes(tag));
+    });
+  }, [selectedFilterTags, videosWithTags, videos]);
+
+  // Réinitialiser la page quand les filtres changent
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedFilterTags]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredVideos.length / FILMS_PER_PAGE));
   const start = (currentPage - 1) * FILMS_PER_PAGE;
-  const filmsOnPage = videos.slice(start, start + FILMS_PER_PAGE);
+  const filmsOnPage = filteredVideos.slice(start, start + FILMS_PER_PAGE);
 
   return (
     <div className="galerie-page">
@@ -96,6 +147,16 @@ const GalerieFilms = () => {
 
         {!loading && !error && (
           <>
+            {/* Filtre de tags */}
+            <TagFilter 
+              selectedTags={selectedFilterTags}
+              onFilterChange={setSelectedFilterTags}
+            />
+
+            {loadingTags && (
+              <p className="galerie-loading-tags">Chargement des tags…</p>
+            )}
+
             <div className="galerie-grid">
               {filmsOnPage.map((film) => {
                 const title = film.title || film.title_en || 'Sans titre';
@@ -118,7 +179,7 @@ const GalerieFilms = () => {
                       </p>
                       {film.country && (
                         <p className="galerie-card-meta">
-                          <Icons.Globe /> <span className="galerie-card-meta-label">Origine</span> {film.country}
+                          <span className="galerie-card-meta-label">Origine</span> {film.country}
                         </p>
                       )}
                     </div>
@@ -127,9 +188,14 @@ const GalerieFilms = () => {
               })}
             </div>
 
+            {filteredVideos.length === 0 && videos.length > 0 && (
+              <p className="galerie-empty">
+                Aucun film ne correspond aux filtres sélectionnés.
+              </p>
+            )}
             {videos.length === 0 && <p className="galerie-empty">Aucun film pour le moment.</p>}
 
-            {videos.length > 0 && (
+            {filteredVideos.length > 0 && (
               <>
                 <nav className="galerie-pagination" aria-label="Pagination">
                   <button
@@ -164,7 +230,8 @@ const GalerieFilms = () => {
                   </button>
                 </nav>
                 <p className="galerie-pagination-info">
-                  PAGE {currentPage} SUR {totalPages} – {videos.length} FILMS TROUVÉS
+                  PAGE {currentPage} SUR {totalPages} – {filteredVideos.length} FILM{filteredVideos.length > 1 ? 'S' : ''} TROUVÉ{filteredVideos.length > 1 ? 'S' : ''}
+                  {selectedFilterTags.length > 0 && ` (filtré${selectedFilterTags.length > 1 ? 's' : ''} par ${selectedFilterTags.length} tag${selectedFilterTags.length > 1 ? 's' : ''})`}
                 </p>
               </>
             )}

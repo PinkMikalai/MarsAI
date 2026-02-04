@@ -78,12 +78,12 @@ const Hero = () => {
           Participez au festival qui place l’humain et la créativité au cœur des futurs souhaitables.
         </p>
         <div className="hero-cta">
-          <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">
-            EN SAVOIR PLUS
-          </a>
           <Link to="/deposer-un-film" className="hero-btn hero-btn-primary">
             S&apos;INSCRIRE
           </Link>
+          <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">
+            EN SAVOIR PLUS
+          </a>
         </div>
       </div>
     </section>
