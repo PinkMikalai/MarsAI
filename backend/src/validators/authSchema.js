@@ -1,30 +1,27 @@
+/* src/validators/authSchema.js */
 const { z } = require('zod');
-const { email, firstname, lastname } = require('./commonSchema');
+const { email, passwordBase, firstname, lastname } = require('./commonSchema');
 
-//Shéma de l'invitation envoyée par le super-admin
+// 1. inviteSchema doit être plat
 const inviteSchema = z.object({
-  body: z.object({
     email,
     firstname,
     lastname,
-    role: z.enum(['Admin', 'Selector', 'Super_admin'], {
-      errorMap: () => ({ message: 'invalid role' })
+    role: z.enum(['Admin', 'Selector', 'Super-admin'], {
+        errorMap: () => ({ message: 'invalid role' })
     })
-  })
 });
 
-// Schéma du mot de passe
+// 2. passwordSchema doit être plat aussi
 const passwordSchema = z.object({
-  body: z.object({
     token: z.string().min(1),
-    password: z.string()
-      .min(6, "Minimum 6 characters")
-      .regex(/[0-9]/, "At least one number is required"),
+    firstname: firstname, 
+    lastname: lastname,
+    password: passwordBase,
     confirmPassword: z.string()
-  })
-}).refine((data) => data.body.password === data.body.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["body", "confirmPassword"]
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"]
 });
 
 module.exports = { inviteSchema, passwordSchema };
