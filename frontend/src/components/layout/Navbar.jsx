@@ -17,9 +17,6 @@ const Navbar = () => {
       </div>
 
       <div className="deposit-navbar-actions">
-        <button type="button" className="deposit-btn-inscription">
-          Inscription
-        </button>
         <span className="deposit-navbar-lang">en</span>
         <span className="deposit-navbar-icon" aria-hidden><Icons.ChevronDown /></span>
       </div>
