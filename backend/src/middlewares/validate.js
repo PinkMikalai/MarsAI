@@ -44,9 +44,10 @@ const validate = (schema, source = 'body') => (req, res, next) => {
     next();
   } catch (error) {
     console.log("Zod a détecté une erreur !"); 
+    const errorDetails = error.format ? error.format() : { message: error.message };
     return res.status(400).json({
       message: 'Data validation error',
-      errors: error.format(),
+      errors: errorDetails,
     });
   }
 };
