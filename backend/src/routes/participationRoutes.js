@@ -4,9 +4,10 @@ const { validate } = require('../middlewares/validate');
 const participationSchema = require('../validators/participationSchema');
 const participationController = require('../controllers/participationController');
 const uploadMiddleware = require('../middlewares/uploadMiddleware');
+const handleMulterErrors = require('../middlewares/handleMulterErrors');
 
 // Définition des endpoints 
-router.post('/', uploadMiddleware, validate(participationSchema), participationController.addParticipation);
+router.post('/', uploadMiddleware, handleMulterErrors, validate(participationSchema), participationController.addParticipation);
 
 
 
