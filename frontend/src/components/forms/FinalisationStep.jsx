@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
 import Icons from '../ui/Icons';
-import { CIVILITY_OPTIONS } from '../../constants/submitForm';
 import { buildSubmitFormData, submitVideo } from '../../service/videoService';
 
 const FinalisationStep = ({ onSuccess, onError }) => {
@@ -34,21 +33,7 @@ const FinalisationStep = ({ onSuccess, onError }) => {
 
       {form.collaborators.map((col, index) => (
         <div key={index} className="deposit-field-group deposit-collab-row">
-          <div className="deposit-grid-4">
-            <div className="deposit-field-group deposit-field-group--no-margin">
-              <label className="deposit-field-label deposit-field-label--jakarta">Civilité *</label>
-              <div className="deposit-field-wrap">
-                <select
-                  className="deposit-input"
-                  value={col.civility}
-                  onChange={(e) => updateCollaborator(index, 'civility', e.target.value)}
-                >
-                  {CIVILITY_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
+          <div className="deposit-grid-3">
             <div className="deposit-field-group deposit-field-group--no-margin">
               <label className="deposit-field-label deposit-field-label--jakarta">Prénom et nom *</label>
               <div className="deposit-field-wrap">
