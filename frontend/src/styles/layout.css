@@ -216,6 +216,22 @@
   color: #FFFFFF;
 }
 
+.deposit-footer-btn-connexion {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  line-height: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.deposit-footer-btn-connexion:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 .deposit-footer-socials {
   display: flex;
   gap: 48px;
