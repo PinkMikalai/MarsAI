@@ -51,14 +51,11 @@ async function addParticipation(req, res) {
             // on extrait juste les noms pour la fonction createTagModel 
             const tagNames = validatedData.tag.map(t => t.name);  // on extrait les noms 
             const allTags = await tagModel.createTagModel(tagNames);  // on crée/récupère les tags
-
             if (allTags && allTags.length > 0) {
                 // on extrait les IDs de ces tags pour les lier à la video 
                 const tagIds = allTags.map(t => t.id); // on extrait les IDs
                 console.log("succès tags liés");
             }
-
-
             await tagModel.linkTagsToVideo(newVideoId, tagIds); // on crée les liens 
         }
         
@@ -77,8 +74,6 @@ async function addParticipation(req, res) {
             error: error.message 
         })
     }
-
-    
 }
 
 module.exports = {
