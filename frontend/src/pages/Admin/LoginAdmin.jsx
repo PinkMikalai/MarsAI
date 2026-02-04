@@ -11,12 +11,12 @@ const LoginAdmin = () => {
           Connexion réservée aux administrateurs et membres du jury.
         </p>
         {/* TODO: formulaire de connexion */}
-        <p className="admin-login-placeholder">
+        {/* <p className="admin-login-placeholder">
           Formulaire de connexion à venir.
-        </p>
-        <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
+        </p> */}
+        {/* <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
           Pas encore de compte ? S&apos;inscrire
-        </Link>
+        </Link> */}
         <Link to={ROUTES.HOME} className="admin-login-back">
           Retour à l&apos;accueil
         </Link>
