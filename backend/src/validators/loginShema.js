@@ -1,11 +1,11 @@
 const {z}= require ( 'zod')
-const {email} = require ('./commonSchema')
-const {password} = require ('./authSchema')
+const {email } = require ('./commonSchema')
+
 
 const loginSchema = 
 z.object({
   email: email,
-  password: password
+  password: z.string().min(1, "Password is required")
 });
 
 module.exports = loginSchema;
