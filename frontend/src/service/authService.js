@@ -12,4 +12,5 @@ export const authService = {
 
     // Connexion (POST)
     login: (credentials) => api.post('/auth/login', credentials)
+
 };

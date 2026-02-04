@@ -37,11 +37,92 @@
   margin: 0 0 1.5rem;
 }
 
-.admin-login-placeholder {
+/* ---------- FORMULAIRE ---------- */
+.login-form {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.login-form-field {
+  margin-bottom: 1rem;
+}
+
+.login-form-label {
+  display: block;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0.4rem;
+}
+
+.login-form-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 1rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.95rem;
+  color: #ffffff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-form-input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.login-form-input:focus {
+  outline: none;
+  border-color: rgba(43, 127, 255, 0.5);
+  box-shadow: 0 0 0 2px rgba(43, 127, 255, 0.15);
+}
+
+.login-form-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-form-error {
   font-family: 'Arimo', sans-serif;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin: 0 0 1.5rem;
+  color: #f87171;
+  margin: 0 0 1rem;
+  padding: 0.5rem 0;
+}
+
+.login-form-submit {
+  width: 100%;
+  height: 44px;
+  margin-top: 0.5rem;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  border: none;
+  border-radius: 9999px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.login-form-submit:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.login-form-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-form-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .admin-login-inscription {

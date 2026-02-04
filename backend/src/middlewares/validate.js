@@ -4,6 +4,8 @@ const validate = (schema, source = 'body') => (req, res, next) => {
     if (req.files) {
       // pour les fichiers uniques (maxCount: 1)
       if (req.files.cover) req.body.cover = req.files.cover[0].filename;
+      if (req.files.img) req.body.img = req.files.img[0].filename;
+      if (req.files.illustration) req.body.illustration = req.files.illustration[0].filename;
       if (req.files.video_file_name) req.body.video_file_name = req.files.video_file_name[0].filename; 
       if (req.files.srt_file_name) req.body.srt_file_name = req.files.srt_file_name[0].filename;
 
