@@ -43,11 +43,21 @@ const validate = (schema, source = 'body') => (req, res, next) => {
     
     next();
   } catch (error) {
-    console.log("Zod a détecté une erreur !"); 
-    const errorDetails = error.format ? error.format() : { message: error.message };
+    console.log("Zod a détecté une erreur !", error); 
+    
+    // Vérifier si c'est une erreur Zod
+    if (error.errors && Array.isArray(error.errors)) {
+      return res.status(400).json({
+        message: 'Data validation error',
+        errors: error.errors,
+      });
+    }
+    
+    // Si ce n'est pas une erreur Zod, retourner l'erreur générique
     return res.status(400).json({
       message: 'Data validation error',
-      errors: errorDetails,
+      error: error.message || 'Unknown error',
+
     });
   }
 };
