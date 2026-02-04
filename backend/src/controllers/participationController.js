@@ -55,10 +55,9 @@ async function addParticipation(req, res) {
                 // on extrait les IDs de ces tags pour les lier à la video 
                 const tagIds = allTags.map(t => t.id); // on extrait les IDs
                 console.log("succès tags liés");
+                await tagModel.linkTagsToVideo(newVideoId, tagIds); // on crée les liens 
             }
-            await tagModel.linkTagsToVideo(newVideoId, tagIds); // on crée les liens 
         }
-        
         
         res.status(201).json({
             message: "participation enregistrée avec succès", 
