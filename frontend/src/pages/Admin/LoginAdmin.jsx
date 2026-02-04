@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import LoginForm from '../../components/auth/LoginForm';
-import { login, setSession } from '../../service/authService';
+import { authService } from '../../service/authService';
 
 const LoginAdmin = () => {
   const navigate = useNavigate();
@@ -13,11 +13,20 @@ const LoginAdmin = () => {
     setError('');
     setIsLoading(true);
     try {
-      const { user, token } = await login({ email, password });
-      setSession(user, token);
+      const response = await authService.login({ email, password });
+      const { user, token } = response.data;
+      
+      // Stocker le token et les infos utilisateur dans localStorage
+      if (token) {
+        localStorage.setItem('token', token);
+      }
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+      
       navigate(ROUTES.HOME, { replace: true });
     } catch (err) {
-      setError(err?.message || 'Connexion impossible. Vérifiez vos identifiants.');
+      setError(err?.response?.data?.message || err?.message || 'Connexion impossible. Vérifiez vos identifiants.');
     } finally {
       setIsLoading(false);
     }
@@ -30,9 +39,10 @@ const LoginAdmin = () => {
         <p className="admin-login-desc">
           Connexion réservée aux administrateurs et membres du jury.
         </p>
+        <LoginForm onSubmit={handleSubmit} isLoading={isLoading} error={error} />
         <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
           Pas encore de compte ? S&apos;inscrire
-        </Link> */}
+        </Link>
         <Link to={ROUTES.HOME} className="admin-login-back">
           Retour à l&apos;accueil
         </Link>
