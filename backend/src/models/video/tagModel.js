@@ -3,6 +3,7 @@ import { pool } from "../../db/index.js";
 
 //nettoie les tags (trim, lowercase) et enlève les doublons! mettre en miniscule
 function normalizeTags(tags = []) {
+    // new Set(...) c'est une astuce JS pour supprimer automatiquement les doublons si l'utilisateur a écrit deux fois le même mot 
     return [...new Set(
         tags
         .map(t => t.trim().toLowerCase())
@@ -16,7 +17,7 @@ async function createTagModel(cleanTags) {
         return [];
     }
 
-    //recuperer les tags qui existent deja
+    //recuperer les tags qui existent deja en BDD, le join(', ') crée autant de "?" que de tags pour la requête IN (?, ?, ?)
     const tagPlaceholders = cleanTags.map(() => '?').join(', ');
     const [existingTags] = await pool.execute(
         `SELECT id, name FROM tag WHERE name IN (${tagPlaceholders})`,

@@ -196,8 +196,9 @@ const participationSchema = z.object({
 
     still: z
         .array(stillSchema)
+        .max(3, "Too many stills")
         .optional()
-        .or(z.array(z.any()).max(10, "Too many stills")),
+        .default([]),
 
     acquisition_source_id: id,
 

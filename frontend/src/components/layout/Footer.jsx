@@ -78,6 +78,9 @@ const Footer = () => {
           <span className="deposit-footer-copyright">
             © 2026 MARS.A.I • Tous droits réservés
           </span>
+          <Link to={ROUTES.ADMIN_LOGIN} className="deposit-footer-btn-connexion">
+            Connexion
+          </Link>
           <div className="footer-admin-stars">
             <Link to={ROUTES.ADMIN_INSCRIPTION} className="footer-admin-link footer-admin-link--blue" title="Inscription Admin & Sélectionneurs" aria-label="S'inscrire (Admin et Sélectionneurs)">
               <span className="footer-admin-star" aria-hidden>★</span>
@@ -139,6 +142,9 @@ const Footer = () => {
         <span className="deposit-footer-copyright">
           © 2026 marsAI Protocol • Tous droits réservés
         </span>
+        <Link to={ROUTES.ADMIN_LOGIN} className="deposit-footer-btn-connexion">
+          Connexion
+        </Link>
         <div className="deposit-footer-socials">
           <a href="#" className="deposit-footer-social">Twitter</a>
           <a href="#" className="deposit-footer-social">Instagram</a>
