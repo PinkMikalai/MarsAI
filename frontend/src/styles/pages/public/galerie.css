@@ -1,16 +1,11 @@
-/**
- * galerie.css — Page Galerie des Films (sans filtres, avec parallaxe)
- * Style aligné sur la homepage : thème sombre, dégradés MARS.A.I.
- */
 
-/* ---------- PAGE & PARALLAX ---------- */
 .galerie-page {
   min-height: 100vh;
   background: var(--color-mars-bg, #050505);
   position: relative;
   overflow-x: hidden;
 }
-
+/* effet paralaxe */
 .galerie-parallax-bg {
   position: fixed;
   inset: 0;
@@ -56,7 +51,7 @@
   background: linear-gradient(135deg, #51A2FF 0%, #AD46FF 40%, transparent 70%);
 }
 
-/* ---------- HEADER ---------- */
+/* haider____________________________________________________________________ */
 .galerie-header {
   position: relative;
   z-index: 2;
@@ -65,7 +60,7 @@
   justify-content: center;
 }
 
-/* ---------- MAIN ---------- */
+/* main__________________________________________________________________________ */
 .galerie-main {
   position: relative;
   z-index: 1;
@@ -131,15 +126,32 @@
   width: 100%;
 }
 
+.galerie-card-body {
+  padding: 0.5rem 0.75rem 0.75rem;
+}
+
 .galerie-card-title {
   font-family: 'Arimo', sans-serif;
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #ffffff;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0 0 0.25rem;
+  padding: 0;
+  line-height: 1.3;
+}
+
+.galerie-card-meta {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.45);
   margin: 0;
-  padding: 0.75rem;
+  line-height: 1.35;
+}
+
+.galerie-card-meta-label {
+  color: rgba(255, 255, 255, 0.35);
 }
 
 /* ---------- PAGINATION ---------- */
@@ -207,4 +219,122 @@
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
   margin: 0;
+}
+
+/* ---------- FILTRE DE TAGS ---------- */
+.galerie-tag-filter {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.galerie-tag-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.galerie-tag-filter-title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.galerie-tag-filter-clear {
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.6875rem;
+  font-family: 'Arimo', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.galerie-tag-filter-clear:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.galerie-tag-filter-input {
+  margin-bottom: 0.5rem;
+}
+
+.galerie-tag-filter-input .tag-input-container {
+  min-height: 36px;
+  padding: 0.375rem 0.5rem;
+  border-radius: 8px;
+  border-color: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.galerie-tag-filter-input .tag-input-field {
+  font-size: 0.75rem;
+}
+
+.galerie-tag-filter-input .tag-badge {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.6875rem;
+  border-radius: 12px;
+}
+
+.galerie-tag-filter-popular {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.galerie-tag-filter-popular-label {
+  font-size: 0.6875rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.375rem;
+  font-family: 'Arimo', sans-serif;
+}
+
+.galerie-tag-filter-popular-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.galerie-tag-filter-popular-tag {
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.6875rem;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.galerie-tag-filter-popular-tag:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.galerie-tag-filter-popular-tag--active {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.galerie-loading-tags {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin: 1rem 0;
 }

@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import FormCard from './FormCard';
 import Icons from '../ui/Icons';
+import TagInput from '../ui/TagInput';
 import { useDepositForm } from '../../context/DepositFormContext';
 import { LANGUAGES_ISO6391, STILLS_MAX_COUNT } from '../../constants/submitForm';
+import { tagsService } from '../../service/tags';
 
 const UploadFilmStep = () => {
-  const { form, setFilm, setFile } = useDepositForm();
+  const { form, setFilm, setFile, setTags } = useDepositForm();
   const videoRef = useRef(null);
   const coverRef = useRef(null);
   const subtitlesRef = useRef(null);
@@ -13,6 +15,7 @@ const UploadFilmStep = () => {
 
   const [coverPreview, setCoverPreview] = useState(null);
   const [stillsPreviews, setStillsPreviews] = useState([]);
+  const [mostUsedTags, setMostUsedTags] = useState([]);
 
   useEffect(() => {
     if (form.files.cover) {
@@ -29,6 +32,23 @@ const UploadFilmStep = () => {
     setStillsPreviews(urls);
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
   }, [form.files.stills]);
+
+  // Charger les tags les plus utilisés
+  useEffect(() => {
+    const loadMostUsedTags = async () => {
+      try {
+        const response = await tagsService.getMostUsedTags();
+        // Prendre les 5 premiers tags
+        const topTags = response.tags?.slice(0, 5).map(tag => tag.name.toLowerCase()) || [];
+        setMostUsedTags(topTags);
+      } catch (error) {
+        console.error('Erreur lors du chargement des tags populaires:', error);
+        setMostUsedTags([]);
+      }
+    };
+
+    loadMostUsedTags();
+  }, []);
 
   const handleVideoChange = (e) => {
     const file = e.target.files?.[0];
@@ -48,6 +68,17 @@ const UploadFilmStep = () => {
   const handleStillsChange = (e) => {
     const files = Array.from(e.target.files || []).slice(0, STILLS_MAX_COUNT);
     setFile('stills', files);
+  };
+
+  // Ajouter un tag populaire aux tags sélectionnés
+  const handleAddPopularTag = (tag) => {
+    const currentTags = form.tags || [];
+    // Normaliser le tag (lowercase, trim) pour correspondre au format de TagInput
+    const normalizedTag = tag.toLowerCase().trim();
+    // Vérifier si le tag n'est pas déjà présent
+    if (!currentTags.includes(normalizedTag)) {
+      setTags([...currentTags, normalizedTag]);
+    }
   };
 
   const { film, files } = form;
@@ -102,6 +133,37 @@ const UploadFilmStep = () => {
           />
         </div>
         <div className="deposit-char-count">{film.description.length} / 500</div>
+      </div>
+
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Tags</label>
+        <TagInput 
+          tags={form.tags || []} 
+          onChange={setTags}
+        />
+        
+        {/* Tags les plus utilisés */}
+        {mostUsedTags.length > 0 && (
+          <div className="deposit-popular-tags">
+            <p className="deposit-popular-tags-label">Tags populaires :</p>
+            <div className="deposit-popular-tags-list">
+              {mostUsedTags.map((tag) => {
+                const isSelected = form.tags?.includes(tag);
+                return (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => handleAddPopularTag(tag)}
+                    disabled={isSelected}
+                    className={`deposit-popular-tag ${isSelected ? 'deposit-popular-tag--selected' : ''}`}
+                  >
+                    {tag}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="deposit-field-group">

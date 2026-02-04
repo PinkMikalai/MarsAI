@@ -22,6 +22,7 @@ const initialState = {
     language: 'fr',
     duration: '', // integer secondes, peut être rempli côté back ou après lecture vidéo
   },
+  tags: [], // string[] - Tags normalisés (trim, lowercase) pour le film
   files: {
     video: null,   // File (nom uniquement, pas de path)
     cover: null,
@@ -69,7 +70,7 @@ export function DepositFormProvider({ children }) {
       ...prev,
       collaborators: [
         ...prev.collaborators,
-        { civility: 'M.', fullname: '', profession: '', email: '' },
+        { fullname: '', profession: '', email: '' },
       ],
     }));
   }, []);
@@ -93,6 +94,10 @@ export function DepositFormProvider({ children }) {
     setForm((prev) => ({ ...prev, subscribe_newsletter: !!value }));
   }, []);
 
+  const setTags = useCallback((tags) => {
+    setForm((prev) => ({ ...prev, tags: Array.isArray(tags) ? tags : [] }));
+  }, []);
+
   const value = {
     form,
     setConsent,
@@ -103,6 +108,7 @@ export function DepositFormProvider({ children }) {
     updateCollaborator,
     removeCollaborator,
     setSubscribeNewsletter,
+    setTags,
   };
 
   return (
