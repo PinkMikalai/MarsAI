@@ -4,6 +4,24 @@
 
 const multer = require('multer'); 
 const path = require('path'); 
+const fs = require('fs'); // Ajouté pour la gestion des dossiers 
+
+// Création automatique de dossier de stockage si non présent 
+const uploadBase = path.join(__dirname, '..', 'assets', 'uploads'); // chemin racine où tous les fichiers seront stockés
+// on crée un tableau contenant les chemins complets de chaque sous-dossier 
+const folders = [
+    path.join(uploadBase, 'videos'),
+    path.join(uploadBase, 'images'),
+    path.join(uploadBase, 'srt')
+];
+
+folders.forEach(dir => {
+    // fs.existsSync vérifie si le dossier existe déjà 
+    if(!fs.existsSync(dir)) {
+        // si le dossier n'existe pas, on le crée
+        fs.mkdirSync(dir, { recursive: true }); // {recursive: true} crée les dossiers parents (assets/uploads) s'ils manquent aussi 
+    }
+})
 
 // configuration du stockage 
 const storage = multer.diskStorage({
@@ -40,7 +58,13 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage });
+// Limitation de la taille des fichiers 
+const upload = multer({ 
+    storage,
+    limits: {
+        fileSize: 100 * 1024 * 1024 // Limite à 100Mo par fichier 
+    }
+});
 
 // exportation des champs configurés 
 module.exports = upload.fields([

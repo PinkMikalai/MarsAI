@@ -14,11 +14,11 @@ async function createUserModel(userData) {
         `;
 
         const [result] = await pool.execute(query, [
-            userData.email,
-            userData.firstname,
-            userData.lastname,
-            userData.password_hash,
-            userData.role_id
+            userData.email || null,
+            userData.firstname || null,
+            userData.lastname || null,
+            userData.password_hash || null,
+            userData.role_id || 2
         ]);
 
         return result.insertId;
@@ -33,12 +33,12 @@ async function createUserModel(userData) {
 async function getUserByEmailModel(email) {
     try {
         const [rows] = await pool.execute(
-            'SELECT id, email, password_hash, firstname, lastname, role_id FROM user WHERE email = ?',
+            'SELECT id, email, password_hash, role_id AS role_id FROM user WHERE email = ?',
             [email]
         );
+        console.log("DEBUG SQL - Ligne brute :", rows[0]); 
         return rows[0];
     } catch (error) {
-        console.error('Error occurred while retrieving data by email : ', error);
         throw error;
     }
 }
