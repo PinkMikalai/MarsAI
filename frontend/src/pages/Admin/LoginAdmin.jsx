@@ -28,16 +28,11 @@ const LoginAdmin = () => {
       <div className="admin-login-card">
         <h1 className="admin-login-title">Connexion</h1>
         <p className="admin-login-desc">
-          Email et mot de passe pour tous les profils : admin, sélectionneurs, participants.
+          Connexion réservée aux administrateurs et membres du jury.
         </p>
-        <LoginForm
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          error={error}
-        />
         <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
           Pas encore de compte ? S&apos;inscrire
-        </Link>
+        </Link> */}
         <Link to={ROUTES.HOME} className="admin-login-back">
           Retour à l&apos;accueil
         </Link>

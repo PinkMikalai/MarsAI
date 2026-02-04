@@ -59,7 +59,7 @@ export async function register({ token, firstname, lastname, password }) {
     const roleMapping = {
         'Admin': 1,
         'Selector': 2,
-        'Super-admin': 3
+        'Super_admin': 3
     };
     const roleId = roleMapping[decoded.role] || 2; // Par défaut selector
   
