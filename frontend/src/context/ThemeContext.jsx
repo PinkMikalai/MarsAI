@@ -1,2 +1,2 @@
-/* ThemeContext.jsx - Gestion du thème (dark/light mode) */
+// ThemeContext , gestion du thème (dark/light mode) ------------//
 

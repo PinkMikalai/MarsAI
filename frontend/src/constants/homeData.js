@@ -1,4 +1,4 @@
-/* homeData.js - Données pour la homepage MARS.A.I */
+// homeData , données pour la homepage MARS.A.I ------------//
 
 export const FEATURES = [
   {
@@ -29,7 +29,7 @@ export const FEATURES = [
 
 export const FILMS = [
   { id: '1', title: 'PROTOCOL ALPHA', description: 'Une plongée dans les protocoles du futur.' },
-  { id: '2', title: 'NEURAL DREAM', description: 'Rêves et intelligence artificielle.' },
+  { id: '2', title: 'NEURAL DREAM', description: 'Rêves et créativité.' },
   { id: '3', title: 'CYBER MARSEILLE', description: 'Marseille réinventée en cyberpunk.' },
 ];
 
@@ -43,7 +43,7 @@ export const OBJECTIFS = [
   {
     id: '2',
     title: 'CHALLENGE CRÉATIF',
-    description: 'Repousser les limites de la création avec l\'IA.',
+    description: 'Repousser les limites de la création.',
     color: 'teal',
   },
   {

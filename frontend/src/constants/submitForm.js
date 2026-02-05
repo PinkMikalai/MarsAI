@@ -1,7 +1,4 @@
-/**
- * Constantes pour le formulaire de soumission vidéo - API Mars.AI 2026
- * Formats: ISO 639-1 (langue), ISO 3166-1 alpha-2 (pays)
- */
+
 
 export const CIVILITY_OPTIONS = [
   { value: 'M.', label: 'M.' },
@@ -42,7 +39,7 @@ export const COUNTRIES_ISO3166 = [
   { value: 'OTHER', label: 'Autre' },
 ];
 
-/** Date backend: ISO 8601 YYYY-MM-DD */
+// formatBirthdateForApi , formate la date de naissance pour l'API ------------//
 export const formatBirthdateForApi = (dateStr) => {
   if (!dateStr) return '';
   const d = new Date(dateStr);
@@ -53,7 +50,7 @@ export const formatBirthdateForApi = (dateStr) => {
   return `${y}-${m}-${day}`;
 };
 
-/** Téléphone: E.164 (+indicatif+numéro, sans espaces) */
+// formatPhoneE164 , formate le téléphone au format E.164 ------------//
 export const formatPhoneE164 = (raw) => {
   if (!raw || typeof raw !== 'string') return '';
   const digits = raw.replace(/\D/g, '');

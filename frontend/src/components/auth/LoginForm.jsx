@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate , Link} from 'react-router-dom';
 import { authService } from '../../service/authService';
@@ -49,6 +50,7 @@ return(
         <h2 className="admin-login-title">Connexion/connexion</h2>
         <p className="admin-login-desc">
           Connexion réservée aux administrateurs et aux sélectionneurs.
+
         </p>
 
         {/* Affichage des erreurs comme dans ton RegisterForm */}

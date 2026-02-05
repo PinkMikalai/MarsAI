@@ -1,4 +1,4 @@
-/* routes.js - Chemins de l'application MarsAI */
+// routes , chemins de l'application MarsAI ------------//
 
 export const ROUTES = {
   HOME: '/',
@@ -6,6 +6,8 @@ export const ROUTES = {
   DEPOSER_UN_FILM: '/deposer-un-film',
   // ADMIN_LOGIN: '/espace-admin',
   // ADMIN_INSCRIPTION: '/espace-admin/inscription',
+  ADMIN_PROFIL: '/espace-admin/profil', // profil/dashboard après connexion ------------//
   REGISTER_USER:'/register_user',
   LOGIN :'/login'
+
 };

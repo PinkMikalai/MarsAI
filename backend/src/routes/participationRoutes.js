@@ -9,6 +9,4 @@ const { handleMulterErrors } = require('../middlewares/handleMulterErrors');
 // Définition des endpoints 
 router.post('/', uploadMiddleware, handleMulterErrors, validate(participationSchema), participationController.addParticipation);
 
-
-
 module.exports = router;
