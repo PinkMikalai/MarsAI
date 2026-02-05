@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export async function createInvitationToken({ email, role }) {
     return jwt.sign(
         { email, role, purpose: 'invitation' },
-        JWT_SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: '48h' }
     );
 }
@@ -112,7 +112,7 @@ export async function login({ email, password }) {
     // Génération du token de session 
     return jwt.sign(
         { sub: user.id, email: user.email, role: roleLabel },
-        JWT_SECRET,
+        process.env.JWT_SECRET,
         { expiresIn: '12h' }
     );
 }

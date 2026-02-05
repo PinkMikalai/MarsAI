@@ -5,7 +5,8 @@
  */
 
 /* ---------- CONTAINER & SECTIONS ---------- */
-.home-container {
+.home-container,
+.container {
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
@@ -13,7 +14,8 @@
   box-sizing: border-box;
 }
 
-.home-section {
+.home-section,
+.night-section {
   padding: 48px 0;
   width: 100%;
 }
@@ -39,7 +41,7 @@
   background: linear-gradient(180deg, #080614 0%, #0c0a20 50%, #0a0814 100%);
 }
 
-.home-mars-night {
+.night-section {
   background: linear-gradient(180deg, #0a0814 0%, #140818 50%, #0c0818 100%);
 }
 
@@ -74,7 +76,8 @@
   background-clip: text;
 }
 
-.home-section-title-pink {
+.home-section-title-pink,
+.title-pink {
   color: #ff2b7f;
 }
 
@@ -90,7 +93,8 @@
   color: #ffffff;
 }
 
-.home-section-desc {
+.home-section-desc,
+.section-desc {
   font-family: 'Arimo', sans-serif;
   font-size: 0.9rem;
   line-height: 1.5;
@@ -346,7 +350,7 @@
 }
 
 /* ---------- MARS A.I. NIGHT ---------- */
-.home-mars-night-inner {
+.night-section .container {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -354,11 +358,11 @@
   gap: 1.25rem;
 }
 
-.home-mars-night-content {
+.night-text {
   flex: 1 1 300px;
 }
 
-.home-mars-night-card {
+.night-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -366,7 +370,7 @@
   min-width: 200px;
 }
 
-.home-mars-night-date {
+.night-date {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -379,8 +383,29 @@
   color: #ff2b7f;
 }
 
-.home-mars-night-date svg {
+.night-date svg {
   flex-shrink: 0;
+}
+
+.btn-reserve {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #51a2ff 0%, #ad46ff 50%, #ff2b7f 100%);
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: 'Arimo', sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-reserve:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 43, 127, 0.4);
 }
 
 /* ---------- LA PLATEFORME ---------- */

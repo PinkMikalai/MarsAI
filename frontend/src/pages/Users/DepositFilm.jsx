@@ -1,16 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import Icons from '../../components/ui/Icons';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
 import { DepositFormProvider } from '../../context/DepositFormContext';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
+import Header from '../../components/layout/Header';
 import ConsentStep from '../../components/forms/ConsentStep';
 import InscriptionStep from '../../components/forms/InscriptionStep';
 import UploadFilmStep from '../../components/forms/UploadFilmStep';
 import FinalisationStep from '../../components/forms/FinalisationStep';
-import Stepper from '../../components/ui/Stepper';
+import Stepper from '../../components/ui/navigation/Stepper';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
@@ -38,15 +38,7 @@ const DepositFilmInner = () => {
     <div className="deposit-page">
       <div className="deposit-container">
         <Navbar />
-
-        <header className="deposit-header">
-          <div className="deposit-badge">
-            <span className="deposit-badge-icon" aria-hidden><Icons.Award /></span>
-            APPEL À PROJETS 2026
-            <span className="deposit-badge-icon" aria-hidden><Icons.Award /></span>
-          </div>
-          <h1 className="deposit-title">DÉPOSER UN FILM</h1>
-        </header>
+        <Header badge="APPEL À PROJETS 2026" title="DÉPOSER UN FILM" />
 
         <div className="deposit-form-zone">
           <Stepper currentStep={currentStepIndex} totalSteps={4} />

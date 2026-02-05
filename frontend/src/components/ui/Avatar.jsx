@@ -1,2 +1,0 @@
-/* Avatar.jsx - Avatar utilisateur */
-

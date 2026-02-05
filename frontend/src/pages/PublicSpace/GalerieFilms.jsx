@@ -2,9 +2,9 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { videosService, getCoverImageUrl } from '../../service/galerieService';
-import TagFilter from '../../components/ui/TagFilter';
+import TagFilter from '../../components/ui/tags/TagFilter';
 import { FILMS_PER_PAGE } from '../../constants/galerieData';
-import Icons from '../../components/ui/Icons';
+import Icons from '../../components/ui/common/Icons';
 
 const GalerieFilms = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -46,7 +46,7 @@ const GalerieFilms = () => {
     setError(null);
     
     console.log('🔵 GalerieFilms: Début du fetch des vidéos');
-    
+    // choper les videos de base de donnees
     videosService.getAllVideos()
       .then((res) => {
         console.log('🟢 GalerieFilms: Réponse reçue:', res);
@@ -55,7 +55,7 @@ const GalerieFilms = () => {
           console.log('✅ GalerieFilms: Première vidéo:', res.data[0]);
           setVideos(res.data);
           
-          // Charger les tags pour chaque vidéo
+          
           if (res.data.length > 0) {
             setLoadingTags(true);
             loadVideoTags(res.data);

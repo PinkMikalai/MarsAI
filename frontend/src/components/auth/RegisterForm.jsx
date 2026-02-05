@@ -61,10 +61,12 @@ const RegisterForm = () => {
     try {
       // Envoi au backend : on fusionne les données du formulaire + le token
       await authService.register({
+        token: token,
         firstname: form.firstname,
         lastname: form.lastname,
         password: form.password,
-        token: token
+        confirmPassword: form.passwordConfirm
+        
       });
 
       alert('Profile created successfully !');
