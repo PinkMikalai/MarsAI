@@ -30,8 +30,17 @@ const commonSchema = {
   // schéma de validation des urls
   url: z
     .string()
-    .url({ message: "Invalid URL" })
-    .trim(),
+    .trim()
+    .refine(
+      (val) => {
+        // Accepte soit un domaine simple (exemple.com) soit une URL complète avec http:// ou https://
+        const simpleUrlPattern = /^([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+        const fullUrlPattern = /^https?:\/\/([a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}(\/.*)?$/;
+        
+        return simpleUrlPattern.test(val) || fullUrlPattern.test(val);
+      },
+      { message: "Invalid URL format. Use either 'example.com' or 'http://example.com' or 'https://example.com'" }
+    ),
   
   // schéma de validation des prénoms
   firstname: z
