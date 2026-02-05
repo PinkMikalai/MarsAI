@@ -4,8 +4,8 @@ const { z } = require('zod');
 const { url, imageSchema, nameSchema } = require('./commonSchema');
 
 const sponsorSchema = z.object({
+    img: imageSchema.optional(),
     name: nameSchema,
-    img: imageSchema,
     url: url.optional(),
 });
 

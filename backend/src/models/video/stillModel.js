@@ -29,4 +29,33 @@ async function createStillsModel(stills, videoId) {
     }
 }
 
-module.exports = { createStillsModel };
+async function getStillsByVideoIdModel(videoId) {
+    const [rows] = await pool.execute(
+        `SELECT * FROM still WHERE video_id = ?`,
+        [videoId]
+    );
+    return rows;
+}
+
+async function updateStillsByVideoIdModel(videoId, stills) {
+    const [rows] = await pool.execute(
+        `UPDATE still SET file_name = ? WHERE video_id = ?`,
+        [stills, videoId]
+    );
+    return true;
+}   
+
+async function deleteStillsByVideoIdModel(videoId) {
+    const [rows] = await pool.execute(
+        `DELETE FROM still WHERE video_id = ?`,
+        [videoId]
+    );
+    return true;
+}
+
+module.exports = { 
+     createStillsModel,
+     getStillsByVideoIdModel, 
+     updateStillsByVideoIdModel,
+     deleteStillsByVideoIdModel 
+};
