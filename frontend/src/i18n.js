@@ -1,2 +1,2 @@
-/* i18n.js - Configuration i18next (FR par défaut) */
+// i18n , configuration i18next (FR de base) ------------//
 

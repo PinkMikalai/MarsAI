@@ -1,2 +1,2 @@
-/* useTheme.js - Hook pour accéder au contexte du thème */
+// useTheme , hook pour accéder au contexte du thème ------------//
 

@@ -1,2 +1,2 @@
-/* Pricing.jsx - Page des tarifs MarsAI */
+// Pricing , page des tarifs MarsAI ------------//
 

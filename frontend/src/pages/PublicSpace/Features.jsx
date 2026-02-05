@@ -1,2 +1,2 @@
-/* Features.jsx - Page des fonctionnalités MarsAI */
+// Features , page des fonctionnalités MarsAI ------------//
 

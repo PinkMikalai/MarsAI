@@ -1,7 +1,8 @@
 import React from 'react';
 import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
-import Icons from '../ui/Icons';
+import Icons from '../ui/common/Icons';
+import Checkbox from '../ui/forms/Checkbox';
 
 const CONDITIONS = [
   'Courts-métrages de 30 secondes minimum à 120 secondes maximum',
@@ -31,33 +32,22 @@ const ConsentStep = () => {
       </ul>
 
       <div className="deposit-field-group">
-        <div className="deposit-checkbox-wrap">
-          <input
-            type="checkbox"
-            id="accept_rules"
-            className="deposit-checkbox"
-            checked={accept_rules}
-            onChange={(e) => handleAcceptRules(e.target.checked)}
-          />
-          <label htmlFor="accept_rules" className="deposit-checkbox-label">
-            J&apos;accepte les conditions du règlement du festival marsAI et certifie que toutes les informations fournies sont exactes. *
-          </label>
-        </div>
+        <Checkbox
+          id="accept_rules"
+          label="J'accepte les conditions du règlement du festival marsAI et certifie que toutes les informations fournies sont exactes."
+          checked={accept_rules}
+          onChange={handleAcceptRules}
+          required
+        />
       </div>
 
       <div className="deposit-field-group">
-        <div className="deposit-checkbox-wrap">
-          <input
-            type="checkbox"
-            id="subscribe_newsletter"
-            className="deposit-checkbox"
-            checked={form.subscribe_newsletter}
-            onChange={(e) => setSubscribeNewsletter(e.target.checked)}
-          />
-          <label htmlFor="subscribe_newsletter" className="deposit-checkbox-label">
-            Je souhaite m&apos;inscrire à la newsletter marsAI pour recevoir les dernières actualités du festival.
-          </label>
-        </div>
+        <Checkbox
+          id="subscribe_newsletter"
+          label="Je souhaite m'inscrire à la newsletter marsAI pour recevoir les dernières actualités du festival."
+          checked={form.subscribe_newsletter}
+          onChange={setSubscribeNewsletter}
+        />
       </div>
     </FormCard>
   );

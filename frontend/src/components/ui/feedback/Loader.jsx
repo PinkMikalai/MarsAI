@@ -1,0 +1,13 @@
+// Loader , indicateur de chargement ------------//
+import React from 'react';
+
+const Loader = () => {
+  return (
+    <div className="loader-container">
+      <div className="loader-spinner"></div>
+      <p className="loader-text">Chargement...</p>
+    </div>
+  );
+};
+
+export default Loader;

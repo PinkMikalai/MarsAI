@@ -1,2 +1,2 @@
-/* useLocalStorage.js - Hook pour persister des données en localStorage */
+// useLocalStorage , hook pour persister des données en localStorage ------------//
 

@@ -1,4 +1,4 @@
-/* Hero.jsx - Section hero de la page d'accueil MarsAI avec vidéo ou FX en boucle */
+// Hero , section hero de la page d'accueil MarsAI avec vidéo ou FX en boucle ------------//
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -9,12 +9,12 @@ const USE_VIDEO_BACKGROUND = true; /* true = vidéo MP4, false = animation FX bl
 const PARALLAX_FACTOR = 0.25; /* 0.25 = vidéo bouge à 25% de la vitesse du scroll */
 
 const Hero = () => {
-  const videoRef = useRef(null);
+  const videoHome = useRef(null);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     if (!USE_VIDEO_BACKGROUND) return;
-    const video = videoRef.current;
+    const video = videoHome.current;
     if (!video) return;
     video.play().catch(() => {});
   }, []);
@@ -43,7 +43,7 @@ const Hero = () => {
           style={{ transform: `translate3d(0, ${scrollY * PARALLAX_FACTOR}px, 0)` }}
         >
           <video
-            ref={videoRef}
+            ref={videoHome}
             className="hero-video"
             src={HERO_VIDEO_SRC}
             autoPlay

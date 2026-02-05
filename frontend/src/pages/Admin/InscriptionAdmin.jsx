@@ -88,6 +88,20 @@ const InscriptionAdmin = () => {
             </div>
           </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           <div className="admin-inscription-field">
             <label htmlFor="inscription-role" className="admin-inscription-label">Rôle</label>
             <select
@@ -103,6 +117,19 @@ const InscriptionAdmin = () => {
               <option value="selectioneur">Sélectionneur</option>
             </select>
           </div>
+        
+
+
+
+
+
+
+
+
+
+
+
+
 
           <div className="admin-inscription-field">
             <label htmlFor="inscription-password" className="admin-inscription-label">Mot de passe</label>
@@ -140,6 +167,26 @@ const InscriptionAdmin = () => {
             S&apos;inscrire
           </button>
         </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
 
         <Link to={ROUTES.ADMIN_LOGIN} className="admin-inscription-back">
           Déjà un compte ? Connexion
