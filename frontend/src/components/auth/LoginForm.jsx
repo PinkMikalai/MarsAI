@@ -1,4 +1,4 @@
-/* LoginForm.jsx - Formulaire de connexion (email + mot de passe) pour tous les profils */
+// LoginForm , formulaire de connexion email + mot de passe pour tous les profils ------------//
 
 import React, { useState } from 'react';
 

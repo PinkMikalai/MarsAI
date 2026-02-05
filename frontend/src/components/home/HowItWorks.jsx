@@ -1,2 +1,2 @@
-/* HowItWorks.jsx - Section comment ça marche */
+// HowItWorks , section comment ça marche ------------//
 

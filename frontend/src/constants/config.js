@@ -1,2 +1,2 @@
-/* config.js - Configuration globale de l'application MarsAI */
+// config , configuration globale de l'application MarsAI ------------//
 

@@ -1,2 +1,2 @@
-/* About.jsx - Page à propos de MarsAI */
+// About , page à propos de MarsAI ------------//
 
