@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
-import LoginForm from '../../components/auth/LoginForm';
+// import LoginForm from '../../components/auth/LoginForm';
 import { authService } from '../../service/authService';
 
 const LoginAdmin = () => {
@@ -37,12 +37,12 @@ const LoginAdmin = () => {
       <div className="admin-login-card">
         <h1 className="admin-login-title">Connexion</h1>
         <p className="admin-login-desc">
-          Connexion réservée aux administrateurs et membres du jury.
+          Connexion réservée aux administrateurs et aux selectionneurs
         </p>
         <LoginForm onSubmit={handleSubmit} isLoading={isLoading} error={error} />
-        <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
+        {/* <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
           Pas encore de compte ? S&apos;inscrire
-        </Link>
+        </Link> */}
         <Link to={ROUTES.HOME} className="admin-login-back">
           Retour à l&apos;accueil
         </Link>
