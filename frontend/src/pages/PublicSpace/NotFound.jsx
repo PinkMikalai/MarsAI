@@ -1,2 +1,2 @@
-/* NotFound.jsx - Page 404 MarsAI */
+// NotFound , page 404 MarsAI ------------//
 

@@ -1,2 +1,2 @@
-/* AuthContext.jsx - Gestion de l'authentification (user, role, token) */
+// AuthContext , gestion de l'authentification (user, role, token) ------------//
 

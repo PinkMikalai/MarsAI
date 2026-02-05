@@ -1,2 +1,2 @@
-/* AppContext.jsx - État global de l'application MarsAI */
+// AppContext , état global de l'application MarsAI ------------//
 
