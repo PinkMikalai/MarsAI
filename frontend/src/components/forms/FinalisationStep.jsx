@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
-import Icons from '../ui/Icons';
+import Icons from '../ui/common/Icons';
 import { buildSubmitFormData, submitVideo } from '../../service/videoService';
 
 const FinalisationStep = ({ onSuccess, onError }) => {

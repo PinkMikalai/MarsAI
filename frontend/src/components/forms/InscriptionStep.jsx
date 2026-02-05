@@ -1,6 +1,6 @@
 import React from 'react';
 import FormCard from './FormCard';
-import Icons from '../ui/Icons';
+import Icons from '../ui/common/Icons';
 import { useDepositForm } from '../../context/DepositFormContext';
 import { CIVILITY_OPTIONS, COUNTRIES_ISO3166 } from '../../constants/submitForm';
 

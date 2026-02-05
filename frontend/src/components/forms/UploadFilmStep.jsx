@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import FormCard from './FormCard';
-import Icons from '../ui/Icons';
-import TagInput from '../ui/TagInput';
+import Icons from '../ui/common/Icons';
+import TagInput from '../ui/tags/TagInput';
 import { useDepositForm } from '../../context/DepositFormContext';
 import { LANGUAGES_ISO6391, STILLS_MAX_COUNT } from '../../constants/submitForm';
 import { tagsService } from '../../service/tags';
