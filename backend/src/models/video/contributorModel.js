@@ -34,4 +34,61 @@ async function createContributorsModel(contributors, videoId) {
     }
 }
 
-module.exports = { createContributorsModel }
+// get all contributors
+async function getAllContributorsModel() {
+    const [rows] = await pool.execute(
+        'SELECT * FROM contributor'
+    );
+    return rows;
+}
+
+// get contributor by id
+async function getContributorByIdModel(id) {
+    const [rows] = await pool.execute(
+        'SELECT * FROM contributor WHERE id = ?',
+        [id]
+    );
+    return rows[0];
+}
+
+// get contributors by video id
+async function getContributorsByVideoIdModel(videoId) {
+    const [rows] = await pool.execute(
+        'SELECT * FROM contributor WHERE video_id = ?',
+        [videoId]
+    );
+    return rows;
+}
+
+// update contributor
+async function updateContributorModel(id, contributorData) {
+    const [result] = await pool.execute(
+        'UPDATE contributor SET firstname = ?, last_name = ?, email = ?, production_role = ?, video_id = ? WHERE id = ?',
+        [
+            contributorData.firstname, 
+            contributorData.last_name, 
+            contributorData.email, 
+            contributorData.production_role, 
+            contributorData.video_id,
+            id]
+    );
+    return result.affectedRows > 0;
+}
+
+// delete contributor
+async function deleteContributorModel(id) {
+    const [result] = await pool.execute(
+        'DELETE FROM contributor WHERE id = ?',
+        [id]
+    );
+    return result.affectedRows > 0;
+}
+
+module.exports = { 
+    createContributorsModel, 
+    getAllContributorsModel, 
+    getContributorByIdModel, 
+    getContributorsByVideoIdModel,
+    updateContributorModel, 
+    deleteContributorModel 
+}

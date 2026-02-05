@@ -17,16 +17,25 @@
 -- - Admin (role_id=1) : validation des vidéos, gestion courante
 -- - Selector (role_id=2) : note et commente les vidéos via selector_memo
 
--- Mot de passe hashé exemple : "password123" (bcrypt)
+-- Mot de passe hashé : "password123" (bcrypt Node.js - Hashes vérifiés ✅)
 INSERT INTO user (email, password_hash, firstname, lastname, role_id) VALUES
 -- Super Admin
-('superadmin@marsai.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Marie', 'Dupont', 3),
+('superadmin@marsai.com', '$2b$10$I3V6QNHtYYl0Im8yfPhaAOhZ0BLsVKiGt2O/44dpTHzETNRFSKfzu', 'Marie', 'Dupont', 3),
 -- Admin
-('admin@marsai.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jean', 'Martin', 1),
+('admin@marsai.com', '$2b$10$./xoea5OA4jaBkkMXuXMceNapzUbDcm72o6fBBg7WvvceLHnu.JsC', 'Jean', 'Martin', 1),
 -- Selectors (role_id=2) - Ce sont eux qui évaluent les vidéos
-('selector1@marsai.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Sophie', 'Bernard', 2),
-('selector2@marsai.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Lucas', 'Petit', 2),
-('selector3@marsai.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Emma', 'Leroy', 2);
+('selector1@marsai.com', '$2b$10$QZtSEvOFgnVbjwblDrvIx.AflPbOAQk5MdbuI6ZMgI4oTqkiIns8y', 'Sophie', 'Bernard', 2),
+('selector2@marsai.com', '$2b$10$shH.OVoJRZKR/HKe3GL.MO04.FDAIc0iO0Z6V.gcwSodD/ULz/fuO', 'Lucas', 'Petit', 2),
+('selector3@marsai.com', '$2b$10$2u7EQJ3I0lr9qJOMa2YDSu4pNtPYr1tpBGdfPgXvccwCnEWLZnnxi', 'Emma', 'Leroy', 2),
+-- Utilisateurs supplémentaires
+('selector6@marsai.com', '$2b$10$A.AWww7bN452KXctjZwVBuWPoxZrIYJSl.sY.BsQKz7Z7aCwqURFy', 'Isabelle', 'Huppert', 2),
+('selector7@marsai.com', '$2b$10$9C35RjaS0gr0tdKPwaRDC.Zdy9sIWmROTVjRQ0.dhfD5CiLFh7WVK', 'Test', 'Test', 2),
+('superadmin2@marsai.com', '$2b$10$rwYTamKkXDkH84ntjfAGxuXkd.lfP5uKZoCcG7FIgUjH6PM1S0JvS', 'Akira', 'Kurozawa', 3),
+('admin3@marsai.com', '$2b$10$7z/JcNazt1w5jyI8EFhV7uxwOhpcUo84x90szWxvX8lQDb9onqfVK', 'François', 'Truffaut', 1),
+('selector11@marsai.com', '$2b$10$Rm4PgRDjr8gonHSxZG2NuejUchP/n0puGbHad5G2igKmQ.mxV4gI6', 'Brigitte', 'Bardot', 2),
+('selector12@marsai.com', '$2b$10$VPRtJkTmJ38vWCZHNZpKY.wKEjKuEOlanD6xcBboaje79iadwDy9q', 'Kate', 'Winslet', 2),
+('selector13@marsai.com', '$2b$10$7bmZk7fUAPKSoZN/0p3ssOzc9iQm54zHtBx/RqMa0V.eTXQ0gd702', 'Sharon', 'Stone', 2),
+('selector14@marsai.com', '$2b$10$NTPHRkrYml8/z3TKSFENk.zMWeJqaz6AMH4sYR.bXKeRFIQz9usVq', 'Daniel', 'Day-Lewis', 2);
 
 -- =====================================================
 -- 2. SOURCES D'ACQUISITION
