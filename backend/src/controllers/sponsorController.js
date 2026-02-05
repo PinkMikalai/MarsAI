@@ -66,6 +66,12 @@ async function getAllSponsors(req, res) {
 
     //si les sponsors n sont pas trouvés affiche ca
     
+    if (!sponsors) {
+        return res.status(404).json({
+            message: "Aucun sponsor trouvé",
+            status: false,
+        });
+    }
     try {
         //on renvoie les sponsors
         console.log(sponsors);
@@ -77,7 +83,7 @@ async function getAllSponsors(req, res) {
     } catch (error) {
         res.status(500).json({
             message: "Erreur lors de la récupération des sponsors",
-            status: "error",
+            status: false,
             error: error.message
         });
     }
