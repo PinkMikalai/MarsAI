@@ -12,6 +12,7 @@ const {
 
 
 // imports des middlewares
+const authMiddleware = require("../middlewares/authMiddleware.js");
 const upload = require("../middlewares/uploadMiddleware.js");
 const { validate } = require("../middlewares/validate.js");
 const { jurySchema } = require("../validators/jurySchema.js");
