@@ -7,10 +7,24 @@ const {
     deleteVideoModel
 } = require("../../models/video/videoModel.js");
 
-//import de nos services (logique métier)
-const { createAndLinkTagsService, updateTagsService, getVideoTagsService } = require("../../services/video/tagService.js");
-
-
+//import de nos services 
+const { 
+    createAndLinkTagsService, 
+    updateTagsService, 
+    getVideoTagsService 
+} = require("../../services/video/tagService.js");
+const { 
+    getStillsByVideoIdModel, 
+    updateStillsByVideoIdModel, 
+} = require("../../models/video/stillModel.js");
+const { 
+    
+    getContributorsByVideoIdModel,
+} = require("../../models/video/contributorModel.js");
+const { 
+    getAwardsByVideoIdModel, 
+} = require("../../models/video/awardModel.js");
+const { getMemosByVideoIdModel } = require("../../models/video/selectorMemoModel.js");
 //=====================================================
 // VIDEO - CRUD
 //=====================================================
@@ -27,12 +41,13 @@ async function createVideo(req, res) {
 // get all videos
 async function getAllVideos(req, res) {
     
-    //ici notre logique de recuperation de toutes les videos
+    //ici notre logique de recuperation de toutes les videos avec leurs infos
 
     try {
         const videos = await getAllVideosModel();
-        //ici console log pour cmder pour verifier si les videos sont bien recuperées
+        //ici console log pour cmder pour verifier si les videos et autres infos sont ete bien recuperee
         console.log("videos", videos);
+        
 
 
         res.status(200).json({
@@ -61,11 +76,24 @@ async function getVideoById(req, res) {
         
         //recuperer les tags de la video depuis video_tag
         const tags = await getVideoTagsService(req.params.id);
-
-        //afficher les tags de la video sur le cmder
         console.log("tags de la video", tags);
-        
 
+        //recuperer les stills de la video depuis still
+        const stills = await getStillsByVideoIdModel(req.params.id);
+        console.log("stills", stills);
+
+        //recuperer les contributors de la video depuis contributor
+        const contributors = await getContributorsByVideoIdModel(req.params.id);
+        console.log("contributors", contributors);
+
+        //recuperer les awards de la video depuis award
+        const awards = await getAwardsByVideoIdModel(req.params.id);
+        console.log("awards", awards);
+        
+        //recuperer les memos de la video depuis selector_memo
+        const memos = await getMemosByVideoIdModel(req.params.id);
+        console.log("memos", memos);
+        
         // si le video n est pas trouvee affiche l erreur
         if (!video || !tags) {
 
@@ -80,6 +108,9 @@ async function getVideoById(req, res) {
                 message: "Video recuperée avec succès",
                 video: video,
                 tags: tags,
+                stills: stills,
+                contributors: contributors,
+                awards: awards,
                 status: true
             });
         }
@@ -98,8 +129,9 @@ async function updateVideo(req, res) {
 
     try {
         // separation des tags de mon video et autres infos sur notre video
-        const { tags, ...videoData } = req.body;
+        const { tags, stills, ...videoData } = req.body;
         console.log("tags fournis", tags);
+        console.log("stills fournis", stills);
         
         //autres infos sur notre video
         console.log("donnees video", videoData);
@@ -113,6 +145,13 @@ async function updateVideo(req, res) {
         if (tags && Array.isArray(tags)) {
             updatedTags = await updateTagsService(req.params.id, tags);
             console.log("tags mis a jour", updatedTags);
+        }
+        
+        //mettre a jour les stills dans still si fournis
+        let updatedStills = [];
+        if (stills && Array.isArray(stills)) {
+            updatedStills = await updateStillsByVideoIdModel(req.params.id, stills);
+            console.log("stills mis a jour", updatedStills);
         }
         
         //recuperer la video mise a jour
