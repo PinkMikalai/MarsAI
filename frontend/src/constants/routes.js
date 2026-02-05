@@ -4,7 +4,8 @@ export const ROUTES = {
   HOME: '/',
   GALERIE_FILMS: '/galerie-des-films',
   DEPOSER_UN_FILM: '/deposer-un-film',
-  ADMIN_LOGIN: '/espace-admin',
+  // ADMIN_LOGIN: '/espace-admin',
   // ADMIN_INSCRIPTION: '/espace-admin/inscription',
-  REGISTER_USER:'/register_user'
+  REGISTER_USER:'/register_user',
+  LOGIN :'/login'
 };

@@ -4,9 +4,8 @@ import { ROUTES } from './constants/routes';
 import Home from './pages/PublicSpace/Home';
 import GalerieFilms from './pages/PublicSpace/GalerieFilms';
 import DepositFilm from './pages/Users/DepositFilm';
-import LoginAdmin from './pages/Admin/LoginAdmin';
-import InscriptionAdmin from './pages/Admin/InscriptionAdmin';
 import RegisterForm from './components/auth/RegisterForm';
+import LoginForm from './components/auth/LoginForm';
 
 function App() {
   return (
@@ -16,8 +15,7 @@ function App() {
         <Route path={ROUTES.GALERIE_FILMS} element={<GalerieFilms />} />
         <Route path={ROUTES.DEPOSER_UN_FILM} element={<DepositFilm />} />
         <Route path={ROUTES.REGISTER_USER} element={<RegisterForm/>}/>
-        <Route path={ROUTES.ADMIN_LOGIN} element={<LoginAdmin />} />
-        {/* <Route path={ROUTES.ADMIN_INSCRIPTION} element={<InscriptionAdmin />} /> */}
+        <Route path={ROUTES.LOGIN} element={<LoginForm />} />
       </Routes>
     </Router>
   );

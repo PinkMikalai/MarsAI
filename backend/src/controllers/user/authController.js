@@ -1,4 +1,3 @@
-const { success } = require('zod');
 const authService = require('../../services/user/authService');
 
 // Vérification du token 
