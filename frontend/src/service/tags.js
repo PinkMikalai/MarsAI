@@ -1,4 +1,4 @@
-import api from './api';
+import api from '../service/api';
 
 export const tagsService = { 
     getMostUsedTags: async () => {
