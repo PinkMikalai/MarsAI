@@ -11,6 +11,10 @@ export const authService = {
     register: (userData) => api.post('/auth/register', userData),
 
     // login , connexion utilisateur ------------//
-    login: (credentials) => api.post('/auth/login', credentials)
+    login: (credentials) => api.post('/auth/login', credentials),
+    // profile , récupération profil utilisateur ------------//
+    profile: (id, token) => api.get(`/auth/profile/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
 
 };

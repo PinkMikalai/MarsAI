@@ -13,7 +13,7 @@ const initialState = {
     birthdate: '',
     country: 'FR',
     phone: '',
-    postal_code: '',
+    address: '',
   },
   subscribe_newsletter: false,
   film: {
