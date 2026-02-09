@@ -74,6 +74,43 @@ async function getVideoByIdModel(id) {
     );
     return rows[0];
 }
+
+// get video by id avec TOUTES les infos (tags, stills, contributors, awards, memos, admin_video, assignation, acquisition_source)
+async function getVideoByIdWithAllInfosModel(id) {
+    const [rows] = await pool.execute(
+        `SELECT 
+            video.*,
+            acquisition_source.name AS acquisition_source_name,
+            GROUP_CONCAT(DISTINCT tag.name) AS tags,
+            GROUP_CONCAT(DISTINCT still.file_name) AS stills,
+            GROUP_CONCAT(DISTINCT CONCAT(contributor.firstname, ' ', contributor.last_name, ' (', contributor.production_role, ')')) AS contributors,
+            GROUP_CONCAT(DISTINCT award.title) AS awards,
+            GROUP_CONCAT(DISTINCT CONCAT(selector_user.firstname, ' ', selector_user.lastname, ' => ', selection_status.name)) AS selector_memos,
+            GROUP_CONCAT(DISTINCT CONCAT(admin_user.firstname, ' ', admin_user.lastname, ' => ', admin_status.name)) AS admin_videos,
+            GROUP_CONCAT(DISTINCT CONCAT(assign_user.firstname, ' ', assign_user.lastname, ' (assigned at: ', assignation.assignate_at, ')')) AS assignations
+        FROM video
+        LEFT JOIN acquisition_source ON video.acquisition_source_id = acquisition_source.id
+        LEFT JOIN video_tag ON video.id = video_tag.video_id
+        LEFT JOIN tag ON video_tag.tag_id = tag.id
+        LEFT JOIN still ON video.id = still.video_id
+        LEFT JOIN contributor ON video.id = contributor.video_id
+        LEFT JOIN video_award ON video.id = video_award.video_id
+        LEFT JOIN award ON video_award.award_id = award.id
+        LEFT JOIN selector_memo ON video.id = selector_memo.video_id
+        LEFT JOIN user AS selector_user ON selector_memo.user_id = selector_user.id
+        LEFT JOIN selection_status ON selector_memo.selection_status_id = selection_status.id
+        LEFT JOIN admin_video ON video.id = admin_video.video_id
+        LEFT JOIN user AS admin_user ON admin_video.user_id = admin_user.id
+        LEFT JOIN admin_status ON admin_video.admin_status_id = admin_status.id
+        LEFT JOIN assignation ON video.id = assignation.video_id
+        LEFT JOIN user AS assign_user ON assignation.user_id = assign_user.id
+        WHERE video.id = ?
+        GROUP BY video.id`,
+        [id]
+    );
+    return rows[0];
+}
+
 // update video (mise a jour dynamique : seulement les champs fournis)
 async function updateVideoModel(id, videoData) {
     try {
@@ -218,6 +255,7 @@ module.exports = {
     createVideoModel,
     getAllVideosModel,
     getVideoByIdModel,
+    getVideoByIdWithAllInfosModel,
     updateVideoModel,
     deleteVideoModel,
 };
