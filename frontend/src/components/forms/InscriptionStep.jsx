@@ -124,14 +124,14 @@ const InscriptionStep = () => {
           </div>
         </div>
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Code postal *</label>
+          <label className="deposit-field-label deposit-field-label--jakarta">Adresse *</label>
           <div className="deposit-field-wrap">
             <input
               type="text"
               className="deposit-input"
-              placeholder="75001"
-              value={p.postal_code}
-              onChange={(e) => setParticipant('postal_code', e.target.value)}
+              placeholder="123 rue de la République, 75001 Paris"
+              value={p.address}
+              onChange={(e) => setParticipant('address', e.target.value)}
             />
           </div>
         </div>

@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { getInviteController, registerController ,loginController, updateUserController, deleteUserController } = require('../controllers/user/authController.js');
+const { getInviteController, registerController ,loginController, updateUserController, deleteUserController, profileUserController } = require('../controllers/user/authController.js');
 const inviteUserController  = require('../controllers/admin/adminController.js');
 const authMiddleware = require('../middlewares/authMiddleware.js');
 const checkRole = require('../middlewares/checkRoleMiddleware.js');
 const { validate} = require('../middlewares/validate.js')
 const {inviteSchema, passwordSchema} = require('../validators/authSchema.js')
 const loginSchema = require('../validators/loginShema.js')
+
 
 
 
@@ -17,6 +18,8 @@ router.get('/invitation', getInviteController)
 router.post('/register', validate(passwordSchema), registerController );
 
 router.post('/login' , validate(loginSchema), loginController);
+
+router.get('/profile/:id',authMiddleware, profileUserController);
 
 router.put('/update_profile' , authMiddleware,  updateUserController); // modification du user par le user
 
