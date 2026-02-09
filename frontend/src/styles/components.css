@@ -64,6 +64,30 @@
   font-weight: 500;
 }
 
+/* Progress bar */
+.progress-bar-track {
+  width: 100%;
+  max-width: 32rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 40%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2B7FFF 0%, #9810FA 50%, #FF2B7F 100%);
+  animation: progress-move 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-move {
+  0% { transform: translateX(-60%); }
+  50% { transform: translateX(30%); }
+  100% { transform: translateX(120%); }
+}
+
 /* tags_________________________________________________________________________________ */
 .tag-input-wrapper {
   width: 100%;

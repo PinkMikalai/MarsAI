@@ -38,16 +38,19 @@
 }
 
 /* ---------- FORMULAIRE ---------- */
-.login-form {
+.login-form,
+.admin-login-form {
   text-align: left;
   margin-bottom: 1.5rem;
 }
 
-.login-form-field {
+.login-form-field,
+.admin-login-field {
   margin-bottom: 1rem;
 }
 
-.login-form-label {
+.login-form-label,
+.admin-login-label {
   display: block;
   font-family: 'Arimo', sans-serif;
   font-size: 0.75rem;
@@ -58,7 +61,8 @@
   margin-bottom: 0.4rem;
 }
 
-.login-form-input {
+.login-form-input,
+.admin-login-input {
   width: 100%;
   height: 44px;
   padding: 0 1rem;
@@ -71,17 +75,20 @@
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.login-form-input::placeholder {
+.login-form-input::placeholder,
+.admin-login-input::placeholder {
   color: rgba(255, 255, 255, 0.35);
 }
 
-.login-form-input:focus {
+.login-form-input:focus,
+.admin-login-input:focus {
   outline: none;
   border-color: rgba(43, 127, 255, 0.5);
   box-shadow: 0 0 0 2px rgba(43, 127, 255, 0.15);
 }
 
-.login-form-input:disabled {
+.login-form-input:disabled,
+.admin-login-input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -94,7 +101,8 @@
   padding: 0.5rem 0;
 }
 
-.login-form-submit {
+.login-form-submit,
+.admin-login-submit {
   width: 100%;
   height: 44px;
   margin-top: 0.5rem;
@@ -111,16 +119,19 @@
   transition: opacity 0.2s, transform 0.15s;
 }
 
-.login-form-submit:hover:not(:disabled) {
+.login-form-submit:hover:not(:disabled),
+.admin-login-submit:hover:not(:disabled) {
   opacity: 0.95;
   transform: translateY(-1px);
 }
 
-.login-form-submit:active:not(:disabled) {
+.login-form-submit:active:not(:disabled),
+.admin-login-submit:active:not(:disabled) {
   transform: translateY(0);
 }
 
-.login-form-submit:disabled {
+.login-form-submit:disabled,
+.admin-login-submit:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }

@@ -13,10 +13,31 @@ const FinalisationStep = ({ onSuccess, onError }) => {
     try {
       const formData = buildSubmitFormData(form);
       const token = localStorage.getItem('token') || '';
+      
+      console.log('📤 Envoi des données...');
       const result = await submitVideo(formData, token || undefined);
-      onSuccess?.(result);
+      
+      if (result?.videoId) {
+        console.log('✅ Vidéo enregistrée avec succès, ID:', result.videoId);
+        onSuccess?.(result);
+      } else {
+        console.warn('⚠️ Réponse reçue mais pas de videoId:', result);
+        onError?.({ message: 'La vidéo n\'a pas pu être enregistrée correctement.' });
+      }
     } catch (err) {
-      onError?.(err.response?.data || err.message || err);
+      console.error('❌ Erreur lors de l\'envoi:', err);
+      if (err.response?.status === 400 && err.response?.data?.errors) {
+        // Erreurs de validation Zod
+        const errors = err.response.data.errors;
+        const errorMessages = errors.map(e => `${e.path?.join('.')}: ${e.message}`).join('\n');
+        onError?.({ 
+          message: 'Erreurs de validation',
+          errors: errorMessages,
+          details: errors
+        });
+      } else {
+        onError?.(err.response?.data || err.message || err);
+      }
     } finally {
       setSubmitting(false);
     }

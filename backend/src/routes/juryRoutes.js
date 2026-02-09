@@ -16,7 +16,6 @@ const authMiddleware = require("../middlewares/authMiddleware.js");
 const upload = require("../middlewares/uploadMiddleware.js");
 const { validate } = require("../middlewares/validate.js");
 const { jurySchema } = require("../validators/jurySchema.js");
-const authMiddleware = require("../middlewares/authMiddleware.js");
 const checkRole = require("../middlewares/checkRoleMiddleware.js");
 
 
