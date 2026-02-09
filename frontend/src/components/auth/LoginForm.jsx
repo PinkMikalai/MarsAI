@@ -47,30 +47,29 @@ const handleSubmit = async (e) => {
 return(
   <div className="admin-login-page">
       <div className="admin-login-card">
-        <h2 className="admin-login-title">Connexion/connexion</h2>
+        <h2 className="admin-login-title">Connexion</h2>
         <p className="admin-login-desc">
-          Connexion réservée aux administrateurs et aux sélectionneurs.
-
+          Restricted access
         </p>
 
-        {/* Affichage des erreurs comme dans ton RegisterForm */}
+        
         {error && (
-          <div className="alert-error" style={{ color: 'red', marginBottom: '10px' }} role="alert">
+          <div className="login-form-error"  role="alert">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="admin-login-form" noValidate>
+        <form onSubmit={handleSubmit} className="login-form" noValidate>
           
-          <div className="admin-login-field">
-            <label htmlFor="email" className="admin-login-label">Email</label>
+          <div className="login-form-field">
+            <label htmlFor="email" className="login-form-label">Email</label>
             <input
               id="email"
               name="email"
               type="email"
               autoComplete="email"
               placeholder="vous@exemple.fr"
-              className="admin-login-input"
+              className="login-form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={loading}
@@ -78,15 +77,15 @@ return(
             />
           </div> 
 
-          <div className="admin-login-field">
-            <label htmlFor="password" className="admin-login-label">Mot de passe</label>
+          <div className="login-form-field">
+            <label htmlFor="password" className="login-form-label">Mot de passe</label>
             <input
               id="password"
               name="password"
               type="password"
               autoComplete="current-password"
               placeholder="••••••••"
-              className="admin-login-input"
+              className="login-form-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
@@ -96,7 +95,7 @@ return(
 
           <button 
             type="submit" 
-        className="admin-login-submit" 
+        className="login-form-submit" 
             disabled={loading}
           >
             {loading ? 'Connexion en cours...' : 'Se connecter'}

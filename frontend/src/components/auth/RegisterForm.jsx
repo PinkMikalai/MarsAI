@@ -12,37 +12,36 @@ const RegisterForm = () => {
   const [userData, setUserData] = useState({ email: '', role: '' });
   
   // Données saisies par l'utilisateur
-  const [form, setForm] = useState({
-    firstname: '',
-    lastname: '',
-    password: '',
-    passwordConfirm: '',
-  });
+  const [form, setForm] = useState({ firstname: '', lastname: '', password: '', passwordConfirm: ''});
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
   //Vérification du token 
   useEffect(() => {
-    console.log("useEffect déclenché avec le token :", token)
-    if (token) {
-      authService.verifyInvitation(token)
-        .then(res => {
-            console.log("Réponse du serveur :", res.data);
-          setUserData({ email: res.data.email, role: res.data.role });
-          setLoading(false);
-        })
-        .catch((err) => {
-          ConsoleError("Api error", err);
-          setError('Invalid or expired link');
-          setLoading(false);
-        });
-    } else {
-      setError("A token is mandatory");
+    // verification de la présence du token
+    const checkToken = async () => {
+    if (!token) {
+      setError("A token is mandatory")
+      setLoading(false)
+      return;
+      }
+    // récupération de la data du token
+    try {
+      const response = await authService.verifyInvitation(token);
+      const data = response.data 
+      console.log("verif data token", data);
+      
+      if(data) {
+      setUserData({ email: data.email , role: data.role}) }
+    } catch(err){
+      setError('Invalid or expired link')
+    } finally {
       setLoading(false);
-    }
-  }, [token]);
+    } 
+  }; checkToken();}, [token]);
 
+// remplissage du formulaire
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -70,7 +69,7 @@ const RegisterForm = () => {
       });
 
       alert('Profile created successfully !');
-      navigate(ROUTES.ADMIN_LOGIN);
+      navigate(ROUTES.LOGIN);
     } catch (err) {
         console.log("Détail erreur reçue:", err.response?.data);
       setError(err.response?.data?.message || "An error occured during the registration");
@@ -79,7 +78,7 @@ const RegisterForm = () => {
  
   // Chargement
   if (loading) {
-    return <div className="admin-inscription-page" style={{color: 'white'}}>Loading...</div>;
+    return <div className="admin-inscription-page" >Loading...</div>;
   }
 
   // Erreur ou probléme de token
@@ -87,8 +86,8 @@ const RegisterForm = () => {
     return (
       <div className="admin-inscription-page">
         <div className="admin-inscription-card">
-          <h2 style={{color: 'red'}}>{error}</h2>
-          <Link to={ROUTES.ADMIN_LOGIN} className="admin-inscription-back">Retour à la connexion</Link>
+          <h2 className='admin-inscription-card-error'>{error}</h2>
+          <Link to={ROUTES.LOGIN} className="admin-inscription-back">Return to login</Link>
         </div>
       </div>
     );
@@ -98,12 +97,12 @@ const RegisterForm = () => {
   return (
     <div className="admin-inscription-page">
       <div className="admin-inscription-card">
-        <h1 className="admin-inscription-title">Finaliser votre inscription</h1>
+        <h1 className="admin-inscription-title">Finalise your registration</h1>
         <p className="admin-inscription-desc">
-          Vous rejoignez l'équipe MarsAI en tant que <strong>{userData.role}</strong>.
+          Welcome to the marsAI film festival team <strong>{userData.role}</strong>.
         </p>
 
-        {error && <div className="alert-error" style={{color: 'red', marginBottom: '10px'}}>{error}</div>}
+        {error && <div className="login-form-error" >{error}</div>}
 
         <form onSubmit={handleSubmit} className="admin-inscription-form">
           
@@ -198,7 +197,7 @@ const RegisterForm = () => {
           </button>
         </form>
 
-        <Link to={ROUTES.ADMIN_LOGIN} className="admin-inscription-back">
+        <Link to={ROUTES.LOGIN} className="admin-inscription-back">
           I already have a profile ? Log in
         </Link>
       </div>
