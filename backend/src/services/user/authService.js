@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, deleteUserModel}  from '../../models/user/userModel.js';
+import { success } from 'zod';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -153,3 +154,18 @@ export async function deleteUser(id) {
         message: `Profile ${id} deleted successfully`
     }
 }
+
+// Espace user 
+export async function profileUser (id) {
+    const user = await getUserByIdModel(id);
+    if(!user) {
+        const error = new Error(`User n° ${id} don't exist !`);
+        error.status = 404;
+        throw error;
+    }
+    return {
+     message : `User n° ${id} connected` ,
+     status : "success"
+     
+    }}
+

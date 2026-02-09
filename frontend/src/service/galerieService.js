@@ -1,8 +1,22 @@
 
 import api from './api';
+// cherche l'url malade ( a changer ptet )
+const getApi = () => import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
 
+const buildUploadUrl = (value, folder) => {
+  if (!value) return null;
+  if (/^https?:\/\//.test(value)) return value;
 
-export const videosService = {
+  const origin = getApi();
+  const cleanValue = value.replace(/^\//, '');
+  const path = cleanValue.includes('assets/uploads')
+    ? cleanValue
+    : `assets/uploads/${folder}/${cleanValue}`;
+
+  return `${origin}/${path}`;
+};
+
+export const videoApi = {
   getAllVideos: async () => {
     try {
       const response = await api.get('/videos');
@@ -18,7 +32,7 @@ export const videosService = {
       const response = await api.get(`/videos/${videoId}`);
       return response.data?.tags || [];
     } catch (error) {
-      console.error(`Erreur lors de la récupération des tags pour la vidéo ${videoId}:`, error);
+      console.error(`Erreur de recup des tags ${videoId}:`, error);
       return [];
     }
   },
@@ -31,34 +45,16 @@ export const videosService = {
         tags: response.data?.tags || []
       };
     } catch (error) {
-      console.error(`Erreur lors de la récupération de la vidéo ${videoId}:`, error);
+      console.error(`Erreur de recup des videos ${videoId}:`, error);
       throw error;
     }
   }
 };
 
-
-export function getCoverImageUrl(cover) {
-  if (!cover) return '';
-  if (cover.startsWith('http://') || cover.startsWith('https://')) return cover;
-  const base = import.meta.env.VITE_API_URL || '';
-  const origin = base.replace(/\/marsai\/?$/, '') || (typeof window !== 'undefined' ? window.location.origin : '');
-  return `${origin}/${cover.replace(/^\//, '')}`;
+export function getCoverUrl(cover) {
+  return buildUploadUrl(cover, 'images');
 }
 
-export function getVideoFileUrl(videoFileName) {
-  if (!videoFileName) return null;
-  if (videoFileName.startsWith('http://') || videoFileName.startsWith('https://')) {
-    return videoFileName;
-  }
-  const base = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-  const origin = base.replace(/\/marsai\/?$/, '') || (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
-  const cleanFileName = videoFileName.replace(/^\//, '');
-  // Les vidéos sont servies depuis /assets/uploads/videos/
-  // Si le nom de fichier contient déjà "assets/uploads", l'utiliser tel quel
-  if (cleanFileName.includes('assets/uploads')) {
-    return `${origin}/${cleanFileName}`;
-  }
-  // Sinon, construire le chemin complet
-  return `${origin}/assets/uploads/videos/${cleanFileName}`;
+export function getVideoUrl(videoFileName) {
+  return buildUploadUrl(videoFileName, 'videos');
 }
