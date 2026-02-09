@@ -1,0 +1,118 @@
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.success-modal-content {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border: 2px solid rgba(43, 127, 255, 0.3);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.success-modal-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  animation: successPulse 2s ease-in-out infinite;
+}
+
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(43, 127, 255, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(43, 127, 255, 0);
+  }
+}
+
+.success-modal-title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 1rem;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 50%, #FF2B7F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.success-modal-message {
+  font-family: 'Arimo', sans-serif;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 1.5rem;
+  line-height: 1.6;
+}
+
+.success-modal-video-id {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 2rem;
+  padding: 0.75rem;
+  background: rgba(43, 127, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(43, 127, 255, 0.2);
+}
+
+.success-modal-video-id strong {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.success-modal-button {
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  color: #fff;
+  border: none;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.success-modal-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(43, 127, 255, 0.4);
+}
+
+.success-modal-button:active {
+  transform: translateY(0);
+}
