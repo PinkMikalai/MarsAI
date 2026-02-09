@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
-import { videosService, getCoverImageUrl } from '../../service/galerieService';
+import { videoApi, getCoverUrl } from '../../service/galerieService';
 import TagFilter from '../../components/ui/tags/TagFilter';
+import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import { FILMS_PER_PAGE } from '../../constants/galerieData';
 import Icons from '../../components/ui/common/Icons';
 
@@ -15,13 +17,14 @@ const GalerieFilms = () => {
   const [loading, setLoading] = useState(true);
   const [loadingTags, setLoadingTags] = useState(false);
   const [error, setError] = useState(null);
+  const [imageErrors, setImageErrors] = useState(new Set());
 
-  // Fonction pour charger les tags de toutes les vidéos
+  // Fonction pour charger les tags de toutes les vidéos _________________________________________
   const loadVideoTags = useCallback(async (videosList) => {
     try {
       setLoadingTags(true);
       const videosWithTagsPromises = videosList.map(async (video) => {
-        const tags = await videosService.getVideoTags(video.id);
+        const tags = await videoApi.getVideoTags(video.id);
         return {
           ...video,
           tags: tags.map(t => t.name?.toLowerCase() || t.toLowerCase())
@@ -47,18 +50,22 @@ const GalerieFilms = () => {
     
     console.log('🔵 GalerieFilms: Début du fetch des vidéos');
     // choper les videos de base de donnees
-    videosService.getAllVideos()
+    videoApi.getAllVideos()
       .then((res) => {
         console.log('🟢 GalerieFilms: Réponse reçue:', res);
         if (!cancelled && res?.success && Array.isArray(res.data)) {
           console.log('✅ GalerieFilms: Nombre de vidéos:', res.data.length);
           console.log('✅ GalerieFilms: Première vidéo:', res.data[0]);
-          setVideos(res.data);
-          
-          
-          if (res.data.length > 0) {
+          const shuffled = [...res.data];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          setVideos(shuffled);
+
+          if (shuffled.length > 0) {
             setLoadingTags(true);
-            loadVideoTags(res.data);
+            loadVideoTags(shuffled);
           }
         } else if (!cancelled) {
           console.warn('⚠️ GalerieFilms: Réponse invalide:', res);
@@ -75,7 +82,7 @@ const GalerieFilms = () => {
       })
       .finally(() => {
         if (!cancelled) {
-          console.log('🏁 GalerieFilms: Fetch terminé');
+          console.log(' GalerieFilms: Fetch terminé');
           setLoading(false);
         }
       });
@@ -98,7 +105,7 @@ const GalerieFilms = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Filtrer les vidéos selon les tags sélectionnés
+  // Filtre les vidéos selon tags sélection
   const filteredVideos = useMemo(() => {
     if (selectedFilterTags.length === 0) {
       return videosWithTags.length > 0 ? videosWithTags : videos;
@@ -111,7 +118,7 @@ const GalerieFilms = () => {
     });
   }, [selectedFilterTags, videosWithTags, videos]);
 
-  // Réinitialiser la page quand les filtres changent
+  // Réinitialiser la page ltres changent
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedFilterTags]);
@@ -142,7 +149,14 @@ const GalerieFilms = () => {
           LA GALERIE <span className="galerie-title-accent">DES FILMS</span>
         </h1>
 
-        {loading && <p className="galerie-loading">Chargement des films…</p>}
+        {loading && (
+          <ProgressBar
+            label="Chargement des films…"
+            value={45}
+            variant="brand"
+            className="my-8 w-full"
+          />
+        )}
         {error && <p className="galerie-error" role="alert">{error}</p>}
 
         {!loading && !error && (
@@ -154,35 +168,57 @@ const GalerieFilms = () => {
             />
 
             {loadingTags && (
-              <p className="galerie-loading-tags">Chargement des tags…</p>
+              <ProgressBar
+                label="Chargement des tags…"
+                value={45}
+                variant="dark"
+                className="my-4 w-full max-w-sm"
+              />
             )}
 
             <div className="galerie-grid">
               {filmsOnPage.map((film) => {
                 const title = film.title || film.title_en || 'Sans titre';
                 const director = [film.realisator_firstname, film.realisator_lastname].filter(Boolean).join(' ') || '–';
-                const coverUrl = getCoverImageUrl(film.cover);
+                const coverUrl = getCoverUrl(film.cover);
+                const hasImageError = imageErrors.has(film.id);
                 
                 return (
                   <article key={film.id} className="galerie-card">
-                    <div className="galerie-card-image-wrap">
-                      {coverUrl ? (
-                        <img src={coverUrl} alt="" className="galerie-card-image galerie-card-image--img" />
-                      ) : (
-                        <div className="galerie-card-image" style={{ background: 'linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%)' }} />
-                      )}
-                    </div>
-                    <div className="galerie-card-body">
-                      <h2 className="galerie-card-title">{title}</h2>
-                      <p className="galerie-card-meta">
-                        <span className="galerie-card-meta-label">Réalisateur</span> {director}
-                      </p>
-                      {film.country && (
+                    <Link to={`/watch/${film.id}`} className="galerie-card-link">
+                      <div className="galerie-card-image-wrap">
+                        {coverUrl && !hasImageError ? (
+                          <img 
+                            src={coverUrl} 
+                            alt={title}
+                            className="galerie-card-image galerie-card-image--img"
+                            onError={() => {
+                              setImageErrors(prev => new Set([...prev, film.id]));
+                            }}
+                          />
+                        ) : (
+                          <div className="galerie-card-image galerie-card-image--default">
+                            <div className="galerie-card-image-placeholder">
+                              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 16L8.586 11.414C9.367 10.633 10.633 10.633 11.414 11.414L16 16M14 14L15.586 12.414C16.367 11.633 17.633 11.633 18.414 12.414L20 14M14 8H14.01M6 20H18C19.105 20 20 19.105 20 18V6C20 4.895 19.105 4 18 4H6C4.895 4 4 4.895 4 6V18C4 19.105 4.895 20 6 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                              <span className="galerie-card-image-placeholder-text">Pas d'image</span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div className="galerie-card-body">
+                        <h2 className="galerie-card-title">{title}</h2>
                         <p className="galerie-card-meta">
-                          <span className="galerie-card-meta-label">Origine</span> {film.country}
+                          <span className="galerie-card-meta-label">Réalisateur</span> {director}
                         </p>
-                      )}
-                    </div>
+                        {film.country && (
+                          <p className="galerie-card-meta">
+                            <span className="galerie-card-meta-label">Origine</span> {film.country}
+                          </p>
+                        )}
+                      </div>
+                    </Link>
                   </article>
                 );
               })}

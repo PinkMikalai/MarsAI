@@ -135,6 +135,35 @@
 .galerie-card-image {
   height: 140px;
   width: 100%;
+  object-fit: cover;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+}
+
+.galerie-card-image--img {
+  display: block;
+}
+
+.galerie-card-image--default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+}
+
+.galerie-card-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  gap: 0.5rem;
+}
+
+.galerie-card-image-placeholder-text {
+  font-size: 0.7rem;
+  font-family: 'Arimo', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .galerie-card-body {
