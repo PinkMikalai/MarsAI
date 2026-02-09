@@ -1,18 +1,14 @@
-// =====================================================
-// UPLOAD - MIDDLEWARE
-// =====================================================
-
-const multer = require('multer'); 
+const multer = require('multer'); // middleware Express qui gère les reqêtes multipart/form-data utilisés pour l'upload de fichiers 
 const path = require('path'); 
 const fs = require('fs'); // Ajouté pour la gestion des dossiers 
 
 // Création automatique de dossier de stockage si non présent 
-const uploadBase = path.join(__dirname, '..', 'assets', 'uploads'); // chemin racine où tous les fichiers seront stockés
+const UPLOAD_BASE = path.join(__dirname, '..', 'assets', 'uploads'); // chemin racine où tous les fichiers seront stockés
 // on crée un tableau contenant les chemins complets de chaque sous-dossier 
 const folders = [
-    path.join(uploadBase, 'videos'),
-    path.join(uploadBase, 'images'),
-    path.join(uploadBase, 'srt')
+    path.join(UPLOAD_BASE, 'videos'),
+    path.join(UPLOAD_BASE, 'images'),
+    path.join(UPLOAD_BASE, 'srt')
 ];
 
 folders.forEach(dir => {
@@ -67,7 +63,7 @@ const upload = multer({
 });
 
 // exportation des champs configurés 
-module.exports = upload.fields([
+const uploadFields = upload.fields([
     { name:'cover', maxCount: 1 },
     { name: 'video_file_name', maxCount: 1 },
     { name: 'srt_file_name', maxCount: 1},
@@ -75,3 +71,8 @@ module.exports = upload.fields([
     { name: 'img', maxCount: 1 },
     { name: 'illustration', maxCount: 1 },
 ]); 
+
+module.exports = {
+    uploadFields,
+    UPLOAD_BASE
+};

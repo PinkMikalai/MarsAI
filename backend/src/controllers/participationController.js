@@ -2,6 +2,7 @@ const videoModel = require('../models/video/videoModel.js');
 const contributorModel = require('../models/video/contributorModel.js');
 const stillModel = require('../models/video/stillModel.js');
 const tagModel = require('../models/video/tagModel.js'); 
+const { uploadToYouTube } = require('../services/video/youtubeService.js');
 
 
 async function addParticipation(req, res) {
@@ -10,6 +11,8 @@ async function addParticipation(req, res) {
     // console.log(test);
 
     try {
+        // PARTIE 1 : ENREGISTREMENT EN BASE DE DONNEES
+
         // c'est ici que zod dépose les données propres après validation 
         const validatedData = req.body; 
 
@@ -58,6 +61,27 @@ async function addParticipation(req, res) {
                 await tagModel.linkTagsToVideo(newVideoId, tagIds); // on crée les liens 
             }
         }
+
+        // PARTIE 2 : UPLOAD VERS YOUTUBE
+        console.log('Démarrage de lupload Youtube');
+
+        const videoFileName = req.files['video_file_name'] ? req.files['video_file_name'][0].filename : null; 
+        const coverFileName = req.files['cover'] ? req.files['cover'][0].filename : null; 
+        const srtFileName = req.files['srt_file_name'] ? req.files['srt_file_name'][0].filename : null; 
+
+        if(!videoFileName) {
+            throw new Error("Le fichier vidéo est manquant dans la requête"); 
+        }
+
+        const youtubeResult = await uploadToYouTube(
+            `videos/${videoFileName}`, 
+            validatedData.title, 
+            validatedData.description || "Soumission MarsAI", 
+            coverFileName ? `images/${coverFileName}` : null,
+            srtFileName ? `srt/${srtFileName}` : null
+        ); 
+
+        // PARTIE 3 : MISE A JOUR SQL AVEC YOUTUBE 
         
         res.status(201).json({
             message: "participation enregistrée avec succès", 
