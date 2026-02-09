@@ -19,7 +19,6 @@ export async function createInvitationToken({ email, role }) {
 
 export async function decodeInvitationToken(token) {
     try {
-        console.log("Clé pour décoder :", process.env.JWT_SECRET);
         const decoded = jwt.verify(token, JWT_SECRET);
         
         if (decoded.purpose !== 'invitation') {
@@ -110,16 +109,27 @@ export async function login({ email, password }) {
    console.log(`VERIFICATION FINALE : ID trouvé = ${idDuRole} -> Nom = ${roleLabel}`);
 
     // Génération du token de session 
-    return jwt.sign(
+    const token =  jwt.sign(
         { sub: user.id, email: user.email, role: roleLabel },
         process.env.JWT_SECRET,
         { expiresIn: '12h' }
     );
+    return {
+        token,
+        user: {
+            id : user.id,
+            email : user.email,
+            firstname : user.firstname,
+            lastname : user.lastname,
+            role:roleLabel
+        }
+    }
 }
 
 // Modification du user
-export async function updateUser(userId, updateData) {
-    const dataToUpdate = { ...updateData };
+export async function updateUser(userId, userData) {
+    const { firstname, lastname, password} = userData
+    const dataToUpdate = { firstname, lastname, password };
 
     // Si l'utilisateur change son mot de passe, on le hache avant de l'envoyer en db
     if (dataToUpdate.password) {
@@ -127,7 +137,7 @@ export async function updateUser(userId, updateData) {
         delete dataToUpdate.password; 
     }
 
-    const success = await updateUserModel(userId, dataToUpdate);
+    const success = await updateUserModel(userId, userData);
     
     if (!success) {
         const error = new Error('User not found or no changes made');
@@ -152,4 +162,18 @@ export async function deleteUser(id) {
         status : "success",
         message: `Profile ${id} deleted successfully`
     }
+}
+// Espace user 
+export async function profileUser (id) {
+    const user = await getUserByIdModel(id);
+    if(!user) {
+        const error = new Error(`User n° ${id} don't exist !`);
+        error.status = 404;
+        throw error;
+    }
+return {
+    message : `User n° ${id} connected`,
+    status : "success"
+}
+
 }

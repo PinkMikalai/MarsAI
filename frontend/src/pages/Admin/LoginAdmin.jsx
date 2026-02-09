@@ -39,7 +39,7 @@ const LoginAdmin = () => {
         <p className="admin-login-desc">
           Connexion réservée aux administrateurs et aux selectionneurs
         </p>
-        <LoginForm onSubmit={handleSubmit} isLoading={isLoading} error={error} />
+        {/* <LoginForm onSubmit={handleSubmit} isLoading={isLoading} error={error} /> */}
         {/* <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
           Pas encore de compte ? S&apos;inscrire
         </Link> */}
