@@ -9,7 +9,8 @@ const {inviteSchema, passwordSchema} = require('../validators/authSchema.js')
 const loginSchema = require('../validators/loginShema.js')
 
 
-// route de l'envoie de l'invitation à créer son profil par le super-admin
+
+
 router.post('/admin/invite',authMiddleware,checkRole(['Super-admin']),validate(inviteSchema), inviteUserController);
 //route de la reception de l'invitation : décodage du token qi contient email et role
 router.get('/invitation', getInviteController);
@@ -17,9 +18,9 @@ router.get('/invitation', getInviteController);
 router.post('/register', validate(passwordSchema), registerController );
 // route pour le login 
 router.post('/login' , validate(loginSchema), loginController);
-// route pour accéder à la page profil du user
-router.get('/profile/', authMiddleware, profileUserController );
-// route pour modifier les infos user par le user
+
+router.get('/profile/:id',authMiddleware, profileUserController);
+
 router.put('/update_profile' , authMiddleware,  updateUserController); // modification du user par le user
 // route pour modifier les infos user par les admins
 router.put('/admin/user_update/:id', authMiddleware, checkRole(['Super-admin', 'Admin']) , updateUserController); // modification du user par le super-admin

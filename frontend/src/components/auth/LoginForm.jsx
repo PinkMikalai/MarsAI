@@ -34,7 +34,7 @@ const handleSubmit = async (e) => {
  if ( user ) { 
   localStorage.setItem('user', JSON.stringify(user)) };
 
-  navigate(ROUTES.HOME , {replace: true})
+  navigate(ROUTES.PROFILE , {replace: true})
  
  } catch(err){
   setError(err.response?.data?.message || 'Username or password not valid')

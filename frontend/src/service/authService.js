@@ -10,11 +10,11 @@ export const authService = {
     // register , finalisation création compte (prénom, nom, mot de passe) //
     register: (userData) => api.post('/auth/register', userData),
 
-    // login , connexion utilisateur //
+    // login , connexion utilisateur ------------//
     login: (credentials) => api.post('/auth/login', credentials),
-
-    // accés à l'espace user qui contient toutes ces infos et permet d'accéder aux fonctionnalités liées à son rôle //
-
-    profile : () => api.get(`/auth/profile`)
+    // profile , récupération profil utilisateur ------------//
+    profile: (id, token) => api.get(`/auth/profile/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    })
 
 };
