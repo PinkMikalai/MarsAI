@@ -70,23 +70,24 @@ const deleteUserController = async (req, res, next) => {
 const profileUserController = async (req, res) => {
     try {
         const id = req.user.id;
-        console.log(id);
-        
+
         const result = await authService.profileUser(id);
 
-        console.log(result);
-        
-
         res.status(200).json({
-            status: 'success',
+            status: 'succes',
             message: `User n° ${id} connected`,
             result: result
         })
-    } catch (error) {
+        
+    } catch (error){
+
         console.error(error);
-        res.status(500).json({ message : `The requested profile doesn't exist` })
-    }
-}
+        res.status(500).json({message : ` the requested profile dosen't  exist `})
+       }
+ }
+
+
+
 module.exports = {
     getInviteController,
     registerController,

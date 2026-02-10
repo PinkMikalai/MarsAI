@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
@@ -11,6 +11,7 @@ import InscriptionStep from '../../components/forms/InscriptionStep';
 import UploadFilmStep from '../../components/forms/UploadFilmStep';
 import FinalisationStep from '../../components/forms/FinalisationStep';
 import Stepper from '../../components/ui/navigation/Stepper';
+import SuccessModal from '../../components/ui/feedback/SuccessModal';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
@@ -18,15 +19,43 @@ const DepositFilmInner = () => {
   const navigate = useNavigate();
   const { currentStepIndex, isFirstStep, isLastStep, back, next } =
     useMultiStepForm(STEP_COMPONENTS);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successData, setSuccessData] = useState(null);
 
   const handleSuccess = (result) => {
-    alert(result?.message || 'Votre vidéo a été soumise avec succès.');
-    navigate('/');
+    console.log('🎉 Succès reçu:', result);
+    
+    if (result?.videoId) {
+      console.log('✅ Vidéo confirmée enregistrée, ID:', result.videoId);
+      setSuccessData(result);
+      setShowSuccessModal(true);
+    } else {
+      console.warn('⚠️ Pas de videoId dans la réponse:', result);
+      handleError({ message: 'La vidéo n\'a pas pu être enregistrée correctement. Veuillez réessayer.' });
+    }
   };
 
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    navigate('/');
+  };
   const handleError = (err) => {
-    const msg = err?.message || (typeof err === 'object' && err?.errors ? JSON.stringify(err.errors) : 'Erreur lors de l\'envoi.');
-    alert(msg);
+    let errorMessage = 'Erreur lors de l\'envoi.';
+    
+    if (err?.message) {
+      errorMessage = err.message;
+    }
+    
+    if (err?.errors && typeof err.errors === 'string') {
+      errorMessage += '\n\nDétails:\n' + err.errors;
+    } else if (err?.errors && Array.isArray(err.errors)) {
+      errorMessage += '\n\nDétails:\n' + err.errors.map(e => `- ${e}`).join('\n');
+    } else if (err?.error) {
+      errorMessage += '\n\n' + err.error;
+    }
+    
+    console.error('🔴 Erreur complète:', err);
+    alert(errorMessage);
   };
 
   const CurrentStepComponent = STEP_COMPONENTS[currentStepIndex];
@@ -78,6 +107,15 @@ const DepositFilmInner = () => {
 
         <Footer />
       </div>
+      
+      {showSuccessModal && successData?.videoId && (
+        <SuccessModal
+          isOpen={showSuccessModal}
+          onClose={handleCloseSuccessModal}
+          videoId={successData.videoId}
+          message={successData.message}
+        />
+      )}
     </div>
   );
 };

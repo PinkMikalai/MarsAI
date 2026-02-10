@@ -1,4 +1,5 @@
 .env
 node_modules/
-/assets/uploads/images/*
-/assets/uploads/videos/*
+src/assets/uploads/images/*
+src/assets/uploads/srt/*
+src/assets/uploads/videos/*
