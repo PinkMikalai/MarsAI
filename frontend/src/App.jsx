@@ -8,6 +8,7 @@ import DepositFilm from './pages/Users/DepositFilm';
 import RegisterForm from './components/auth/RegisterForm';
 import LoginForm from './components/auth/LoginForm';
 import Profile from './pages/Users/Profile';
+import WatchFilm from './pages/PublicSpace/WatchFilm';
 
 function App() {
   
@@ -21,6 +22,7 @@ function App() {
         <Route path={ROUTES.REGISTER_USER} element={<RegisterForm/>}/>
         <Route path={ROUTES.LOGIN} element={<LoginForm />} />
         <Route path={ROUTES.PROFILE} element={<Profile />} />
+        <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
       </Routes>
     </Router>
     </AuthProvider>

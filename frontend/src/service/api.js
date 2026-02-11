@@ -34,6 +34,3 @@ const api = async ( endpoint , options = {}) => {
 }
 
 export default api;
-
-
-

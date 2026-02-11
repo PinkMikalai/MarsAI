@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FILMS } from '../../constants/homeData';
 import { ROUTES } from '../../constants/routes';
 
 const FilmsCompetition = () => {
+  const filmsToShow = useMemo(() => {
+    const shuffled = [...FILMS];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled.slice(0, 3);
+  }, []);
+
   return (
     <section className="home-section home-films" aria-label="Films en compétition">
       <div className="home-container">
@@ -15,12 +24,26 @@ const FilmsCompetition = () => {
         </p>
         <Link to={ROUTES.GALERIE_FILMS} className="home-section-link">VOIR TOUS LES FILMS &gt;</Link>
         <div className="home-films-grid">
-          {FILMS.map((film) => (
-            <article key={film.id} className="home-film-card">
-              <div className="home-film-card-image" />
-              <h3 className="home-film-card-title">{film.title}</h3>
-              <p className="home-film-card-desc">{film.description}</p>
-            </article>
+          {filmsToShow.map((film) => (
+            <Link
+              key={film.id}
+              to={ROUTES.WATCH_FILM.replace(':videoId', film.id)}
+              className="home-film-card-link"
+            >
+              <article className="home-film-card">
+                <div className="home-film-card-image">
+                  {film.cover && (
+                    <img
+                      src={film.cover}
+                      alt={film.title}
+                      className="home-film-card-image-img"
+                    />
+                  )}
+                </div>
+                <h3 className="home-film-card-title">{film.title}</h3>
+                <p className="home-film-card-desc">{film.description}</p>
+              </article>
+            </Link>
           ))}
         </div>
       </div>
