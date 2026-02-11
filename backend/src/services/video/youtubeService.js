@@ -4,16 +4,8 @@ const { google } = require('googleapis');
 const { getOAuth2Client } = require('../../config/youtubeConfig');
 const { UPLOAD_BASE } = require('../../middlewares/uploadMiddleware');
 
-/**
- * Upload une vidéo sur YouTube avec sa miniature et ses sous-titres
- * @param {string} videoPath - Chemin relatif (ex: videos/abc123.mp4)
- * @param {string} title - Titre de la vidéo
- * @param {string} synopsis_en - Description de la vidéo (optionnel)
- * @param {string} coverPath - Chemin relatif de l'image cover (ex: images/cover.jpg)
- * @param {string} srtPath - Chemin relatif du fichier SRT (ex: srt/subtitles.srt, optionnel)
- * @returns {Promise<{id: string}>} - ID de la vidéo YouTube
- */
-async function uploadToYouTube(videoPath, title_en, synopsis_en= '', coverPath = null, srtPath = null) {
+
+async function uploadToYouTube(videoPath, title, description, coverPath = null, srtPath = null) {
   console.log("DEBUG - Chemins reçus :", { videoPath, coverPath, srtPath });
     const fullPath = path.join(UPLOAD_BASE, videoPath);
 
@@ -52,7 +44,7 @@ async function uploadToYouTube(videoPath, title_en, synopsis_en= '', coverPath =
 
   const fileSize = fs.statSync(fullPath).size;
 
-  console.log(`Début de l'upload : ${title_en}`);
+  console.log(`Début de l'upload : ${title}`);
 
   try {
     const res = await youtube.videos.insert(
@@ -61,8 +53,9 @@ async function uploadToYouTube(videoPath, title_en, synopsis_en= '', coverPath =
         notifySubscribers: false,
         requestBody: {
           snippet: {
-            title: title_en || 'Sans titre',
-            description: synopsis_en || '',
+            title: title,
+            description: description,
+            defaultLanguage: 'en',
           },
           status: {
             privacyStatus: 'private',
