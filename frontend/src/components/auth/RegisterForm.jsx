@@ -22,6 +22,8 @@ const RegisterForm = () => {
     // verification de la présence du token
     const checkToken = async () => {
     if (!token) {
+
+      
       setError("A token is mandatory")
       setLoading(false)
       return;
@@ -29,11 +31,9 @@ const RegisterForm = () => {
     // récupération de la data du token
     try {
       const response = await authService.verifyInvitation(token);
-      const data = response.data 
-      console.log("verif data token", data);
       
-      if(data) {
-      setUserData({ email: data.email , role: data.role}) }
+      if(response) {
+      setUserData({ email: response.email , role: response.role}) }
     } catch(err){
       setError('Invalid or expired link')
     } finally {

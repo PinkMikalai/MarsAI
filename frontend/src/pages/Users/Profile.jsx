@@ -1,35 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { ROUTES } from '../../constants/routes';
 import { authService } from '../../service/authService';
+import { useAuth } from '../../context/AuthContext';
 
 const Profile = () => {
+  const { user} = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    const user = storedUser ? JSON.parse(storedUser) : null;
+    // const token = localStorage.getItem('token');
+    // console.log("Check token",token);
+    
+    // const storedUser = localStorage.getItem('user');
+    // const user = storedUser ? JSON.parse(storedUser) : null;
+    console.log("Data user", user);
+     
 
-    if (!token || !user?.id) {
+    if (!user) {
       setLoading(false);
-      setError('Connecte-toi pour voir ton profil.');
+      setError('Login is neccessary to acces tour profile');
       return;
     }
+    setLoading(true);
 
-    authService.profile(user.id, token)
-      .then((res) => {
-        setProfile(res.data?.result || res.data?.user || res.data || null);
+    authService.profile()
+      .then((data) => {
+        console.log("Check data.result", data.result);
+        console.log("Check data", data);
+        
+        
+        setProfile(data.result || data );
       })
       .catch((err) => {
-        setError(err.response?.data?.message || 'Impossible de charger le profil.');
+        setError(err.message || 'Error during profile loading.');
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [user]);
 
   return (
     <div className="profile-page">
