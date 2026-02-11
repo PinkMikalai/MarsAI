@@ -66,50 +66,156 @@ async function getAllVideosModel() {
     
 }
 
-// get video by id
+// get video by id, infos pour tout les mondes
 async function getVideoByIdModel(id) {
-    const [rows] = await pool.execute(
-        'SELECT * FROM video WHERE id = ?',
-        [id]
-    );
-    return rows[0];
+    try {
+            
+        const [rows] = await pool.execute(
+            `SELECT 
+                JSON_OBJECT(
+                    'id', v.id,
+                    'video_file_name', v.video_file_name,
+                    'title', v.title,
+                    'synopsis', v.synopsis,
+                    'synopsis_en', v.synopsis_en,
+                    'cover', v.cover,
+                    'language', v.language,
+                    'country', v.country,
+                    'duration', v.duration,
+                    'realisator_firstname', v.realisator_firstname,
+                    'realisator_lastname', v.realisator_lastname,
+                    'social_media_links_json', v.social_media_links_json,
+                    'tag', IFNULL(
+                        (
+                            SELECT JSON_ARRAYAGG(t.name)
+                            FROM video_tag vt
+                            JOIN tag t ON t.id = vt.tag_id
+                            WHERE vt.video_id = v.id
+                        ),
+                        JSON_ARRAY()
+                    ),
+                    'award', IFNULL(
+                        (
+                            SELECT JSON_ARRAYAGG(
+                                JSON_OBJECT(
+                                    'id', a.id,
+                                    'title', a.title,
+                                    'img', a.img,
+                                    'award_rank', a.award_rank
+                                )
+                            )
+                            FROM video_award va
+                            JOIN award a ON a.id = va.award_id
+                            WHERE va.video_id = v.id
+                        ),
+                        JSON_ARRAY()
+                    )
+                ) AS video_json
+            FROM video v
+            WHERE v.id = ?`,
+        [id]    
+        );
+        return rows;
+    } catch (error) {
+
+        console.error('erreur lors de la recuperation de la video: ', error);
+        throw error;
+    }
+}
+// get video by id, infos pour l'admin
+async function getAdminVideoDataByIdModel(id) {
+    try {
+        const [rows] = await pool.execute(
+            `SELECT 
+            JSON_OBJECT(
+                'id', v.id,
+                'youtube_url', v.youtube_url,
+                'srt_file_name', v.srt_file_name,
+                'tech_resume', v.tech_resume,
+                'classification', v.classification,
+                'creative_resume', v.creative_resume,
+                'email', v.email,
+                'realisator_civility', v.realisator_civility,
+                'birthdate', v.birthdate,
+                'mobile_number', v.mobile_number,
+                'phone_number', v.phone_number,
+                'address', v.address,
+                'acquisition_source', IFNULL(
+                    JSON_OBJECT(
+                        'id', acs.id,
+                        'name', acs.name
+                    ),
+                    NULL
+                ),
+                'contributors', IFNULL(
+                    (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', c.id,
+                            'firstname', c.firstname,
+                            'last_name', c.last_name,
+                            'email', c.email,
+                            'production_role', c.production_role,
+                            'created_at', c.created_at
+                        )
+                    )
+                    FROM contributor c
+                    WHERE c.video_id = v.id),
+                    JSON_ARRAY()
+                ),
+                'admin_videos', IFNULL(
+                    (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', av.id,
+                            'comment', av.comment,
+                            'user_id', av.user_id,
+                            'admin_status', JSON_OBJECT(
+                                'id', ast.id,
+                                'name', ast.name
+                            ),
+                            'created_at', av.created_at,
+                            'updated_at', av.updated_at
+                        )
+                    )
+                    FROM admin_video av
+                    JOIN admin_status ast ON ast.id = av.admin_status_id
+                    WHERE av.video_id = v.id),
+                    JSON_ARRAY()
+                )
+            ) AS video_json
+            FROM video v
+            LEFT JOIN acquisition_source acs ON v.acquisition_source_id = acs.id
+            WHERE v.id = ?`,
+            [id]
+        );
+        return rows;
+    } catch (error) {
+        console.error("erreur lors de la recuperation des donnees pour l'admin: ", error);
+        throw error;
+    }
+
+
+
+
 }
 
-// get video by id avec TOUTES les infos (tags, stills, contributors, awards, memos, admin_video, assignation, acquisition_source)
-async function getVideoByIdWithAllInfosModel(id) {
-    const [rows] = await pool.execute(
-        `SELECT 
-            video.*,
-            acquisition_source.name AS acquisition_source_name,
-            GROUP_CONCAT(DISTINCT tag.name) AS tags,
-            GROUP_CONCAT(DISTINCT still.file_name) AS stills,
-            GROUP_CONCAT(DISTINCT CONCAT(contributor.firstname, ' ', contributor.last_name, ' (', contributor.production_role, ')')) AS contributors,
-            GROUP_CONCAT(DISTINCT award.title) AS awards,
-            GROUP_CONCAT(DISTINCT CONCAT(selector_user.firstname, ' ', selector_user.lastname, ' => ', selection_status.name)) AS selector_memos,
-            GROUP_CONCAT(DISTINCT CONCAT(admin_user.firstname, ' ', admin_user.lastname, ' => ', admin_status.name)) AS admin_videos,
-            GROUP_CONCAT(DISTINCT CONCAT(assign_user.firstname, ' ', assign_user.lastname, ' (assigned at: ', assignation.assignate_at, ')')) AS assignations
-        FROM video
-        LEFT JOIN acquisition_source ON video.acquisition_source_id = acquisition_source.id
-        LEFT JOIN video_tag ON video.id = video_tag.video_id
-        LEFT JOIN tag ON video_tag.tag_id = tag.id
-        LEFT JOIN still ON video.id = still.video_id
-        LEFT JOIN contributor ON video.id = contributor.video_id
-        LEFT JOIN video_award ON video.id = video_award.video_id
-        LEFT JOIN award ON video_award.award_id = award.id
-        LEFT JOIN selector_memo ON video.id = selector_memo.video_id
-        LEFT JOIN user AS selector_user ON selector_memo.user_id = selector_user.id
-        LEFT JOIN selection_status ON selector_memo.selection_status_id = selection_status.id
-        LEFT JOIN admin_video ON video.id = admin_video.video_id
-        LEFT JOIN user AS admin_user ON admin_video.user_id = admin_user.id
-        LEFT JOIN admin_status ON admin_video.admin_status_id = admin_status.id
-        LEFT JOIN assignation ON video.id = assignation.video_id
-        LEFT JOIN user AS assign_user ON assignation.user_id = assign_user.id
-        WHERE video.id = ?
-        GROUP BY video.id`,
-        [id]
-    );
-    return rows[0];
+// get video by id, infos pour le selector
+async function getSelectorVideoDataByIdModel(id) {
+
+    try {
+        const [rows] = await pool.execute(
+            `SELECT * FROM video WHERE id = ?`,
+            [id]
+        );
+        return rows;
+    } catch (error) {
+        console.error('erreur lors de la recuperation des donnees pour le selector: ', error);
+        throw error;
+    }
+
 }
+
+
+
 
 // update video (mise a jour dynamique : seulement les champs fournis)
 async function updateVideoModel(id, videoData) {
@@ -255,7 +361,8 @@ module.exports = {
     createVideoModel,
     getAllVideosModel,
     getVideoByIdModel,
-    getVideoByIdWithAllInfosModel,
+    getAdminVideoDataByIdModel,
+    getSelectorVideoDataByIdModel,
     updateVideoModel,
     deleteVideoModel,
 };
