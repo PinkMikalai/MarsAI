@@ -33,10 +33,10 @@ async function createUserModel(userData) {
 async function getUserByEmailModel(email) {
     try {
         const [rows] = await pool.execute(
-            'SELECT id, email, password_hash, role_id AS role_id FROM user WHERE email = ?',
+            'SELECT id, email,firstname,lastname, password_hash, role_id AS role_id FROM user WHERE email = ?',
             [email]
         );
-        console.log("DEBUG SQL - Ligne brute :", rows[0]); 
+        console.log("DEBUG SQL", rows[0]); 
         return rows[0];
     } catch (error) {
         throw error;

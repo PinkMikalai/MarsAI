@@ -1,16 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
+import { AuthProvider } from './context/AuthContext';
 import Home from './pages/PublicSpace/Home';
 import GalerieFilms from './pages/PublicSpace/GalerieFilms';
 import DepositFilm from './pages/Users/DepositFilm';
-import Profile from './pages/Users/Profile';
 import RegisterForm from './components/auth/RegisterForm';
 import LoginForm from './components/auth/LoginForm';
+import Profile from './pages/Users/Profile';
 import WatchFilm from './pages/PublicSpace/WatchFilm';
 
 function App() {
+  
   return (
+    <AuthProvider>
     <Router>
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
@@ -22,6 +25,7 @@ function App() {
         <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 
