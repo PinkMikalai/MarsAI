@@ -201,6 +201,12 @@
   gap: 1rem;
 }
 
+.home-film-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .home-film-card {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -216,6 +222,8 @@
 .home-film-card-image {
   height: 120px;
   background: linear-gradient(135deg, #6b21a8 0%, #0d9488 100%);
+  overflow: hidden;
+  position: relative;
 }
 
 .home-film-card:nth-child(2) .home-film-card-image {
@@ -224,6 +232,13 @@
 
 .home-film-card:nth-child(3) .home-film-card-image {
   background: linear-gradient(135deg, #1d4ed8 0%, #eab308 100%);
+}
+
+.home-film-card-image-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .home-film-card-title {
