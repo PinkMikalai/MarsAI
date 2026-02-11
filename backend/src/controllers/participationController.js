@@ -62,12 +62,45 @@ async function addParticipation(req, res) {
             }
         }
 
-        // PARTIE 2 : UPLOAD VERS YOUTUBE
+        // PARTIE 2 : PREPARATION ET UPLOAD VERS YOUTUBE 
+        console.log("Préparation de la description Youtube..");
+
+        // Le titre du film (en langue originale et anglais ou juste anglais) 
+        const youtubeDisplayTitle = validatedData.title 
+            ? `${validatedData.title} || ${validatedData.title_en}`
+            : validatedData.title_en;
+
+        // TAGS 
+        const hashtags = validatedData.tag 
+            ? validatedData.tag.map(t => {
+                // Sécurité : on vérifie que t.name existe, sinon on prend une chaîne vide
+                const tagName = t.name || ""; 
+                return `#${tagName.replace(/\s+/g, '')}`;
+            }).join(' ') 
+            : '';
+
+        const fullDescription = `
+            
+            SYNOPSIS (EN) : ${validatedData.synopsis_en || 'N/A'}
+
+            SYNOPSIS (Original) : ${validatedData.synopsis || 'N/A'}
+
+            ---
+
+            DIRECTED BY : ${validatedData.realisator_firstname} ${validatedData.realisator_lastname}
+            COUNTRY : ${validatedData.country}
+
+            ${hashtags}
+        
+        `
+
+
+        // PARTIE 3 : UPLOAD VERS YOUTUBE
         console.log('Démarrage de lupload Youtube');
 
         const videoFileName = req.files['video_file_name'] ? req.files['video_file_name'][0].filename : null; 
-        const coverFileName = req.files['cover'] ? req.files['cover'][0].filename : null; 
-        const srtFileName = req.files['srt_file_name'] ? req.files['srt_file_name'][0].filename : null; 
+        const cover = req.files['cover'] ? req.files['cover'][0].filename : null; 
+        const srt_file_name = req.files['srt_file_name'] ? req.files['srt_file_name'][0].filename : null; 
 
         if(!videoFileName) {
             throw new Error("Le fichier vidéo est manquant dans la requête"); 
@@ -75,17 +108,20 @@ async function addParticipation(req, res) {
 
         const youtubeResult = await uploadToYouTube(
             `videos/${videoFileName}`, 
-            validatedData.title, 
-            validatedData.description || "Soumission MarsAI", 
-            coverFileName ? `images/${coverFileName}` : null,
-            srtFileName ? `srt/${srtFileName}` : null
+            youtubeDisplayTitle, 
+            fullDescription, 
+            cover ? `images/${cover}` : null,
+            srt_file_name ? `srt/${srt_file_name}` : null
         ); 
 
-        // PARTIE 3 : MISE A JOUR SQL AVEC YOUTUBE 
+        // PARTIE 4 : MISE A JOUR SQL AVEC YOUTUBE 
+
+        await videoModel.updateYoutubeId(newVideoId,youtubeResult.id)
         
         res.status(201).json({
             message: "participation enregistrée avec succès", 
-            videoId: newVideoId
+            videoId: newVideoId,
+            youtubeId: youtubeResult.id
         })
         
 
