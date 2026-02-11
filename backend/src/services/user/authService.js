@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, deleteUserModel}  from '../../models/user/userModel.js';
-import { success } from 'zod';
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -172,7 +172,17 @@ export async function profileUser (id) {
         error.status = 404;
         throw error;
     }
+      const roleNames = {
+        1: 'Admin',
+        2: 'Selector',
+        3: 'Super-admin'
+    };
 return {
+    id : user.id,
+    firstname : user.firstname,
+    lastname: user.lastname,
+    email: user.email,
+    role: roleNames[user.role_id],
     message : `User n° ${id} connected`,
     status : "success"
 }

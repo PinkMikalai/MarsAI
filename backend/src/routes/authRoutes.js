@@ -19,7 +19,7 @@ router.post('/register', validate(passwordSchema), registerController );
 // route pour le login 
 router.post('/login' , validate(loginSchema), loginController);
 
-router.get('/profile/:id',authMiddleware, profileUserController);
+router.get('/profile',authMiddleware, profileUserController);
 
 router.put('/update_profile' , authMiddleware,  updateUserController); // modification du user par le user
 // route pour modifier les infos user par les admins
