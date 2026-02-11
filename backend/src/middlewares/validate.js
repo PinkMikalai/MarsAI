@@ -1,5 +1,7 @@
 const validate = (schema, source = 'body') => (req, res, next) => {
   try {
+    console.log("DEBUG - Fichiers dans req.files :", req.files ? Object.keys(req.files) : "Aucun fichier");
+    console.log("DEBUG - Contenu de req.body avant injection :", req.body);
     // extraction des fichiers multer
     if (req.files) {
       // pour les fichiers uniques (maxCount: 1)
