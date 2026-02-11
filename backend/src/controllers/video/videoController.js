@@ -3,12 +3,14 @@ const {
     createVideoModel, 
     getAllVideosModel,
     getVideoByIdModel,
-    getVideoByIdWithAllInfosModel,
+    getAdminVideoDataByIdModel,
+    getSelectorVideoDataByIdModel,
     updateVideoModel, 
     deleteVideoModel
 } = require("../../models/video/videoModel.js");
 
 //import de nos services 
+const checkRole = require("../../middlewares/checkRoleMiddleware.js");
 const { 
     createAndLinkTagsService, 
     updateTagsService, 
@@ -69,25 +71,34 @@ async function getAllVideos(req, res) {
 // get video by id avec TOUTES les infos (tags, stills, contributors, awards, memos)
 async function getVideoById(req, res) {
 
+
     try {
         //recuperer la video avec TOUTES ses infos d'un coup
-        const videoData = await getVideoByIdWithAllInfosModel(req.params.id);
-        console.log("video data récupérée", videoData);
+        const basicVideoData = await getVideoByIdModel(req.params.id);
+      
         
+        const selectorVideoData =   await getSelectorVideoDataByIdModel(req.params.id);
+       
+        //l affichage des donnees pour le selector
+        const adminVideoData =   await getAdminVideoDataByIdModel(req.params.id);
+ 
         // si le video n est pas trouvee affiche l erreur
-        if (!videoData) {
+        if (!basicVideoData) {
 
             console.log("Video non trouvée, 404");
             return res.status(404).json({
                 message: "Video non trouvée",
                 status: false
             });
-        
         }else{
-            console.log("Video trouvee avec toutes ses infos");
+            console.log("basic video data", basicVideoData);
+            console.log("admin video data", adminVideoData);
             res.status(200).json({
                 message: "Video recuperée avec succès",
-                data: videoData,
+                data: {
+                    basicVideoData,
+                    adminVideoData,
+                },
                 status: true,
             });
         }
