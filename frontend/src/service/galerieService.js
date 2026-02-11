@@ -40,10 +40,7 @@ export const videoApi = {
   getVideoById: async (videoId) => {
     try {
       const response = await api.get(`/videos/${videoId}`);
-      return {
-        video: response.data?.video || null,
-        tags: response.data?.tags || []
-      };
+      return response.data;
     } catch (error) {
       console.error(`Erreur de recup des videos ${videoId}:`, error);
       throw error;

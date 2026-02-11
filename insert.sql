@@ -2,12 +2,21 @@
 -- INSERTIONS DE DONNÉES DE TEST POUR MARSAI - 25 VIDÉOS
 -- Fichier: insert.sql
 -- Date: 2026-01-28
+-- Mis à jour: 2026-02-06
 -- =====================================================
 
+-- ⚠️ IMPORTANT: Exécutez D'ABORD marsai.sql pour créer la structure !
+-- Ce fichier insère uniquement les données.
+
 -- =====================================================
--- NOTE: Les rôles sont déjà créés dans marsai.sql
--- Admin (id=1), Selector (id=2), Super_admin (id=3)
--- La table "jury" est séparée pour afficher les célébrités (sans compte)
+-- NOTES IMPORTANTES:
+-- =====================================================
+-- 1. Les tables de référence (role, selection_status, admin_status) 
+--    sont déjà créées et remplies dans marsai.sql
+-- 2. Tous les user_id utilisent maintenant des sous-requêtes par email
+--    pour trouver automatiquement les IDs (fonctionne peu importe les IDs réels)
+-- 3. La table "jury" est séparée pour afficher les célébrités (sans compte)
+-- 4. Les selectors (role_id=2) notent les vidéos via selector_memo
 -- =====================================================
 
 -- =====================================================
@@ -18,24 +27,24 @@
 -- - Selector (role_id=2) : note et commente les vidéos via selector_memo
 
 -- Mot de passe hashé : "password123" (bcrypt Node.js - Hashes vérifiés ✅)
-INSERT INTO user (email, password_hash, firstname, lastname, role_id) VALUES
+INSERT INTO user (email, password_hash, firstname, lastname, role_id, created_at, updated_at) VALUES
 -- Super Admin
-('superadmin@marsai.com', '$2b$10$I3V6QNHtYYl0Im8yfPhaAOhZ0BLsVKiGt2O/44dpTHzETNRFSKfzu', 'Marie', 'Dupont', 3),
+('superadmin@marsai.com', '$2b$10$I3V6QNHtYYl0Im8yfPhaAOhZ0BLsVKiGt2O/44dpTHzETNRFSKfzu', 'Marie', 'Dupont', 3, '2026-01-28 09:53:06', '2026-01-28 09:53:06'),
 -- Admin
-('admin@marsai.com', '$2b$10$./xoea5OA4jaBkkMXuXMceNapzUbDcm72o6fBBg7WvvceLHnu.JsC', 'Jean', 'Martin', 1),
+('admin@marsai.com', '$2b$10$./xoea5OA4jaBkkMXuXMceNapzUbDcm72o6fBBg7WvvceLHnu.JsC', 'Jean', 'Martin', 1, '2026-01-28 09:53:06', '2026-01-28 09:53:06'),
 -- Selectors (role_id=2) - Ce sont eux qui évaluent les vidéos
-('selector1@marsai.com', '$2b$10$QZtSEvOFgnVbjwblDrvIx.AflPbOAQk5MdbuI6ZMgI4oTqkiIns8y', 'Sophie', 'Bernard', 2),
-('selector2@marsai.com', '$2b$10$shH.OVoJRZKR/HKe3GL.MO04.FDAIc0iO0Z6V.gcwSodD/ULz/fuO', 'Lucas', 'Petit', 2),
-('selector3@marsai.com', '$2b$10$2u7EQJ3I0lr9qJOMa2YDSu4pNtPYr1tpBGdfPgXvccwCnEWLZnnxi', 'Emma', 'Leroy', 2),
+('selector1@marsai.com', '$2b$10$QZtSEvOFgnVbjwblDrvIx.AflPbOAQk5MdbuI6ZMgI4oTqkiIns8y', 'Sophie', 'Bernard', 2, '2026-01-28 09:53:06', '2026-01-28 09:53:06'),
+('selector2@marsai.com', '$2b$10$shH.OVoJRZKR/HKe3GL.MO04.FDAIc0iO0Z6V.gcwSodD/ULz/fuO', 'Lucas', 'Petit', 2, '2026-01-28 09:53:06', '2026-01-28 09:53:06'),
+('selector3@marsai.com', '$2b$10$2u7EQJ3I0lr9qJOMa2YDSu4pNtPYr1tpBGdfPgXvccwCnEWLZnnxi', 'Emma', 'Leroy', 2, '2026-01-28 09:53:06', '2026-01-28 09:53:06'),
 -- Utilisateurs supplémentaires
-('selector6@marsai.com', '$2b$10$A.AWww7bN452KXctjZwVBuWPoxZrIYJSl.sY.BsQKz7Z7aCwqURFy', 'Isabelle', 'Huppert', 2),
-('selector7@marsai.com', '$2b$10$9C35RjaS0gr0tdKPwaRDC.Zdy9sIWmROTVjRQ0.dhfD5CiLFh7WVK', 'Test', 'Test', 2),
-('superadmin2@marsai.com', '$2b$10$rwYTamKkXDkH84ntjfAGxuXkd.lfP5uKZoCcG7FIgUjH6PM1S0JvS', 'Akira', 'Kurozawa', 3),
-('admin3@marsai.com', '$2b$10$7z/JcNazt1w5jyI8EFhV7uxwOhpcUo84x90szWxvX8lQDb9onqfVK', 'François', 'Truffaut', 1),
-('selector11@marsai.com', '$2b$10$Rm4PgRDjr8gonHSxZG2NuejUchP/n0puGbHad5G2igKmQ.mxV4gI6', 'Brigitte', 'Bardot', 2),
-('selector12@marsai.com', '$2b$10$VPRtJkTmJ38vWCZHNZpKY.wKEjKuEOlanD6xcBboaje79iadwDy9q', 'Kate', 'Winslet', 2),
-('selector13@marsai.com', '$2b$10$7bmZk7fUAPKSoZN/0p3ssOzc9iQm54zHtBx/RqMa0V.eTXQ0gd702', 'Sharon', 'Stone', 2),
-('selector14@marsai.com', '$2b$10$NTPHRkrYml8/z3TKSFENk.zMWeJqaz6AMH4sYR.bXKeRFIQz9usVq', 'Daniel', 'Day-Lewis', 2);
+('selector6@marsai.com', '$2b$10$A.AWww7bN452KXctjZwVBuWPoxZrIYJSl.sY.BsQKz7Z7aCwqURFy', 'Isabelle', 'Huppert', 2, '2026-02-02 10:50:40', '2026-02-02 15:24:11'),
+('selector7@marsai.com', '$2b$10$9C35RjaS0gr0tdKPwaRDC.Zdy9sIWmROTVjRQ0.dhfD5CiLFh7WVK', 'Test', 'Test', 2, '2026-02-03 10:07:10', '2026-02-03 10:07:10'),
+('superadmin2@marsai.com', '$2b$10$rwYTamKkXDkH84ntjfAGxuXkd.lfP5uKZoCcG7FIgUjH6PM1S0JvS', 'Akira', 'Kurozawa', 3, '2026-02-03 12:55:00', '2026-02-03 12:55:00'),
+('admin3@marsai.com', '$2b$10$7z/JcNazt1w5jyI8EFhV7uxwOhpcUo84x90szWxvX8lQDb9onqfVK', 'François', 'Truffaut', 1, '2026-02-04 12:00:50', '2026-02-05 07:56:26'),
+('selector11@marsai.com', '$2b$10$Rm4PgRDjr8gonHSxZG2NuejUchP/n0puGbHad5G2igKmQ.mxV4gI6', 'Brigitte', 'Bardot', 2, '2026-02-04 14:56:39', '2026-02-04 15:18:37'),
+('selector12@marsai.com', '$2b$10$VPRtJkTmJ38vWCZHNZpKY.wKEjKuEOlanD6xcBboaje79iadwDy9q', 'Kate', 'Winslet', 2, '2026-02-05 08:03:46', '2026-02-05 08:03:46'),
+('selector13@marsai.com', '$2b$10$7bmZk7fUAPKSoZN/0p3ssOzc9iQm54zHtBx/RqMa0V.eTXQ0gd702', 'Sharon', 'Stone', 2, '2026-02-05 09:02:58', '2026-02-05 09:02:58'),
+('selector14@marsai.com', '$2b$10$NTPHRkrYml8/z3TKSFENk.zMWeJqaz6AMH4sYR.bXKeRFIQz9usVq', 'Daniel', 'Day-Lewis', 2, '2026-02-05 09:56:51', '2026-02-05 09:56:51');
 
 -- =====================================================
 -- 2. SOURCES D'ACQUISITION
@@ -611,14 +620,39 @@ INSERT INTO video_award (video_id, award_id) VALUES
 -- =====================================================
 -- Les Super Admin et Admin assignent des vidéos aux Selectors
 -- pour qu'ils puissent les évaluer dans selector_memo
+-- Utilise des sous-requêtes pour trouver automatiquement les IDs par email
 
-INSERT INTO assignation (video_id, user_id, assigned_by) VALUES
--- Selector Sophie (user_id 3) - 9 vidéos assignées par Super Admin (user_id 1)
-(1, 3, 1), (2, 3, 1), (3, 3, 1), (4, 3, 1), (5, 3, 1), (11, 3, 1), (12, 3, 1), (19, 3, 1), (25, 3, 1),
--- Selector Lucas (user_id 4) - 9 vidéos assignées par Admin (user_id 2)
-(5, 4, 2), (6, 4, 2), (7, 4, 2), (8, 4, 2), (13, 4, 2), (14, 4, 2), (15, 4, 2), (20, 4, 2), (21, 4, 2),
--- Selector Emma (user_id 5) - 9 vidéos assignées par Super Admin (user_id 1)
-(8, 5, 1), (9, 5, 1), (10, 5, 1), (16, 5, 1), (17, 5, 1), (18, 5, 1), (22, 5, 1), (23, 5, 1), (24, 5, 1);
+INSERT INTO assignation (video_id, user_id, assigned_by)
+-- Selector Sophie - assignée par Super Admin
+SELECT 1, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 2, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 3, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 4, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 5, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 11, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 12, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 19, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 25, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector1@marsai.com' AND sa.email = 'superadmin@marsai.com'
+-- Selector Lucas - assigné par Admin
+UNION ALL SELECT 5, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 6, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 7, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 8, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 13, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 14, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 15, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 20, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+UNION ALL SELECT 21, u.id, a.id FROM user u, user a WHERE u.email = 'selector2@marsai.com' AND a.email = 'admin@marsai.com'
+-- Selector Emma - assignée par Super Admin
+UNION ALL SELECT 8, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 9, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 10, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 16, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 17, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 18, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 22, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 23, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com'
+UNION ALL SELECT 24, u.id, sa.id FROM user u, user sa WHERE u.email = 'selector3@marsai.com' AND sa.email = 'superadmin@marsai.com';
 
 -- =====================================================
 -- 14. SELECTOR_MEMO (Commentaires et notations des SELECTORS)
@@ -627,82 +661,83 @@ INSERT INTO assignation (video_id, user_id, assigned_by) VALUES
 -- les vidéos qui leur ont été assignées. Chaque selector peut attribuer
 -- un rating (1-10), un commentaire et un statut de sélection.
 
-INSERT INTO selector_memo (rating, comment, video_id, user_id, selection_status_id) VALUES
--- Sophie (user_id 3, Selector) évalue ses films
-(9, 'Visuellement époustouflant ! L\'utilisation des couleurs est magistrale. La narration pourrait être plus développée mais l\'esthétique compense largement.', 1, 3, 1),
-(10, 'Chef-d\'oeuvre émotionnel. J\'ai pleuré. La relation entre la femme et l\'IA est touchante et universelle. MUST WIN.', 2, 3, 1),
-(7, 'Techniquement impressionnant mais peut-être trop abstrait pour le grand public. À revoir pour mieux apprécier.', 3, 3, 2),
-(6, 'Concept intéressant mais l\'exécution manque de rythme. Certains passages sont trop longs.', 4, 3, 6),
-(10, 'Philosophiquement profond, visuellement sublime. Un des meilleurs films sur la conscience IA.', 5, 3, 1),
-(8, 'Le thème du deuil numérique est très actuel. Bien exécuté, quelques longueurs au milieu.', 11, 3, 6),
-(9, 'Documentaire poignant. L\'océan qui parle est un concept brillant. Message environnemental fort.', 12, 3, 1),
-(7, 'Concept architectural fascinant mais le film manque d\'émotion. Trop froid.', 19, 3, 2),
-(10, 'Absolument magnifique. La façon dont l\'IA traduit la langue des signes en poésie visuelle est révolutionnaire.', 25, 3, 1),
-
--- Lucas (user_id 4, Selector) évalue ses films
-(10, 'Brillant ! La meilleure réflexion sur la conscience IA que j\'ai vue. Doit absolument gagner un prix.', 5, 4, 1),
-(8, 'Belle expérience sensorielle. Montréal n\'a jamais été aussi poétique. Parfait équilibre son/image.', 6, 4, 6),
-(7, 'Le concept de boucle récursive est bien exécuté mais le film devient répétitif (ironiquement). Quelques scènes effrayantes.', 7, 4, 2),
-(9, 'Magnifique perspective sur notre époque vue depuis le futur. Les enfants sont attachants.', 8, 4, 1),
-(8, 'Drôle et intelligent. L\'IA qui apprend l\'humour est hilarante. Quelques blagues tombent à plat.', 13, 4, 6),
-(6, 'Beau visuellement mais trop contemplatif. Je me suis endormi au milieu. Désolé.', 14, 4, 5),
-(9, 'Romance surprenamment émouvante. Qui aurait cru que deux chatbots pouvaient faire pleurer ?', 15, 4, 1),
-(8, 'Le film de Philip K. Dick que l\'on attendait. Hommage réussi avec une touche brésilienne unique.', 20, 4, 6),
-(9, 'Histoire touchante. La scène où il voit les couleurs pour la première fois est inoubliable.', 21, 4, 1),
-
--- Emma (user_id 5, Selector) évalue ses films
-(9, 'Perspective unique sur notre époque. Les enfants acteurs IA sont convaincants.', 8, 5, 1),
-(8, 'Fascinant d\'un point de vue éducatif. Rend la physique quantique accessible et belle.', 9, 5, 6),
-(4, 'L\'anachronisme ne fonctionne pas pour moi. Da Vinci méritait mieux. SIGNALÉ pour incohérences historiques.', 10, 5, 4),
-(10, 'Film noir parfait ! L\'atmosphère, la musique, le mystère... Tout est maîtrisé. Mon coup de coeur.', 16, 5, 1),
-(9, 'L\'animation origami est hypnotisante. Jamais vu quelque chose de similaire. Très original.', 17, 5, 1),
-(7, 'Concept ambitieux mais l\'exécution parfois maladroite. Les voix reconstruites sont impressionnantes.', 18, 5, 2),
-(8, 'Chorégraphie AI fascinante. Les mouvements sont à la fois familiers et étrangement inhumains.', 22, 5, 6),
-(6, 'Format audio-drama difficile à suivre visuellement. Le concept est bon mais je n\'ai pas accroché.', 23, 5, 3),
-(7, 'Drôle et critique. La satire sur les droits des personnages de jeu vidéo est pertinente mais parfois trop appuyée.', 24, 5, 6);
+-- Utilise des sous-requêtes pour trouver automatiquement les IDs par email
+INSERT INTO selector_memo (rating, comment, video_id, user_id, selection_status_id)
+-- Sophie Bernard (selector1@marsai.com)
+SELECT 9, 'Visuellement époustouflant ! L''utilisation des couleurs est magistrale. La narration pourrait être plus développée mais l''esthétique compense largement.', 1, id, 1 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 10, 'Chef-d''oeuvre émotionnel. J''ai pleuré. La relation entre la femme et l''IA est touchante et universelle. MUST WIN.', 2, id, 1 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 7, 'Techniquement impressionnant mais peut-être trop abstrait pour le grand public. À revoir pour mieux apprécier.', 3, id, 2 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 6, 'Concept intéressant mais l''exécution manque de rythme. Certains passages sont trop longs.', 4, id, 6 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 10, 'Philosophiquement profond, visuellement sublime. Un des meilleurs films sur la conscience IA.', 5, id, 1 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 8, 'Le thème du deuil numérique est très actuel. Bien exécuté, quelques longueurs au milieu.', 11, id, 6 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 9, 'Documentaire poignant. L''océan qui parle est un concept brillant. Message environnemental fort.', 12, id, 1 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 7, 'Concept architectural fascinant mais le film manque d''émotion. Trop froid.', 19, id, 2 FROM user WHERE email = 'selector1@marsai.com'
+UNION ALL SELECT 10, 'Absolument magnifique. La façon dont l''IA traduit la langue des signes en poésie visuelle est révolutionnaire.', 25, id, 1 FROM user WHERE email = 'selector1@marsai.com'
+-- Lucas Petit (selector2@marsai.com)
+UNION ALL SELECT 10, 'Brillant ! La meilleure réflexion sur la conscience IA que j''ai vue. Doit absolument gagner un prix.', 5, id, 1 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 8, 'Belle expérience sensorielle. Montréal n''a jamais été aussi poétique. Parfait équilibre son/image.', 6, id, 6 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 7, 'Le concept de boucle récursive est bien exécuté mais le film devient répétitif (ironiquement). Quelques scènes effrayantes.', 7, id, 2 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 9, 'Magnifique perspective sur notre époque vue depuis le futur. Les enfants sont attachants.', 8, id, 1 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 8, 'Drôle et intelligent. L''IA qui apprend l''humour est hilarante. Quelques blagues tombent à plat.', 13, id, 6 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 6, 'Beau visuellement mais trop contemplatif. Je me suis endormi au milieu. Désolé.', 14, id, 5 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 9, 'Romance surprenamment émouvante. Qui aurait cru que deux chatbots pouvaient faire pleurer ?', 15, id, 1 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 8, 'Le film de Philip K. Dick que l''on attendait. Hommage réussi avec une touche brésilienne unique.', 20, id, 6 FROM user WHERE email = 'selector2@marsai.com'
+UNION ALL SELECT 9, 'Histoire touchante. La scène où il voit les couleurs pour la première fois est inoubliable.', 21, id, 1 FROM user WHERE email = 'selector2@marsai.com'
+-- Emma Leroy (selector3@marsai.com)
+UNION ALL SELECT 9, 'Perspective unique sur notre époque. Les enfants acteurs IA sont convaincants.', 8, id, 1 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 8, 'Fascinant d''un point de vue éducatif. Rend la physique quantique accessible et belle.', 9, id, 6 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 4, 'L''anachronisme ne fonctionne pas pour moi. Da Vinci méritait mieux. SIGNALÉ pour incohérences historiques.', 10, id, 4 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 10, 'Film noir parfait ! L''atmosphère, la musique, le mystère... Tout est maîtrisé. Mon coup de coeur.', 16, id, 1 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 9, 'L''animation origami est hypnotisante. Jamais vu quelque chose de similaire. Très original.', 17, id, 1 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 7, 'Concept ambitieux mais l''exécution parfois maladroite. Les voix reconstruites sont impressionnantes.', 18, id, 2 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 8, 'Chorégraphie AI fascinante. Les mouvements sont à la fois familiers et étrangement inhumains.', 22, id, 6 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 6, 'Format audio-drama difficile à suivre visuellement. Le concept est bon mais je n''ai pas accroché.', 23, id, 3 FROM user WHERE email = 'selector3@marsai.com'
+UNION ALL SELECT 7, 'Drôle et critique. La satire sur les droits des personnages de jeu vidéo est pertinente mais parfois trop appuyée.', 24, id, 6 FROM user WHERE email = 'selector3@marsai.com';
 
 -- =====================================================
 -- 15. ADMIN_VIDEO (Statuts administratifs des 25 vidéos)
 -- =====================================================
 
-INSERT INTO admin_video (comment, video_id, user_id, admin_status_id) VALUES
-('Tous les documents sont conformes. Vidéo validée pour la sélection officielle.', 1, 2, 2),
-('Excellente soumission. Droits musicaux vérifiés.', 2, 2, 2),
-('En attente de confirmation des droits sur certains samples audio.', 3, 2, 1),
-('Problème de format vidéo. Demande de re-soumission en 4K.', 4, 2, 4),
-('Parfait. Tous les critères techniques sont respectés.', 5, 2, 2),
-('Vérification en cours des autorisations de tournage à Montréal.', 6, 2, 1),
-('Validé après correction du générique.', 7, 2, 2),
-('Documentation complète et conforme.', 8, 2, 2),
-('Validation CERN reçue. Approuvé.', 9, 2, 2),
-('Rejeté : contenu trop similaire à une œuvre existante sous copyright.', 10, 2, 3),
-('Validé. Sujet sensible traité avec respect.', 11, 2, 2),
-('Excellent documentaire. Toutes les autorisations environnementales obtenues.', 12, 2, 2),
-('En cours de vérification des droits sur les références comiques.', 13, 2, 1),
-('Magnifique. Validé sans réserve.', 14, 2, 2),
-('Validé. Dialogue IA vérifié pour contenu approprié.', 15, 2, 2),
-('Chef-d\'œuvre technique. Validé.', 16, 2, 2),
-('En attente d\'une meilleure qualité audio.', 17, 2, 4),
-('Validation historique requise pour certaines affirmations.', 18, 2, 1),
-('Validé. Concept architectural vérifié.', 19, 2, 2),
-('Droits Philip K. Dick Estate vérifiés. Approuvé.', 20, 2, 2),
-('Belle histoire humaine. Validé.', 21, 2, 2),
-('Validé. Performance de danse AI exceptionnelle.', 22, 2, 2),
-('Problème de synchronisation audio. En attente de correction.', 23, 2, 4),
-('Rejeté : problèmes de droits avec certains personnages de jeux vidéo.', 24, 2, 3),
-('Projet inclusif remarquable. Validé avec félicitations.', 25, 2, 2);
+-- Utilise une sous-requête pour trouver automatiquement l'ID de l'admin par email
+INSERT INTO admin_video (comment, video_id, user_id, admin_status_id)
+SELECT 'Tous les documents sont conformes. Vidéo validée pour la sélection officielle.', 1, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Excellente soumission. Droits musicaux vérifiés.', 2, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'En attente de confirmation des droits sur certains samples audio.', 3, id, 1 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Problème de format vidéo. Demande de re-soumission en 4K.', 4, id, 4 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Parfait. Tous les critères techniques sont respectés.', 5, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Vérification en cours des autorisations de tournage à Montréal.', 6, id, 1 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validé après correction du générique.', 7, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Documentation complète et conforme.', 8, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validation CERN reçue. Approuvé.', 9, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Rejeté : contenu trop similaire à une œuvre existante sous copyright.', 10, id, 3 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validé. Sujet sensible traité avec respect.', 11, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Excellent documentaire. Toutes les autorisations environnementales obtenues.', 12, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'En cours de vérification des droits sur les références comiques.', 13, id, 1 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Magnifique. Validé sans réserve.', 14, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validé. Dialogue IA vérifié pour contenu approprié.', 15, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Chef-d''œuvre technique. Validé.', 16, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'En attente d''une meilleure qualité audio.', 17, id, 4 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validation historique requise pour certaines affirmations.', 18, id, 1 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validé. Concept architectural vérifié.', 19, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Droits Philip K. Dick Estate vérifiés. Approuvé.', 20, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Belle histoire humaine. Validé.', 21, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Validé. Performance de danse AI exceptionnelle.', 22, id, 2 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Problème de synchronisation audio. En attente de correction.', 23, id, 4 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Rejeté : problèmes de droits avec certains personnages de jeux vidéo.', 24, id, 3 FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Projet inclusif remarquable. Validé avec félicitations.', 25, id, 2 FROM user WHERE email = 'admin@marsai.com';
 
 -- =====================================================
 -- 16. EVENTS (Événements)
 -- =====================================================
 
-INSERT INTO event (title, description, date, duration, capacity, illustration, location, user_id) VALUES
-('Cérémonie d\'ouverture Mars AI 2026', 'Projection des films finalistes et discours d\'ouverture du festival. Présence des réalisateurs.', '2026-03-15 19:00:00', 180, 500, 'opening_ceremony.jpg', 'Grand Rex, Paris', 1),
-('Masterclass : L\'IA dans le cinéma', 'Atelier pratique sur l\'utilisation des outils IA pour la création cinématographique. Apportez votre laptop !', '2026-03-16 14:00:00', 120, 100, 'masterclass_ai.jpg', 'Studio Éphémère, Paris', 2),
-('Table ronde : Éthique et IA créative', 'Discussion avec des experts sur les implications éthiques de l\'IA dans l\'art. Q&A avec le public.', '2026-03-17 10:00:00', 90, 150, 'roundtable.jpg', 'Salle Lumière, Paris', 1),
-('Projection spéciale : Sélection Jury', 'Les 5 films préférés du jury projetés avec commentaires en direct.', '2026-03-17 15:00:00', 150, 300, 'jury_selection.jpg', 'Cinéma Le Champo, Paris', 1),
-('Networking Cocktail', 'Rencontre entre cinéastes, investisseurs et passionnés d\'IA. Buffet et boissons inclus.', '2026-03-17 19:00:00', 180, 200, 'networking.jpg', 'Palais de Tokyo, Paris', 2),
-('Remise des prix', 'Cérémonie de clôture et annonce des lauréats du festival. Tapis rouge et champagne.', '2026-03-18 20:00:00', 150, 500, 'awards_ceremony.jpg', 'Grand Rex, Paris', 1);
+-- Utilise des sous-requêtes pour trouver automatiquement les IDs par email
+INSERT INTO event (title, description, date, duration, capacity, illustration, location, user_id)
+SELECT 'Cérémonie d''ouverture Mars AI 2026', 'Projection des films finalistes et discours d''ouverture du festival. Présence des réalisateurs.', '2026-03-15 19:00:00', 180, 500, 'opening_ceremony.jpg', 'Grand Rex, Paris', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'Masterclass : L''IA dans le cinéma', 'Atelier pratique sur l''utilisation des outils IA pour la création cinématographique. Apportez votre laptop !', '2026-03-16 14:00:00', 120, 100, 'masterclass_ai.jpg', 'Studio Éphémère, Paris', id FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Table ronde : Éthique et IA créative', 'Discussion avec des experts sur les implications éthiques de l''IA dans l''art. Q&A avec le public.', '2026-03-17 10:00:00', 90, 150, 'roundtable.jpg', 'Salle Lumière, Paris', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'Projection spéciale : Sélection Jury', 'Les 5 films préférés du jury projetés avec commentaires en direct.', '2026-03-17 15:00:00', 150, 300, 'jury_selection.jpg', 'Cinéma Le Champo, Paris', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'Networking Cocktail', 'Rencontre entre cinéastes, investisseurs et passionnés d''IA. Buffet et boissons inclus.', '2026-03-17 19:00:00', 180, 200, 'networking.jpg', 'Palais de Tokyo, Paris', id FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'Remise des prix', 'Cérémonie de clôture et annonce des lauréats du festival. Tapis rouge et champagne.', '2026-03-18 20:00:00', 150, 500, 'awards_ceremony.jpg', 'Grand Rex, Paris', id FROM user WHERE email = 'superadmin@marsai.com';
 
 -- =====================================================
 -- 17. RESERVATIONS (Réservations aux événements)
@@ -740,17 +775,18 @@ INSERT INTO reservation (email, email_verified, name, qrcode, event_id) VALUES
 -- 18. CMS (Contenu du site)
 -- =====================================================
 
-INSERT INTO cms (element, english_content, french_content, illustration, user_id) VALUES
-('hero_title', 'Welcome to Mars AI Film Festival 2026', 'Bienvenue au Festival Mars AI 2026', 'hero_bg.jpg', 1),
-('hero_subtitle', 'Where Artificial Intelligence Meets Cinematic Art', 'Où l\'Intelligence Artificielle Rencontre l\'Art Cinématographique', NULL, 1),
-('about_section', 'Mars AI is the first international film festival dedicated to AI-generated cinema. We celebrate creativity, innovation, and the future of storytelling. This year features 25 exceptional films from 20 countries.', 'Mars AI est le premier festival international de cinéma dédié aux films générés par IA. Nous célébrons la créativité, l\'innovation et l\'avenir de la narration. Cette année présente 25 films exceptionnels de 20 pays.', 'about_image.jpg', 1),
-('submission_rules', 'Films must be at least 50% AI-generated. Maximum duration: 20 minutes. All genres accepted. Deadline: February 15, 2026.', 'Les films doivent être au moins 50% générés par IA. Durée maximale : 20 minutes. Tous genres acceptés. Date limite : 15 février 2026.', NULL, 2),
-('jury_section', 'Our prestigious jury includes award-winning directors and AI pioneers who will select this year\'s winners.', 'Notre prestigieux jury comprend des réalisateurs primés et des pionniers de l\'IA qui sélectionneront les gagnants de cette année.', 'jury_section.jpg', 1),
-('awards_section', 'Eight awards will be presented including Grand Prix, Public Choice, and Innovation prizes.', 'Huit prix seront remis dont le Grand Prix, le Prix du Public et les prix de l\'Innovation.', 'awards_section.jpg', 1),
-('contact_info', 'Email: contact@marsai-festival.com | Phone: +33 1 23 45 67 89 | Address: 1 Rue du Festival, 75001 Paris', 'Email : contact@marsai-festival.com | Téléphone : +33 1 23 45 67 89 | Adresse : 1 Rue du Festival, 75001 Paris', NULL, 2),
-('footer_text', '© 2026 Mars AI Film Festival. All rights reserved. Made with AI and human creativity.', '© 2026 Festival Mars AI. Tous droits réservés. Fait avec l\'IA et la créativité humaine.', NULL, 1),
-('sponsors_section', 'Thanks to our amazing sponsors who make this festival possible.', 'Merci à nos incroyables sponsors qui rendent ce festival possible.', 'sponsors_bg.jpg', 2),
-('newsletter_cta', 'Subscribe to our newsletter for exclusive updates and early bird tickets!', 'Abonnez-vous à notre newsletter pour des mises à jour exclusives et des billets en avant-première !', NULL, 2);
+-- Utilise des sous-requêtes pour trouver automatiquement les IDs par email
+INSERT INTO cms (element, english_content, french_content, illustration, user_id)
+SELECT 'hero_title', 'Welcome to Mars AI Film Festival 2026', 'Bienvenue au Festival Mars AI 2026', 'hero_bg.jpg', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'hero_subtitle', 'Where Artificial Intelligence Meets Cinematic Art', 'Où l''Intelligence Artificielle Rencontre l''Art Cinématographique', NULL, id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'about_section', 'Mars AI is the first international film festival dedicated to AI-generated cinema. We celebrate creativity, innovation, and the future of storytelling. This year features 25 exceptional films from 20 countries.', 'Mars AI est le premier festival international de cinéma dédié aux films générés par IA. Nous célébrons la créativité, l''innovation et l''avenir de la narration. Cette année présente 25 films exceptionnels de 20 pays.', 'about_image.jpg', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'submission_rules', 'Films must be at least 50% AI-generated. Maximum duration: 20 minutes. All genres accepted. Deadline: February 15, 2026.', 'Les films doivent être au moins 50% générés par IA. Durée maximale : 20 minutes. Tous genres acceptés. Date limite : 15 février 2026.', NULL, id FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'jury_section', 'Our prestigious jury includes award-winning directors and AI pioneers who will select this year''s winners.', 'Notre prestigieux jury comprend des réalisateurs primés et des pionniers de l''IA qui sélectionneront les gagnants de cette année.', 'jury_section.jpg', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'awards_section', 'Eight awards will be presented including Grand Prix, Public Choice, and Innovation prizes.', 'Huit prix seront remis dont le Grand Prix, le Prix du Public et les prix de l''Innovation.', 'awards_section.jpg', id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'contact_info', 'Email: contact@marsai-festival.com | Phone: +33 1 23 45 67 89 | Address: 1 Rue du Festival, 75001 Paris', 'Email : contact@marsai-festival.com | Téléphone : +33 1 23 45 67 89 | Adresse : 1 Rue du Festival, 75001 Paris', NULL, id FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'footer_text', '© 2026 Mars AI Film Festival. All rights reserved. Made with AI and human creativity.', '© 2026 Festival Mars AI. Tous droits réservés. Fait avec l''IA et la créativité humaine.', NULL, id FROM user WHERE email = 'superadmin@marsai.com'
+UNION ALL SELECT 'sponsors_section', 'Thanks to our amazing sponsors who make this festival possible.', 'Merci à nos incroyables sponsors qui rendent ce festival possible.', 'sponsors_bg.jpg', id FROM user WHERE email = 'admin@marsai.com'
+UNION ALL SELECT 'newsletter_cta', 'Subscribe to our newsletter for exclusive updates and early bird tickets!', 'Abonnez-vous à notre newsletter pour des mises à jour exclusives et des billets en avant-première !', NULL, id FROM user WHERE email = 'admin@marsai.com';
 
 -- =====================================================
 -- VÉRIFICATION FINALE
