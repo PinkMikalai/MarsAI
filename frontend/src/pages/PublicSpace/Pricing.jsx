@@ -1,2 +1,2 @@
-// Pricing , page des tarifs MarsAI ------------//
+// Pricing , page des prix du festival MarsAI ------------//
 

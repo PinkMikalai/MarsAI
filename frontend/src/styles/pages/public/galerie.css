@@ -1,7 +1,10 @@
 
 .galerie-page {
   min-height: 100vh;
-  background: var(--color-mars-bg, #050505);
+  background: radial-gradient(circle at top, rgba(43, 127, 255, 0.16), transparent 55%),
+              radial-gradient(circle at center, rgba(152, 16, 250, 0.18), transparent 60%),
+              radial-gradient(circle at bottom, rgba(255, 43, 127, 0.2), transparent 65%),
+              var(--color-mars-bg, #050505); /* proche du visuel home */
   position: relative;
   overflow-x: hidden;
 }
@@ -120,7 +123,9 @@
 }
 
 .galerie-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: radial-gradient(circle at top left, rgba(43, 127, 255, 0.22), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(255, 43, 127, 0.22), transparent 60%),
+              rgba(5, 5, 15, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   overflow: hidden;
@@ -129,7 +134,7 @@
 
 .galerie-card:hover {
   border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.6);
 }
 
 .galerie-card-image {
@@ -207,12 +212,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   padding: 0;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(5, 5, 15, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  border-radius: 999px; /* style pill comme les CTA home */
   color: #ffffff;
   cursor: pointer;
   transition: background 0.2s, border-color 0.2s;
@@ -229,12 +234,12 @@
 }
 
 .galerie-pagination-num {
-  min-width: 36px;
-  height: 36px;
+  min-width: 38px;
+  height: 38px;
   padding: 0 0.5rem;
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
+  border-radius: 999px; /* pill */
   font-family: 'Arimo', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;

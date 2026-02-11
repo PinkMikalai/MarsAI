@@ -11,7 +11,7 @@ const SCOPES =  [
 //  
 function getOAuth2Client() {
     // identifiants de l'application à récupérer depuis le .env 
-    const clientId = process.env.YOUTUBE_CLIENT_I; 
+    const clientId = process.env.YOUTUBE_CLIENT_ID; 
     const clientSecret = process.env.YOUTUBE_CLIENT_SECRET; 
     const redirectUri = process.env.YOUTUBE_REDIRECT_URI || 'http://localhost:3000/callback';
 

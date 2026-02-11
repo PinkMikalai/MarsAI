@@ -3,11 +3,14 @@ const {
     createVideoModel, 
     getAllVideosModel,
     getVideoByIdModel,
+    getAdminVideoDataByIdModel,
+    getSelectorVideoDataByIdModel,
     updateVideoModel, 
     deleteVideoModel
 } = require("../../models/video/videoModel.js");
 
 //import de nos services 
+const checkRole = require("../../middlewares/checkRoleMiddleware.js");
 const { 
     createAndLinkTagsService, 
     updateTagsService, 
@@ -65,60 +68,45 @@ async function getAllVideos(req, res) {
     }
 }
 
-// get video by id
+// get video by id avec TOUTES les infos (tags, stills, contributors, awards, memos)
 async function getVideoById(req, res) {
-    // console.log("test getVideoById");
+
 
     try {
-        //recuperer la video
-        const video = await getVideoByIdModel(req.params.id);
-        console.log("video", video);
+        //recuperer la video avec TOUTES ses infos d'un coup
+        const basicVideoData = await getVideoByIdModel(req.params.id);
+      
         
-        //recuperer les tags de la video depuis video_tag
-        const tags = await getVideoTagsService(req.params.id);
-        console.log("tags de la video", tags);
-
-        //recuperer les stills de la video depuis still
-        const stills = await getStillsByVideoIdModel(req.params.id);
-        console.log("stills", stills);
-
-        //recuperer les contributors de la video depuis contributor
-        const contributors = await getContributorsByVideoIdModel(req.params.id);
-        console.log("contributors", contributors);
-
-        //recuperer les awards de la video depuis award
-        const awards = await getAwardsByVideoIdModel(req.params.id);
-        console.log("awards", awards);
-        
-        //recuperer les memos de la video depuis selector_memo
-        const memos = await getMemosByVideoIdModel(req.params.id);
-        console.log("memos", memos);
-        
+        const selectorVideoData =   await getSelectorVideoDataByIdModel(req.params.id);
+       
+        //l affichage des donnees pour le selector
+        const adminVideoData =   await getAdminVideoDataByIdModel(req.params.id);
+ 
         // si le video n est pas trouvee affiche l erreur
-        if (!video || !tags) {
+        if (!basicVideoData) {
 
             console.log("Video non trouvée, 404");
             return res.status(404).json({
                 message: "Video non trouvée",
                 status: false
             });
-        
         }else{
+            console.log("basic video data", basicVideoData);
+            console.log("admin video data", adminVideoData);
             res.status(200).json({
                 message: "Video recuperée avec succès",
-                video: video,
-                tags: tags,
-                stills: stills,
-                contributors: contributors,
-                awards: awards,
-                status: true
+                data: {
+                    basicVideoData,
+                    adminVideoData,
+                },
+                status: true,
             });
         }
     } catch (error) {
         console.error("Erreur getVideoById:", error);
         res.status(500).json({
             message: error.message,
-            status: "error"
+            status: false
         });
     }
 }
