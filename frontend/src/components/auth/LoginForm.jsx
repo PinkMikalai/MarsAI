@@ -81,7 +81,7 @@ const LoginForm = () => {
               id="email"
               name="email"
               type="email"
-              autoComplete="email"
+              autoComplete="none"
               placeholder="vous@exemple.fr"
               className="login-form-input"
               value={email}
@@ -97,7 +97,7 @@ const LoginForm = () => {
               id="password"
               name="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               placeholder="••••••••"
               className="login-form-input"
               value={password}

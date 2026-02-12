@@ -14,7 +14,7 @@ const CONDITIONS = [
 
 const ConsentStep = () => {
   const { form, setConsent, setSubscribeNewsletter } = useDepositForm();
-  const { accept_rules, accept_ownership } = form.consent;
+  const { accept_rules, accept_ownership, accept_age_18 } = form.consent;
 
   const handleAcceptRules = (checked) => {
     setConsent('accept_rules', checked);
@@ -30,6 +30,16 @@ const ConsentStep = () => {
           <li key={i}>{text}</li>
         ))}
       </ul>
+
+      <div className="deposit-field-group">
+        <Checkbox
+          id="accept_age_18"
+          label="Je certifie avoir 18 ans ou plus *"
+          checked={accept_age_18}
+          onChange={(checked) => setConsent('accept_age_18', checked)}
+          required
+        />
+      </div>
 
       <div className="deposit-field-group">
         <Checkbox

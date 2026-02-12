@@ -19,8 +19,9 @@ const buildUploadUrl = (value, folder) => {
 export const videoApi = {
   getAllVideos: async () => {
     try {
-      const response = await api.get('/videos');
-      return response.data;
+
+      const data = await api('/videos', { method: 'GET' });
+      return data;
     } catch (error) {
       console.error('Erreur lors du chargement des vidéos:', error);
       throw error;
@@ -29,8 +30,9 @@ export const videoApi = {
   
   getVideoTags: async (videoId) => {
     try {
-      const response = await api.get(`/videos/${videoId}`);
-      return response.data?.tags || [];
+
+      const data = await api(`/videos/${videoId}`, { method: 'GET' });
+      return data?.tags || [];
     } catch (error) {
       console.error(`Erreur de recup des tags ${videoId}:`, error);
       return [];
@@ -39,8 +41,9 @@ export const videoApi = {
   
   getVideoById: async (videoId) => {
     try {
-      const response = await api.get(`/videos/${videoId}`);
-      return response.data;
+
+      const data = await api(`/videos/${videoId}`, { method: 'GET' });
+      return data;
     } catch (error) {
       console.error(`Erreur de recup des videos ${videoId}:`, error);
       throw error;

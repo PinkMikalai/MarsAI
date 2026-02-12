@@ -19,6 +19,16 @@ export const LANGUAGES_ISO6391 = [
   { value: 'ru', label: 'Русский' },
 ];
 
+/** Emoji drapeau à partir du code ISO 3166-1 alpha-2 (2 lettres). */
+export const getCountryFlag = (code) => {
+  if (!code || code.length !== 2 || code === 'OTHER') return '';
+  return code
+    .toUpperCase()
+    .split('')
+    .map((c) => String.fromCodePoint(0x1f1e6 - 65 + c.charCodeAt(0)))
+    .join('');
+};
+
 export const COUNTRIES_ISO3166 = [
   { value: 'FR', label: 'France' },
   { value: 'BE', label: 'Belgique' },
@@ -60,7 +70,7 @@ export const formatPhoneE164 = (raw) => {
   return raw.startsWith('+') ? raw : `+${digits}`;
 };
 
-export const VIDEO_MAX_SIZE_MB = 300;
+export const VIDEO_MAX_SIZE_MB = 100;
 export const COVER_MAX_SIZE_MB = 5;
 export const SUBTITLES_MAX_SIZE_MB = 1;
 export const STILLS_MAX_SIZE_MB = 5;

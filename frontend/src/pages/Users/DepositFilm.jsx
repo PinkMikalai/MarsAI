@@ -26,8 +26,11 @@ const DepositFilmInner = () => {
     console.log('🎉 Succès reçu:', result);
     
     if (result?.videoId) {
-      console.log('✅ Vidéo confirmée enregistrée, ID:', result.videoId);
-      setSuccessData(result);
+      console.log('✅ Vidéo enregistrée en base et envoyée sur YouTube, ID:', result.videoId);
+      setSuccessData({
+        ...result,
+        message: result.message || 'Votre participation a bien été enregistrée : le film est enregistré dans notre base de données et a été envoyé sur la chaîne YouTube du festival.',
+      });
       setShowSuccessModal(true);
     } else {
       console.warn('⚠️ Pas de videoId dans la réponse:', result);
