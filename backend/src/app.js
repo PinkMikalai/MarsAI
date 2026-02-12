@@ -25,10 +25,7 @@ app.use('/assets/uploads', express.static(uploadsPath));
 app.use("/marsai", router);
 
 
-//configuration de la route error
-
 // configuration de la route not found
 app.use(notFound);
 //test
-
 module.exports = app;
