@@ -116,10 +116,15 @@ const FinalisationStep = ({ onSuccess, onError }) => {
         </p>
       </div>
 
+      {!form.consent.accept_age_18 && (
+        <p className="deposit-age-warning" role="alert">
+          Vous devez confirmer avoir 18 ans ou plus (étape Conditions) pour finaliser.
+        </p>
+      )}
       <button
         type="button"
         className="deposit-btn-submit deposit-btn-submit-wrap"
-        disabled={submitting}
+        disabled={submitting || !form.consent.accept_age_18}
         onClick={handleSubmit}
       >
         {submitting ? 'Envoi en cours...' : 'FINALISER MA SOUMISSION'}

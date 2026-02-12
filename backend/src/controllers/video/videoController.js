@@ -1,5 +1,5 @@
 //import de nos models (reqs SQL)
-const {
+import {
     createVideoModel, 
     getAllVideosModel,
     getVideoByIdModel,
@@ -7,27 +7,17 @@ const {
     getSelectorVideoDataByIdModel,
     updateVideoModel, 
     deleteVideoModel
-} = require("../../models/video/videoModel.js");
-
-//import de nos services 
-const checkRole = require("../../middlewares/checkRoleMiddleware.js");
-const { 
+} from "../../models/video/videoModel.js";
+import { 
     createAndLinkTagsService, 
     updateTagsService, 
     getVideoTagsService 
-} = require("../../services/video/tagService.js");
-const { 
-    getStillsByVideoIdModel, 
+} from "../../services/video/tagService.js";
+import { 
     updateStillsByVideoIdModel, 
-} = require("../../models/video/stillModel.js");
-const { 
-    
-    getContributorsByVideoIdModel,
-} = require("../../models/video/contributorModel.js");
-const { 
-    getAwardsByVideoIdModel, 
-} = require("../../models/video/awardModel.js");
-const { getMemosByVideoIdModel } = require("../../models/video/selectorMemoModel.js");
+} from "../../models/video/stillModel.js";
+
+
 //=====================================================
 // VIDEO - CRUD
 //=====================================================
@@ -36,11 +26,7 @@ const { getMemosByVideoIdModel } = require("../../models/video/selectorMemoModel
 //create video
 async function createVideo(req, res) {
     console.log("test creation de video");
-    
-    
 }
-
-
 // get all videos
 async function getAllVideos(req, res) {
     
@@ -70,35 +56,53 @@ async function getAllVideos(req, res) {
 
 // get video by id avec TOUTES les infos (tags, stills, contributors, awards, memos)
 async function getVideoById(req, res) {
-
-
     try {
-        //recuperer la video avec TOUTES ses infos d'un coup
-        const basicVideoData = await getVideoByIdModel(req.params.id);
-      
+        // Récupérer le rôle de l'utilisateur s'il est connecté (sinon role = undefined)
+        const role = req.user?.role;
         
-        const selectorVideoData =   await getSelectorVideoDataByIdModel(req.params.id);
-       
-        //l affichage des donnees pour le selector
-        const adminVideoData =   await getAdminVideoDataByIdModel(req.params.id);
+        // Recuperer la video avec TOUTES ses infos
+        const basicVideoData = await getVideoByIdModel(req.params.id);
  
-        // si le video n est pas trouvee affiche l erreur
-        if (!basicVideoData) {
-
-            console.log("Video non trouvée, 404");
+        // Si la video n'est pas trouvée, afficher l'erreur
+        if (!basicVideoData || !basicVideoData[0]) {
             return res.status(404).json({
                 message: "Video non trouvée",
                 status: false
             });
-        }else{
-            console.log("basic video data", basicVideoData);
+        }
+        
+        // Si l'utilisateur est Admin ou Super-admin → données complètes admin
+        else if (role === "Admin" || role === "Super-admin") {
+            const adminVideoData = await getAdminVideoDataByIdModel(req.params.id);
             console.log("admin video data", adminVideoData);
-            res.status(200).json({
+            return res.status(200).json({
                 message: "Video recuperée avec succès",
                 data: {
-                    basicVideoData,
-                    adminVideoData,
+                    basicVideoData: basicVideoData,
+                    adminVideoData: adminVideoData,
                 },
+                status: true,
+            });
+        }
+        // Si l'utilisateur est Selector → données selector
+        else if (role === "Selector") {
+            const selectorVideoData = await getSelectorVideoDataByIdModel(req.params.id, req.user?.id);
+            console.log("selector video data", selectorVideoData);
+            return res.status(200).json({
+                message: "Video recuperée avec succès",
+                data: {
+                    basicVideoData: basicVideoData,
+                    selectorVideoData: selectorVideoData,
+                },
+                status: true,
+            });
+        }
+        // Sinon (pas de rôle ou rôle non reconnu) → données basiques uniquement
+        else {
+            console.log("basic video data", basicVideoData);
+            return res.status(200).json({
+                message: "Video recuperée avec succès",
+                data: basicVideoData[0],
                 status: true,
             });
         }
@@ -172,10 +176,10 @@ async function deleteVideo(req, res) {
 
     //ici notour logique de suppression d une video
 }
-module.exports = {
+export {
     createVideo,
     getAllVideos,
     getVideoById,
     updateVideo,
     deleteVideo,
-}
+};

@@ -288,6 +288,16 @@
   color: #51A2FF;
 }
 
+.footer-admin-link--orange {
+  color: #f97316;
+  opacity: 0.9;
+}
+
+.footer-admin-link--orange:hover {
+  opacity: 1;
+  color: #fb923c;
+}
+
 .footer-admin-star {
   font-size: 14px;
   line-height: 1;
