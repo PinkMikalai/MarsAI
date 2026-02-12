@@ -44,15 +44,15 @@ const SuccessModal = ({ isOpen, onClose, videoId, message }) => {
                 Félicitations ! 🎉
               </h2>
               
-              {/* Message */}
+              {/* Message de validation */}
               <p className="success-modal-message">
-                {message || 'Votre vidéo a été soumise avec succès et enregistrée dans notre base de données.'}
+                {message || 'Votre participation a bien été enregistrée : le film est enregistré dans notre base de données et a été envoyé sur la chaîne YouTube du festival.'}
               </p>
               
               {/* ID de la vidéo (pour confirmation) */}
               {videoId && (
                 <p className="success-modal-video-id">
-                  <strong>ID de votre vidéo :</strong> #{videoId}
+                  <strong>Référence de votre vidéo :</strong> #{videoId}
                 </p>
               )}
               

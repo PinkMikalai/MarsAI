@@ -4,6 +4,7 @@ const initialState = {
   consent: {
     accept_rules: false,
     accept_ownership: false,
+    accept_age_18: false,
   },
   participant: {
     civility: 'M.',
@@ -18,9 +19,12 @@ const initialState = {
   subscribe_newsletter: false,
   film: {
     title: '',
+    title_en: '',
     description: '',
+    synopsis_en: '',
     language: 'fr',
-    duration: '', // integer secondes, peut être rempli côté back ou après lecture vidéo
+    duration: '',
+    classification: 'Hybrid',
   },
   tags: [], // string[] - Tags normalisés (trim, lowercase) pour le film
   files: {
