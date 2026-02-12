@@ -94,6 +94,20 @@ async function getVideoByIdModel(id) {
                         ),
                         JSON_ARRAY()
                     ),
+                    'still', IFNULL(
+                        (
+                            SELECT JSON_ARRAYAGG(
+                                JSON_OBJECT(
+                                    'id', s.id,
+                                    'file_name', s.file_name,
+                                    'created_at', s.created_at
+                                )
+                            )
+                            FROM still s
+                            WHERE s.video_id = v.id
+                        ),
+                        JSON_ARRAY()
+                    ),
                     'award', IFNULL(
                         (
                             SELECT JSON_ARRAYAGG(
@@ -198,13 +212,56 @@ async function getAdminVideoDataByIdModel(id) {
 
 }
 
-// get video by id, infos pour le selector
-async function getSelectorVideoDataByIdModel(id) {
+// get video by id, infos pour le selector (selector_memo filtré par video + user connecté)
+async function getSelectorVideoDataByIdModel(id, userId) {
 
     try {
         const [rows] = await pool.execute(
-            `SELECT * FROM video WHERE id = ?`,
-            [id]
+            `SELECT JSON_OBJECT(
+                'id', v.id,
+                'synopsis', v.synopsis,
+                'synopsis_en', v.synopsis_en,
+                'tech_resume', v.tech_resume,
+                'classification', v.classification,
+                'creative_resume', v.creative_resume,
+                'contributors', IFNULL(
+                    (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', c.id,
+                            'firstname', c.firstname,
+                            'last_name', c.last_name,
+                            'email', c.email,
+                            'production_role', c.production_role,
+                            'created_at', c.created_at
+                        )
+                    )
+                    FROM contributor c
+                    WHERE c.video_id = v.id),
+                    JSON_ARRAY()
+                ),
+                'selector_memo', IFNULL(
+                    JSON_OBJECT(
+                        'id', sm.id,
+                        'comment', sm.comment,
+                        'rating', sm.rating,
+                        'user_id', sm.user_id,
+                        'created_at', sm.created_at,
+                        'updated_at', sm.updated_at,
+                        'selection_status', IFNULL(
+                            JSON_OBJECT(
+                                'id', ss.id, 
+                                'name', ss.name),
+                            NULL
+                        )
+                    ),
+                    NULL
+                )
+            ) AS video_json 
+             FROM video v 
+             LEFT JOIN selector_memo sm ON sm.video_id = v.id AND sm.user_id = ?
+             LEFT JOIN selection_status ss ON ss.id = sm.selection_status_id
+             WHERE v.id = ?`,
+            [userId ?? null, id]
         );
         return rows;
     } catch (error) {
