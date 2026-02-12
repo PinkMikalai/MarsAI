@@ -4,6 +4,11 @@ const stillModel = require('../models/video/stillModel.js');
 const tagModel = require('../models/video/tagModel.js'); 
 const { uploadToYouTube } = require('../services/video/youtubeService.js');
 
+const { getVideoMetada } = require('../services/video/metadataService.js'); 
+const { UPLOAD_BASE } = require('../middlewares/uploadMiddleware.js'); 
+const path  = require('path'); 
+const fs = require('fs'); 
+
 
 async function addParticipation(req, res) {
     console.log("je teste ma route addParticipation");
@@ -11,17 +16,45 @@ async function addParticipation(req, res) {
     // console.log(test);
 
     try {
-        // PARTIE 1 : ENREGISTREMENT EN BASE DE DONNEES
-
-        // c'est ici que zod dépose les données propres après validation 
         const validatedData = req.body; 
+        
+        // PARTIE 1 : ANALYSE TECHNIQUE DE LA VIDEO (RATIO ET DUREE)
 
-        // étape 1 
-        // console.log("Titre :", validatedData.title);
-        // console.log("Nombre de contributeurs :", validatedData.contributor?.length);
-        // console.log("Nombre de stills :", validatedData.still?.length);
+        const videoFileName = req.files['video_file_name'] ? req.files['video_file_name'][0].filename : null; 
+        // vérification de la présence de la vidéo 
+        if(!videoFileName) {
+            throw new Error ("Fichier vidéo introuvable dans la requête");
+        }
 
-        // étape 2 : Insertion de la video 
+        // Chemin complet pour ffprobe
+        const fullVideoPath = path.join(UPLOAD_BASE, 'videos', videoFileName); 
+
+        // Appel du metadataService
+        const meta = await getVideoMetada(fullVideoPath); 
+
+        // validation du format 16/9
+        if(!meta.is169) {
+            // Sécurité : suppression du mauvais fichier du serveur 
+            if (fs.existsSync(fullVideoPath)) fs.unlinkSync(fullVideoPath);
+
+            return res.status(400).json({
+                message: `Format invalide : ${meta.width}*${meta.height}.cLe format 16/9 est obligatoire.`
+            });
+        }
+
+        // validation de la durée (max 3 min = 180 secondes)
+        if (meta.duration > 180) {
+            if (fs.existsSync(fullVideoPath)) fs.unlinkSync(fullVideoPath); 
+            return res.status(400).json({
+                message: `Vidéo trop longue : ${meta.duration} secondes. La durée maximale autorisée est de 3 minutes (180s).`
+            });
+        }
+        // injection de la durée réelle dans la BDD
+        validatedData.duration = meta.duration
+
+        // PARTIE 2 : ENREGISTREMENT EN BASE DE DONNEES 
+
+        // étape 1 : Insertion de la video en base de données 
         // on appelle la fonction dans videoModel, l'id retourné par le model sera stocké dans newVideoId
         const newVideoId = await videoModel.createVideoModel(validatedData); 
         // on vérifie si MySql a bien enregistré un ID 
@@ -32,25 +65,25 @@ async function addParticipation(req, res) {
             })
         }
 
-        // étape 3 : insertion des contributeurs
+        // étape 2 : insertion des contributeurs
         if (validatedData.contributor && validatedData.contributor.length > 0) {
-            console.log("tentative d'insertion des contributeurs");
+            // console.log("tentative d'insertion des contributeurs");
             // on appelle le modèle en lui passant : le tableau des contributeurs et l'id de la video que l'on veut créer
             await contributorModel.createContributorsModel(validatedData.contributor, newVideoId);
-            console.log("étape 3 : succès (contributeurs liés)");
+            // console.log("étape 3 : succès (contributeurs liés)");
         }
 
-        // étape 4 : insertion des stills 
+        // étape 3 : insertion des stills 
         if (validatedData.still && validatedData.still.length > 0) {
-            console.log("tentative d'insertion des stills");
+            // console.log("tentative d'insertion des stills");
             // on appelle le modèle des stills 
             await stillModel.createStillsModel(validatedData.still, newVideoId); 
-            console.log("étape 4 : succès (images liées)");        
+            // console.log("étape 3 : succès (images liées)");        
         }
 
-        // étape 5 : gestion des tags 
+        // étape 4 : gestion des tags 
         if (validatedData.tag && validatedData.tag.length > 0 ) {
-            console.log("tentative de gestion des tags");
+            // console.log("tentative de gestion des tags");
             // on extrait juste les noms pour la fonction createTagModel 
             const tagNames = validatedData.tag.map(t => t.name);  // on extrait les noms 
             const allTags = await tagModel.createTagModel(tagNames);  // on crée/récupère les tags
@@ -62,7 +95,7 @@ async function addParticipation(req, res) {
             }
         }
 
-        // PARTIE 2 : PREPARATION ET UPLOAD VERS YOUTUBE 
+        // PARTIE 3 : PREPARATION ET UPLOAD VERS YOUTUBE 
         console.log("Préparation de la description Youtube..");
 
         // Le titre du film (en langue originale et anglais ou juste anglais) 
@@ -79,26 +112,20 @@ async function addParticipation(req, res) {
             }).join(' ') 
             : '';
 
-        const fullDescription = `
-            
+        const fullDescription = `     
             SYNOPSIS (EN) : ${validatedData.synopsis_en || 'N/A'}
-
             SYNOPSIS (Original) : ${validatedData.synopsis || 'N/A'}
-
             ---
-
             DIRECTED BY : ${validatedData.realisator_firstname} ${validatedData.realisator_lastname}
             COUNTRY : ${validatedData.country}
-
             ${hashtags}
-        
         `
 
 
-        // PARTIE 3 : UPLOAD VERS YOUTUBE
+        // PARTIE 4 : UPLOAD VERS YOUTUBE
         console.log('Démarrage de lupload Youtube');
 
-        const videoFileName = req.files['video_file_name'] ? req.files['video_file_name'][0].filename : null; 
+        // const videoFileName = req.files['video_file_name'] ? req.files['video_file_name'][0].filename : null; 
         const cover = req.files['cover'] ? req.files['cover'][0].filename : null; 
         const srt_file_name = req.files['srt_file_name'] ? req.files['srt_file_name'][0].filename : null; 
 
@@ -114,14 +141,20 @@ async function addParticipation(req, res) {
             srt_file_name ? `srt/${srt_file_name}` : null
         ); 
 
-        // PARTIE 4 : MISE A JOUR SQL AVEC YOUTUBE 
+        // PARTIE 5 : MISE A JOUR SQL AVEC YOUTUBE 
 
-        await videoModel.updateYoutubeId(newVideoId,youtubeResult.id)
+        // construction de l'url youtube à partir de l'id reçu
+        const youtubeUrl = `https://www.youtube.com/watch?v=${youtubeResult.id}`;
+
+        // on appelle la requête (modèle) pour mettre à jour la colonne youtube_url
+        await videoModel.updateYoutubeId(newVideoId, youtubeResult.id)
         
         res.status(201).json({
-            message: "participation enregistrée avec succès", 
+            message: "Participation enregistrée et vidéo uploadée avec succès", 
             videoId: newVideoId,
-            youtubeId: youtubeResult.id
+            youtubeUrl: youtubeUrl, 
+            detectedDuration: meta.duration,
+            resolution: `${meta.width}x${meta.height}`
         })
         
 

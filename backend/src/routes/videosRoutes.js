@@ -1,5 +1,13 @@
 const { Router } = require("express");
-const { createVideo, getAllVideos, getVideoById, updateVideo, deleteVideo } = require("../controllers/video/videoController");
+const { 
+    createVideo, 
+    getAllVideos, 
+    getVideoById, 
+    updateVideo, 
+    deleteVideo 
+} = require("../controllers/video/videoController");
+
+
 const router = Router();
 
 // nos routes avec les methodes

@@ -16,24 +16,26 @@ export function buildSubmitFormData(form) {
   fd.append('address', form.participant.address || 'Non renseigné');
 
   fd.append('title', form.film.title || '');
-  fd.append('title_en', form.film.title || 'Titre non renseigné');
-  fd.append('synopsis', '');
-  fd.append('synopsis_en', form.film.description || 'Description non renseignée');
-  fd.append('tech_resume', form.film.description || 'Résumé technique non renseigné');
-  fd.append('creative_resume', form.film.description || 'Résumé créatif non renseigné');
-  fd.append('language', form.film.language || 'FR');
+  fd.append('title_en', form.film.title_en || form.film.title || '');
+  fd.append('synopsis', form.film.description || '');
+  fd.append('synopsis_en', form.film.synopsis_en || form.film.description || '');
+  fd.append('tech_resume', form.film.description || '');
+  fd.append('creative_resume', form.film.description || '');
+  fd.append('language', form.film.language || 'fr');
   
-  if (form.film.duration !== '' && form.film.duration != null) {
-    fd.append('duration', String(form.film.duration));
-  } else {
-    fd.append('duration', '60');
-  }
+  const durationVal = form.film.duration !== '' && form.film.duration != null
+    ? String(form.film.duration)
+    : '60';
+  fd.append('duration', durationVal);
   
-  fd.append('classification', 'Hybrid');
+  const classification = form.film.classification === '100% AI' ? '100% AI' : 'Hybrid';
+  fd.append('classification', classification);
   fd.append('social_media_links_json', JSON.stringify({}));
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
+    console.log("Check form.tags", form.tags);
+
     const tagObjects = form.tags.map(tagName => ({ name: tagName }));
     fd.append('tag', JSON.stringify(tagObjects));
   } else {
@@ -57,18 +59,20 @@ export function buildSubmitFormData(form) {
     });
   }
 
-  if (form.collaborators && form.collaborators.length > 0) {
-    const contributors = form.collaborators.map(col => {
-      const nameParts = (col.fullname || '').split(' ');
+  const completeCollaborators = (form.collaborators || []).filter(
+    (col) => (col.fullname || '').trim() && (col.email || '').trim() && (col.profession || '').trim()
+  );
+  if (completeCollaborators.length > 0) {
+    const contributors = completeCollaborators.map((col) => {
+      const nameParts = (col.fullname || '').trim().split(/\s+/);
       const firstname = nameParts[0] || '';
       const last_name = nameParts.slice(1).join(' ') || '';
-      
       return {
-        firstname: firstname,
-        last_name: last_name,
-        email: col.email || '',
-        gender: 'Other',
-        production_role: col.profession || ''
+        firstname,
+        last_name,
+        email: (col.email || '').trim(),
+        production_role: (col.profession || '').trim(),
+        gender: col.gender || 'Other',
       };
     });
     fd.append('contributor', JSON.stringify(contributors));
@@ -77,8 +81,8 @@ export function buildSubmitFormData(form) {
       firstname: form.participant.firstname || '',
       last_name: form.participant.lastname || '',
       email: form.participant.email || '',
-      gender: form.participant.civility === 'M.' ? 'Mr' : (form.participant.civility === 'Mme' ? 'Mrs' : 'Other'),
-      production_role: 'Réalisateur'
+      production_role: 'Réalisateur',
+      gender: 'Other',
     }]));
   }
 
@@ -90,9 +94,13 @@ export async function submitVideo(formData, token) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await api.post(SUBMIT_URL, formData, {
+
+  const data = await api(SUBMIT_URL, {
+    method: 'POST',
+    body: formData,
     headers: { ...headers },
-    timeout: 300000,
   });
-  return response.data;
+
+  return data;
 }
+
