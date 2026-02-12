@@ -17,9 +17,6 @@ const Profile = () => {
    const isAdminProfile = isAdmin || isSuperAdmin || isSelector;
 
 
-     
-
-  const isAdminProfile = isAdmin || isSuperAdmin || isSelector;
 
 
   useEffect(() => {
