@@ -13,11 +13,7 @@ const Profile = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // const token = localStorage.getItem('token');
-    // console.log("Check token",token);
-    
-    // const storedUser = localStorage.getItem('user');
-    // const user = storedUser ? JSON.parse(storedUser) : null;
+
     console.log("Data user", user);
      
 
