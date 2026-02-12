@@ -5,36 +5,26 @@ import Footer from '../../components/layout/Footer';
 import { ROUTES } from '../../constants/routes';
 import { authService } from '../../service/authService';
 import { useAuth } from '../../context/AuthContext';
+import AdminLayout from '../../components/admin/AdminLayout';
 
 const Profile = () => {
-  const { user} = useAuth();
+  const { user, isAdmin, isSuperAdmin, isSelector } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    // const token = localStorage.getItem('token');
-    // console.log("Check token",token);
-    
-    // const storedUser = localStorage.getItem('user');
-    // const user = storedUser ? JSON.parse(storedUser) : null;
-    console.log("Data user", user);
-     
+  const isAdminProfile = isAdmin || isSuperAdmin || isSelector;
 
+  useEffect(() => {
     if (!user) {
       setLoading(false);
-      setError('Login is neccessary to acces tour profile');
+      setError('Login is necessary to access your profile');
       return;
     }
     setLoading(true);
-
     authService.profile()
       .then((data) => {
-        console.log("Check data.result", data.result);
-        console.log("Check data", data);
-        
-        
-        setProfile(data.result || data );
+        setProfile(data.result || data);
       })
       .catch((err) => {
         setError(err.message || 'Error during profile loading.');
@@ -42,6 +32,35 @@ const Profile = () => {
       .finally(() => setLoading(false));
   }, [user]);
 
+  /* Non connecté : message + lien login */
+  if (!user) {
+    return (
+      <div className="profile-page">
+        <Navbar />
+        <main className="profile-container">
+          <h1 className="profile-title">Mon profil</h1>
+          <div className="profile-error">
+            <p>{error || 'Connexion nécessaire pour accéder à votre profil.'}</p>
+            <Link to={ROUTES.LOGIN} className="profile-link">Aller au login</Link>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  /* Admin / Super Admin / Sélectionneur : layout admin (contenu vide pour l'instant) */
+  if (isAdminProfile) {
+    return (
+      <AdminLayout>
+        <section className="admin-overview">
+          {/* Contenu à venir */}
+        </section>
+      </AdminLayout>
+    );
+  }
+
+  /* Utilisateur simple : fiche profil */
   return (
     <div className="profile-page">
       <Navbar />
