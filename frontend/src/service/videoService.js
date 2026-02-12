@@ -22,18 +22,21 @@ export function buildSubmitFormData(form) {
   fd.append('tech_resume', form.film.description || 'Résumé technique non renseigné');
   fd.append('creative_resume', form.film.description || 'Résumé créatif non renseigné');
   fd.append('language', form.film.language || 'FR');
-  
+
   if (form.film.duration !== '' && form.film.duration != null) {
     fd.append('duration', String(form.film.duration));
   } else {
     fd.append('duration', '60');
   }
-  
-  fd.append('classification', 'Hybrid');
+
+  const classificationValue = form.film.classification === 'Hybrid' ? 'Hybrid' : '100% AI';
+  fd.append('classification', classificationValue);
   fd.append('social_media_links_json', JSON.stringify({}));
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
+    console.log("Check form.tags", form.tags);
+
     const tagObjects = form.tags.map(tagName => ({ name: tagName }));
     fd.append('tag', JSON.stringify(tagObjects));
   } else {
@@ -62,7 +65,7 @@ export function buildSubmitFormData(form) {
       const nameParts = (col.fullname || '').split(' ');
       const firstname = nameParts[0] || '';
       const last_name = nameParts.slice(1).join(' ') || '';
-      
+
       return {
         firstname: firstname,
         last_name: last_name,
@@ -90,9 +93,10 @@ export async function submitVideo(formData, token) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await api.post(SUBMIT_URL, formData, {
+  const response = await api(SUBMIT_URL, formData, {
     headers: { ...headers },
     timeout: 300000,
   });
   return response.data;
 }
+

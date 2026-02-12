@@ -1,22 +1,24 @@
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai';
 
 const api = async ( endpoint , options = {}) => {
+  const { checkAuth = true , ... fetchOptions } = options;
   const token = localStorage.getItem('token');
 
   // configuration des headers 
-  const headers = { 'Content-Type': 'application/json' , ...options.headers,};
+  const headers = { ...options.headers};
+  if(!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json'
+  }
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const config = { ...options , headers,};
-
   try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, config)
+    const response = await fetch(`${BASE_URL}${endpoint}`, { ...fetchOptions, headers })
 
     // gestion des réponses :
-    if(response.status === 401) {
+    if(response.status === 401 && checkAuth) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       window.location.href = '/login';
@@ -24,7 +26,7 @@ const api = async ( endpoint , options = {}) => {
     }
     if(!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || "ServEr error")
+      throw new Error(error.message || "Server error")
     }
     const data = await response.json();
     return data; 
