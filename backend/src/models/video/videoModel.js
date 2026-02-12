@@ -357,6 +357,18 @@ async function deleteVideoModel(id) {
     }
 }
 
+// Requête SQL pour l'URL youtube 
+async function updateYoutubeId(videoId, youtubeUrl) {
+    try {
+        const query = `UPDATE video SET youtube_url = ? WHERE id = ?`; 
+        const [result] = await pool.execute(query, [youtubeUrl, videoId]); 
+        return result.affectedRows > 0; 
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de l\'URL YouTube: ', error);
+        throw error;
+    }
+}
+
 module.exports = {
     createVideoModel,
     getAllVideosModel,
@@ -365,4 +377,5 @@ module.exports = {
     getSelectorVideoDataByIdModel,
     updateVideoModel,
     deleteVideoModel,
+    updateYoutubeId,
 };

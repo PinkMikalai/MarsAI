@@ -87,7 +87,8 @@ const participationSchema = z.object({
         .number()
         .int()
         .positive()
-        .max(120, "Duration cannot exceed 120 seconds"),
+        .max(120, "Duration cannot exceed 120 seconds")
+        .optional(),
     
     // LANGUE : ISO 639-1 (Exactement 2 caractères, ex: "fr")
     language: z

@@ -1,7 +1,7 @@
 const ffmpeg = require('fluent-ffmpeg'); 
 
 
-const getVIdeoMetada = (fullPath) => {
+const getVideoMetada = (fullPath) => {
     // Encapsulation dasn une Promise car ffprobe est un processus externe (asynchrone)
     return new Promise((resolve, reject) => {
 
@@ -29,7 +29,7 @@ const getVIdeoMetada = (fullPath) => {
             const currentRatio = width / height; 
             const targetRatio = 16 / 9;  //soit environ 1.77777
 
-            const is169 = Math.abs(currentRatio - targetRatio) < 0.01; 
+            const is169 = Math.abs(currentRatio - targetRatio) < 0.03; 
 
 
             resolve({
@@ -42,3 +42,5 @@ const getVIdeoMetada = (fullPath) => {
         })
     })
 }
+
+module.exports = { getVideoMetada };
