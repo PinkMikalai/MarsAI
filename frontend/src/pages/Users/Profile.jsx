@@ -13,7 +13,14 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  
+   const isAdminProfile = isAdmin || isSuperAdmin || isSelector;
+
+
+     
+
   const isAdminProfile = isAdmin || isSuperAdmin || isSelector;
+
 
   useEffect(() => {
     if (!user) {
