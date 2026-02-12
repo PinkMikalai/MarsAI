@@ -836,12 +836,33 @@
   margin-top: 32px;
 }
 
+.deposit-age-warning {
+  margin-top: 12px;
+  color: #f59e0b;
+  font-size: 14px;
+}
+
 .deposit-btn-submit-wrap {
   margin-top: 24px;
 }
 
 .deposit-file-input-hidden {
   display: none;
+}
+
+.deposit-video-preview {
+  margin-top: 12px;
+}
+
+.deposit-video-preview .deposit-field-label {
+  margin-bottom: 8px;
+}
+
+.deposit-video-player {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 8px;
+  background: #000;
 }
 
 .deposit-textarea--short {

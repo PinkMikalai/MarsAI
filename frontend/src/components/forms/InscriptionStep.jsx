@@ -2,7 +2,7 @@ import React from 'react';
 import FormCard from './FormCard';
 import Icons from '../ui/common/Icons';
 import { useDepositForm } from '../../context/DepositFormContext';
-import { CIVILITY_OPTIONS, COUNTRIES_ISO3166 } from '../../constants/submitForm';
+import { CIVILITY_OPTIONS, COUNTRIES_ISO3166, getCountryFlag } from '../../constants/submitForm';
 
 const InscriptionStep = () => {
   const { form, setParticipant } = useDepositForm();
@@ -103,7 +103,9 @@ const InscriptionStep = () => {
               onChange={(e) => setParticipant('country', e.target.value)}
             >
               {COUNTRIES_ISO3166.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <option key={opt.value} value={opt.value}>
+                  {getCountryFlag(opt.value)} {opt.label}
+                </option>
               ))}
             </select>
           </div>
