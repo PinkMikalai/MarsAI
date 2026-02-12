@@ -1,14 +1,13 @@
 const nodemailer = require('nodemailer');
 
-console.log("DEBUG MAIL_USER:", process.env.MAIL_USER);
+// console.log("DEBUG MAIL_USER:", process.env.MAIL_USER);
+console.log("CONFIG TEST:", { host: process.env.EMAIL_HOST, port: process.env.EMAIL_PORT });
 const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST,
-    port: process.env.MAIL_PORT,
+   host: process.env.EMAIL_HOST || '127.0.0.1',
+    port: Number(process.env.EMAIL_PORT) || 1025,
     secure: false, 
-    auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-    },
+    ignoreTLS: true
+   
 });
 
 const sendInvitationEmail = async ({ email, token ,role }) => {
@@ -63,10 +62,10 @@ const sendInvitationEmail = async ({ email, token ,role }) => {
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log(' Mail receptionné par Mailtrap ! ID:', info.messageId);
+        console.log(' Mail receptionné  ! ID:', info.messageId);
         return info;
     } catch (error) {
-        console.error(" Erreur Mailtrap :", error);
+        console.error(" Erreur envi invit  :", error);
         throw new Error("Impossible d'envoyer l'email d'invitation.");
     }
 };

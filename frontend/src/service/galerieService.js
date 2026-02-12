@@ -19,6 +19,7 @@ const buildUploadUrl = (value, folder) => {
 export const videoApi = {
   getAllVideos: async () => {
     try {
+
       const data = await api('/videos', { method: 'GET' });
       return data;
     } catch (error) {
@@ -29,6 +30,7 @@ export const videoApi = {
   
   getVideoTags: async (videoId) => {
     try {
+
       const data = await api(`/videos/${videoId}`, { method: 'GET' });
       return data?.tags || [];
     } catch (error) {
@@ -39,6 +41,7 @@ export const videoApi = {
   
   getVideoById: async (videoId) => {
     try {
+
       const data = await api(`/videos/${videoId}`, { method: 'GET' });
       return data;
     } catch (error) {

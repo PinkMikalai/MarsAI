@@ -5,8 +5,10 @@ const api = async ( endpoint , options = {}) => {
   const token = localStorage.getItem('token');
 
   // configuration des headers 
-  const headers = {...options.headers};
-  if (!(options.body instanceof FormData)) {
+
+  const headers = { ...options.headers};
+  if(!(options.body instanceof FormData)) {
+
     headers['Content-Type'] = 'application/json'
   }
 
@@ -24,6 +26,9 @@ const api = async ( endpoint , options = {}) => {
       window.location.href = '/login';
       return;
     }
+
+ 
+
     if (!response.ok) {
       if (response.status === 413) {
         throw new Error('Le fichier ou les fichiers sont trop volumineux. Réduisez la taille (vidéo, images) ou contactez l’équipe.');
@@ -50,6 +55,7 @@ const api = async ( endpoint , options = {}) => {
     const contentType = response.headers.get('Content-Type') || '';
     if (contentType.includes('application/json')) {
       return await response.json();
+
     }
     return await response.text();
   } catch (error) {

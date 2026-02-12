@@ -34,6 +34,8 @@ export function buildSubmitFormData(form) {
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
+    console.log("Check form.tags", form.tags);
+
     const tagObjects = form.tags.map(tagName => ({ name: tagName }));
     fd.append('tag', JSON.stringify(tagObjects));
   } else {
@@ -92,10 +94,13 @@ export async function submitVideo(formData, token) {
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
+
   const data = await api(SUBMIT_URL, {
     method: 'POST',
     body: formData,
     headers: { ...headers },
   });
+
   return data;
 }
+
