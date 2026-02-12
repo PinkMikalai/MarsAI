@@ -82,6 +82,9 @@ const Footer = () => {
             Connexion
           </Link>
           <div className="footer-admin-stars">
+            <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title="Mon profil" aria-label="Aller au profil">
+              <span className="footer-admin-star" aria-hidden>★</span>
+            </Link>
             <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title="Inscription Admin & Sélectionneurs" aria-label="S'inscrire (Admin et Sélectionneurs)">
               <span className="footer-admin-star" aria-hidden>★</span>
             </Link>
@@ -151,6 +154,9 @@ const Footer = () => {
           <a href="#" className="deposit-footer-social">LinkedIn</a>
         </div>
         <div className="footer-admin-stars">
+          <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title="Mon profil" aria-label="Aller au profil">
+            <span className="footer-admin-star" aria-hidden>★</span>
+          </Link>
           <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title="Inscription Admin & Sélectionneurs" aria-label="S'inscrire (Admin et Sélectionneurs)">
             <span className="footer-admin-star" aria-hidden>★</span>
           </Link>

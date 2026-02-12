@@ -14,8 +14,18 @@ const UploadFilmStep = () => {
   const stillsRef = useRef(null);
 
   const [coverPreview, setCoverPreview] = useState(null);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [stillsPreviews, setStillsPreviews] = useState([]);
   const [mostUsedTags, setMostUsedTags] = useState([]);
+
+  useEffect(() => {
+    if (form.files.video instanceof File) {
+      const url = URL.createObjectURL(form.files.video);
+      setVideoPreviewUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+    setVideoPreviewUrl(null);
+  }, [form.files.video]);
 
   useEffect(() => {
     if (form.files.cover) {
@@ -37,9 +47,9 @@ const UploadFilmStep = () => {
   useEffect(() => {
     const loadMostUsedTags = async () => {
       try {
-        const response = await tagsService.getMostUsedTags();
-        // Prendre les 5 premiers tags
-        const topTags = response.tags?.slice(0, 5).map(tag => tag.name.toLowerCase()) || [];
+        const data = await tagsService.getMostUsedTags();
+        const list = Array.isArray(data) ? data : (data?.tags || data?.data || []);
+        const topTags = list.slice(0, 5).map((t) => (typeof t === 'string' ? t : (t?.name || t)).toLowerCase()).filter(Boolean);
         setMostUsedTags(topTags);
       } catch (error) {
         console.error('Erreur lors du chargement des tags populaires:', error);
@@ -121,8 +131,36 @@ const UploadFilmStep = () => {
         </div>
       </div>
 
+      <div className="deposit-grid-2">
+        <div className="deposit-field-group">
+          <label className="deposit-field-label">Titre (anglais) *</label>
+          <div className="deposit-field-wrap">
+            <input
+              type="text"
+              className="deposit-input"
+              placeholder="Neural Odyssey"
+              value={film.title_en ?? ''}
+              onChange={(e) => setFilm('title_en', e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="deposit-field-group">
+          <label className="deposit-field-label">Classification *</label>
+          <div className="deposit-field-wrap">
+            <select
+              className="deposit-input"
+              value={film.classification ?? 'Hybrid'}
+              onChange={(e) => setFilm('classification', e.target.value)}
+            >
+              <option value="Hybrid">Hybrid</option>
+              <option value="100% AI">100% AI</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Descriptif (max 500 car.)</label>
+        <label className="deposit-field-label">Descriptif / Synopsis (max 500 car.)</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
@@ -133,6 +171,20 @@ const UploadFilmStep = () => {
           />
         </div>
         <div className="deposit-char-count">{film.description.length} / 500</div>
+      </div>
+
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Synopsis (anglais) * (max 500 car.)</label>
+        <div className="deposit-field-wrap">
+          <textarea
+            className="deposit-textarea deposit-textarea--short"
+            placeholder="An exploration..."
+            maxLength={500}
+            value={film.synopsis_en ?? ''}
+            onChange={(e) => setFilm('synopsis_en', e.target.value)}
+          />
+        </div>
+        <div className="deposit-char-count">{(film.synopsis_en ?? '').length} / 500</div>
       </div>
 
       <div className="deposit-field-group">
@@ -167,21 +219,6 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Durée (secondes, 30–120)</label>
-        <div className="deposit-field-wrap">
-          <input
-            type="number"
-            min={30}
-            max={120}
-            className="deposit-input"
-            placeholder="58"
-            value={film.duration}
-            onChange={(e) => setFilm('duration', e.target.value ? parseInt(e.target.value, 10) : '')}
-          />
-        </div>
-      </div>
-
-      <div className="deposit-field-group">
         <label className="deposit-field-label">Vidéo * (mp4, mov, webm – max 300 Mo)</label>
         <div className="deposit-upload-vignette">
           <div className="deposit-upload-vignette-icon" aria-hidden><Icons.Upload /></div>
@@ -200,6 +237,17 @@ const UploadFilmStep = () => {
             {files.video ? files.video.name : 'Choisir la vidéo'}
           </button>
         </div>
+        {videoPreviewUrl && (
+          <div className="deposit-video-preview">
+            <p className="deposit-field-label">Aperçu de la vidéo</p>
+            <video
+              src={videoPreviewUrl}
+              controls
+              preload="metadata"
+              className="deposit-video-player"
+            />
+          </div>
+        )}
       </div>
 
       <div className="deposit-grid-2">
