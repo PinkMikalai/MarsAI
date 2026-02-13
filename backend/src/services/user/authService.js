@@ -1,15 +1,19 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 import {createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, deleteUserModel}  from '../../models/user/userModel.js';
-
+import { createInvitationModel, getInvitationByJtiModel, markInvitationAsUsedMdel } from '../../models/admin/invitationModel.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 
 //  Génère un token d'invitation 
 export async function createInvitationToken({ email, role }) {
+    const jti = uuidv4(); // identifiant unique qui sera inclu dans le token
+    // création de l'invitation dans la db 
+    await createInvitationModel( {jti, email, role})
     return jwt.sign(
-        { email, role, purpose: 'invitation' },
+        { email, role,jti, purpose: 'invitation' },
         process.env.JWT_SECRET,
         { expiresIn: '48h' }
     );
@@ -25,14 +29,25 @@ export async function decodeInvitationToken(token) {
         if (decoded.purpose !== 'invitation') {
             throw new Error('Invalid token ');
         }
+        // verification d l'usge unique de l'invitation 
+        const invitation = await getInvitationByJtiModel(decoded.jti);
+
+        if(!invitation) {
+            throw new Error('Invitation not found');
+
+        } 
+        if ( invitation.status !=='pending') {
+            throw new Error('Invitation already used')
+        }
 
         return {
             email: decoded.email,
             role: decoded.role,
+            jti : decoded.jti,
             token:token
         };
     } catch (err) {
-        const error = new Error('Invalid or expired token');
+        const error = new Error(err.message ||'Invalid or expired token');
         error.status = 401;
         throw error;
     }
