@@ -17,6 +17,7 @@ const UploadFilmStep = () => {
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
   const [stillsPreviews, setStillsPreviews] = useState([]);
   const [mostUsedTags, setMostUsedTags] = useState([]);
+  const [videoDragOver, setVideoDragOver] = useState(false);
 
   useEffect(() => {
     if (form.files.video instanceof File) {
@@ -63,7 +64,23 @@ const UploadFilmStep = () => {
   const handleVideoChange = (e) => {
     const file = e.target.files?.[0];
     setFile('video', file || null);
+    e.target.value = '';
   };
+
+  const handleVideoDrop = (e) => {
+    e.preventDefault();
+    setVideoDragOver(false);
+    const file = e.dataTransfer?.files?.[0];
+    if (file && /video\/(mp4|quicktime|webm)/i.test(file.type)) setFile('video', file);
+  };
+
+  const handleVideoDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    setVideoDragOver(true);
+  };
+
+  const handleVideoDragLeave = () => setVideoDragOver(false);
 
   const handleCoverChange = (e) => {
     const file = e.target.files?.[0];
@@ -220,8 +237,17 @@ const UploadFilmStep = () => {
 
       <div className="deposit-field-group">
         <label className="deposit-field-label">Vidéo * (mp4, mov, webm – max 300 Mo)</label>
-        <div className="deposit-upload-vignette">
-          <div className="deposit-upload-vignette-icon" aria-hidden><Icons.Upload /></div>
+        <div
+          className={`deposit-upload-vignette deposit-upload-vignette--video ${videoPreviewUrl ? 'deposit-upload-vignette--preview' : ''} ${videoDragOver ? 'deposit-upload-vignette--drag-over' : ''}`}
+          onClick={() => !videoPreviewUrl && videoRef.current?.click()}
+          onKeyDown={(e) => e.key === 'Enter' && !videoPreviewUrl && videoRef.current?.click()}
+          onDrop={handleVideoDrop}
+          onDragOver={handleVideoDragOver}
+          onDragLeave={handleVideoDragLeave}
+          role="button"
+          tabIndex={0}
+          aria-label={videoPreviewUrl ? 'Changer la vidéo' : 'Choisir ou glisser la vidéo'}
+        >
           <input
             ref={videoRef}
             type="file"
@@ -229,25 +255,36 @@ const UploadFilmStep = () => {
             onChange={handleVideoChange}
             className="deposit-file-input-hidden"
           />
-          <button
-            type="button"
-            className="deposit-upload-btn"
-            onClick={() => videoRef.current?.click()}
-          >
-            {files.video ? files.video.name : 'Choisir la vidéo'}
-          </button>
+          {videoPreviewUrl ? (
+            <>
+              <video
+                src={videoPreviewUrl}
+                controls
+                preload="metadata"
+                className="deposit-video-player deposit-video-player--in-zone"
+                onClick={(e) => e.stopPropagation()}
+              />
+              <button
+                type="button"
+                className="deposit-upload-btn"
+                onClick={(e) => { e.stopPropagation(); videoRef.current?.click(); }}
+              >
+                Changer la vidéo
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="deposit-upload-vignette-icon" aria-hidden><Icons.Upload /></div>
+              <button
+                type="button"
+                className="deposit-upload-btn"
+                onClick={(e) => { e.stopPropagation(); videoRef.current?.click(); }}
+              >
+                Choisir ou glisser la vidéo
+              </button>
+            </>
+          )}
         </div>
-        {videoPreviewUrl && (
-          <div className="deposit-video-preview">
-            <p className="deposit-field-label">Aperçu de la vidéo</p>
-            <video
-              src={videoPreviewUrl}
-              controls
-              preload="metadata"
-              className="deposit-video-player"
-            />
-          </div>
-        )}
       </div>
 
       <div className="deposit-grid-2">

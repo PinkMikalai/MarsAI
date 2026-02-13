@@ -13,7 +13,22 @@ export function buildSubmitFormData(form) {
   fd.append('birthdate', form.participant.birthdate || '');
   fd.append('country', form.participant.country || 'FR');
   fd.append('mobile_number', formatPhoneE164(form.participant.phone || ''));
+  fd.append('phone_number', formatPhoneE164(form.participant.phone_landline || ''));
   fd.append('address', form.participant.address || 'Non renseigné');
+
+  // Réseaux sociaux : form.participant.social_links = [{ platform, url }, ...]
+  const socialLinksArray = form.participant.social_links || [];
+  const socialPayload = {};
+  const counts = {};
+  socialLinksArray.forEach(({ platform, url }) => {
+    const u = (url || '').trim();
+    if (!u || !platform) return;
+    const n = (counts[platform] || 0) + 1;
+    counts[platform] = n;
+    const key = n === 1 ? platform : `${platform}_${n}`;
+    socialPayload[key] = u;
+  });
+  fd.append('social_media_links_json', JSON.stringify(socialPayload));
 
   fd.append('title', form.film.title || '');
   fd.append('title_en', form.film.title_en || form.film.title || '');
@@ -31,6 +46,7 @@ export function buildSubmitFormData(form) {
   const classification = form.film.classification === '100% AI' ? '100% AI' : 'Hybrid';
   fd.append('classification', classification);
 
+
   // Réseaux sociaux du réalisateur 
   const socialLinks = {}; // objet vide, accumulateur 
   if (form.socialLinks && Array.isArray(form.socialLinks)) { // form.socialLinks existe et c'est bien un tableau 
@@ -41,8 +57,6 @@ export function buildSubmitFormData(form) {
     });
   }
   fd.append('social_media_links_json', JSON.stringify({socialLinks}));
-
-
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
