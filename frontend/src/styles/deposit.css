@@ -185,6 +185,93 @@
   background-clip: text;
 }
 
+/* ---------- GUIDES FORMATS (étape 1) ---------- */
+.deposit-formats-guide {
+  margin-bottom: 24px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+}
+
+.deposit-formats-guide-title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #e8e8e8;
+  margin: 0 0 8px 0;
+}
+
+.deposit-formats-guide-intro {
+  font-family: 'Arimo', sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(232, 232, 232, 0.9);
+  margin: 0 0 14px 0;
+}
+
+.deposit-formats-guide-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.deposit-formats-guide-block {
+  margin-bottom: 12px;
+}
+
+.deposit-formats-guide-block:last-child {
+  margin-bottom: 0;
+}
+
+.deposit-formats-guide-block-title {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #51A2FF;
+  margin-bottom: 4px;
+}
+
+.deposit-formats-guide-block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e8e8e8;
+}
+
+.deposit-formats-guide-block ul li {
+  position: relative;
+  padding-left: 12px;
+  margin-bottom: 2px;
+}
+
+.deposit-formats-guide-block ul li::before {
+  content: '–';
+  position: absolute;
+  left: 0;
+}
+
+.deposit-step1-hint {
+  width: 100%;
+  flex-basis: 100%;
+  margin-top: 12px;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #1a1a1a;
+  background: linear-gradient(135deg, #FBC700 0%, #F0B100 100%);
+  border: 1px solid rgba(251, 199, 0, 0.8);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(251, 199, 0, 0.25);
+}
+
 /* ---------- CONDITIONS (étape consentement) ---------- */
 .deposit-conditions-title {
   font-family: 'Arimo', sans-serif;
@@ -285,8 +372,76 @@
   font-size: 11px;
   line-height: 15px;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
+}
+
+/* Menu déroulant pays avec drapeaux dans la liste */
+.deposit-country-select {
+  position: relative;
+}
+
+.deposit-country-trigger {
+  position: relative;
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  color: inherit;
+}
+
+.deposit-country-trigger::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 5px solid transparent;
+  border-top-color: currentColor;
+  margin-top: 2px;
+  opacity: 0.7;
+}
+
+.deposit-country-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 4px 0 0;
+  padding: 6px 0;
+  max-height: 280px;
+  overflow-y: auto;
+  list-style: none;
+  background: rgba(40, 40, 40, 0.98);
+  border: 1px solid rgba(242, 242, 242, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+}
+
+.deposit-country-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
   color: #e8e8e8;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.deposit-country-option:hover,
+.deposit-country-option--selected {
+  background: rgba(173, 70, 255, 0.15);
+}
+
+.deposit-country-flag--option.fi {
+  width: 1.5rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+.deposit-country-option-label {
+  flex: 1;
 }
 
 /* Select : fond sombre dans la zone, options en liste avec fond clair + texte sombre */
@@ -312,6 +467,71 @@
 .deposit-field-wrap:focus-within {
   border-color: rgba(173, 70, 255, 0.4);
   box-shadow: 0 0 0 2px rgba(173, 70, 255, 0.12);
+}
+
+.deposit-field-wrap--with-flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deposit-country-select > .deposit-country-flag {
+  margin-left: 12px;
+}
+
+.deposit-field-wrap--phone-prefix {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deposit-phone-prefix {
+  flex-shrink: 0;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(232, 232, 232, 0.9);
+}
+
+.deposit-phone-prefix-select {
+  flex-shrink: 0;
+  margin-left: 12px;
+  min-width: 90px;
+  height: 40px;
+  padding: 0 8px;
+  background: rgba(60, 60, 60, 0.95);
+  border: 1px solid rgba(242, 242, 242, 0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #e8e8e8;
+  cursor: pointer;
+}
+
+.deposit-phone-prefix-select:focus {
+  outline: none;
+  border-color: rgba(173, 70, 255, 0.4);
+}
+
+.deposit-input--phone {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Drapeaux SVG via flag-icons (fi fi-xx) */
+.deposit-country-flag.fi {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 1.5rem;
+  background-size: cover;
+  background-position: center;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.deposit-input--with-flag {
+  flex: 1;
+  min-width: 0;
 }
 
 .deposit-input {
@@ -359,6 +579,178 @@
 
 .deposit-textarea:focus {
   outline: none;
+}
+
+.deposit-field-hint {
+  font-size: 12px;
+  color: rgba(232, 232, 232, 0.75);
+  margin: 0 0 8px 0;
+}
+
+.deposit-social-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.deposit-social-links-label {
+  color: #e8e8e8 !important;
+}
+
+.deposit-social-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.deposit-social-links .deposit-input,
+.deposit-social-links .deposit-platform-trigger span {
+  color: #e8e8e8;
+}
+
+.deposit-social-link-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.deposit-social-link-row:last-of-type {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.deposit-platform-select-wrap {
+  position: relative;
+}
+
+.deposit-platform-select {
+  position: relative;
+  flex: 0 0 auto;
+  min-width: 180px;
+}
+
+.deposit-platform-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  color: #e8e8e8;
+}
+
+.deposit-social-platform-icon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.deposit-platform-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 4px 0 0;
+  padding: 6px 0;
+  min-width: 200px;
+  max-height: 280px;
+  overflow-y: auto;
+  list-style: none;
+  background: rgba(40, 40, 40, 0.98);
+  border: 1px solid rgba(242, 242, 242, 0.25);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 25;
+}
+
+.deposit-platform-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: #e8e8e8;
+  font-size: 14px;
+  transition: background 0.15s ease;
+}
+
+.deposit-platform-option:hover,
+.deposit-platform-option--selected {
+  background: rgba(173, 70, 255, 0.15);
+}
+
+.deposit-platform-option .deposit-social-platform-icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.deposit-social-link-row .deposit-input--social-url {
+  flex: 1;
+  min-width: 180px;
+}
+
+.deposit-social-link-remove {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(242, 242, 242, 0.3);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #e8e8e8;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.deposit-social-link-remove:hover {
+  background: rgba(200, 60, 60, 0.3);
+  border-color: rgba(200, 60, 60, 0.5);
+}
+
+.deposit-social-link-add {
+  align-self: flex-start;
+  min-width: 44px;
+  height: 40px;
+  padding: 0 16px;
+  border: 2px dashed rgba(242, 242, 242, 0.4);
+  border-radius: 10px;
+  background: transparent;
+  color: #e8e8e8;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.deposit-social-link-add:hover:not(:disabled) {
+  background: rgba(173, 70, 255, 0.1);
+  border-color: rgba(173, 70, 255, 0.5);
+}
+
+.deposit-social-link-add:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.deposit-input--social-platform {
+  flex: 0 0 auto;
+  min-width: 180px;
+}
+
+.deposit-input--social-url {
+  flex: 1;
+  min-width: 200px;
 }
 
 .deposit-char-count {
@@ -607,6 +999,11 @@
   cursor: pointer;
 }
 
+.deposit-upload-vignette--drag-over {
+  border-color: rgba(173, 70, 255, 0.6);
+  background: rgba(173, 70, 255, 0.08);
+}
+
 .deposit-upload-preview-img {
   display: block;
   max-width: 100%;
@@ -649,23 +1046,50 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: #000000;
-  transition: transform var(--deposit-duration) var(--deposit-ease),
-    box-shadow var(--deposit-duration) var(--deposit-ease);
+  transition: opacity 0.4s var(--deposit-ease),
+    transform 0.35s var(--deposit-ease),
+    box-shadow 0.35s var(--deposit-ease),
+    filter 0.4s var(--deposit-ease);
 }
 
-.deposit-btn-submit:hover {
+.deposit-btn-submit:hover:not(:disabled) {
   transform: translateY(-3px);
   box-shadow: 0 8px 28px rgba(251, 199, 0, 0.4);
 }
 
-.deposit-btn-submit:active {
+.deposit-btn-submit:active:not(:disabled) {
   transform: translateY(-1px) scale(0.99);
 }
 
 .deposit-btn-submit:disabled {
-  opacity: 0.7;
+  opacity: 0.45;
   cursor: not-allowed;
-  transform: none;
+  transform: scale(0.98);
+  filter: saturate(0.6);
+}
+
+.deposit-btn-submit:not(:disabled) {
+  opacity: 1;
+  filter: saturate(1);
+}
+
+@keyframes deposit-btn-just-enabled {
+  0% {
+    transform: scale(0.98);
+    box-shadow: 0px 2px 5px #000000;
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 6px 24px rgba(251, 199, 0, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0px 2px 5px #000000;
+  }
+}
+
+.deposit-btn-submit--just-enabled {
+  animation: deposit-btn-just-enabled 0.6s var(--deposit-ease) forwards;
 }
 
 .deposit-btn-collab {
@@ -850,12 +1274,22 @@
   display: none;
 }
 
-.deposit-video-preview {
-  margin-top: 12px;
+.deposit-upload-vignette--video {
+  min-height: 120px;
 }
 
-.deposit-video-preview .deposit-field-label {
-  margin-bottom: 8px;
+.deposit-upload-vignette--video.deposit-upload-vignette--preview {
+  min-height: 200px;
+  padding: 12px;
+}
+
+.deposit-video-player--in-zone {
+  width: 100%;
+  max-width: 100%;
+  max-height: 320px;
+  border-radius: 8px;
+  background: #000;
+  display: block;
 }
 
 .deposit-video-player {

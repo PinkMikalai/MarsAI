@@ -58,13 +58,14 @@ async function getAllVideos(req, res) {
 async function getVideoById(req, res) {
     try {
         // Récupérer le rôle de l'utilisateur s'il est connecté (sinon role = undefined)
-        const role = req.user?.role;
+        let role = req.user?.role;
+       
         
         // Recuperer la video avec TOUTES ses infos
         const basicVideoData = await getVideoByIdModel(req.params.id);
  
         // Si la video n'est pas trouvée, afficher l'erreur
-        if (!basicVideoData || !basicVideoData[0]) {
+        if (!basicVideoData) {
             return res.status(404).json({
                 message: "Video non trouvée",
                 status: false
@@ -102,7 +103,7 @@ async function getVideoById(req, res) {
             console.log("basic video data", basicVideoData);
             return res.status(200).json({
                 message: "Video recuperée avec succès",
-                data: basicVideoData[0],
+                data: basicVideoData,
                 status: true,
             });
         }
