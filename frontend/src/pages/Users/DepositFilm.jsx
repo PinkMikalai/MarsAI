@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
-import { DepositFormProvider } from '../../context/DepositFormContext';
+import { DepositFormProvider, useDepositForm } from '../../context/DepositFormContext';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import Header from '../../components/layout/Header';
@@ -17,10 +17,25 @@ const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, Finalisat
 
 const DepositFilmInner = () => {
   const navigate = useNavigate();
+  const { form } = useDepositForm();
   const { currentStepIndex, isFirstStep, isLastStep, back, next } =
     useMultiStepForm(STEP_COMPONENTS);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successData, setSuccessData] = useState(null);
+
+  const consentComplete = form.consent.accept_age_18 && form.consent.accept_rules && form.consent.accept_ownership;
+  const canGoNext = currentStepIndex !== 0 || consentComplete;
+
+  const [justEnabled, setJustEnabled] = useState(false);
+  const prevConsentRef = React.useRef(consentComplete);
+  React.useEffect(() => {
+    if (currentStepIndex === 0 && consentComplete && !prevConsentRef.current) {
+      setJustEnabled(true);
+      const t = setTimeout(() => setJustEnabled(false), 900);
+      return () => clearTimeout(t);
+    }
+    prevConsentRef.current = consentComplete;
+  }, [consentComplete, currentStepIndex]);
 
   const handleSuccess = (result) => {
     console.log('🎉 Succès reçu:', result);
@@ -100,11 +115,26 @@ const DepositFilmInner = () => {
               <button
                 type="button"
                 onClick={next}
-                className="deposit-btn-submit"
+                className={`deposit-btn-submit ${justEnabled ? 'deposit-btn-submit--just-enabled' : ''}`}
+                disabled={!canGoNext}
               >
                 Étape {currentStepIndex + 2}
               </button>
             )}
+            <AnimatePresence mode="wait">
+              {currentStepIndex === 0 && !consentComplete && (
+                <motion.p
+                  className="deposit-step1-hint"
+                  role="status"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  Cochez les cases ci-dessus (âge 18 ans et acceptation des conditions) pour passer à l’étape suivante.
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
         </div>
 

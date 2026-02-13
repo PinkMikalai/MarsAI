@@ -49,6 +49,48 @@ export const COUNTRIES_ISO3166 = [
   { value: 'OTHER', label: 'Autre' },
 ];
 
+/** Indicatif téléphonique (sans +) et infos pour le champ selon le pays. */
+export const COUNTRY_PHONE = {
+  FR: { code: '33', placeholder: '6 12 34 56 78', maxLength: 9 },
+  BE: { code: '32', placeholder: '4 12 34 56 78', maxLength: 9 },
+  CH: { code: '41', placeholder: '78 123 45 67', maxLength: 9 },
+  CA: { code: '1', placeholder: '514 555 1234', maxLength: 10 },
+  US: { code: '1', placeholder: '555 123 4567', maxLength: 10 },
+  GB: { code: '44', placeholder: '7700 900123', maxLength: 10 },
+  DE: { code: '49', placeholder: '151 12345678', maxLength: 11 },
+  ES: { code: '34', placeholder: '612 34 56 78', maxLength: 9 },
+  IT: { code: '39', placeholder: '312 345 6789', maxLength: 10 },
+  MA: { code: '212', placeholder: '612 345 678', maxLength: 9 },
+  TN: { code: '216', placeholder: '12 345 678', maxLength: 8 },
+  DZ: { code: '213', placeholder: '551 23 45 67', maxLength: 9 },
+  SN: { code: '221', placeholder: '70 123 45 67', maxLength: 9 },
+  JP: { code: '81', placeholder: '90 1234 5678', maxLength: 10 },
+  CN: { code: '86', placeholder: '138 1234 5678', maxLength: 11 },
+  BR: { code: '55', placeholder: '11 91234 5678', maxLength: 11 },
+};
+
+/** Options pour le sélecteur d’indicatif téléphonique (+33 FR, +32 BE, …). */
+export const PHONE_PREFIX_OPTIONS = COUNTRIES_ISO3166
+  .filter((c) => c.value !== 'OTHER' && COUNTRY_PHONE[c.value])
+  .map((c) => ({ value: c.value, label: `+${COUNTRY_PHONE[c.value].code} ${c.value}` }));
+
+/** Réseaux sociaux : plateforme au choix + lien (max 10). */
+export const SOCIAL_PLATFORMS = [
+  { value: '', label: '— Choisir un réseau —' },
+  { value: 'youtube', label: 'YouTube' },
+  { value: 'instagram', label: 'Instagram' },
+  { value: 'facebook', label: 'Facebook' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'x', label: 'X (Twitter)' },
+  { value: 'artstation', label: 'ArtStation' },
+  { value: 'behance', label: 'Behance' },
+  { value: 'vimeo', label: 'Vimeo' },
+  { value: 'tiktok', label: 'TikTok' },
+  { value: 'other', label: 'Autre' },
+];
+
+export const SOCIAL_LINKS_MAX = 10;
+
 // formatBirthdateForApi , formate la date de naissance pour l'API ------------//
 export const formatBirthdateForApi = (dateStr) => {
   if (!dateStr) return '';

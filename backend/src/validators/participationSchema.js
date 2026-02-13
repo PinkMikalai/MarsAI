@@ -127,6 +127,13 @@ const participationSchema = z.object({
         .trim()
         .max(20, "Phone number too long")
         .regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number starting with '+' and your country code (e.g., +33612345678)"),
+    // TÉLÉPHONE FIXE (optionnel)
+    phone_number: z
+        .union([
+            z.literal(""),
+            z.string().trim().max(20, "Phone number too long").regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number (e.g., +33123456789)"),
+        ])
+        .optional(),
     // ADDRESSE 
     address: z
         .string({ required_error: "Address is required" })

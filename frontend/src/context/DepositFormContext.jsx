@@ -14,7 +14,11 @@ const initialState = {
     birthdate: '',
     country: 'FR',
     phone: '',
+    phone_country: '', // indicatif mobile (vide = pays du formulaire)
+    phone_landline: '',
+    phone_landline_country: '', // indicatif fixe (vide = pays du formulaire)
     address: '',
+    social_links: [], // { platform: string, url: string }[], max 10
   },
   subscribe_newsletter: false,
   film: {

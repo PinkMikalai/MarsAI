@@ -79,7 +79,7 @@ const Hero = () => {
         </p>
         <div className="hero-cta">
           <Link to="/deposer-un-film" className="hero-btn hero-btn-primary">
-            S&apos;INSCRIRE
+            PARTICIPER
           </Link>
           <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">
             EN SAVOIR PLUS

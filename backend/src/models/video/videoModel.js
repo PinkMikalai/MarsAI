@@ -44,7 +44,10 @@ async function createVideoModel(videoData) {
             videoData.phone_number || null,
             videoData.address,
             // conversion de l'objet JS en chaîne de caractères JSON pour le stockage 
+<<<<<<< Front-AntoineProfileAdmin
+=======
             // videoData.social_media_links_json ? JSON.stringify(videoData.social_media_links_json) : null,
+>>>>>>> test
             videoData.social_media_links_json || null,
             videoData.acquisition_source_id || null
         ]);
