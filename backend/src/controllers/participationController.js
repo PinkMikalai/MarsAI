@@ -65,11 +65,23 @@ async function addParticipation(req, res) {
             })
         }
 
+        let contributorsToSave = []; 
+        try {
+            if (typeof validatedData.contributor === 'string') {
+                contributorsToSave = JSON.parse(validatedData.contributor);
+            } else {
+                contributorsToSave = validatedData.contributor || [];
+            }
+        } catch (error) {
+            return res.status(400).json({
+                message: "Contributors format is invalid"
+            }); 
+        }
         // étape 2 : insertion des contributeurs
-        if (validatedData.contributor && validatedData.contributor.length > 0) {
+        if (contributorsToSave && contributorsToSave.length > 0) {
             // console.log("tentative d'insertion des contributeurs");
             // on appelle le modèle en lui passant : le tableau des contributeurs et l'id de la video que l'on veut créer
-            await contributorModel.createContributorsModel(validatedData.contributor, newVideoId);
+            await contributorModel.createContributorsModel(contributorsToSave, newVideoId);
             // console.log("étape 3 : succès (contributeurs liés)");
         }
 
