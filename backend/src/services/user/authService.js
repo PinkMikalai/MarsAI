@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import {createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, deleteUserModel}  from '../../models/user/userModel.js';
-import { createInvitationModel, getInvitationByJtiModel, markInvitationAsUsedMdel } from '../../models/admin/invitationModel.js';
+import { createInvitationModel, getInvitationByJtiModel, markInvitationAsUsedModel } from '../../models/admin/invitationModel.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -83,7 +83,7 @@ export async function register({ token, firstname, lastname, password }) {
     // Hachage du mot de passe
     const hash = await bcrypt.hash(password, 10);
 
-    // Insrtion dans la db
+    // Insertion dans la db
    const userId = await createUserModel(
     {
         email: decoded.email,
@@ -91,7 +91,11 @@ export async function register({ token, firstname, lastname, password }) {
         lastname,
         password_hash: hash,
         role_id: roleId
-    }) ; 
+    }) ;
+    
+    const marked = await markInvitationAsUsedModel(decoded.jti);
+    console.log("Mraquage de l'invitation", marked);
+    
     return {
         id: userId,
         email : decoded.email,

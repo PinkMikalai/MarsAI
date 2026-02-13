@@ -11,7 +11,7 @@ async function createInvitationModel({ jti, email, role}) {
 
 async function getInvitationByJtiModel(jti) {
 
-    const query = `SELECT FRON invitation id, email, role WHERE jti = ?`;
+    const query = `SELECT id, email, role , status FROM invitation  WHERE jti = ?`;
     const [rows] = await pool.execute( query, [jti]);
     return rows[0];
 
@@ -19,13 +19,13 @@ async function getInvitationByJtiModel(jti) {
 
 async function getInvitationByIdModel(id) {
 
-    const query = `SELECT FRON invitation id, email, role WHERE id = ?`;
+    const query = `SELECT id, email, role , status FROM invitation WHERE id = ?`;
     const [rows] = await pool.execute( query, [id]);
     return rows[0];
 
 }
 
-async function markInvitationAsUsedMdel(jti) {
+async function markInvitationAsUsedModel(jti) {
     const query = `UPDATE invitation SET status = 'used' WHERE jti = ?`;
     const [result] = await pool.execute( query, [jti]);
     return result.affectedRows > 0;
@@ -35,5 +35,5 @@ module.exports = {
     createInvitationModel,
     getInvitationByIdModel,
     getInvitationByJtiModel,
-    markInvitationAsUsedMdel
+    markInvitationAsUsedModel
 }
