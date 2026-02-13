@@ -30,7 +30,19 @@ export function buildSubmitFormData(form) {
   
   const classification = form.film.classification === '100% AI' ? '100% AI' : 'Hybrid';
   fd.append('classification', classification);
-  fd.append('social_media_links_json', JSON.stringify({}));
+
+  // Réseaux sociaux du réalisateur 
+  const socialLinks = {}; // objet vide, accumulateur 
+  if (form.socialLinks && Array.isArray(form.socialLinks)) { // form.socialLinks existe et c'est bien un tableau 
+    form.socialLinks.forEach(link => {
+      if (link.platform && link.url) {
+        socialLinks[link.platform.trim()] = link.url.trim();
+      }
+    });
+  }
+  fd.append('social_media_links_json', JSON.stringify({socialLinks}));
+
+
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
