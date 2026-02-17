@@ -143,6 +143,20 @@ CREATE INDEX idx_video_acquisition_source ON video(acquisition_source_id);
 -- =====================================================
 
 
+-- Table INVITATION (dépend de USER)
+CREATE TABLE IF NOT EXISTS invitation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    jti VARCHAR(255) NOT NULL UNIQUE,
+    type ENUM('registration', 'password_reset') DEFAULT 'registration',
+    email VARCHAR(255) NOT NULL,
+    user_id INT DEFAULT NULL,
+    role VARCHAR(50) DEFAULT NULL,
+    status ENUM('pending', 'used', 'expired') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_invitation_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 CREATE TABLE IF NOT EXISTS cms (
     id INT AUTO_INCREMENT PRIMARY KEY,
     element VARCHAR(100) NOT NULL UNIQUE,
