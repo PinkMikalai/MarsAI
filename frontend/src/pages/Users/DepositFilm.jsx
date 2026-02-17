@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
@@ -21,6 +21,10 @@ const DepositFilmInner = () => {
   const { currentStepIndex, isFirstStep, isLastStep, back, next } =
     useMultiStepForm(STEP_COMPONENTS);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentStepIndex]);
   const [successData, setSuccessData] = useState(null);
 
   const consentComplete = form.consent.accept_age_18 && form.consent.accept_rules && form.consent.accept_ownership;

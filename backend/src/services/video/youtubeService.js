@@ -1,8 +1,8 @@
-const path = require('path');
-const fs = require('fs');
-const { google } = require('googleapis');
-const { getOAuth2Client } = require('../../config/youtubeConfig');
-const { UPLOAD_BASE } = require('../../middlewares/uploadMiddleware');
+import path from 'path';
+import fs from 'fs';
+import { google } from 'googleapis';
+import { getOAuth2Client } from '../../config/youtubeConfig.js';
+import { UPLOAD_BASE } from '../../middlewares/uploadMiddleware.js';
 
 
 async function uploadToYouTube(videoPath, title, description, coverPath = null, srtPath = null) {
@@ -195,6 +195,6 @@ async function uploadCaption(youtube, videoId, srtPath) {
   });
 }
 
-module.exports = { uploadToYouTube };
+export { uploadToYouTube };
 
 

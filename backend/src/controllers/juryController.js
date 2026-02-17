@@ -1,16 +1,11 @@
-// JURY - CONTROLLER
-
-const { 
+import { 
     createJuryModel, 
     getAllJuryModel, 
     getJuryByIdModel, 
     updateJuryModel, 
     deleteJuryModel 
-} = require("../models/juryModel.js");
-
-const { deleteOldFile } = require("../services/deleteFileService.js");
-
-// nos fonctions controllers
+} from "../models/juryModel.js";
+import { deleteOldFile } from "../services/deleteFileService.js";
 
 async function createJury(req, res) {
     console.log("test create jury");
@@ -19,19 +14,15 @@ async function createJury(req, res) {
         console.log("req.body:", req.body);
         console.log("req.files:", req.files);
 
-        // si un fichier illustration a ete uploade, on recupere son nom
         if (req.files && req.files.illustration) {
             req.body.illustration = req.files.illustration[0].filename;
             console.log("fichier illustration uploade:", req.body.illustration);
         }
 
-        //creer le jury
         const insertId = await createJuryModel(req.body);
         console.log("jury cree, id:", insertId);
 
-        //verifier si la creation a reussi
         if (insertId) {
-            //recuperer le jury cree
             const newJury = await getJuryByIdModel(insertId);
             console.log("jury recupere:", newJury);
 
@@ -60,7 +51,6 @@ async function getAllJury(req, res) {
     console.log("test get all jury");
 
     try {
-        //recuperer tous les jurys
         const jurys = await getAllJuryModel();
         console.log("jurys recuperes:", jurys);
 
@@ -84,11 +74,9 @@ async function getJuryById(req, res) {
     console.log("id:", req.params.id);
 
     try {
-        //recuperer le jury par id
         const jury = await getJuryByIdModel(req.params.id);
         console.log("jury recupere:", jury);
 
-        //si le jury n est pas trouve
         if (!jury) {
             console.log("jury non trouve");
             return res.status(404).json({
@@ -120,7 +108,6 @@ async function updateJury(req, res) {
         console.log("req.body:", req.body);
         console.log("req.files:", req.files);
 
-        //verifier si le jury existe
         const existingJury = await getJuryByIdModel(req.params.id);
         if (!existingJury) {
             console.log("jury non trouve");
@@ -130,29 +117,22 @@ async function updateJury(req, res) {
             });
         }   
 
-        // sauvegarder l'ancien nom de fichier avant la mise a jour
         const oldIllustrationFileName = existingJury.illustration;
         console.log("ancien fichier:", oldIllustrationFileName);
 
-        // si un fichier illustration a ete uploade, on recupere son nom
         if (req.files && req.files.illustration) {
             req.body.illustration = req.files.illustration[0].filename;
             console.log("nouveau fichier illustration uploade:", req.body.illustration);
         }
 
-        //mettre a jour le jury
         const result = await updateJuryModel(req.params.id, req.body);
         console.log("result:", result);
 
-        //verifier si la mise a jour a reussi
         if (result) {
-            // si un nouveau fichier a ete uploade et qu'il y avait un ancien fichier
-            // on supprime l'ancien fichier du serveur via le service
             if (req.files && req.files.illustration && oldIllustrationFileName) {
                 deleteOldFile(oldIllustrationFileName, 'images');
             }
 
-            //recuperer le jury mis a jour
             const updatedJury = await getJuryByIdModel(req.params.id);
             console.log("jury mis a jour:", updatedJury);
 
@@ -182,7 +162,6 @@ async function deleteJury(req, res) {
     console.log("id:", req.params.id);
 
     try {
-        //verifier si le jury existe
         const existingJury = await getJuryByIdModel(req.params.id);
         if (!existingJury) {
             console.log("jury non trouve");
@@ -192,17 +171,13 @@ async function deleteJury(req, res) {
             }); 
         }
 
-        //recuperation du nom de l illustration du jury
         const illustrationFileName = existingJury.illustration;
         console.log("nom de l illustration:", illustrationFileName);
 
-        //supprimer le jury de la bdd
         const result = await deleteJuryModel(req.params.id);
         console.log("result:", result);
 
-        //verifier si la suppression a reussi
         if (result) {
-            //supprimer l illustration du jury du serveur
             if (illustrationFileName) {
                 deleteOldFile(illustrationFileName, 'images');
             }
@@ -226,10 +201,11 @@ async function deleteJury(req, res) {
         });
     }
 }
-module.exports = {  
+
+export {  
     createJury,
     getAllJury,
     getJuryById,
     updateJury,
     deleteJury,
-}
+};

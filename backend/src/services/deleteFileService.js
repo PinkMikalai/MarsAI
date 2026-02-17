@@ -1,7 +1,11 @@
 // DELETE FILE SERVICE - suppression d anciens fichiers lors des updates
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // supprimer un ancien fichier
 function deleteOldFile(fileName, fileType = 'images') {
@@ -72,7 +76,4 @@ function deleteMultipleFiles(fileNames = [], fileType = 'images') {
     };
 }
 
-module.exports = {
-    deleteOldFile,
-    deleteMultipleFiles
-};
+export { deleteOldFile, deleteMultipleFiles };

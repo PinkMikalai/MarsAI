@@ -26,7 +26,7 @@ const initialState = {
     title_en: '',
     description: '',
     synopsis_en: '',
-    language: 'fr',
+    language: 'FR',
     duration: '',
     classification: 'Hybrid',
   },
@@ -78,7 +78,7 @@ export function DepositFormProvider({ children }) {
       ...prev,
       collaborators: [
         ...prev.collaborators,
-        { fullname: '', profession: '', email: '' },
+        { firstname: '', lastname: '', email: '', profession: '' },
       ],
     }));
   }, []);

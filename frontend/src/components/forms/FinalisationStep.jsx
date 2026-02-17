@@ -54,41 +54,53 @@ const FinalisationStep = ({ onSuccess, onError }) => {
 
       {form.collaborators.map((col, index) => (
         <div key={index} className="deposit-field-group deposit-collab-row">
-          <div className="deposit-grid-3">
+          <div className="deposit-grid-2 deposit-collab-grid">
             <div className="deposit-field-group deposit-field-group--no-margin">
-              <label className="deposit-field-label deposit-field-label--jakarta">Prénom et nom *</label>
+              <label className="deposit-field-label deposit-field-label--jakarta">Prénom *</label>
               <div className="deposit-field-wrap">
                 <input
                   type="text"
                   className="deposit-input"
-                  placeholder="Marie Martin"
-                  value={col.fullname}
-                  onChange={(e) => updateCollaborator(index, 'fullname', e.target.value)}
+                  placeholder="Marie"
+                  value={col.firstname ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'firstname', e.target.value)}
                 />
               </div>
             </div>
             <div className="deposit-field-group deposit-field-group--no-margin">
-              <label className="deposit-field-label deposit-field-label--jakarta">Profession *</label>
+              <label className="deposit-field-label deposit-field-label--jakarta">Nom *</label>
               <div className="deposit-field-wrap">
                 <input
                   type="text"
                   className="deposit-input"
-                  placeholder="Sound Designer"
-                  value={col.profession}
-                  onChange={(e) => updateCollaborator(index, 'profession', e.target.value)}
+                  placeholder="Martin"
+                  value={col.lastname ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'lastname', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="deposit-field-group deposit-field-group--no-margin">
+              <label className="deposit-field-label deposit-field-label--jakarta">Adresse mail *</label>
+              <div className="deposit-field-wrap">
+                <input
+                  type="email"
+                  className="deposit-input"
+                  placeholder="marie@example.com"
+                  value={col.email ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'email', e.target.value)}
                 />
               </div>
             </div>
             <div className="deposit-field-group deposit-field-group--no-margin deposit-field-group--inline">
               <div className="deposit-field-group--flex-1">
-                <label className="deposit-field-label deposit-field-label--jakarta">Email *</label>
+                <label className="deposit-field-label deposit-field-label--jakarta">Rôle de production *</label>
                 <div className="deposit-field-wrap">
                   <input
-                    type="email"
+                    type="text"
                     className="deposit-input"
-                    placeholder="marie@example.com"
-                    value={col.email}
-                    onChange={(e) => updateCollaborator(index, 'email', e.target.value)}
+                    placeholder="Sound Designer"
+                    value={col.profession ?? ''}
+                    onChange={(e) => updateCollaborator(index, 'profession', e.target.value)}
                   />
                 </div>
               </div>

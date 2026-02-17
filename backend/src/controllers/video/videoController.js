@@ -1,4 +1,3 @@
-//import de nos models (reqs SQL)
 import {
     createVideoModel, 
     getAllVideosModel,
@@ -22,22 +21,14 @@ import {
 // VIDEO - CRUD
 //=====================================================
 
-
-//create video
 async function createVideo(req, res) {
     console.log("test creation de video");
 }
-// get all videos
-async function getAllVideos(req, res) {
-    
-    //ici notre logique de recuperation de toutes les videos avec leurs infos
 
+async function getAllVideos(req, res) {
     try {
         const videos = await getAllVideosModel();
-        //ici console log pour cmder pour verifier si les videos et autres infos sont ete bien recuperee
         console.log("videos", videos);
-        
-
 
         res.status(200).json({
             success: true,
@@ -54,25 +45,18 @@ async function getAllVideos(req, res) {
     }
 }
 
-// get video by id avec TOUTES les infos (tags, stills, contributors, awards, memos)
 async function getVideoById(req, res) {
     try {
-        // Récupérer le rôle de l'utilisateur s'il est connecté (sinon role = undefined)
         let role = req.user?.role;
-       
         
-        // Recuperer la video avec TOUTES ses infos
         const basicVideoData = await getVideoByIdModel(req.params.id);
  
-        // Si la video n'est pas trouvée, afficher l'erreur
         if (!basicVideoData) {
             return res.status(404).json({
                 message: "Video non trouvée",
                 status: false
             });
         }
-        
-        // Si l'utilisateur est Admin ou Super-admin → données complètes admin
         else if (role === "Admin" || role === "Super-admin") {
             const adminVideoData = await getAdminVideoDataByIdModel(req.params.id);
             console.log("admin video data", adminVideoData);
@@ -85,7 +69,6 @@ async function getVideoById(req, res) {
                 status: true,
             });
         }
-        // Si l'utilisateur est Selector → données selector
         else if (role === "Selector") {
             const selectorVideoData = await getSelectorVideoDataByIdModel(req.params.id, req.user?.id);
             console.log("selector video data", selectorVideoData);
@@ -98,7 +81,6 @@ async function getVideoById(req, res) {
                 status: true,
             });
         }
-        // Sinon (pas de rôle ou rôle non reconnu) → données basiques uniquement
         else {
             console.log("basic video data", basicVideoData);
             return res.status(200).json({
@@ -116,42 +98,33 @@ async function getVideoById(req, res) {
     }
 }
 
-// update video
 async function updateVideo(req, res) {
     console.log("test updateVideo");
 
     try {
-        // separation des tags de mon video et autres infos sur notre video
         const { tags, stills, ...videoData } = req.body;
         console.log("tags fournis", tags);
         console.log("stills fournis", stills);
-        
-        //autres infos sur notre video
         console.log("donnees video", videoData);
         
-        //mettre a jour la video (table video uniquement)
         const updated = await updateVideoModel(req.params.id, videoData);
         console.log("updated", updated);
         
-        //mettre a jour les tags dans video_tag si fournis
         let updatedTags = [];
         if (tags && Array.isArray(tags)) {
             updatedTags = await updateTagsService(req.params.id, tags);
             console.log("tags mis a jour", updatedTags);
         }
         
-        //mettre a jour les stills dans still si fournis
         let updatedStills = [];
         if (stills && Array.isArray(stills)) {
             updatedStills = await updateStillsByVideoIdModel(req.params.id, stills);
             console.log("stills mis a jour", updatedStills);
         }
         
-        //recuperer la video mise a jour
         const video = await getVideoByIdModel(req.params.id);
         console.log("video", video);
         
-        //recuperer tous les tags de la video depuis video_tag
         const videoTags = await getVideoTagsService(req.params.id);
         console.log("tous les tags de la video", videoTags);
         
@@ -171,12 +144,10 @@ async function updateVideo(req, res) {
     }
 }
 
-// delete video
 async function deleteVideo(req, res) {
     console.log("test deleteVideo");
-
-    //ici notour logique de suppression d une video
 }
+
 export {
     createVideo,
     getAllVideos,

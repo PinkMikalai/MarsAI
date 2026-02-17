@@ -1,10 +1,5 @@
-const { z } = require('zod'); 
-
-
-// import des autres schemas
-const { firstname, lastname, imageSchema, bioSchema } = require('./commonSchema');
-
-
+import { z } from 'zod';
+import { firstname, lastname, imageSchema, bioSchema } from './commonSchema.js';
 
 const jurySchema = z.object({
     firstname: firstname,
@@ -13,4 +8,4 @@ const jurySchema = z.object({
     bio: bioSchema.optional(),
 });
 
-module.exports = { jurySchema };
+export { jurySchema };
