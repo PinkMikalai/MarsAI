@@ -1,4 +1,4 @@
-const { pool } = require('../../db/index.js');
+import { pool } from '../../db/index.js';
 
 // create award
 async function createAwardModel(awardData) {
@@ -92,7 +92,7 @@ async function getVideosByAwardIdModel(awardId) {
     return rows;
 }
 
-module.exports = {
+export {
     createAwardModel,
     getAllAwardsModel,
     getAwardByIdModel,

@@ -1,4 +1,4 @@
-const { pool } =require("../../db/index.js")
+import { pool } from "../../db/index.js";
 
 // création d'un user
 async function createUserModel(userData) {
@@ -115,7 +115,7 @@ async function deleteUserModel(id) {
     }
 }
 
-module.exports = {
+export {
     createUserModel,
     getUserByEmailModel,
     getUserByIdModel,

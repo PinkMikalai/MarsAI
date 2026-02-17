@@ -1,23 +1,22 @@
-const { Router } = require("express");
-const { 
+import { Router } from "express";
+import { 
     createVideo, 
     getAllVideos, 
     getVideoById, 
     updateVideo, 
     deleteVideo 
-} = require("../controllers/video/videoController");
-const { createSelectorMemo } = require("../controllers/video/selectorMemoController");
-const optionalAuthMiddleware = require("../middlewares/optionalAuthMiddleware");
-const checkRole = require("../middlewares/checkRoleMiddleware");
+} from "../controllers/video/videoController.js";
+import { createSelectorMemo } from "../controllers/video/selectorMemoController.js";
+import optionalAuthMiddleware from "../middlewares/optionalAuthMiddleware.js";
+import checkRole from "../middlewares/checkRoleMiddleware.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
 const router = Router();
-const authMiddleware = require("../middlewares/authMiddleware");
 
-// nos routes avec les methodes
 router.post("/", createVideo);
-router.post("/:id/memo",authMiddleware, checkRole("Selector"), createSelectorMemo); //notation de la video par selector
+router.post("/:id/memo", authMiddleware, checkRole("Selector"), createSelectorMemo);
 router.get("/", getAllVideos);
 router.get("/:id", optionalAuthMiddleware, getVideoById);
 router.put("/:id", updateVideo);
 router.delete("/:id", deleteVideo);
 
-module.exports = router;
+export default router;

@@ -1,5 +1,5 @@
-const { z } = require('zod');
-const { date, imageSchema, nameSchema } = require('./commonSchema');
+import { z } from 'zod';
+import { date, imageSchema, nameSchema } from './commonSchema.js';
 
 const eventSchema = z.object({
   title: nameSchema,
@@ -12,4 +12,4 @@ const eventSchema = z.object({
   id_USER: z.coerce.number().int().positive().optional(),
 });
 
-module.exports = { eventSchema };
+export { eventSchema };

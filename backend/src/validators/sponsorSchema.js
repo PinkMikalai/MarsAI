@@ -1,7 +1,5 @@
-const { z } = require('zod');
-
-// import du commonSchema
-const { url, imageSchema, nameSchema } = require('./commonSchema');
+import { z } from 'zod';
+import { url, imageSchema, nameSchema } from './commonSchema.js';
 
 const sponsorSchema = z.object({
     img: imageSchema.optional(),
@@ -9,4 +7,4 @@ const sponsorSchema = z.object({
     url: url.optional(),
 });
 
-module.exports = { sponsorSchema };
+export { sponsorSchema };

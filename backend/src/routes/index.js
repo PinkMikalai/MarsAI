@@ -1,24 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const authRoute = require('./authRoutes')
+import { Router } from "express";
+const router = Router();
+import authRoute from './authRoutes.js';
 
-router.use('/auth' , authRoute);
+router.use('/auth', authRoute);
 
-//imports des routes
-const videosRoutes = require("./videosRoutes");
-const tagRoutes = require("./tagRoutes");
-const participationRoutes = require("./participationRoutes");
-const sponsorsRoutes = require("./sponsorsRoutes");
-const juryRoutes = require("./juryRoutes");
+import videosRoutes from "./videosRoutes.js";
+import tagRoutes from "./tagRoutes.js";
+import participationRoutes from "./participationRoutes.js";
+import sponsorsRoutes from "./sponsorsRoutes.js";
+import juryRoutes from "./juryRoutes.js";
 
-
-
-//Nos routes
 router.use("/videos", videosRoutes);
 router.use("/tags", tagRoutes);
 router.use('/participation', participationRoutes);
 router.use('/sponsors', sponsorsRoutes);
 router.use('/jury', juryRoutes);
 
-module.exports = router;
-
+export default router;

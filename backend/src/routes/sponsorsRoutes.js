@@ -1,23 +1,18 @@
-const { Router } = require("express");
-const { 
+import { Router } from "express";
+import { 
     createSponsor, 
     getAllSponsors, 
     getSponsorById, 
     updateSponsor, 
     deleteSponsor 
-} = require("../controllers/sponsorController.js");
+} from "../controllers/sponsorController.js";
 const router = Router();
 
-
-// imports des middlewares
-const { uploadFields } = require("../middlewares/uploadMiddleware.js");
-const { validate } = require("../middlewares/validate.js");
-const { sponsorSchema } = require("../validators/sponsorSchema.js");
-const authMiddleware = require("../middlewares/authMiddleware.js");
-const checkRole = require("../middlewares/checkRoleMiddleware.js");
-
-// nos routes avec les methodes
-
+import { uploadFields } from "../middlewares/uploadMiddleware.js";
+import { validate } from "../middlewares/validate.js";
+import { sponsorSchema } from "../validators/sponsorSchema.js";
+import authMiddleware from "../middlewares/authMiddleware.js";
+import checkRole from "../middlewares/checkRoleMiddleware.js";
 
 router.post("/", authMiddleware, checkRole(['Super-admin', 'Admin']), uploadFields, validate(sponsorSchema), createSponsor); 
 router.get("/", getAllSponsors);
@@ -25,5 +20,4 @@ router.get("/:id", getSponsorById);
 router.put("/:id", authMiddleware, checkRole(['Super-admin', 'Admin']), uploadFields, validate(sponsorSchema), updateSponsor); 
 router.delete("/:id", authMiddleware, checkRole(['Super-admin', 'Admin']), deleteSponsor);
 
-
-module.exports = router;
+export default router;
