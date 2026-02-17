@@ -48,6 +48,7 @@ export function buildSubmitFormData(form) {
   
   const classification = form.film.classification === '100% AI' ? '100% AI' : 'Hybrid';
   fd.append('classification', classification);
+
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
@@ -76,6 +77,7 @@ export function buildSubmitFormData(form) {
     });
   }
 
+  // filtration pour ne garder que les collaborateurs saisis 
   const completeCollaborators = (form.collaborators || []).filter(
     (col) => (col.firstname || '').trim() && (col.lastname || '').trim() && (col.email || '').trim() && (col.profession || '').trim()
   );
