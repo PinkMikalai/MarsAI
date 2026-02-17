@@ -1,4 +1,4 @@
-const { pool } = require('../../db/index.js');
+import { pool } from '../../db/index.js';
 
 // stills : tableau d'objets 
 // videoId : id de la vidéo parent
@@ -53,7 +53,7 @@ async function deleteStillsByVideoIdModel(videoId) {
     return true;
 }
 
-module.exports = { 
+export { 
      createStillsModel,
      getStillsByVideoIdModel, 
      updateStillsByVideoIdModel,

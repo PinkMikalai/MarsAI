@@ -1,4 +1,4 @@
-const ffmpeg = require('fluent-ffmpeg'); 
+import ffmpeg from 'fluent-ffmpeg'; 
 
 
 const getVideoMetada = (fullPath) => {
@@ -43,4 +43,4 @@ const getVideoMetada = (fullPath) => {
     })
 }
 
-module.exports = { getVideoMetada };
+export { getVideoMetada };

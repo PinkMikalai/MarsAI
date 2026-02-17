@@ -1,4 +1,4 @@
-const { pool } = require("../db/index.js");
+import { pool } from "../db/index.js";
 
 /**
  * Création nouvel événement
@@ -90,7 +90,7 @@ async function deleteEventModel(id) {
 
 
 
-module.exports = {
+export {
   createEventModel,
   getAllEventsModel,
   getEventByIdModel,

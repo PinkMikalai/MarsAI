@@ -1,4 +1,4 @@
-const { pool } = require("../../db");
+import { pool } from "../../db/index.js";
 
 // Créer un mémo de sélection
 async function createSelectorMemoModel(memoData) {
@@ -111,7 +111,7 @@ async function getVideoMemoStatsModel(videoId) {
     return rows[0];
 }
 
-module.exports = {
+export {
     createSelectorMemoModel,
     getAllSelectorMemosModel,
     getSelectorMemoByIdModel,
