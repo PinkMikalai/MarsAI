@@ -48,7 +48,7 @@ async function getUserByEmailModel(email) {
 async function getUserByIdModel(id) {
     try {
         const [rows] = await pool.execute(
-            'SELECT id, email, firstname, lastname, role_id FROM user WHERE id = ?',
+            'SELECT id, email, firstname, lastname, password_hash, role_id FROM user WHERE id = ?',
             [id]
         );
         return rows[0];
