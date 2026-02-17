@@ -25,7 +25,7 @@ const commonSchema = {
     .refine((val) => !isNaN(Date.parse(val)), {
       message: "Invalid date format",
     })
-    .transform((val) => new Date(val)), // Transforme la string en objet Date JS
+    .transform((val) => new Date(val)), // Transforme la string en objet JS
 
   // schéma de validation des urls
   url: z
