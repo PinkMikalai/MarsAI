@@ -12,7 +12,7 @@ const inviteSchema = z.object({
 
 // passwordSchema 
 const passwordSchema = z.object({
-    token: z.string().min(1),
+    token: z.string().min(1, "Token is required"),
     firstname: firstname, 
     lastname: lastname,
     password: passwordBase,
@@ -22,4 +22,24 @@ const passwordSchema = z.object({
     path: ["confirmPassword"]
 });
 
-module.exports = { inviteSchema, passwordSchema };
+// resetPasswordSchéma
+const resetPasswordSchema = z.object({
+    token: z.string().min(1, "Token is required"),
+    newPassword: passwordBase,
+    confirmNewPassword : z.string()
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords do not match",
+    path: ["confirmNewPassword"]
+});
+
+const updatePasswordSchema = z.object({
+    oldPassword : passwordBase,
+    newPassword: passwordBase,
+    confirmNewPassword : z.string()
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords do not match",
+    path: ["confirmNewPassword"]
+});
+
+
+module.exports = { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema};
