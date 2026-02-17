@@ -34,8 +34,10 @@ const RegisterForm = () => {
       
       if(response) {
       setUserData({ email: response.email , role: response.role}) }
+      //enlever le token de l'url 
+      window.history.replaceState({}, document.title, window.location.pathname);
     } catch(err){
-      setError('Invalid or expired link')
+      setError(err.response?.data.message || 'Invalid or expired link')
     } finally {
       setLoading(false);
     } 
