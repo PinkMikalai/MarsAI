@@ -48,15 +48,16 @@ export function buildSubmitFormData(form) {
 
 
   // Réseaux sociaux du réalisateur 
-  const socialLinks = {}; // objet vide, accumulateur 
-  if (form.socialLinks && Array.isArray(form.socialLinks)) { // form.socialLinks existe et c'est bien un tableau 
-    form.socialLinks.forEach(link => {
-      if (link.platform && link.url) {
-        socialLinks[link.platform.trim()] = link.url.trim();
-      }
-    });
-  }
-  fd.append('social_media_links_json', JSON.stringify({socialLinks}));
+  // const socialLinks = {}; // objet vide, accumulateur 
+  // if (form.socialLinks && Array.isArray(form.socialLinks)) { // form.socialLinks existe et c'est bien un tableau 
+  //   form.socialLinks.forEach(link => {
+  //     if (link.platform && link.url) {
+  //       socialLinks[link.platform.trim()] = link.url.trim();
+  //     }
+  //   });
+  // }
+  // fd.append('social_media_links_json', JSON.stringify(socialLinks));
+
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
@@ -85,6 +86,7 @@ export function buildSubmitFormData(form) {
     });
   }
 
+  // filtration pour ne garder que les collaborateurs saisis 
   const completeCollaborators = (form.collaborators || []).filter(
     (col) => (col.fullname || '').trim() && (col.email || '').trim() && (col.profession || '').trim()
   );
