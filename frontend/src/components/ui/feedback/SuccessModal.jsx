@@ -9,17 +9,14 @@ const SuccessModal = ({ isOpen, onClose, videoId, message }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="success-modal-overlay"
-            onClick={onClose}
-          />
-          
-          {/* Modal */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="success-modal-overlay"
+          onClick={onClose}
+        >
+          {/* Modal centré dans l'overlay */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -29,6 +26,7 @@ const SuccessModal = ({ isOpen, onClose, videoId, message }) => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="success-modal-title"
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="success-modal-content">
               {/* Icône de succès */}
@@ -66,7 +64,7 @@ const SuccessModal = ({ isOpen, onClose, videoId, message }) => {
               </button>
             </div>
           </motion.div>
-        </>
+        </motion.div>
       )}
     </AnimatePresence>
   );
