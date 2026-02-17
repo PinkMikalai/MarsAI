@@ -38,7 +38,7 @@ const loginController = async (req, res, next) => {
 const updateUserController = async (req, res, next) => {
     try {
 
-        const {id} = req.params;
+        const id = req.params.id || req.user.id;
         const result = await authService.updateUser(id, req.body);
         res.status(200).json({
             status: "success",
@@ -74,7 +74,7 @@ const profileUserController = async (req, res) => {
         const result = await authService.profileUser(id);
 
         res.status(200).json({
-            status: 'succes',
+            status: 'success',
             message: `User n° ${id} connected`,
             result: result
         })
@@ -85,7 +85,63 @@ const profileUserController = async (req, res) => {
         res.status(500).json({message : ` the requested profile dosen't  exist `})
        }
  }
+const forgotPasswordController = async (req, res, next) => {
+    // obtenir un lien d reinitialisation
+    try {
+        const { email } = req.body;
+        const result = await authService.passwordReset(email);
 
+        res.status(200).json( {
+            status: 'success',
+            message : 'Link to reset password created',
+            result : result
+
+        })
+
+    } catch(error) {
+        next(error)
+
+    }
+}
+const resetPasswordController = async (req, res, next) =>{
+    try{
+        const { token, newPassword} = req.body;
+
+        const result = await authService.confirmPasswordReset(token, newPassword);
+
+        res.status(200).json( {
+            status : 'success',
+            message : 'New password created',
+            result : result
+
+        })
+
+
+    } catch(error){
+        next(error)
+
+    }
+}
+const updatePasswordController = async (req, res, next) =>{
+    try{
+        const userId = req.user.id;
+        const { oldPassword, newPassword} = req.body
+
+        const result = await authService.updatePassword(userId,oldPassword, newPassword);
+
+        res.status(200).json( {
+            status : 'success',
+            message : 'Password updated successfully',
+            result : result
+
+        })
+
+
+    } catch(error){
+        next(error)
+
+    }
+}
 
 
 module.exports = {
@@ -94,5 +150,8 @@ module.exports = {
     loginController,
     updateUserController,
     deleteUserController,
-    profileUserController
+    profileUserController,
+    forgotPasswordController,
+    resetPasswordController,
+    updatePasswordController
 };

@@ -1,17 +1,17 @@
 const { pool } = require("../../db/index.js");
 
-async function createInvitationModel({ jti, email, role}) {
+async function createInvitationModel({ jti, email, role = null, type = 'registration', user_id = null}) {
     const query = `
-        INSERT INTO invitation (jti, email, role, status) VALUES (?, ?, ?, 'pending')
+        INSERT INTO invitation (jti, email, role, type, user_id, status) VALUES (?, ?, ?, ?, ?, 'pending')
     `;
-    const [result] = await pool.execute(query , [jti, email,role]);
+    const [result] = await pool.execute(query , [jti, email,role, type, user_id]);
     return result.insertId;
     
 }
 
 async function getInvitationByJtiModel(jti) {
 
-    const query = `SELECT FRON invitation id, email, role WHERE jti = ?`;
+    const query = `SELECT id, email, role , type, user_id, status FROM invitation  WHERE jti = ?`;
     const [rows] = await pool.execute( query, [jti]);
     return rows[0];
 
@@ -19,13 +19,13 @@ async function getInvitationByJtiModel(jti) {
 
 async function getInvitationByIdModel(id) {
 
-    const query = `SELECT FRON invitation id, email, role WHERE id = ?`;
+    const query = `SELECT id, email, role , type, user_id, status FROM invitation WHERE id = ?`;
     const [rows] = await pool.execute( query, [id]);
     return rows[0];
 
 }
 
-async function markInvitationAsUsedMdel(jti) {
+async function markInvitationAsUsedModel(jti) {
     const query = `UPDATE invitation SET status = 'used' WHERE jti = ?`;
     const [result] = await pool.execute( query, [jti]);
     return result.affectedRows > 0;
@@ -35,5 +35,5 @@ module.exports = {
     createInvitationModel,
     getInvitationByIdModel,
     getInvitationByJtiModel,
-    markInvitationAsUsedMdel
+    markInvitationAsUsedModel
 }
