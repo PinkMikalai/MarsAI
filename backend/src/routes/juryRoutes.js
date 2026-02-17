@@ -1,25 +1,18 @@
-const { Router } = require("express");
-
+import { Router } from "express";
 const router = Router();
-//
-const { 
+import { 
     createJury, 
     getAllJury, 
     getJuryById, 
     updateJury, 
     deleteJury 
-} = require("../controllers/juryController.js");
+} from "../controllers/juryController.js";
 
-
-// imports des middlewares
-const authMiddleware = require("../middlewares/authMiddleware.js");
-const { uploadFields } = require("../middlewares/uploadMiddleware.js");
-const { validate } = require("../middlewares/validate.js");
-const { jurySchema } = require("../validators/jurySchema.js");
-const checkRole = require("../middlewares/checkRoleMiddleware.js");
-
-
-// nos routes avec les methodes
+import authMiddleware from "../middlewares/authMiddleware.js";
+import { uploadFields } from "../middlewares/uploadMiddleware.js";
+import { validate } from "../middlewares/validate.js";
+import { jurySchema } from "../validators/jurySchema.js";
+import checkRole from "../middlewares/checkRoleMiddleware.js";
 
 router.post("/", authMiddleware, checkRole(['Super-admin', 'Admin']), uploadFields, validate(jurySchema), createJury);
 router.get("/", getAllJury);
@@ -27,4 +20,4 @@ router.get("/:id", getJuryById);
 router.put("/:id", authMiddleware, checkRole(['Super-admin', 'Admin']), uploadFields, validate(jurySchema), updateJury);
 router.delete("/:id", authMiddleware, checkRole(['Super-admin', 'Admin']), deleteJury);
 
-module.exports = router;
+export default router;

@@ -1,8 +1,6 @@
-/* src/validators/authSchema.js */
-const { z } = require('zod');
-const { email, passwordBase, firstname, lastname } = require('./commonSchema');
+import { z } from 'zod';
+import { email, passwordBase, firstname, lastname } from './commonSchema.js';
 
-//inviteSchema 
 const inviteSchema = z.object({
     email,
     role: z.enum(['Admin', 'Selector', 'Super-admin'], {
@@ -10,7 +8,6 @@ const inviteSchema = z.object({
     })
 });
 
-// passwordSchema 
 const passwordSchema = z.object({
     token: z.string().min(1, "Token is required"),
     firstname: firstname, 
@@ -22,24 +19,22 @@ const passwordSchema = z.object({
     path: ["confirmPassword"]
 });
 
-// resetPasswordSchéma
 const resetPasswordSchema = z.object({
     token: z.string().min(1, "Token is required"),
     newPassword: passwordBase,
-    confirmNewPassword : z.string()
+    confirmNewPassword: z.string()
 }).refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "Passwords do not match",
     path: ["confirmNewPassword"]
 });
 
 const updatePasswordSchema = z.object({
-    oldPassword : passwordBase,
+    oldPassword: passwordBase,
     newPassword: passwordBase,
-    confirmNewPassword : z.string()
+    confirmNewPassword: z.string()
 }).refine((data) => data.newPassword === data.confirmNewPassword, {
     message: "Passwords do not match",
     path: ["confirmNewPassword"]
 });
 
-
-module.exports = { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema};
+export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema };

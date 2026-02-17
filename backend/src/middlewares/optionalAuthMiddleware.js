@@ -1,10 +1,9 @@
-const jwt = require('jsonwebtoken');
-// Ajouter un export nommé pour l'auth optionnelle
+import jwt from 'jsonwebtoken';
+
 const optionalAuthMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(' ')[1];
     
-    // Pas de token ? Continuer sans bloquer
     if (!token) {
         req.user = null;
         return next();
@@ -19,10 +18,9 @@ const optionalAuthMiddleware = (req, res, next) => {
         };
         next();
     } catch (error) {
-        // Token invalide ? Continuer quand même
         req.user = null;
         next();
     }
 };
 
-module.exports = optionalAuthMiddleware;
+export default optionalAuthMiddleware;

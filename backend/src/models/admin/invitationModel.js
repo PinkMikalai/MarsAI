@@ -1,4 +1,4 @@
-const { pool } = require("../../db/index.js");
+import { pool } from "../../db/index.js";
 
 async function createInvitationModel({ jti, email, role = null, type = 'registration', user_id = null}) {
     const query = `
@@ -31,7 +31,7 @@ async function markInvitationAsUsedModel(jti) {
     return result.affectedRows > 0;
 }
 
-module.exports = {
+export {
     createInvitationModel,
     getInvitationByIdModel,
     getInvitationByJtiModel,
