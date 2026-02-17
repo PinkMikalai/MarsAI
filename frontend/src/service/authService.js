@@ -3,14 +3,16 @@ import api from "./api" ;
 export const authService = {
     // verifyInvitation , vérification token et récupération email/role //
     verifyInvitation: (token) => api(`/auth/invitation?token=${token}`, {
-        method: 'GET'
+        method: 'GET',
+        checkAuth : false
 
     }),
     
     // register , finalisation création compte (prénom, nom, mot de passe) //
     register: (userData) => api('/auth/register', {
         method: 'POST',
-        body: JSON.stringify(userData)
+        body: JSON.stringify(userData),
+        checkAuth : false
 
     }),
 
