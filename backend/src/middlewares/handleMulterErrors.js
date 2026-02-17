@@ -1,7 +1,6 @@
-const multer = require('multer'); 
+import multer from 'multer'; 
 
-const handleMulterErrors = (err, req,  res, next) => {
-    // si l'erreur vient de  multer 
+const handleMulterErrors = (err, req, res, next) => {
     if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
             return res.status(200).json({
@@ -12,11 +11,10 @@ const handleMulterErrors = (err, req,  res, next) => {
             message: "Erreur Multer : " + err.message
         })
     }
-    // Si c'est une autre erreur (ex: format de fichier refusé)
     if (err) {
         return res.status(400).json({ message: err.message });
     }
-    // Si tout va bien, on passe au middleware suivant (Zod ou Controller)
     next();
 };
-module.exports = { handleMulterErrors };
+
+export { handleMulterErrors };

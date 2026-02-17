@@ -31,12 +31,15 @@ export function buildSubmitFormData(form) {
   fd.append('social_media_links_json', JSON.stringify(socialPayload));
 
   fd.append('title', form.film.title || '');
-  fd.append('title_en', form.film.title_en || form.film.title || '');
+  const titleEn = (form.film.title_en || form.film.title || '').trim();
+  fd.append('title_en', titleEn || '—');
   fd.append('synopsis', form.film.description || '');
-  fd.append('synopsis_en', form.film.synopsis_en || form.film.description || '');
-  fd.append('tech_resume', form.film.description || '');
-  fd.append('creative_resume', form.film.description || '');
-  fd.append('language', form.film.language || 'fr');
+  const synopsisEn = (form.film.synopsis_en || form.film.description || '').trim();
+  fd.append('synopsis_en', synopsisEn || '—');
+  const resumeText = (form.film.description || form.film.synopsis_en || '').trim();
+  fd.append('tech_resume', resumeText || '—');
+  fd.append('creative_resume', resumeText || '—');
+  fd.append('language', form.film.language || 'FR');
   
   const durationVal = form.film.duration !== '' && form.film.duration != null
     ? String(form.film.duration)
@@ -46,17 +49,6 @@ export function buildSubmitFormData(form) {
   const classification = form.film.classification === '100% AI' ? '100% AI' : 'Hybrid';
   fd.append('classification', classification);
 
-
-  // Réseaux sociaux du réalisateur 
-  const socialLinks = {}; // objet vide, accumulateur 
-  if (form.socialLinks && Array.isArray(form.socialLinks)) { // form.socialLinks existe et c'est bien un tableau 
-    form.socialLinks.forEach(link => {
-      if (link.platform && link.url) {
-        socialLinks[link.platform.trim()] = link.url.trim();
-      }
-    });
-  }
-  fd.append('social_media_links_json', JSON.stringify({socialLinks}));
   fd.append('acquisition_source_id', '1');
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
@@ -85,22 +77,18 @@ export function buildSubmitFormData(form) {
     });
   }
 
+  // filtration pour ne garder que les collaborateurs saisis 
   const completeCollaborators = (form.collaborators || []).filter(
-    (col) => (col.fullname || '').trim() && (col.email || '').trim() && (col.profession || '').trim()
+    (col) => (col.firstname || '').trim() && (col.lastname || '').trim() && (col.email || '').trim() && (col.profession || '').trim()
   );
   if (completeCollaborators.length > 0) {
-    const contributors = completeCollaborators.map((col) => {
-      const nameParts = (col.fullname || '').trim().split(/\s+/);
-      const firstname = nameParts[0] || '';
-      const last_name = nameParts.slice(1).join(' ') || '';
-      return {
-        firstname,
-        last_name,
-        email: (col.email || '').trim(),
-        production_role: (col.profession || '').trim(),
-        gender: col.gender || 'Other',
-      };
-    });
+    const contributors = completeCollaborators.map((col) => ({
+      firstname: (col.firstname || '').trim(),
+      last_name: (col.lastname || '').trim(),
+      email: (col.email || '').trim(),
+      production_role: (col.profession || '').trim(),
+      gender: col.gender || 'Other',
+    }));
     fd.append('contributor', JSON.stringify(contributors));
   } else {
     fd.append('contributor', JSON.stringify([{

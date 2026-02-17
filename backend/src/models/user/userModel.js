@@ -1,4 +1,4 @@
-const { pool } =require("../../db/index.js")
+import { pool } from "../../db/index.js";
 
 // création d'un user
 async function createUserModel(userData) {
@@ -48,7 +48,7 @@ async function getUserByEmailModel(email) {
 async function getUserByIdModel(id) {
     try {
         const [rows] = await pool.execute(
-            'SELECT id, email, firstname, lastname, role_id FROM user WHERE id = ?',
+            'SELECT id, email, firstname, lastname, password_hash, role_id FROM user WHERE id = ?',
             [id]
         );
         return rows[0];
@@ -115,7 +115,7 @@ async function deleteUserModel(id) {
     }
 }
 
-module.exports = {
+export {
     createUserModel,
     getUserByEmailModel,
     getUserByIdModel,

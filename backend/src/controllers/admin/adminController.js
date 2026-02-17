@@ -1,25 +1,19 @@
-const { createInvitationToken } = require('../../services/user/authService');
-const { sendInvitationEmail } = require('../../services/admin/mailService');
+import { createInvitationToken } from '../../services/user/authService.js';
+import { sendInvitationEmail } from '../../services/admin/mailService.js';
 
 const inviteUser = async (req, res, next) => {
     try {
         const { email, role } = req.body;
-
-        // Génération du token 
         const token = await createInvitationToken({ email, role });
-
-        // le token est tranféré au mailService pour envoi dans le heder du message d'invitation
         await sendInvitationEmail({ email, token, role });
-
         res.status(200).json({
             status: "success",
             message: `Invitation send to ${email}, with success`,
-            token : token
+            token: token
         });
     } catch (error) {
-        //vers le errorMiddleware
         next(error);
     }
 }; 
 
-module.exports = inviteUser;
+export default inviteUser;

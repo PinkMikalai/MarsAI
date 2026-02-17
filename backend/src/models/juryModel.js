@@ -1,6 +1,6 @@
 // JURY - MODEL
 
-const { pool } = require("../db/index.js");
+import { pool } from "../db/index.js";
 
 // create jury
 async function createJuryModel(juryData) {
@@ -79,7 +79,7 @@ async function deleteJuryModel(id) {
     return result.affectedRows > 0;
 }
 
-module.exports = {
+export {
     createJuryModel,     
     getAllJuryModel,
     getJuryByIdModel,
