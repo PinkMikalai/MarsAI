@@ -3,16 +3,12 @@ import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import { createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, deleteUserModel } from '../../models/user/userModel.js';
 import { createInvitationModel, getInvitationByJtiModel, markInvitationAsUsedModel } from '../../models/admin/invitationModel.js';
-import { welcomeEmail , passwordResetEmail } from '../admin/mailService.js';
-
+import { welcomeEmail, passwordResetEmail } from '../admin/mailService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-
-//  Génère un token d'invitation 
 export async function createInvitationToken({ email, role }) {
-    const jti = uuidv4(); // identifiant unique qui sera inclu dans le token
-    // création de l'invitation dans la db 
+    const jti = uuidv4();
     await createInvitationModel({ jti, email, role })
     return jwt.sign(
         { email, role, jti, purpose: 'invitation' },
@@ -21,27 +17,19 @@ export async function createInvitationToken({ email, role }) {
     );
 }
 
-
-//  Décode le token pour le Frontend (Affichage email/rôle)
-
 export async function decodeInvitationToken(token) {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-
         if (decoded.purpose !== 'invitation') {
             throw new Error('Invalid token ');
         }
-        // verification d l'usge unique de l'invitation 
         const invitation = await getInvitationByJtiModel(decoded.jti);
-
         if (!invitation) {
             throw new Error('Invitation not found');
-
         }
         if (invitation.status !== 'pending') {
             throw new Error('Invitation already used')
         }
-
         return {
             email: decoded.email,
             role: decoded.role,
@@ -55,57 +43,41 @@ export async function decodeInvitationToken(token) {
     }
 }
 
-
-// Inscription en base de données
 export async function register({ token, firstname, lastname, password }) {
-
-    //Vérification du token d'invitation
     const decoded = await decodeInvitationToken(token);
     console.log("Contenu du token aprés decode :", decoded);
 
-    // Vérification de l'existence de l'utilisateur
     const existing = await getUserByEmailModel(decoded.email);
-
     if (existing) {
         const error = new Error('Email already exists');
         error.status = 409;
         throw error;
     }
 
-
-    // Mapping du rôle (Texte -> ID numérique pour la BDD)
     const roleMapping = {
         'Admin': 1,
         'Selector': 2,
         'Super-admin': 3
     };
-    const roleId = roleMapping[decoded.role] || 2; // Par défaut selector
+    const roleId = roleMapping[decoded.role] || 2;
 
-
-    // Hachage du mot de passe
     const hash = await bcrypt.hash(password, 10);
 
-    // Insertion dans la db
-    const userId = await createUserModel(
-        {
-            email: decoded.email,
-            firstname,
-            lastname,
-            password_hash: hash,
-            role_id: roleId
-        });
+    const userId = await createUserModel({
+        email: decoded.email,
+        firstname,
+        lastname,
+        password_hash: hash,
+        role_id: roleId
+    });
 
     const marked = await markInvitationAsUsedModel(decoded.jti);
     console.log("Marquage de l'invitation", marked);
 
-    // envoi du mail de confirmation d crétion du compte 
-
     try {
         await welcomeEmail(decoded.email, firstname);
-
     } catch (emailError) {
         console.error("Failed to send welcome email", emailError)
-
     }
 
     return {
@@ -113,13 +85,9 @@ export async function register({ token, firstname, lastname, password }) {
         email: decoded.email,
         message: `User n° ${userId} created with success `
     };
-
-
 }
 
-// Connexion réservée aux membres de l'équipe
 export async function login({ email, password }) {
-
     const user = await getUserByEmailModel(email);
     console.log("Objet user récupéré :", user);
 
@@ -135,12 +103,9 @@ export async function login({ email, password }) {
         3: 'Super-admin'
     };
 
-    // On récupère le nom du rôle via l'ID
     const roleLabel = roleNames[idDuRole];
-
     console.log(`VERIFICATION FINALE : ID trouvé = ${idDuRole} -> Nom = ${roleLabel}`);
 
-    // Génération du token de session 
     const token = jwt.sign(
         { sub: user.id, email: user.email, role: roleLabel },
         process.env.JWT_SECRET,
@@ -158,27 +123,15 @@ export async function login({ email, password }) {
     }
 }
 
-// Modification du user
 export async function updateUser(userId, userData) {
-    const { firstname, lastname, password, email, role_id } = userData
-    // préparation des données avant de les soumettre au model
+    const { firstname, lastname, password, email, role_id } = userData;
     const dataToUpdate = {};
-    if (firstname) {
-        dataToUpdate.firstname = firstname
-    };
-    if (lastname) {
-        dataToUpdate.lastname = lastname
-    };
-     if (email) {
-        dataToUpdate.email = email
-    }; 
-     if (role_id) {
-        dataToUpdate.role_id = role_id
-    }; 
-    // gestion du mdp 
+    if (firstname) dataToUpdate.firstname = firstname;
+    if (lastname) dataToUpdate.lastname = lastname;
+    if (email) dataToUpdate.email = email;
+    if (role_id) dataToUpdate.role_id = role_id;
     if (password && password.trim() !== "") {
         dataToUpdate.password_hash = await bcrypt.hash(password, 10);
-
     }
     const success = await updateUserModel(userId, userData);
 
@@ -194,7 +147,6 @@ export async function updateUser(userId, userData) {
     };
 }
 
-// Suppresion du user
 export async function deleteUser(id) {
     const result = await deleteUserModel(id);
     if (!result) {
@@ -207,7 +159,7 @@ export async function deleteUser(id) {
         message: `Profile ${id} deleted successfully`
     }
 }
-// Espace user 
+
 export async function profileUser(id) {
     const user = await getUserByIdModel(id);
     if (!user) {
@@ -229,97 +181,79 @@ export async function profileUser(id) {
         message: `User n° ${id} connected`,
         status: "success"
     }
-
 }
-// réinitialisation du mot de passe 
+
 export async function passwordReset(email) {
     const user = await getUserByEmailModel(email);
-    if(!user) {
-        return { message: `A reset link has been sent the email address provided `};
+    if (!user) {
+        return { message: `A reset link has been sent the email address provided ` };
     }
-    // enregigistrement de l'identifiant unique dans la table invitation
     const jti = uuidv4();
-    await createInvitationModel( {
-        jti, 
-        email : user.email,
+    await createInvitationModel({
+        jti,
+        email: user.email,
         type: 'password_reset',
-        user_id : user.id
+        user_id: user.id
     })
-    // génération du token unique
     const token = jwt.sign(
         { jti, purpose: 'password_reset' },
         process.env.JWT_SECRET,
         { expiresIn: '2h' }
     );
-    // envoi du mail avec lien pour réinitilisation du mdp
     try {
-        await passwordResetEmail( user.email, token, user.firstname);
-    } catch(emailError){
+        await passwordResetEmail(user.email, token, user.firstname);
+    } catch (emailError) {
         console.error("Reset password email error", emailError)
-
-    } 
+    }
     return {
-        status : 'success',
-         message: `A reset link has been sent the email address provided `,
-        token : token}
-} 
+        status: 'success',
+        message: `A reset link has been sent the email address provided `,
+        token: token
+    }
+}
+
 export async function confirmPasswordReset(token, newPassword) {
     try {
-        // vérification du token 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if(decoded.purpose !== 'password_reset') {
+        if (decoded.purpose !== 'password_reset') {
             throw new Error('Invalid token prupose')
         }
-        //verification de l'existance du jti en db
         const invitationData = await getInvitationByJtiModel(decoded.jti);
-        if ( !invitationData || invitationData.status !=='pending' ) {
+        if (!invitationData || invitationData.status !== 'pending') {
             throw new Error('jti invalid or already used');
         }
-        // hashage du nouvaeu mot de passe
         const hash = await bcrypt.hash(newPassword, 10);
-
-        //update du usr en db
-        await updateUserModel(invitationData.user_id, { password_hash : hash });
-
-        // marquage du jti comme utilisé
+        await updateUserModel(invitationData.user_id, { password_hash: hash });
         await markInvitationAsUsedModel(decoded.jti);
 
         return {
-            success : true,
+            success: true,
             message: "Password updated sucessfully"
         };
-
-    } catch(err){
+    } catch (err) {
         const error = new Error(err.message || 'Reset failed');
         error.status = 401;
         throw error;
-
-    };
-    
-}
- export async function updatePassword( userId, oldPassword, newPassword) {
-        const user = await getUserByIdModel(userId);
-
-        if(!user) {
-            throw new Error('User not found');
-        }
-        console.log("user récupéré :", {id: user.id, pshash: !! user.password_hash});
-        
-  // vérification de l'ancien mot de passe saisi
-   const checkPasswords = await bcrypt.compare( oldPassword, user.password_hash);
-   if(!checkPasswords) {
-    const error = new Error('CurrEnt password incorrect');
-    error.status = 401;
-    throw error;
-   }
-   // hashage du nouvaeu mot de passe
-        const hash = await bcrypt.hash(newPassword, 10);
-
-        //update du usr en db
-        await updateUserModel(userId, { password_hash : hash });
-          return {
-            success : true,
-            message: "Password updated sucessfully"
-        };
-
     }
+}
+
+export async function updatePassword(userId, oldPassword, newPassword) {
+    const user = await getUserByIdModel(userId);
+    if (!user) {
+        throw new Error('User not found');
+    }
+    console.log("user récupéré :", { id: user.id, pshash: !!user.password_hash });
+
+    const checkPasswords = await bcrypt.compare(oldPassword, user.password_hash);
+    if (!checkPasswords) {
+        const error = new Error('CurrEnt password incorrect');
+        error.status = 401;
+        throw error;
+    }
+    const hash = await bcrypt.hash(newPassword, 10);
+    await updateUserModel(userId, { password_hash: hash });
+    return {
+        success: true,
+        message: "Password updated sucessfully"
+    };
+}

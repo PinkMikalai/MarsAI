@@ -1,6 +1,4 @@
-//ici mes imports
-
-const { 
+import { 
     createSelectorMemoModel, 
     getAllSelectorMemosModel, 
     getSelectorMemoByIdModel, 
@@ -8,19 +6,16 @@ const {
     deleteSelectorMemoModel, 
     deleteMemosByVideoIdModel, 
     getVideoMemoStatsModel 
-} = require("../../models/video/selectorMemoModel.js");
-
+} from "../../models/video/selectorMemoModel.js";
 
 //=====================================================
 // SELECTOR MEMO - CRUD
 //=====================================================
 
-//create selector memo par selector
 async function createSelectorMemo(req, res) {
     try {
         const { rating, comment, video_id, user_id, selection_status_id } = req.body;
         const selectorMemo = await createSelectorMemoModel({rating, comment, video_id, user_id, selection_status_id});
-        //si le memo d utilisateur existe deja tu refuse l ajout
         if (selectorMemo) {
             res.status(400).json({
                 message: "Vous ne pouvez pas noter cette video deux fois",
@@ -43,8 +38,6 @@ async function createSelectorMemo(req, res) {
     }
 }
 
-
-//update de la notation
 async function updateSelectorMemo(req, res) {
     try {
         const { rating, comment, video_id, user_id, selection_status_id } = req.body;
@@ -58,12 +51,11 @@ async function updateSelectorMemo(req, res) {
     }
 }
 
-// ici les memos d un selector par son id
 async function getSelectorMemosById(req, res) {
     console.log("test getSelectorMemosById");
 }
 
-module.exports = {
+export {
     createSelectorMemo,
     updateSelectorMemo,
     getSelectorMemosById,

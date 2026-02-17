@@ -1,9 +1,8 @@
-const { Router } = require("express");
-const { getMostUsedTags } = require("../controllers/video/tagController");
+import { Router } from "express";
+import { getMostUsedTags } from "../controllers/video/tagController.js";
 
 const router = Router();
 
-// nos routes avec les methodes
-router.get("/most-used", getMostUsedTags); // afficher les tags les plus utilises
+router.get("/most-used", getMostUsedTags);
 
-module.exports = router;
+export default router;

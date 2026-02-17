@@ -1,4 +1,4 @@
-const { pool } = require("../../db/index.js"); 
+import { pool } from "../../db/index.js"; 
 
 // create video : créer une nouvelle entrée dans la table 'video' 
 // videoData : données validées provenant du controller (req.body)
@@ -426,7 +426,7 @@ async function updateYoutubeId(videoId, youtubeUrl) {
     }
 }
 
-module.exports = {
+export {
     createVideoModel,
     getAllVideosModel,
     getVideoByIdModel,

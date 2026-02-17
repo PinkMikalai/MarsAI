@@ -1,4 +1,4 @@
-const { pool } = require('../../db/index.js');
+import { pool } from '../../db/index.js';
 
 // contributors - tableau d'objets 
 // videoId 6 - l'id de la video parente 
@@ -84,7 +84,7 @@ async function deleteContributorModel(id) {
     return result.affectedRows > 0;
 }
 
-module.exports = { 
+export { 
     createContributorsModel, 
     getAllContributorsModel, 
     getContributorByIdModel, 

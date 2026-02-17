@@ -1,7 +1,6 @@
-require("dotenv").config();
+import 'dotenv/config';
 
-module.exports = {
-  //recupperation de nos donnees pour pouvoir se connecter a notre bd via .env
+export default {
   development: { 
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -12,7 +11,6 @@ module.exports = {
     dialectOptions: { decimalNumbers: true },
     define: { underscored: true }
   },
-  // Export db config for direct use
   db: {
     user: process.env.DB_USER,
     password: process.env.DB_PASS,

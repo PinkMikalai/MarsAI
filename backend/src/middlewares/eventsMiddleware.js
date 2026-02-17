@@ -1,5 +1,3 @@
-// alertes des events en cas d'erreurs
-
 function validateEvent(req, res, next) {
     const { title, date, capacity } = req.body;
   
@@ -22,7 +20,6 @@ function validateEvent(req, res, next) {
     }
   
     next();
-  }
-  
-  module.exports = validateEvent;
-  
+}
+
+export default validateEvent;

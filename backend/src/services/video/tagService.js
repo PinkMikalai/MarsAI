@@ -1,4 +1,4 @@
-const { createTagModel, normalizeTags, linkTagsToVideo, unlinkTagsFromVideo, getTagsByVideoId } = require("../../models/video/tagModel");
+import { createTagModel, normalizeTags, linkTagsToVideo, unlinkTagsFromVideo, getTagsByVideoId } from "../../models/video/tagModel.js";
 
 // =====================================================
 // TAG - SERVICE
@@ -59,9 +59,4 @@ async function getVideoTagsService(videoId) {
     return tags;
 }
 
-module.exports = {
-    createTagsService,
-    createAndLinkTagsService,
-    updateTagsService,
-    getVideoTagsService
-};
+export { createTagsService, createAndLinkTagsService, updateTagsService, getVideoTagsService };

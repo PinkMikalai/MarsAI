@@ -1,12 +1,11 @@
-const { Router } = require("express");
+import { Router } from "express";
 const router = Router();
-const { validate } = require('../middlewares/validate');
-const participationSchema = require('../validators/participationSchema');
-const participationController = require('../controllers/participationController');
-const { uploadFields } = require('../middlewares/uploadMiddleware');
-const { handleMulterErrors } = require('../middlewares/handleMulterErrors');
+import { validate } from '../middlewares/validate.js';
+import participationSchema from '../validators/participationSchema.js';
+import { addParticipation } from '../controllers/participationController.js';
+import { uploadFields } from '../middlewares/uploadMiddleware.js';
+import { handleMulterErrors } from '../middlewares/handleMulterErrors.js';
 
-// Définition des endpoints 
-router.post('/', uploadFields, handleMulterErrors, validate(participationSchema), participationController.addParticipation);
+router.post('/', uploadFields, handleMulterErrors, validate(participationSchema), addParticipation);
 
-module.exports = router;
+export default router;

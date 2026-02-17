@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 const frontendUrl = process.env.FRONT_URL || 'http://localhost:5173';
 
 // console.log("DEBUG MAIL_USER:", process.env.MAIL_USER);
@@ -171,4 +171,4 @@ const passwordResetEmail = async (email, token, firstname = 'User') => {
 
 
 
-module.exports = { sendInvitationEmail, welcomeEmail, passwordResetEmail };
+export { sendInvitationEmail, welcomeEmail, passwordResetEmail };

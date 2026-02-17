@@ -1,31 +1,24 @@
-// import du packet express
-const express = require("express");
-const cors = require('cors');
-const morgan = require('morgan');
-const path = require('path');
-const router = require("./routes");
+import express from "express";
+import cors from 'cors';
+import morgan from 'morgan';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import router from "./routes/index.js";
+import notFound from "./middlewares/notFound.js";
 
-const notFound = require("./middlewares/notFound");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-
-
-// creation de l application express
 const app = express();
 
-// configuration de l application
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Servir les fichiers statiques (images, vidéos, sous-titres)
 const uploadsPath = path.join(__dirname, 'assets', 'uploads');
 app.use('/assets/uploads', express.static(uploadsPath));
 
-// configuration de la route
 app.use("/marsai", router);
-
-
-// configuration de la route not found
 app.use(notFound);
-//test
-module.exports = app;
+
+export default app;

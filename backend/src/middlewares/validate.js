@@ -2,16 +2,13 @@ const validate = (schema, source = 'body') => (req, res, next) => {
   try {
     console.log("DEBUG - Fichiers dans req.files :", req.files ? Object.keys(req.files) : "Aucun fichier");
     console.log("DEBUG - Contenu de req.body avant injection :", req.body);
-    // extraction des fichiers multer
     if (req.files) {
-      // pour les fichiers uniques (maxCount: 1)
       if (req.files.cover) req.body.cover = req.files.cover[0].filename;
       if (req.files.img) req.body.img = req.files.img[0].filename;
       if (req.files.illustration) req.body.illustration = req.files.illustration[0].filename;
       if (req.files.video_file_name) req.body.video_file_name = req.files.video_file_name[0].filename; 
       if (req.files.srt_file_name) req.body.srt_file_name = req.files.srt_file_name[0].filename;
 
-      // pour les stills, plusieurs fichiers possibles donc transformation du tableau de fichiers en un tableau d'objet pour le schéma de validation
       if (req.files.still) {
         req.body.still = req.files.still.map(file => ({
           file_name: file.filename
@@ -19,7 +16,6 @@ const validate = (schema, source = 'body') => (req, res, next) => {
       } 
     }
 
-    // transformation des strings de postman en objets/tableaux réels 
     ['contributor', 'tag'].forEach(field => {
       if (req.body[field] && typeof req.body[field] === 'string') {
         try {
@@ -30,13 +26,11 @@ const validate = (schema, source = 'body') => (req, res, next) => {
       }
     })
 
-    // Si source est 'query', on valide req.query, sinon req.body
     const dataToValidate = source === 'query' ? req.query : req.body;
     console.log("Données reçues pour validation:", dataToValidate); 
     
     const validatedData = schema.parse(dataToValidate);
     console.log("Données après validation Zod:", validatedData); 
-    // On réinjecte les données nettoyées au bon endroit
     if (source === 'query') {
       req.query = validatedData;
     } else {
@@ -47,7 +41,6 @@ const validate = (schema, source = 'body') => (req, res, next) => {
   } catch (error) {
     console.log("Zod a détecté une erreur !", error); 
     
-    // Vérifier si c'est une erreur Zod
     if (error.errors && Array.isArray(error.errors)) {
       return res.status(400).json({
         message: 'Data validation error',
@@ -55,12 +48,11 @@ const validate = (schema, source = 'body') => (req, res, next) => {
       });
     }
     
-    // Si ce n'est pas une erreur Zod, retourner l'erreur générique
     return res.status(400).json({
       message: 'Data validation error',
       error: error.message || 'Unknown error',
-
     });
   }
 };
-module.exports = { validate};
+
+export { validate };
