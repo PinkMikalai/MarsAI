@@ -90,11 +90,36 @@ const WatchFilm = () => {
     videoApi.getVideoById(current.id)
       .then((res) => {
         if (cancelled) return;
-        const payload = res?.video || res?.tags || res?.stills ? res : (res?.data || {});
+        let video = null;
+        let tags = [];
+        let stills = [];
+        const raw = res?.data;
+        if (Array.isArray(raw) && raw[0]?.video_json) {
+          try {
+            const parsed = typeof raw[0].video_json === 'string' ? JSON.parse(raw[0].video_json) : raw[0].video_json;
+            video = { ...parsed, tag: undefined, still: undefined };
+            tags = Array.isArray(parsed.tag) ? parsed.tag.map((t) => (typeof t === 'string' ? { name: t } : t)) : [];
+            stills = Array.isArray(parsed.still) ? parsed.still : [];
+          } catch (_) {
+            video = current || null;
+          }
+        } else if (raw && (raw.video || raw.tags || raw.stills)) {
+          video = raw.video || current || null;
+          tags = raw.tags || [];
+          stills = raw.stills || [];
+        } else if (raw?.basicVideoData) {
+          const b = Array.isArray(raw.basicVideoData) ? raw.basicVideoData[0] : raw.basicVideoData;
+          const parsed = b?.video_json ? (typeof b.video_json === 'string' ? JSON.parse(b.video_json) : b.video_json) : b;
+          if (parsed) {
+            video = { ...parsed, tag: undefined, still: undefined };
+            tags = Array.isArray(parsed.tag) ? parsed.tag.map((t) => (typeof t === 'string' ? { name: t } : t)) : [];
+            stills = Array.isArray(parsed.still) ? parsed.still : [];
+          }
+        }
         setData({
-          video: payload.video || current || null,
-          tags: payload.tags || [],
-          stills: payload.stills || [],
+          video: video || current || null,
+          tags: tags || [],
+          stills: stills || [],
         });
       })
       .catch(() => {
