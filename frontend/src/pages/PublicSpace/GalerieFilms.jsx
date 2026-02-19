@@ -8,85 +8,80 @@ import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import { FILMS_PER_PAGE } from '../../constants/galerieData';
 import Icons from '../../components/ui/common/Icons';
 
+// ─────────────────────────────────────────────────────────────────
+// Cache module-level : persiste entre les navigations (pas de refetch
+// inutile quand l'utilisateur revient depuis WatchFilm)
+// ─────────────────────────────────────────────────────────────────
+let _cachedVideos         = null;
+let _cachedVideosWithTags = null;
+
 const GalerieFilms = () => {
   const [scrollY, setScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [videos, setVideos] = useState([]);
-  const [videosWithTags, setVideosWithTags] = useState([]);
+  const [videos, setVideos] = useState(_cachedVideos || []);
+  const [videosWithTags, setVideosWithTags] = useState(_cachedVideosWithTags || []);
   const [selectedFilterTags, setSelectedFilterTags] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!_cachedVideos);
   const [loadingTags, setLoadingTags] = useState(false);
   const [error, setError] = useState(null);
   const [imageErrors, setImageErrors] = useState(new Set());
 
-  // Fonction pour charger les tags de toutes les vidéos _________________________________________
+  // Charge les tags de toutes les vidéos en parallèle
   const loadVideoTags = useCallback(async (videosList) => {
     try {
       setLoadingTags(true);
-      const videosWithTagsPromises = videosList.map(async (video) => {
-        const tags = await videoApi.getVideoTags(video.id);
-        return {
-          ...video,
-          tags: tags.map(t => t.name?.toLowerCase() || t.toLowerCase())
-        };
-      });
-      
-      const videosWithTagsData = await Promise.all(videosWithTagsPromises);
-      setVideosWithTags(videosWithTagsData);
-    } catch (error) {
-      console.error('Erreur lors du chargement des tags:', error);
-      // En cas d'erreur, on garde les vidéos sans tags
-      setVideosWithTags(videosList.map(v => ({ ...v, tags: [] })));
+      const results = await Promise.all(
+        videosList.map(async (video) => {
+          const tags = await videoApi.getVideoTags(video.id);
+          return {
+            ...video,
+            tags: tags.map(t => t.name?.toLowerCase() || t.toLowerCase()),
+          };
+        })
+      );
+      _cachedVideosWithTags = results;
+      setVideosWithTags(results);
+    } catch {
+      const fallback = videosList.map(v => ({ ...v, tags: [] }));
+      _cachedVideosWithTags = fallback;
+      setVideosWithTags(fallback);
     } finally {
       setLoadingTags(false);
     }
   }, []);
 
-  // Fetch des 25 vidéos depuis la base de données (insert.sql)
   useEffect(() => {
+    // Déjà en cache → rien à charger
+    if (_cachedVideos) return;
+
     let cancelled = false;
     setLoading(true);
     setError(null);
-    
-    console.log('🔵 GalerieFilms: Début du fetch des vidéos');
-    // choper les videos de base de donnees
+
     videoApi.getAllVideos()
       .then((res) => {
-        console.log('🟢 GalerieFilms: Réponse reçue:', res);
-        if (!cancelled && res?.success && Array.isArray(res.data)) {
-          console.log('✅ GalerieFilms: Nombre de vidéos:', res.data.length);
-          console.log('✅ GalerieFilms: Première vidéo:', res.data[0]);
+        if (cancelled) return;
+        if (res?.success && Array.isArray(res.data)) {
           const shuffled = [...res.data];
           for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
           }
+          _cachedVideos = shuffled;
           setVideos(shuffled);
-
-          if (shuffled.length > 0) {
-            setLoadingTags(true);
-            loadVideoTags(shuffled);
-          }
-        } else if (!cancelled) {
-          console.warn('⚠️ GalerieFilms: Réponse invalide:', res);
+          if (shuffled.length > 0) loadVideoTags(shuffled);
+        } else {
           setVideos([]);
         }
       })
       .catch((err) => {
         if (!cancelled) {
-          console.error('🔴 GalerieFilms: Erreur lors du fetch:', err);
-          console.error('🔴 GalerieFilms: Détails:', err.response?.data);
           setError(err?.response?.data?.error || err?.message || 'Impossible de charger les vidéos.');
           setVideos([]);
         }
       })
-      .finally(() => {
-        if (!cancelled) {
-          console.log(' GalerieFilms: Fetch terminé');
-          setLoading(false);
-        }
-      });
-    
+      .finally(() => { if (!cancelled) setLoading(false); });
+
     return () => { cancelled = true; };
   }, [loadVideoTags]);
 
@@ -188,13 +183,13 @@ const GalerieFilms = () => {
                     <Link to={`/watch/${film.id}`} className="galerie-card-link">
                       <div className="galerie-card-image-wrap">
                         {coverUrl && !hasImageError ? (
-                          <img 
-                            src={coverUrl} 
+                          <img
+                            src={coverUrl}
                             alt={title}
                             className="galerie-card-image galerie-card-image--img"
-                            onError={() => {
-                              setImageErrors(prev => new Set([...prev, film.id]));
-                            }}
+                            loading="lazy"
+                            decoding="async"
+                            onError={() => setImageErrors(prev => new Set([...prev, film.id]))}
                           />
                         ) : (
                           <div className="galerie-card-image galerie-card-image--default">

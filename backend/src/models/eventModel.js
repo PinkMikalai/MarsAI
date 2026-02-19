@@ -6,7 +6,7 @@ import { pool } from "../db/index.js";
 async function createEventModel(eventData) {
   const [result] = await pool.execute(
     `INSERT INTO event 
-     (title, description, date, duration, capacity, illustration, location, id_USER) 
+     (title, description, date, duration, capacity, illustration, location, user_id) 
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       eventData.title,
@@ -16,7 +16,7 @@ async function createEventModel(eventData) {
       eventData.capacity ?? null,
       eventData.illustration ?? null,
       eventData.location ?? null,
-      eventData.id_USER ?? null,
+      eventData.user_id ?? null,
     ]
   );
 
@@ -56,7 +56,7 @@ async function updateEventModel(id, eventData) {
          capacity = ?, 
          illustration = ?, 
          location = ?, 
-         id_USER = ?
+         user_id = ?
      WHERE id = ?`,
     [
       eventData.title ?? null,
@@ -66,7 +66,7 @@ async function updateEventModel(id, eventData) {
       eventData.capacity ?? null,
       eventData.illustration ?? null,
       eventData.location ?? null,
-      eventData.id_USER ?? null,
+      eventData.user_id ?? null,
       id,
     ]
   );
