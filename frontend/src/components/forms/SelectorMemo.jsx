@@ -23,6 +23,7 @@ function useSelectionStatuses() {
         };
         fetchStatuses();
     }, []);
+    
 
     return { statuses, loadingStatuses };
 }
