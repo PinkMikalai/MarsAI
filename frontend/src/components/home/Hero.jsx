@@ -3,7 +3,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
-import heroVideo from '../../assets/videos/videoLoop2.mp4';
+import heroVideo from '../../assets/videos/IRONMAN.mp4';
 
 const USE_VIDEO_BACKGROUND = true; /* true = vidéo MP4, false = animation FX bleu/magenta seamless */
 const PARALLAX_FACTOR = 0.25; /* 0.25 = vidéo bouge à 25% de la vitesse du scroll */
