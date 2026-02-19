@@ -1,6 +1,5 @@
 import { Router } from "express";
 import authRoute from './authRoutes.js';
-import authRoute from './authRoutes.js';
 import videosRoutes from "./videosRoutes.js";
 import tagRoutes from "./tagRoutes.js";
 import participationRoutes from "./participationRoutes.js";
