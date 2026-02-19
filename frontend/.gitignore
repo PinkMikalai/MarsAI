@@ -25,4 +25,5 @@ dist-ssr
 
 .env
 
-public/videos/*
+src/assets/videos/*.mp4
+

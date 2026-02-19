@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [react()],
+
   resolve: {
     alias: {
       '@shared': path.resolve(__dirname, '../shared'),
@@ -17,6 +18,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['countries-list'],
   },
+
   server: {
     proxy: {
       '/api': {
