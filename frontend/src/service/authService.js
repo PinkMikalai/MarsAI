@@ -25,5 +25,5 @@ export const authService = {
     profile: () => api(`/auth/profile`, {
      method: 'GET'
     })
-    
+
 };

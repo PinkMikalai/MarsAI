@@ -5,11 +5,11 @@ const frontendUrl = process.env.FRONT_URL || 'http://localhost:5173';
 console.log("CONFIG TEST:", { host: process.env.EMAIL_HOST, port: process.env.EMAIL_PORT });
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST || '127.0.0.1',
+
     port: Number(process.env.EMAIL_PORT) || 2025,
     secure: false,
     ignoreTLS: true,
     auth: null
-
 });
 
 const sendInvitationEmail = async ({ email, token, role }) => {

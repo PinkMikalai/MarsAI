@@ -1,5 +1,6 @@
 import { Router } from "express";
 import authRoute from './authRoutes.js';
+import authRoute from './authRoutes.js';
 import videosRoutes from "./videosRoutes.js";
 import tagRoutes from "./tagRoutes.js";
 import participationRoutes from "./participationRoutes.js";
@@ -16,6 +17,5 @@ router.use('/participation', participationRoutes);
 router.use('/sponsors', sponsorsRoutes);
 router.use('/jury', juryRoutes);
 router.use('/admin', assignmentRoutes);
-
 
 export default router;

@@ -1,4 +1,4 @@
-import { createInvitationToken } from '../../services/user/authService.js';
+mport { createInvitationToken } from '../../services/user/authService.js';
 import { sendInvitationEmail } from '../../services/admin/mailService.js';
 import { assignVideoToUser, multipleAssignments,updateAssignment, deleteAssignment } from '../../services/admin/assignmentService.js';
 
@@ -10,7 +10,7 @@ const inviteUserController = async (req, res, next) => {
         await sendInvitationEmail({ email, token, role });
         res.status(200).json({
             status: "success",
-            message: `Invitation send to ${email}, with success`,
+            message: Invitation send to ${email}, with success,
             token: token
         });
     } catch (error) {
@@ -70,7 +70,7 @@ const inviteUserController = async (req, res, next) => {
 
         res.status(200).json({
             success : true,
-            message : `Assignment ${id} delated`,
+            message : Assignment ${id} delated,
             result : result
         })
  
@@ -86,5 +86,4 @@ export {inviteUserController,
     deleteAssignmentController
 
 } ;
-
 
