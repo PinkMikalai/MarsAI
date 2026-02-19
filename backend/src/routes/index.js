@@ -20,7 +20,6 @@ router.use('/sponsors', sponsorsRoutes);
 router.use('/jury', juryRoutes);
 router.use('/profile', profileRoutes);
 router.use('/selection-status', selectionStatusRoutes);
-=======
 router.use('/events', eventsRoutes);
 router.use('/admin', assignmentRoutes);
 
