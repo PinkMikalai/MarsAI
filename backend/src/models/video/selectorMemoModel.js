@@ -69,11 +69,18 @@ async function getMemoByUserAndVideoModel(userId, videoId) {
     return rows[0];
 }
 
-// Mettre à jour un mémo de sélection
+// Mettre à jour un mémo de sélection (mise à jour partielle)
 async function updateSelectorMemoModel(id, memoData) {
+    const existing = await getSelectorMemoByIdModel(id);
+    if (!existing) return false;
+
+    const rating = memoData.rating !== undefined ? memoData.rating : existing.rating;
+    const comment = memoData.comment !== undefined ? memoData.comment : existing.comment;
+    const selection_status_id = memoData.selection_status_id !== undefined ? memoData.selection_status_id : existing.selection_status_id;
+
     const [result] = await pool.execute(
         'UPDATE selector_memo SET rating = ?, comment = ?, selection_status_id = ? WHERE id = ?',
-        [memoData.rating, memoData.comment, memoData.selection_status_id, id]
+        [rating ?? null, comment ?? null, selection_status_id ?? null, id]
     );
     return result.affectedRows > 0;
 }

@@ -72,8 +72,12 @@ async function getVideoById(req, res) {
         else if (role === "Selector") {
             const selectorVideoData = await getSelectorVideoDataByIdModel(req.params.id, req.user?.id);
             console.log("selector video data", selectorVideoData);
+
+            const hasMemo = selectorVideoData[0]?.video_json?.selector_memo?.id !== null;
+
             return res.status(200).json({
                 message: "Video recuperée avec succès",
+                memo_status: hasMemo ? "Vous avez déjà noté cette vidéo" : "Vous n'avez pas encore noté cette vidéo",
                 data: {
                     basicVideoData: basicVideoData,
                     selectorVideoData: selectorVideoData,
