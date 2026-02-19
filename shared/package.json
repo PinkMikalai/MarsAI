@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "countries-list": "^3.2.2",
+    "libphonenumber-js": "^1.12.37",
     "zod": "^4.3.6"
   }
 }
