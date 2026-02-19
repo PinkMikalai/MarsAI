@@ -24,6 +24,25 @@ export const authService = {
     // profil , récupération profil utilisateur//
     profile: () => api(`/auth/profile`, {
      method: 'GET'
-    })
+    }),
 
+    // mot de passe oublié : envoi du lien par email //
+    forgotPassword: (email) => api('/auth/forgot_password', {
+        method: 'POST',
+        body: JSON.stringify({ email }),
+        checkAuth: false,
+    }),
+
+    // réinitialisation du mot de passe (avec token reçu par email) //
+    resetPassword: (data) => api('/auth/reset_password', {
+        method: 'POST',
+        body: JSON.stringify(data),
+        checkAuth: false,
+    }),
+
+    // mise à jour du mot de passe (depuis le profil, utilisateur connecté) //
+    updatePassword: (data) => api('/auth/update_password', {
+        method: 'PUT',
+        body: JSON.stringify(data),
+    }),
 };
