@@ -1,3 +1,13 @@
+
+// import React, { useState, useRef, useEffect } from 'react';
+// import FormCard from './FormCard';
+// import Icons from '../ui/common/Icons';
+// import { useDepositForm } from '../../context/DepositFormContext';
+// import { CIVILITY_OPTIONS, COUNTRIES_ISO3166, COUNTRY_PHONE, PHONE_PREFIX_OPTIONS, SOCIAL_PLATFORMS, SOCIAL_LINKS_MAX } from '../../constants/submitForm';
+// import { SiYoutube, SiInstagram, SiFacebook, SiLinkedin, SiX, SiArtstation, SiBehance, SiVimeo, SiTiktok } from 'react-icons/si';
+// import { FiLink } from 'react-icons/fi';
+
+
 // import React, { useState, useRef, useEffect } from 'react';
 // import FormCard from './FormCard';
 // import Icons from '../ui/common/Icons';
@@ -416,7 +426,6 @@
 // };
 
 // export default InscriptionStep;
-
 
 import React from 'react';
 import FormCard from './FormCard';
