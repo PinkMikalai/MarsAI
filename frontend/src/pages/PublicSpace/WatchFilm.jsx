@@ -23,7 +23,6 @@ function parseVideoResponse(res, fallback) {
     let adminJson    = null;
     let selectorMemo = null;
 
-    // basicVideoData : direct (public/else) ou imbriqué (Admin/Selector)
     const basicVideoData = res?.data?.basicVideoData
         ?? (Array.isArray(res?.data) ? res.data : null);
 
@@ -31,12 +30,10 @@ function parseVideoResponse(res, fallback) {
         videoJson = basicVideoData[0]?.video_json || null;
     }
 
-    // Données admin (uniquement si Admin)
     if (res?.data?.adminVideoData) {
         adminJson = res.data.adminVideoData[0]?.video_json || null;
     }
 
-    // Memo selector (uniquement si Selector)
     if (res?.data?.selectorVideoData) {
         const sj = res.data.selectorVideoData[0]?.video_json;
         selectorMemo = sj?.selector_memo?.id ? sj.selector_memo : null;
@@ -150,7 +147,7 @@ const ActionBtn = ({ icon, label, onClick, className = '' }) => (
 // COMPOSANT PRINCIPAL
 // =====================================================
 const WatchFilm = () => {
-    const { videoId }                    = useParams();
+    const { videoId }                           = useParams();
     const { isSelector, isAdmin, isSuperAdmin } = useAuth();
     const isAdminUser = isAdmin || isSuperAdmin;
 
@@ -158,7 +155,7 @@ const WatchFilm = () => {
     const wrapRef       = useRef(null);
     const scrollLockRef = useRef(false);
     const touchStartRef = useRef(null);
-    const navigateRef   = useRef(null); // ref stable vers la dernière version de navigate
+    const navigateRef   = useRef(null);
 
     const [videos, setVideos]             = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -175,10 +172,10 @@ const WatchFilm = () => {
     const [isSwitching, setIsSwitching]         = useState(false);
     const [scrollDirection, setScrollDirection] = useState(null);
 
-    const [showMemoModal, setShowMemoModal]     = useState(false);
-    const [showAdminPanel, setShowAdminPanel]   = useState(false);
-    const [showDrawer, setShowDrawer]           = useState(false);
-    const [existingMemo, setExistingMemo]       = useState(null);
+    const [showMemoModal, setShowMemoModal]   = useState(false);
+    const [showAdminPanel, setShowAdminPanel] = useState(false);
+    const [showDrawer, setShowDrawer]         = useState(false);
+    const [existingMemo, setExistingMemo]     = useState(null);
 
     // =====================================================
     // CHARGEMENT LISTE VIDÉOS
@@ -213,11 +210,11 @@ const WatchFilm = () => {
     useEffect(() => {
         const scrollY = window.scrollY;
         const prev = {
-            overflow:    document.body.style.overflow,
-            overscroll:  document.body.style.overscrollBehavior,
-            position:    document.body.style.position,
-            top:         document.body.style.top,
-            width:       document.body.style.width,
+            overflow:   document.body.style.overflow,
+            overscroll: document.body.style.overscrollBehavior,
+            position:   document.body.style.position,
+            top:        document.body.style.top,
+            width:      document.body.style.width,
         };
         document.body.style.overflow           = 'hidden';
         document.body.style.overscrollBehavior = 'none';
@@ -315,7 +312,6 @@ const WatchFilm = () => {
             wrapRef.current.requestFullscreen().catch(() => {});
         }
         videoRef.current?.play().catch(() => {});
-
     };
 
     // =====================================================
@@ -334,11 +330,9 @@ const WatchFilm = () => {
         }
     };
 
-
-    // Garde toujours la dernière version de navigate dans une ref stable
+    // Ref stable vers la dernière version de navigate — évite les re-binds du listener wheel
     navigateRef.current = navigate;
 
-    // Wheel non-passive attaché UNE SEULE FOIS — utilise navigateRef pour éviter les re-binds
     useEffect(() => {
         const onWheel = (e) => {
             e.preventDefault();
@@ -352,66 +346,6 @@ const WatchFilm = () => {
 
     const handleTouchStart = (e) => {
         touchStartRef.current = e.touches?.[0]?.clientY ?? null;
-
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    const current = videos[currentIndex];
-    if (!current?.id) return;
-
-    setIsPlaying(false);
-    setStillIndex(0);
-    setIsSwitching(true);
-
-    videoApi.getVideoById(current.id)
-      .then((res) => {
-        if (cancelled) return;
-        let video = null;
-        let tags = [];
-        let stills = [];
-        const raw = res?.data;
-        if (Array.isArray(raw) && raw[0]?.video_json) {
-          try {
-            const parsed = typeof raw[0].video_json === 'string' ? JSON.parse(raw[0].video_json) : raw[0].video_json;
-            video = { ...parsed, tag: undefined, still: undefined };
-            tags = Array.isArray(parsed.tag) ? parsed.tag.map((t) => (typeof t === 'string' ? { name: t } : t)) : [];
-            stills = Array.isArray(parsed.still) ? parsed.still : [];
-          } catch (_) {
-            video = current || null;
-          }
-        } else if (raw && (raw.video || raw.tags || raw.stills)) {
-          video = raw.video || current || null;
-          tags = raw.tags || [];
-          stills = raw.stills || [];
-        } else if (raw?.basicVideoData) {
-          const b = Array.isArray(raw.basicVideoData) ? raw.basicVideoData[0] : raw.basicVideoData;
-          const parsed = b?.video_json ? (typeof b.video_json === 'string' ? JSON.parse(b.video_json) : b.video_json) : b;
-          if (parsed) {
-            video = { ...parsed, tag: undefined, still: undefined };
-            tags = Array.isArray(parsed.tag) ? parsed.tag.map((t) => (typeof t === 'string' ? { name: t } : t)) : [];
-            stills = Array.isArray(parsed.still) ? parsed.still : [];
-          }
-        }
-        setData({
-          video: video || current || null,
-          tags: tags || [],
-          stills: stills || [],
-        });
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setData({ video: current || null, tags: [], stills: [] });
-      });
-
-    const timer = setTimeout(() => {
-      setIsSwitching(false);
-    }, 320);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(timer);
-
     };
 
     const handleTouchMove = (e) => e.preventDefault();
@@ -460,7 +394,7 @@ const WatchFilm = () => {
                         <div
                             ref={wrapRef}
                             className={`watch-film-video-wrap
-                                ${isSwitching      ? 'is-switching'      : ''}
+                                ${isSwitching ? 'is-switching' : ''}
                                 ${scrollDirection === 'down' ? 'is-switching-down' : ''}
                                 ${scrollDirection === 'up'   ? 'is-switching-up'   : ''}
                             `}

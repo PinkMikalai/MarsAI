@@ -444,6 +444,7 @@ import { FiLink } from 'react-icons/fi';
 import { useFormValidation } from '../../hooks/useFormValidation.js';
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 import { participationSchema } from '@shared/schemas/participationSchema.js';
+import Select from 'react-select';
 
 const SOCIAL_ICONS = {
   youtube: SiYoutube,
