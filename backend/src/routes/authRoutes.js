@@ -1,12 +1,13 @@
 import { Router } from 'express';
-const router = Router();
 import { getInviteController, registerController, loginController, updateUserController, deleteUserController, profileUserController, forgotPasswordController, resetPasswordController, updatePasswordController } from '../controllers/user/authController.js';
-import inviteUserController from '../controllers/admin/adminController.js';
+import {inviteUserController} from '../controllers/admin/adminController.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 import checkRole from '../middlewares/checkRoleMiddleware.js';
 import { validate } from '../middlewares/validate.js';
 import { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema } from '../validators/authSchema.js';
 import loginSchema from '../validators/loginShema.js';
+
+const router = Router();
 
 router.post('/admin/invite', authMiddleware, checkRole(['Super-admin']), validate(inviteSchema), inviteUserController);
 router.get('/invitation', getInviteController);

@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "mail": "maildev --smtp 1025 --web 1080"
+    "mail": "npx maildev --smtp 2025 --web 8080"
   },
   "keywords": [],
   "author": "",
