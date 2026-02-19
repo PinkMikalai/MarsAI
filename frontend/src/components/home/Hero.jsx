@@ -3,8 +3,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../layout/Navbar';
+import heroVideo from '../../assets/videos/IRONMAN.mp4';
 
-const HERO_VIDEO_SRC = '/videos/videoLoop2.mp4';
 const USE_VIDEO_BACKGROUND = true; /* true = vidéo MP4, false = animation FX bleu/magenta seamless */
 const PARALLAX_FACTOR = 0.25; /* 0.25 = vidéo bouge à 25% de la vitesse du scroll */
 
@@ -36,7 +36,6 @@ const Hero = () => {
 
   return (
     <section className="hero" aria-label="Accueil MARSAI">
-      {/* Fond : vidéo OU animation FX bleu → magenta (seamless) + parallaxe */}
       {USE_VIDEO_BACKGROUND ? (
         <div
           className="hero-video-wrap"
@@ -45,7 +44,7 @@ const Hero = () => {
           <video
             ref={videoHome}
             className="hero-video"
-            src={HERO_VIDEO_SRC}
+            src={heroVideo}
             autoPlay
             muted
             loop

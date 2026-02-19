@@ -4,22 +4,33 @@ import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../context/AuthContext';
 
 const NAV_ITEMS = [
-  { id: 'overview', label: 'Vue d\'ensemble' },
-  { id: 'films', label: 'Gestion films' },
-  { id: 'jury', label: 'Distribution & Jury' },
-  { id: 'results', label: 'Résultats & classement' },
-  { id: 'leaderboard', label: 'Leaderboard officiel' },
-  { id: 'events', label: 'Évènements' },
-  { id: 'messages', label: 'Messages' },
-  { id: 'festival-box', label: 'Festival Box' },
-  { id: 'settings', label: 'Configuration Festival' },
+  { id: 'overview', label: 'Vue d\'ensemble', path: ROUTES.PROFILE },
+  { id: 'films', label: 'Gestion films', path: ROUTES.PROFILE },
+  { id: 'jury', label: 'Distribution & Jury', path: ROUTES.PROFILE },
+  { id: 'results', label: 'Résultats & classement', path: ROUTES.PROFILE },
+  { id: 'leaderboard', label: 'Leaderboard officiel', path: ROUTES.PROFILE },
+  { id: 'events', label: 'Évènements', path: ROUTES.ADMIN_EVENTS },
+  { id: 'sponsors', label: 'Sponsors', path: ROUTES.ADMIN_SPONSORS },
+  { id: 'messages', label: 'Messages', path: ROUTES.PROFILE },
+  { id: 'festival-box', label: 'Festival Box', path: ROUTES.PROFILE },
+  { id: 'settings', label: 'Configuration Festival', path: ROUTES.PROFILE },
 ];
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, isAdmin, isSuperAdmin } = useAuth();
+  const canAccessEvents = isAdmin || isSuperAdmin;
+  const canAccessSponsors = isAdmin || isSuperAdmin;
   const isProfile = location.pathname === ROUTES.PROFILE;
+  const isEvents = location.pathname === ROUTES.ADMIN_EVENTS;
+  const isSponsors = location.pathname === ROUTES.ADMIN_SPONSORS;
+
+  const navItems = NAV_ITEMS.filter((item) => {
+    if (item.id === 'events' && !canAccessEvents) return false;
+    if (item.id === 'sponsors' && !canAccessSponsors) return false;
+    return true;
+  });
 
   const displayName = user?.firstname && user?.lastname
     ? `${user.firstname} ${user.lastname}`
@@ -49,17 +60,20 @@ const AdminSidebar = () => {
       </div>
       <nav className="admin-sidebar-nav" aria-label="Navigation espace admin">
         <ul className="admin-sidebar-nav-list">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.id}>
-              <Link
-                to={ROUTES.PROFILE}
-                className={`admin-sidebar-nav-item ${item.id === 'overview' && isProfile ? 'admin-sidebar-nav-item--active' : ''}`}
-              >
-                <span className="admin-sidebar-nav-bullet" aria-hidden />
-                <span className="admin-sidebar-nav-label">{item.label}</span>
-              </Link>
-            </li>
-          ))}
+          {navItems.map((item) => {
+            const isActive = (item.id === 'overview' && isProfile) || (item.id === 'events' && isEvents) || (item.id === 'sponsors' && isSponsors);
+            return (
+              <li key={item.id}>
+                <Link
+                  to={item.path}
+                  className={`admin-sidebar-nav-item ${isActive ? 'admin-sidebar-nav-item--active' : ''}`}
+                >
+                  <span className="admin-sidebar-nav-bullet" aria-hidden />
+                  <span className="admin-sidebar-nav-label">{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
       <div className="admin-sidebar-footer">

@@ -61,6 +61,20 @@
   margin-bottom: 0.4rem;
 }
 
+.login-form-forgot {
+  display: block;
+  font-size: 0.85rem;
+  color: #51A2FF;
+  text-decoration: none;
+  margin-bottom: 0.4rem;
+  transition: color 0.2s;
+}
+
+.login-form-forgot:hover {
+  color: #7ab8ff;
+  text-decoration: underline;
+}
+
 .login-form-input,
 .admin-login-input {
   width: 100%;
@@ -99,6 +113,22 @@
   color: #f87171;
   margin: 0 0 1rem;
   padding: 0.5rem 0;
+}
+
+.login-form-success {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.login-form-success p {
+  margin: 0 0 0.75rem;
+}
+
+.login-form-success a {
+  display: inline-block;
 }
 
 .login-form-submit,
