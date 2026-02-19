@@ -9,7 +9,7 @@ const eventSchema = z.object({
   capacity: z.coerce.number().int().min(0).optional(),
   illustration: imageSchema.optional(),
   location: z.string().trim().max(255).optional(),
-  id_USER: z.coerce.number().int().positive().optional(),
+  user_id: z.coerce.number().int().positive().optional(),
 });
 
 export { eventSchema };

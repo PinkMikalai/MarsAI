@@ -8,8 +8,11 @@ export const ROUTES = {
   WATCH_FILM: '/watch/:videoId',
 
   ADMIN_PROFILE: '/espace-admin/profile', // profil/dashboard après connexion ------------//
+  ADMIN_EVENTS: '/espace-admin/evenements',
+  ADMIN_SPONSORS: '/espace-admin/sponsors',
 
-  REGISTER_USER:'/register_user',
-  LOGIN :'/login'
-
+  REGISTER_USER: '/register_user',
+  LOGIN: '/login',
+  FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset_password',
 };
