@@ -22,7 +22,7 @@ const FilmsCompetition = () => {
         <p className="home-section-desc">
           Découvrez les films en compétition cette année et votez pour votre favori.
         </p>
-        <Link to={ROUTES.GALERIE_FILMS} className="home-section-link">VOIR TOUS LES FILMS &gt;</Link>
+        <Link to={ROUTES.GALLERY_FILMS} className="home-section-link">VOIR TOUS LES FILMS &gt;</Link>
         <div className="home-films-grid">
           {filmsToShow.map((film) => (
             <Link
