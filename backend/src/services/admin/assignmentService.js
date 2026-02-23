@@ -1,4 +1,4 @@
-import { createAssignmentModel, createMultipleAssignmentModel, updateAssignmentModel, deleteAssignmentModel } from "../../models/admin/assignementModel.js";
+import { createAssignmentModel, createMultipleAssignmentModel, updateAssignmentModel, deleteAssignmentModel, getAssignmentByVideoModel, getAssignmentByUserModel, getSelectorLoadModel} from "../../models/admin/assignementModel.js";
 import { getUserByIdModel } from "../../models/user/userModel.js";
 import { getVideoByIdModel } from "../../models/video/videoModel.js";
 
@@ -85,6 +85,23 @@ async function multipleAssignments({ video_ids, user_ids, admin_id }) {
 
 }
 
+async function getAssignmentByVideo(video_id) {
+
+    const assignment = await getAssignmentByVideoModel(video_id);
+    if (!assignment) {
+        return []
+    };
+    return assignment
+}
+
+async function getAssignmentByUser(user_id) {
+
+    const assignment = await getAssignmentByUserModel(user_id);
+    if (!assignment) {
+        return []
+    };
+    return assignment
+}
 
 async function updateAssignment(id, { video_id, user_id, admin_id }) {
 
@@ -147,9 +164,27 @@ async function deleteAssignment(id) {
     }
 }
 
+async function getSelectorVideoLoad() {
+    const videoLoad = await getSelectorLoadModel();
+    
+    if(!videoLoad) {
+        const error = new Error(`Error fetching selector films load`);
+        error.status = 404;
+        throw error
+    }
+    return{
+        success: true,
+        result : videoLoad
+    }
+    
+}
+
 export {
     assignVideoToUser,
     multipleAssignments,
+    getAssignmentByVideo,
+    getAssignmentByUser,
     updateAssignment,
-    deleteAssignment
+    deleteAssignment,
+    getSelectorVideoLoad
 }
