@@ -1,13 +1,14 @@
-import { countries, getEmojiFlag } from 'countries-list'
+import { countries } from 'countries-list'
+
 
 export const COUNTRIES_ISO3166 = [
     // Liste des pays avec emoji drapeaux pour le select 
   ...Object.entries(countries).map(([code, country]) => ({
     value: code,
-    label: `${getEmojiFlag(code)} ${country.name}`,
+    label: country.name,
     name: country.name,
-    phone: country.phone[0] || '', // Extraction du premier code 
-    emoji: getEmojiFlag(code)
+    flagClass: code.toLowerCase(),
+    phone: Array.isArray(country.phone) ? country.phone[0] : country.phone,
     })),
   // On ajoute l'option "Other" à la main
   { value: 'OTHER', label: '🏳️ Autre', name: 'Other', phone: '' }
@@ -21,7 +22,8 @@ export const PHONE_PREFIX_OPTIONS = COUNTRIES_ISO3166
     .filter(c => c.value !== 'OTHER')
     .map(c => ({
         value: c.value, 
-        label: `${c.emoji} ${c.value} +${c.phone}`,
-        prefix: `+${c.phone}`
+        label: `${c.phone}`,
+        prefix: `${c.phone}`,
+        flagClass: c.flagClass
     }));
 

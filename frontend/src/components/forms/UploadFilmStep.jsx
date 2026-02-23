@@ -6,8 +6,13 @@ import { useDepositForm } from '../../context/DepositFormContext';
 import { LANGUAGES_ISO6391, STILLS_MAX_COUNT } from '../../constants/submitForm';
 import { tagsService } from '../../service/tags';
 
+import { useFormValidation } from '../../hooks/useFormValidation';
+import { participationSchema } from '@shared/schemas/participationSchema';
+
 const UploadFilmStep = () => {
   const { form, setFilm, setFile, setTags } = useDepositForm();
+  const { film, files } = form; 
+
   const videoRef = useRef(null);
   const coverRef = useRef(null);
   const subtitlesRef = useRef(null);
@@ -108,7 +113,6 @@ const UploadFilmStep = () => {
     }
   };
 
-  const { film, files } = form;
 
   return (
     <FormCard number="03" title="Upload du film">

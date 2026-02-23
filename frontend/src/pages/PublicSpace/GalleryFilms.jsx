@@ -1,57 +1,30 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
-import { videoApi, getCoverUrl } from '../../service/galerieService';
-import TagFilter from '../../components/ui/tags/TagFilter';
+import { videoApi, getCoverUrl } from '../../service/galleryService';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
-import { FILMS_PER_PAGE } from '../../constants/galerieData';
+import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import Icons from '../../components/ui/common/Icons';
+
 
 // ─────────────────────────────────────────────────────────────────
 // Cache module-level : persiste entre les navigations (pas de refetch
 // inutile quand l'utilisateur revient depuis WatchFilm)
 // ─────────────────────────────────────────────────────────────────
-let _cachedVideos         = null;
-let _cachedVideosWithTags = null;
+let _cachedVideos = null;
 
 const GalerieFilms = () => {
   const [scrollY, setScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [videos, setVideos] = useState(_cachedVideos || []);
-  const [videosWithTags, setVideosWithTags] = useState(_cachedVideosWithTags || []);
-  const [selectedFilterTags, setSelectedFilterTags] = useState([]);
   const [loading, setLoading] = useState(!_cachedVideos);
-  const [loadingTags, setLoadingTags] = useState(false);
   const [error, setError] = useState(null);
   const [imageErrors, setImageErrors] = useState(new Set());
 
-  // Charge les tags de toutes les vidéos en parallèle
-  const loadVideoTags = useCallback(async (videosList) => {
-    try {
-      setLoadingTags(true);
-      const results = await Promise.all(
-        videosList.map(async (video) => {
-          const tags = await videoApi.getVideoTags(video.id);
-          return {
-            ...video,
-            tags: tags.map(t => t.name?.toLowerCase() || t.toLowerCase()),
-          };
-        })
-      );
-      _cachedVideosWithTags = results;
-      setVideosWithTags(results);
-    } catch {
-      const fallback = videosList.map(v => ({ ...v, tags: [] }));
-      _cachedVideosWithTags = fallback;
-      setVideosWithTags(fallback);
-    } finally {
-      setLoadingTags(false);
-    }
-  }, []);
+
 
   useEffect(() => {
-    // Déjà en cache → rien à charger
     if (_cachedVideos) return;
 
     let cancelled = false;
@@ -69,7 +42,6 @@ const GalerieFilms = () => {
           }
           _cachedVideos = shuffled;
           setVideos(shuffled);
-          if (shuffled.length > 0) loadVideoTags(shuffled);
         } else {
           setVideos([]);
         }
@@ -83,7 +55,7 @@ const GalerieFilms = () => {
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
-  }, [loadVideoTags]);
+  }, []);
 
   useEffect(() => {
     let ticking = false;
@@ -100,23 +72,7 @@ const GalerieFilms = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Filtre les vidéos selon tags sélection
-  const filteredVideos = useMemo(() => {
-    if (selectedFilterTags.length === 0) {
-      return videosWithTags.length > 0 ? videosWithTags : videos;
-    }
-
-    return (videosWithTags.length > 0 ? videosWithTags : videos).filter((video) => {
-      const videoTags = video.tags || [];
-      // Une vidéo correspond si elle a au moins un des tags sélectionnés
-      return selectedFilterTags.some(tag => videoTags.includes(tag));
-    });
-  }, [selectedFilterTags, videosWithTags, videos]);
-
-  // Réinitialiser la page ltres changent
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedFilterTags]);
+  const filteredVideos = videos;
 
   const totalPages = Math.max(1, Math.ceil(filteredVideos.length / FILMS_PER_PAGE));
   const start = (currentPage - 1) * FILMS_PER_PAGE;
@@ -156,21 +112,6 @@ const GalerieFilms = () => {
 
         {!loading && !error && (
           <>
-            {/* Filtre de tags */}
-            <TagFilter 
-              selectedTags={selectedFilterTags}
-              onFilterChange={setSelectedFilterTags}
-            />
-
-            {loadingTags && (
-              <ProgressBar
-                label="Chargement des tags…"
-                value={45}
-                variant="dark"
-                className="my-4 w-full max-w-sm"
-              />
-            )}
-
             <div className="galerie-grid">
               {filmsOnPage.map((film) => {
                 const title = film.title || film.title_en || 'Sans titre';
@@ -219,11 +160,6 @@ const GalerieFilms = () => {
               })}
             </div>
 
-            {filteredVideos.length === 0 && videos.length > 0 && (
-              <p className="galerie-empty">
-                Aucun film ne correspond aux filtres sélectionnés.
-              </p>
-            )}
             {videos.length === 0 && <p className="galerie-empty">Aucun film pour le moment.</p>}
 
             {filteredVideos.length > 0 && (
@@ -262,7 +198,6 @@ const GalerieFilms = () => {
                 </nav>
                 <p className="galerie-pagination-info">
                   PAGE {currentPage} SUR {totalPages} – {filteredVideos.length} FILM{filteredVideos.length > 1 ? 'S' : ''} TROUVÉ{filteredVideos.length > 1 ? 'S' : ''}
-                  {selectedFilterTags.length > 0 && ` (filtré${selectedFilterTags.length > 1 ? 's' : ''} par ${selectedFilterTags.length} tag${selectedFilterTags.length > 1 ? 's' : ''})`}
                 </p>
               </>
             )}
