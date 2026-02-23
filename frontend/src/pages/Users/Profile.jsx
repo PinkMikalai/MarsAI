@@ -19,19 +19,14 @@ const AdminProfileContent = ({ profile, loading }) => {
   const { user } = useAuth();
   const [modalEdit, setModalEdit] = useState(false);
   const [modalPassword, setModalPassword] = useState(false);
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [passwordSuccess, setPasswordSuccess] = useState(false);
-  const [passwordSubmitting, setPasswordSubmitting] = useState(false);
+  const [passwordLinkSent, setPasswordLinkSent] = useState(false);
+  const [passwordSending, setPasswordSending] = useState(false);
 
   const closePasswordModal = () => {
     setModalPassword(false);
-    setPasswordSuccess(false);
-    setOldPassword('');
-    setNewPassword('');
-    setConfirmNewPassword('');
+    setPasswordLinkSent(false);
+    setPasswordSending(false);
     setPasswordError('');
   };
 
@@ -129,13 +124,12 @@ const AdminProfileContent = ({ profile, loading }) => {
         <div className="admin-profile-modal-overlay" onClick={closePasswordModal} role="dialog" aria-modal="true" aria-labelledby="modal-password-title">
           <div className="admin-profile-modal" onClick={(e) => e.stopPropagation()}>
             <h3 id="modal-password-title" className="admin-profile-modal-title">Changer le mot de passe</h3>
-            <p className="admin-profile-modal-text">
-              Saisissez votre mot de passe actuel puis le nouveau (min. 6 caractères, au moins un chiffre).
-            </p>
 
-            {passwordSuccess ? (
+            {passwordLinkSent ? (
               <>
-                <p className="admin-profile-modal-success">Votre mot de passe a été mis à jour.</p>
+                <p className="admin-profile-modal-success">
+                  Un email vous a été envoyé à <strong>{data?.email}</strong>. Consultez votre boîte mail et cliquez sur le lien pour définir un nouveau mot de passe.
+                </p>
                 <div className="admin-profile-modal-actions">
                   <button type="button" className="admin-profile-btn admin-profile-btn--primary" onClick={closePasswordModal}>
                     Fermer
@@ -143,92 +137,46 @@ const AdminProfileContent = ({ profile, loading }) => {
                 </div>
               </>
             ) : (
-              <form
-                className="admin-profile-modal-form"
-                onSubmit={async (e) => {
-                  e.preventDefault();
-                  setPasswordError('');
-                  if (!oldPassword || !newPassword || !confirmNewPassword) {
-                    setPasswordError('Veuillez remplir tous les champs.');
-                    return;
-                  }
-                  if (newPassword !== confirmNewPassword) {
-                    setPasswordError('Les deux nouveaux mots de passe ne correspondent pas.');
-                    return;
-                  }
-                  if (newPassword.length < 6) {
-                    setPasswordError('Le nouveau mot de passe doit contenir au moins 6 caractères.');
-                    return;
-                  }
-                  setPasswordSubmitting(true);
-                  try {
-                    await authService.updatePassword({ oldPassword, newPassword, confirmNewPassword });
-                    setPasswordSuccess(true);
-                    setOldPassword('');
-                    setNewPassword('');
-                    setConfirmNewPassword('');
-                  } catch (err) {
-                    setPasswordError(err.message || 'Erreur lors de la mise à jour du mot de passe.');
-                  } finally {
-                    setPasswordSubmitting(false);
-                  }
-                }}
-              >
+              <>
+                <p className="admin-profile-modal-text">
+                  Un lien pour modifier votre mot de passe sera envoyé à votre adresse email du compte. Cliquez sur le bouton ci-dessous pour recevoir ce lien.
+                </p>
+                {data?.email && (
+                  <p className="admin-profile-modal-email">
+                    Email : <strong>{data.email}</strong>
+                  </p>
+                )}
                 {passwordError && <p className="admin-profile-modal-error" role="alert">{passwordError}</p>}
-                <div className="admin-profile-modal-field">
-                  <label htmlFor="profile-old-password" className="admin-profile-modal-label">Mot de passe actuel</label>
-                  <input
-                    id="profile-old-password"
-                    type="password"
-                    autoComplete="current-password"
-                    className="admin-profile-modal-input"
-                    value={oldPassword}
-                    onChange={(e) => setOldPassword(e.target.value)}
-                    disabled={passwordSubmitting}
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="admin-profile-modal-field">
-                  <label htmlFor="profile-new-password" className="admin-profile-modal-label">Nouveau mot de passe</label>
-                  <input
-                    id="profile-new-password"
-                    type="password"
-                    autoComplete="new-password"
-                    className="admin-profile-modal-input"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    disabled={passwordSubmitting}
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="admin-profile-modal-field">
-                  <label htmlFor="profile-confirm-password" className="admin-profile-modal-label">Confirmer le nouveau mot de passe</label>
-                  <input
-                    id="profile-confirm-password"
-                    type="password"
-                    autoComplete="new-password"
-                    className="admin-profile-modal-input"
-                    value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    disabled={passwordSubmitting}
-                    placeholder="••••••••"
-                  />
-                </div>
                 <div className="admin-profile-modal-actions">
-                  <button type="submit" className="admin-profile-btn admin-profile-btn--primary" disabled={passwordSubmitting}>
-                    {passwordSubmitting ? 'Enregistrement…' : 'Enregistrer'}
+                  <button
+                    type="button"
+                    className="admin-profile-btn admin-profile-btn--primary"
+                    disabled={passwordSending || !data?.email}
+                    onClick={async () => {
+                      setPasswordError('');
+                      const emailToUse = data?.email || user?.email;
+                      if (!emailToUse) {
+                        setPasswordError('Aucune adresse email associée au compte.');
+                        return;
+                      }
+                      setPasswordSending(true);
+                      try {
+                        await authService.forgotPassword(emailToUse);
+                        setPasswordLinkSent(true);
+                      } catch (err) {
+                        setPasswordError(err.message || 'Erreur lors de l\'envoi de l\'email.');
+                      } finally {
+                        setPasswordSending(false);
+                      }
+                    }}
+                  >
+                    {passwordSending ? 'Envoi en cours…' : 'Envoyer le lien par email'}
                   </button>
                   <button type="button" className="admin-profile-btn admin-profile-btn--secondary" onClick={closePasswordModal}>
                     Annuler
                   </button>
                 </div>
-              </form>
-            )}
-
-            {!passwordSuccess && (
-              <Link to={ROUTES.FORGOT_PASSWORD} className="admin-profile-forgot-link" onClick={closePasswordModal}>
-                Mot de passe oublié ? Envoyer un lien de réinitialisation
-              </Link>
+              </>
             )}
           </div>
         </div>

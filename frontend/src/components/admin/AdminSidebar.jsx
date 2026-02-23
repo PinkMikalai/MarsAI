@@ -6,11 +6,12 @@ import { useAuth } from '../../context/AuthContext';
 const NAV_ITEMS = [
   { id: 'overview', label: 'Vue d\'ensemble', path: ROUTES.PROFILE },
   { id: 'films', label: 'Gestion films', path: ROUTES.PROFILE },
-  { id: 'jury', label: 'Distribution & Jury', path: ROUTES.PROFILE },
+  { id: 'jury', label: 'Distribution & Jury', path: ROUTES.ADMIN_JURY },
   { id: 'results', label: 'Résultats & classement', path: ROUTES.PROFILE },
   { id: 'leaderboard', label: 'Leaderboard officiel', path: ROUTES.PROFILE },
   { id: 'events', label: 'Évènements', path: ROUTES.ADMIN_EVENTS },
   { id: 'sponsors', label: 'Sponsors', path: ROUTES.ADMIN_SPONSORS },
+  { id: 'invitations', label: 'Invitations', path: ROUTES.ADMIN_INVITATIONS },
   { id: 'messages', label: 'Messages', path: ROUTES.PROFILE },
   { id: 'festival-box', label: 'Festival Box', path: ROUTES.PROFILE },
   { id: 'settings', label: 'Configuration Festival', path: ROUTES.PROFILE },
@@ -22,13 +23,19 @@ const AdminSidebar = () => {
   const { user, logout, isAdmin, isSuperAdmin } = useAuth();
   const canAccessEvents = isAdmin || isSuperAdmin;
   const canAccessSponsors = isAdmin || isSuperAdmin;
+  const canAccessJury = isAdmin || isSuperAdmin;
+  const canAccessInvitations = isSuperAdmin;
   const isProfile = location.pathname === ROUTES.PROFILE;
   const isEvents = location.pathname === ROUTES.ADMIN_EVENTS;
   const isSponsors = location.pathname === ROUTES.ADMIN_SPONSORS;
+  const isJury = location.pathname === ROUTES.ADMIN_JURY;
+  const isInvitations = location.pathname === ROUTES.ADMIN_INVITATIONS;
 
   const navItems = NAV_ITEMS.filter((item) => {
     if (item.id === 'events' && !canAccessEvents) return false;
     if (item.id === 'sponsors' && !canAccessSponsors) return false;
+    if (item.id === 'jury' && !canAccessJury) return false;
+    if (item.id === 'invitations' && !canAccessInvitations) return false;
     return true;
   });
 
@@ -61,7 +68,7 @@ const AdminSidebar = () => {
       <nav className="admin-sidebar-nav" aria-label="Navigation espace admin">
         <ul className="admin-sidebar-nav-list">
           {navItems.map((item) => {
-            const isActive = (item.id === 'overview' && isProfile) || (item.id === 'events' && isEvents) || (item.id === 'sponsors' && isSponsors);
+            const isActive = (item.id === 'overview' && isProfile) || (item.id === 'events' && isEvents) || (item.id === 'sponsors' && isSponsors) || (item.id === 'jury' && isJury) || (item.id === 'invitations' && isInvitations);
             return (
               <li key={item.id}>
                 <Link

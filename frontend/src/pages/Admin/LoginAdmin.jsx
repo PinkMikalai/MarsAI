@@ -40,7 +40,7 @@ const LoginAdmin = () => {
           Connexion réservée aux administrateurs et aux selectionneurs
         </p>
         {/* <LoginForm onSubmit={handleSubmit} isLoading={isLoading} error={error} /> */}
-        {/* <Link to={ROUTES.ADMIN_INSCRIPTION} className="admin-login-inscription">
+        {/* <Link to={ROUTES.REGISTER_USER} className="admin-login-inscription">
           Pas encore de compte ? S&apos;inscrire
         </Link> */}
         <Link to={ROUTES.HOME} className="admin-login-back">
