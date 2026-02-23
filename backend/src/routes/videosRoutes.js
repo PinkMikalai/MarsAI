@@ -6,6 +6,7 @@ import {
     updateVideo, 
     deleteVideo 
 } from "../controllers/video/videoController.js";
+import { searchVideos } from "../controllers/searchController.js";
 import { 
     createSelectorMemo, 
     getAllSelectorMemos, 
@@ -22,7 +23,8 @@ const router = Router();
 
 // Routes vidéos
 router.post("/", createVideo);
-router.get("/", getAllVideos);
+router.get("/", optionalAuthMiddleware, getAllVideos);
+router.get("/search", optionalAuthMiddleware, searchVideos);
 router.get("/:id", optionalAuthMiddleware, getVideoById);
 router.put("/:id", updateVideo);
 router.delete("/:id", deleteVideo);
