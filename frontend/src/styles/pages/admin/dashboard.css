@@ -638,6 +638,16 @@
   line-height: 1.5;
 }
 
+.admin-profile-modal-email {
+  margin: 0 0 16px;
+  font-size: 0.9rem;
+  color: var(--color-mars-white);
+}
+
+.admin-profile-modal-email strong {
+  font-weight: 600;
+}
+
 .admin-profile-forgot-link {
   display: inline-block;
   margin-bottom: 16px;
@@ -806,6 +816,16 @@
   color: #fca5a5;
 }
 
+.admin-events-form-success {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: #86efac;
+}
+
 .admin-events-form {
   display: flex;
   flex-direction: column;
@@ -921,6 +941,12 @@
 .admin-events-td--title {
   font-weight: 500;
   color: var(--color-mars-white);
+}
+
+.admin-events-td--bio {
+  max-width: 220px;
+  color: var(--color-mars-muted-40);
+  font-size: 0.85rem;
 }
 
 .admin-events-td--actions {
