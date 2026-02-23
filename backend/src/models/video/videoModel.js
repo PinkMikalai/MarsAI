@@ -427,96 +427,25 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 
 
 // search videos — conditions selon le rôle (Public, Selector, Admin/Super-admin)
-async function searchVideosModel(search = {}) {
+async function getSearchVideosModel(search = {}) {
+
     try {
-        // on recupere le role et l'id de l'utilisateur connecté
-        const { role, userId } = search;
-       
-        // Champs JSON de base (comme getVideoByIdModel)
-        const baseJsonFields = `
-        JSON_OBJECT(
-            'id', v.id,
-            'video_file_name', v.video_file_name,
-            'title', v.title,
-            'synopsis', v.synopsis,
-            'synopsis_en', v.synopsis_en,
-            'cover', v.cover,
-            'language', v.language,
-            'country', v.country,
-            'duration', v.duration,
-            'realisator_firstname', v.realisator_firstname,
-            'realisator_lastname', v.realisator_lastname,
-            'social_media_links_json', v.social_media_links_json,
-            'tag', IFNULL(
-                (SELECT JSON_ARRAYAGG(t.name)
-                 FROM video_tag vt
-                 JOIN tag t ON t.id = vt.tag_id
-                 WHERE vt.video_id = v.id),
-                JSON_ARRAY()
-            ),
-            'still', IFNULL(
-                (SELECT JSON_ARRAYAGG(
-                    JSON_OBJECT('id', s.id, 'file_name', s.file_name, 'created_at', s.created_at))
-                 FROM still s WHERE s.video_id = v.id),
-                JSON_ARRAY()
-            ),
-            'award', IFNULL(
-                (SELECT JSON_ARRAYAGG(
-                    JSON_OBJECT('id', a.id, 'title', a.title, 'img', a.img, 'award_rank', a.award_rank))
-                 FROM video_award va
-                 JOIN award a ON a.id = va.award_id
-                 WHERE va.video_id = v.id),
-                JSON_ARRAY()
-            )`;
-
-        // SELECTOR : ajouter selector_memo (note, statut du user connecté)
-        const selectorMemoField = (search.role === 'Selector' && search.userId)
-            ? `, 'selector_memo', IFNULL(
-                JSON_OBJECT(
-                    'id', sm.id,
-                    'comment', sm.comment,
-                    'rating', sm.rating,
-                    'user_id', sm.user_id,
-                    'created_at', sm.created_at,
-                    'updated_at', sm.updated_at,
-                    'selection_status', IFNULL(
-                        JSON_OBJECT('id', ss.id, 'name', ss.name),
-                        NULL
-                    )
-                ),
-                NULL
-            )`
-            : '';
-
-        // ADMIN / SUPER-ADMIN : ajouter classification et admin_videos
-        const adminFields = (role === 'Admin' || role === 'Super-admin')
-            ? `, 'classification', v.classification,
-               'admin_videos', IFNULL(
-                   (SELECT JSON_ARRAYAGG(
-                       JSON_OBJECT(
-                           'id', av.id,
-                           'comment', av.comment,
-                           'admin_status', JSON_OBJECT('id', ast.id, 'name', ast.name),
-                           'created_at', av.created_at
-                       ))
-                    FROM admin_video av
-                    JOIN admin_status ast ON ast.id = av.admin_status_id
-                    WHERE av.video_id = v.id),
-                   JSON_ARRAY()
-               )`
-            : '';
-
-        // pour le public   
-        const jsonFieldsPublic = baseJsonFields;
-            // on combine les champs json
-        // pour le selector
-        const jsonFieldsSelector = baseJsonFields + selectorMemoField;
-        // on combine les champs json pour l'admin
-        const jsonFieldsAdmin = baseJsonFields + adminFields;
-
-    } catch (error) {
-        console.error('erreur lors de la recherche des videos: ', error);
-        throw error;
+        const { search, role, userId } = search;
+        const query = `SELECT * 
+        FROM video 
+        WHERE title LIKE '%${search}%' 
+        OR title_en LIKE '%${search}%' 
+        OR synopsis LIKE '%${search}%' 
+        OR realisator_firstname LIKE '%${search}%' 
+        OR realisator_lastname LIKE '%${search}%' 
+        OR language LIKE '%${search}%' 
+        OR country LIKE '%${search}%' 
+        OR classification LIKE '%${search}%'`;
+        const [rows] = await pool.execute(query);
+        return rows;
+        console.log('query search', rows);
+    }catch (error) {
+        console.error('erreur lors de la recherche des videos(cote model): ', error);
     }
 }
 
@@ -530,5 +459,5 @@ export {
     updateVideoModel,
     deleteVideoModel,
     updateYoutubeId,
-    searchVideosModel,
+    getSearchVideosModel,
 };
