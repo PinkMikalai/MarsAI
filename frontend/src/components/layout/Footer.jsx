@@ -25,7 +25,7 @@ const Footer = () => {
             <ul className="deposit-footer-list">
               <li><Link to="/" className="deposit-footer-link">Accueil</Link></li>
               <li><Link to="/" className="deposit-footer-link">Festival</Link></li>
-              <li><Link to={ROUTES.GALERIE_FILMS} className="deposit-footer-link">Galerie des films</Link></li>
+              <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">Galerie des films</Link></li>
               <li><Link to="/" className="deposit-footer-link">Compétition</Link></li>
               <li><Link to="/" className="deposit-footer-link">Conférences</Link></li>
               <li><Link to="/" className="deposit-footer-link">Contact</Link></li>
@@ -44,7 +44,7 @@ const Footer = () => {
           <div>
             <h3 className="deposit-footer-col-title">Compétition</h3>
             <ul className="deposit-footer-list">
-              <li><Link to={ROUTES.DEPOSER_UN_FILM} className="deposit-footer-link">Soumission</Link></li>
+              <li><Link to={ROUTES.PARTICIPATE} className="deposit-footer-link">Soumission</Link></li>
               <li><Link to="/" className="deposit-footer-link">Règlement</Link></li>
               <li><Link to="/" className="deposit-footer-link">Prix</Link></li>
             </ul>
@@ -114,7 +114,7 @@ const Footer = () => {
           <h3 className="deposit-footer-col-title">Navigation</h3>
           <ul className="deposit-footer-list">
             <li><Link to="/" className="deposit-footer-link">Programme</Link></li>
-            <li><Link to={ROUTES.GALERIE_FILMS} className="deposit-footer-link">Films</Link></li>
+            <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">Films</Link></li>
             <li><Link to="/" className="deposit-footer-link">Jury</Link></li>
             <li><Link to="/" className="deposit-footer-link">Billetterie</Link></li>
           </ul>
@@ -124,7 +124,7 @@ const Footer = () => {
           <h3 className="deposit-footer-col-title">Compétition</h3>
           <ul className="deposit-footer-list">
             <li><Link to="/" className="deposit-footer-link">Règlement</Link></li>
-            <li><Link to={ROUTES.DEPOSER_UN_FILM} className="deposit-footer-link">Soumission</Link></li>
+            <li><Link to={ROUTES.PARTICIPATE} className="deposit-footer-link">Soumission</Link></li>
             <li><Link to="/" className="deposit-footer-link">Prix</Link></li>
             <li><Link to="/" className="deposit-footer-link">FAQ</Link></li>
           </ul>

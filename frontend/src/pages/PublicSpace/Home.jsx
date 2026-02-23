@@ -10,10 +10,12 @@ import LaPlateforme from '../../components/home/LaPlateforme';
 import ChiffresProjetes from '../../components/home/ChiffresProjetes';
 import Sponsors from '../../components/home/Sponsors';
 import Footer from '../../components/layout/Footer';
+import Header from '../../components/layout/Header';
 
 const Home = () => {
   return (
     <div className="home-page">
+      <Header />
       <Hero />
       <Features />
       <FilmsCompetition />

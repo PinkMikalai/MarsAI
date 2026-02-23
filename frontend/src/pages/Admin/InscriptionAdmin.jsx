@@ -30,7 +30,7 @@ const InscriptionAdmin = () => {
     }
     // TODO: envoi au backend
     alert('Inscription envoyée (à brancher sur l\'API).');
-    navigate(ROUTES.ADMIN_LOGIN);
+    navigate(ROUTES.LOGIN);
   };
 
   return (
@@ -188,7 +188,7 @@ const InscriptionAdmin = () => {
 
         
 
-        <Link to={ROUTES.ADMIN_LOGIN} className="admin-inscription-back">
+        <Link to={ROUTES.LOGIN} className="admin-inscription-back">
           Déjà un compte ? Connexion
         </Link>
       </div>

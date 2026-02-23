@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galerieService';
+import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../context/AuthContext';
 import { CreateSelectorMemoForm, UpdateSelectorMemoForm } from '../../components/forms/SelectorMemo';
@@ -9,123 +9,330 @@ const STILL_INTERVAL_MS = 5000;
 const SCROLL_LOCK_MS    = 700;
 
 // =====================================================
-// EXTRACTION DES DONNÉES SELON LE RÔLE
+// EXTRACTION DES DONNÉES — aligné sur videoController.getVideoById
 //
-// Controller (getVideoById) — 3 cas :
-//   else (public)  → res.data = basicVideoData  (array direct)
-//   Admin          → res.data = { basicVideoData, adminVideoData }
-//   Selector       → res.data = { basicVideoData, selectorVideoData }
+// PUBLIC (controller lignes 88-94) :
+//   res.data = basicVideoData (array direct)
 //
-// Dans tous les cas, basicVideoData = [{ video_json: {...} }]
+// ADMIN / SUPER-ADMIN (controller lignes 60-70) :
+//   res.data = { basicVideoData, adminVideoData }
+//
+// SELECTOR (controller lignes 72-86) :
+//   res.data = { basicVideoData, selectorVideoData }
+//   res.memo_status = "Vous avez déjà noté..." | "Vous n'avez pas encore noté..."
 // =====================================================
 function parseVideoResponse(res, fallback) {
-    let videoJson    = null;
-    let adminJson    = null;
+    let videoJson = null;
+    let adminData = null;
     let selectorMemo = null;
 
+    // Public : data = basicVideoData directement
+    // Admin/Selector : data = { basicVideoData, adminVideoData | selectorVideoData }
     const basicVideoData = res?.data?.basicVideoData
         ?? (Array.isArray(res?.data) ? res.data : null);
+    const adminVideoData = res?.data?.adminVideoData;
+    const selectorVideoData = res?.data?.selectorVideoData;
 
-    if (basicVideoData) {
-        videoJson = basicVideoData[0]?.video_json || null;
-    }
+    const basicJson = basicVideoData?.[0]?.video_json ?? null;
 
-    if (res?.data?.adminVideoData) {
-        adminJson = res.data.adminVideoData[0]?.video_json || null;
-    }
-
-    if (res?.data?.selectorVideoData) {
-        const sj = res.data.selectorVideoData[0]?.video_json;
-        selectorMemo = sj?.selector_memo?.id ? sj.selector_memo : null;
+    if (basicJson) {
+        // Admin : fusion basicVideoData + adminVideoData
+        if (adminVideoData) {
+            const adminJson = adminVideoData[0]?.video_json ?? null;
+            videoJson = { ...basicJson, ...adminJson };
+            adminData = adminJson;
+        }
+        // Selector : fusion basicVideoData + selectorVideoData
+        else if (selectorVideoData) {
+            const selectorJson = selectorVideoData[0]?.video_json ?? null;
+            videoJson = { ...basicJson, ...selectorJson };
+            selectorMemo = selectorJson?.selector_memo?.id ? selectorJson.selector_memo : null;
+        }
+        // Public : basicVideoData uniquement
+        else {
+            videoJson = basicJson;
+        }
     }
 
     return {
-        video:        videoJson || fallback || null,
-        tags:         videoJson?.tag   || [],
-        stills:       videoJson?.still || [],
-        adminData:    adminJson,
+        video: videoJson ?? fallback ?? null,
+        tags: videoJson?.tag ?? [],
+        stills: videoJson?.still ?? [],
+        adminData,
         selectorMemo,
+        memoStatus: res?.memo_status ?? null,
     };
 }
 
 // =====================================================
-// PANNEAU ADMIN — slide depuis la droite
+// PANNEAU INFOS — Admin et Selector (stills, commentaires, données)
 // =====================================================
-const AdminPanel = ({ adminData, isOpen, onClose }) => {
-    const contributors = adminData?.contributors || [];
+const InfoPanel = ({
+    isAdmin,
+    isSelector,
+    adminData,
+    video,
+    existingMemo,
+    memoStatus,
+    stillUrls,
+    stillIndex,
+    onNoterClick,
+    isOpen,
+    onClose,
+}) => {
+    const adminContributors = adminData?.contributors || [];
+    const selectorContributors = video?.contributors || [];
+    const contributors = isAdmin ? adminContributors : selectorContributors;
     const adminVideos  = adminData?.admin_videos  || [];
 
     return (
         <div className={`wf-admin-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}>
             <div className="wf-admin-panel-header">
-                <h3 className="wf-admin-panel-title">Infos Admin</h3>
+                <h3 className="wf-admin-panel-title">Infos</h3>
                 <button className="wf-admin-panel-close" onClick={onClose} aria-label="Fermer">✕</button>
             </div>
 
             <div className="wf-admin-panel-body">
 
-                {/* Technique */}
-                <div className="wf-admin-section">
-                    <h4 className="wf-admin-section-title">Technique</h4>
-                    {adminData?.classification && (
-                        <div className="wf-admin-row">
-                            <span className="wf-admin-label">Classification</span>
-                            <span className="wf-admin-value">{adminData.classification}</span>
+                {/* SELECTOR : Ma notation + Données selectorVideoData */}
+                {isSelector && (
+                    <>
+                        <div className="wf-admin-section">
+                            <h4 className="wf-admin-section-title">Ma notation</h4>
+                            <div className="wf-admin-row wf-admin-row--selector">
+                                <span className="wf-admin-label">Note</span>
+                                <span className="wf-admin-value">
+                                    {existingMemo?.rating ?? '—'} / 10
+                                </span>
+                            </div>
+                            <div className="wf-admin-row wf-admin-row--selector">
+                                <span className="wf-admin-label">Statut</span>
+                                <span className="wf-admin-value">
+                                    {existingMemo?.selection_status?.name ?? (memoStatus ?? '—')}
+                                </span>
+                            </div>
+                            {existingMemo?.created_at && (
+                                <div className="wf-admin-row wf-admin-row--selector">
+                                    <span className="wf-admin-label">Noté le</span>
+                                    <span className="wf-admin-value">
+                                        {new Date(existingMemo.created_at).toLocaleDateString('fr-FR')}
+                                    </span>
+                                </div>
+                            )}
+                            {existingMemo?.comment && (
+                                <div className="wf-admin-section">
+                                    <h4 className="wf-admin-section-title">Mon commentaire</h4>
+                                    <p className="wf-admin-text">{existingMemo.comment}</p>
+                                </div>
+                            )}
+                            <button
+                                className="wf-action-btn wf-action-btn--noter wf-action-btn--in-panel"
+                                onClick={onNoterClick}
+                            >
+                                <span className="wf-action-btn-icon">{existingMemo ? '✏️' : '⭐'}</span>
+                                <span className="wf-action-btn-label">{existingMemo ? 'Modifier' : 'Noter'}</span>
+                            </button>
                         </div>
-                    )}
-                    {adminData?.youtube_url && (
-                        <div className="wf-admin-row">
-                            <span className="wf-admin-label">YouTube</span>
-                            <a className="wf-admin-link" href={adminData.youtube_url} target="_blank" rel="noreferrer">
-                                Voir ↗
-                            </a>
-                        </div>
-                    )}
-                    {adminData?.acquisition_source && (
-                        <div className="wf-admin-row">
-                            <span className="wf-admin-label">Source</span>
-                            <span className="wf-admin-value">{adminData.acquisition_source.name}</span>
-                        </div>
-                    )}
-                    {adminData?.tech_resume && (
-                        <p className="wf-admin-text">{adminData.tech_resume}</p>
-                    )}
-                    {adminData?.creative_resume && (
-                        <p className="wf-admin-text">{adminData.creative_resume}</p>
-                    )}
-                </div>
-
-                {/* Contributeurs */}
-                {contributors.length > 0 && (
-                    <div className="wf-admin-section">
-                        <h4 className="wf-admin-section-title">
-                            Contributeurs <span className="wf-admin-count">{contributors.length}</span>
-                        </h4>
-                        <ul className="wf-admin-list">
-                            {contributors.map((c) => (
-                                <li key={c.id} className="wf-admin-list-item">
-                                    <span className="wf-admin-contributor-name">{c.firstname} {c.last_name}</span>
-                                    <span className="wf-admin-contributor-role">{c.production_role}</span>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                        {/* Description (synopsis) en double */}
+                        {(video?.synopsis_en || video?.synopsis) && (
+                            <div className="wf-admin-section">
+                                <h4 className="wf-admin-section-title">Description</h4>
+                                <p className="wf-admin-text">
+                                    {video.synopsis_en || video.synopsis}
+                                </p>
+                            </div>
+                        )}
+                        {/* selectorVideoData : Technique, Contributeurs */}
+                        {(video?.tech_resume || video?.classification || video?.creative_resume) && (
+                            <div className="wf-admin-section">
+                                <h4 className="wf-admin-section-title">Technique</h4>
+                                {video.classification && (
+                                    <div className="wf-admin-row">
+                                        <span className="wf-admin-label">Classification</span>
+                                        <span className="wf-admin-value">{video.classification}</span>
+                                    </div>
+                                )}
+                                {video.tech_resume && (
+                                    <div className="wf-admin-text-block">
+                                        <span className="wf-admin-text-label">Résumé technique</span>
+                                        <p className="wf-admin-text">{video.tech_resume}</p>
+                                    </div>
+                                )}
+                                {video.creative_resume && (
+                                    <div className="wf-admin-text-block">
+                                        <span className="wf-admin-text-label">Résumé créatif</span>
+                                        <p className="wf-admin-text">{video.creative_resume}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        {contributors.length > 0 && (
+                            <div className="wf-admin-section">
+                                <h4 className="wf-admin-section-title">
+                                    Contributeurs <span className="wf-admin-count">{contributors.length}</span>
+                                </h4>
+                                <ul className="wf-admin-list">
+                                    {contributors.map((c) => (
+                                        <li key={c.id} className="wf-admin-list-item">
+                                            <span className="wf-admin-contributor-name">{c.firstname} {c.last_name}</span>
+                                            <span className="wf-admin-contributor-role">{c.production_role}</span>
+                                            {c.email && (
+                                                <a className="wf-admin-link wf-admin-link--email" href={`mailto:${c.email}`}>
+                                                    {c.email}
+                                                </a>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </>
                 )}
 
-                {/* Historique statuts */}
-                {adminVideos.length > 0 && (
-                    <div className="wf-admin-section">
-                        <h4 className="wf-admin-section-title">Historique statuts</h4>
-                        <ul className="wf-admin-list">
-                            {adminVideos.map((av) => (
-                                <li key={av.id} className="wf-admin-list-item">
-                                    <span className={`wf-admin-status-badge wf-admin-status-badge--${av.admin_status?.name?.toLowerCase().replace(/\s+/g, '-') || 'default'}`}>
-                                        {av.admin_status?.name || '—'}
+                {/* ADMIN : adminVideoData — Technique, Réalisateur, Contributeurs, Historique */}
+                {isAdmin && adminData && (
+                    <>
+                        <div className="wf-admin-section">
+                            <h4 className="wf-admin-section-title">Technique</h4>
+                            {adminData.classification && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Classification</span>
+                                    <span className="wf-admin-value">{adminData.classification}</span>
+                                </div>
+                            )}
+                            {adminData.youtube_url && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">YouTube</span>
+                                    <a className="wf-admin-link" href={adminData.youtube_url} target="_blank" rel="noreferrer">
+                                        Voir ↗
+                                    </a>
+                                </div>
+                            )}
+                            {adminData.srt_file_name && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Sous-titres</span>
+                                    <span className="wf-admin-value">{adminData.srt_file_name}</span>
+                                </div>
+                            )}
+                            {adminData.acquisition_source && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Source</span>
+                                    <span className="wf-admin-value">{adminData.acquisition_source.name}</span>
+                                </div>
+                            )}
+                            {adminData.tech_resume && (
+                                <div className="wf-admin-text-block">
+                                    <span className="wf-admin-text-label">Résumé technique</span>
+                                    <p className="wf-admin-text">{adminData.tech_resume}</p>
+                                </div>
+                            )}
+                            {adminData.creative_resume && (
+                                <div className="wf-admin-text-block">
+                                    <span className="wf-admin-text-label">Résumé créatif</span>
+                                    <p className="wf-admin-text">{adminData.creative_resume}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {(adminData.realisator_civility || adminData.email || adminData.birthdate || adminData.mobile_number || adminData.phone_number || adminData.address) && (
+                        <div className="wf-admin-section">
+                            <h4 className="wf-admin-section-title">Réalisateur</h4>
+                            {adminData.realisator_civility && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Civilité</span>
+                                    <span className="wf-admin-value">{adminData.realisator_civility}</span>
+                                </div>
+                            )}
+                            {adminData.email && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Email</span>
+                                    <a className="wf-admin-link" href={`mailto:${adminData.email}`}>
+                                        {adminData.email}
+                                    </a>
+                                </div>
+                            )}
+                            {adminData.birthdate && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Date de naissance</span>
+                                    <span className="wf-admin-value">
+                                        {new Date(adminData.birthdate).toLocaleDateString('fr-FR')}
                                     </span>
-                                    {av.comment && <p className="wf-admin-text">{av.comment}</p>}
-                                </li>
+                                </div>
+                            )}
+                            {adminData.mobile_number && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Mobile</span>
+                                    <span className="wf-admin-value">{adminData.mobile_number}</span>
+                                </div>
+                            )}
+                            {adminData.phone_number && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Téléphone fixe</span>
+                                    <span className="wf-admin-value">{adminData.phone_number}</span>
+                                </div>
+                            )}
+                            {adminData.address && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">Adresse</span>
+                                    <span className="wf-admin-value">{adminData.address}</span>
+                                </div>
+                            )}
+                        </div>
+                        )}
+
+                        {adminContributors.length > 0 && (
+                            <div className="wf-admin-section">
+                                <h4 className="wf-admin-section-title">
+                                    Contributeurs <span className="wf-admin-count">{adminContributors.length}</span>
+                                </h4>
+                                <ul className="wf-admin-list">
+                                    {adminContributors.map((c) => (
+                                        <li key={c.id} className="wf-admin-list-item">
+                                            <span className="wf-admin-contributor-name">{c.firstname} {c.last_name}</span>
+                                            <span className="wf-admin-contributor-role">{c.production_role}</span>
+                                            {c.email && (
+                                                <a className="wf-admin-link wf-admin-link--email" href={`mailto:${c.email}`}>
+                                                    {c.email}
+                                                </a>
+                                            )}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+
+                        {adminVideos.length > 0 && (
+                            <div className="wf-admin-section">
+                                <h4 className="wf-admin-section-title">Historique statuts</h4>
+                                <ul className="wf-admin-list">
+                                    {adminVideos.map((av) => (
+                                        <li key={av.id} className="wf-admin-list-item">
+                                            <span className={`wf-admin-status-badge wf-admin-status-badge--${av.admin_status?.name?.toLowerCase().replace(/\s+/g, '-') || 'default'}`}>
+                                                {av.admin_status?.name || '—'}
+                                            </span>
+                                            {av.comment && <p className="wf-admin-text">{av.comment}</p>}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </>
+                )}
+
+                {/* STILLS — pour Admin et Selector */}
+                {stillUrls.length > 0 && (
+                    <div className="wf-admin-section">
+                        <h4 className="wf-admin-section-title">Stills</h4>
+                        <div className="wf-drawer-stills wf-drawer-stills--in-panel">
+                            {stillUrls.map((url, idx) => (
+                                <img
+                                    key={url}
+                                    src={url}
+                                    alt={`still ${idx + 1}`}
+                                    className={`wf-drawer-still-img ${idx === stillIndex ? 'wf-drawer-still-img--active' : ''}`}
+                                />
                             ))}
-                        </ul>
+                        </div>
                     </div>
                 )}
             </div>
@@ -174,8 +381,8 @@ const WatchFilm = () => {
 
     const [showMemoModal, setShowMemoModal]   = useState(false);
     const [showAdminPanel, setShowAdminPanel] = useState(false);
-    const [showDrawer, setShowDrawer]         = useState(false);
     const [existingMemo, setExistingMemo]     = useState(null);
+    const [memoStatus, setMemoStatus]         = useState(null);
 
     // =====================================================
     // CHARGEMENT LISTE VIDÉOS
@@ -250,10 +457,10 @@ const WatchFilm = () => {
         setStillIndex(0);
         setIsSwitching(true);
         setExistingMemo(null);
+        setMemoStatus(null);
         setAdminData(null);
         setShowMemoModal(false);
         setShowAdminPanel(false);
-        setShowDrawer(false);
 
         videoApi.getVideoById(current.id)
             .then((res) => {
@@ -264,6 +471,7 @@ const WatchFilm = () => {
                 setStills(parsed.stills);
                 setAdminData(parsed.adminData);
                 setExistingMemo(parsed.selectorMemo);
+                setMemoStatus(parsed.memoStatus);
             })
             .catch(() => {
                 if (cancelled) return;
@@ -416,9 +624,9 @@ const WatchFilm = () => {
                             {!isPlaying && (
                                 <div className="wf-overlay">
 
-                                    {/* NAV — absolute en haut */}
-                                    <div className="wf-nav">
-                                        <Link to={ROUTES.GALERIE_FILMS} className="watch-film-back">
+                                    {/* NAV — stopPropagation pour éviter fullscreen au clic sur Galerie/Accueil */}
+                                    <div className="wf-nav" onClick={(e) => e.stopPropagation()}>
+                                        <Link to={ROUTES.GALLERY_FILMS} className="watch-film-back">
                                             ← Galerie
                                         </Link>
                                         <Link to={ROUTES.HOME} className="watch-film-home">
@@ -435,37 +643,40 @@ const WatchFilm = () => {
                                         </button>
                                     </div>
 
-                                    {/* ACTIONS — absolute droite, centrées verticalement */}
-                                    <div className="wf-actions" onClick={(e) => e.stopPropagation()}>
-                                        {isSelector && (
-                                            <>
-                                                <div className="wf-stat-box">
-                                                    <span className="wf-stat-box-value">{existingMemo?.rating ?? '—'}</span>
-                                                    <span className="wf-stat-box-label">/ 10</span>
-                                                </div>
-                                                <div className="wf-stat-box wf-stat-box--status">
-                                                    <span className="wf-stat-box-value wf-stat-box-value--sm">
-                                                        {existingMemo?.selection_status?.name ?? '—'}
-                                                    </span>
-                                                    <span className="wf-stat-box-label">statut</span>
-                                                </div>
-                                                <ActionBtn
-                                                    icon={existingMemo ? '✏️' : '⭐'}
-                                                    label={existingMemo ? 'Modifier' : 'Noter'}
-                                                    className={existingMemo ? 'wf-action-btn--noter-done' : 'wf-action-btn--noter'}
-                                                    onClick={() => setShowMemoModal(true)}
-                                                />
-                                            </>
-                                        )}
-                                        {isAdminUser && (
+                                    {/* ACTIONS — Note, Statut, Infos, Noter (Selector) */}
+                                    {(isAdminUser || isSelector) && (
+                                        <div className="wf-actions" onClick={(e) => e.stopPropagation()}>
+                                            {isSelector && (
+                                                <>
+                                                    <div className="wf-stat-box">
+                                                        <span className="wf-stat-box-value">{existingMemo?.rating ?? '—'}</span>
+                                                        <span className="wf-stat-box-label">/ 10</span>
+                                                    </div>
+                                                    <div className="wf-stat-box wf-stat-box--status">
+                                                        <span className="wf-stat-box-value wf-stat-box-value--sm">
+                                                            {existingMemo?.selection_status?.name ?? (memoStatus ?? '—')}
+                                                        </span>
+                                                        <span className="wf-stat-box-label">statut</span>
+                                                    </div>
+                                                    <ActionBtn
+                                                        icon={existingMemo ? '✏️' : '⭐'}
+                                                        label={existingMemo ? 'Modifier' : 'Noter'}
+                                                        className={`wf-action-btn--noter ${existingMemo ? 'wf-action-btn--noter-done' : ''}`}
+                                                        onClick={() => {
+                                                            setShowAdminPanel(false);
+                                                            setShowMemoModal(true);
+                                                        }}
+                                                    />
+                                                </>
+                                            )}
                                             <ActionBtn
                                                 icon="ℹ️"
                                                 label="Infos"
                                                 className={`wf-action-btn--admin ${showAdminPanel ? 'wf-action-btn--active' : ''}`}
                                                 onClick={() => setShowAdminPanel((prev) => !prev)}
                                             />
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
 
                                     {/* ZONE BAS — dans le flux flex (meta puis drawer empilés) */}
                                     <div className="wf-meta-zone">
@@ -501,75 +712,67 @@ const WatchFilm = () => {
                                                     ))}
                                                 </div>
                                             )}
-                                            {isSelector && (
-                                                <div className={`wf-memo-badge ${existingMemo ? 'wf-memo-badge--rated' : 'wf-memo-badge--unrated'}`}>
-                                                    {existingMemo
-                                                        ? <>✅ Noté <strong>{existingMemo.rating}/10</strong> — {existingMemo.selection_status?.name || ''}</>
-                                                        : <>📋 Pas encore noté</>
-                                                    }
-                                                </div>
-                                            )}
-                                            {isAdminUser && adminData && (
-                                                <div className="wf-admin-inline">
-                                                    {adminData.classification && (
-                                                        <span className="wf-admin-badge">{adminData.classification}</span>
-                                                    )}
-                                                    {adminData.acquisition_source && (
-                                                        <span className="wf-admin-badge wf-admin-badge--source">
-                                                            {adminData.acquisition_source.name}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            )}
                                         </div>
-
-                                        {/* DRAWER — juste en dessous du meta, dans le flux */}
-                                        {(isSelector || isAdminUser) && (stillUrls.length > 0 || existingMemo?.comment) && (
-                                            <div className="wf-drawer-zone" onClick={(e) => e.stopPropagation()}>
-                                                <button
-                                                    className={`wf-drawer-toggle ${showDrawer ? 'wf-drawer-toggle--open' : ''}`}
-                                                    onClick={() => setShowDrawer((prev) => !prev)}
-                                                    aria-label={showDrawer ? 'Masquer' : 'Afficher'}
-                                                >
-                                                    <svg className="wf-drawer-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-                                                    </svg>
-                                                    <span className="wf-drawer-toggle-label">
-                                                        {existingMemo?.comment ? 'Stills & Commentaire' : 'Voir les stills'}
-                                                    </span>
-                                                </button>
-                                                <div className={`wf-drawer ${showDrawer ? 'wf-drawer--open' : ''}`}>
-                                                    {stillUrls.length > 0 && (
-                                                        <div className="wf-drawer-stills">
-                                                            {stillUrls.map((url, idx) => (
-                                                                <img
-                                                                    key={url}
-                                                                    src={url}
-                                                                    alt={`still ${idx + 1}`}
-                                                                    className={`wf-drawer-still-img ${idx === stillIndex ? 'wf-drawer-still-img--active' : ''}`}
-                                                                />
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                    {isSelector && existingMemo?.comment && (
-                                                        <div className="wf-drawer-comment">
-                                                            <p className="wf-drawer-comment-label">Mon commentaire</p>
-                                                            <p className="wf-drawer-comment-text">{existingMemo.comment}</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>{/* fin wf-meta-zone */}
 
-                                    {/* PANNEAU ADMIN */}
-                                    {isAdminUser && (
-                                        <AdminPanel
+                                    {/* PANNEAU INFOS — Admin et Selector (stills, commentaires, données) */}
+                                    {(isAdminUser || isSelector) && (
+                                        <InfoPanel
+                                            isAdmin={isAdminUser}
+                                            isSelector={isSelector}
                                             adminData={adminData}
+                                            video={video}
+                                            existingMemo={existingMemo}
+                                            memoStatus={memoStatus}
+                                            stillUrls={stillUrls}
+                                            stillIndex={stillIndex}
+                                            onNoterClick={() => {
+                                                setShowAdminPanel(false);
+                                                setShowMemoModal(true);
+                                            }}
                                             isOpen={showAdminPanel}
                                             onClose={() => setShowAdminPanel(false)}
                                         />
                                     )}
+                                </div>
+                            )}
+
+                            {/* MODALE NOTATION — à l'intérieur du wrap pour fullscreen */}
+                            {showMemoModal && isSelector && (
+                                <div
+                                    className="watch-film-memo-overlay"
+                                    onClick={() => setShowMemoModal(false)}
+                                >
+                                    <div
+                                        className="watch-film-memo-modal"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <button
+                                            className="watch-film-memo-close"
+                                            onClick={() => setShowMemoModal(false)}
+                                            aria-label="Fermer"
+                                        >
+                                            ✕
+                                        </button>
+
+                                        {existingMemo ? (
+                                            <UpdateSelectorMemoForm
+                                                memo={existingMemo}
+                                                onSuccess={(updatedMemo) => {
+                                                    if (updatedMemo) setExistingMemo(updatedMemo);
+                                                    setShowMemoModal(false);
+                                                }}
+                                            />
+                                        ) : (
+                                            <CreateSelectorMemoForm
+                                                videoId={video?.id || videoId}
+                                                onSuccess={(newMemo) => {
+                                                    if (newMemo) setExistingMemo(newMemo);
+                                                    setShowMemoModal(false);
+                                                }}
+                                            />
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -583,45 +786,6 @@ const WatchFilm = () => {
                     <video key={url} src={url} preload="metadata" />
                 ))}
             </div>
-
-            {/* MODALE NOTATION (Selector uniquement) */}
-            {showMemoModal && isSelector && (
-                <div
-                    className="watch-film-memo-overlay"
-                    onClick={() => setShowMemoModal(false)}
-                >
-                    <div
-                        className="watch-film-memo-modal"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <button
-                            className="watch-film-memo-close"
-                            onClick={() => setShowMemoModal(false)}
-                            aria-label="Fermer"
-                        >
-                            ✕
-                        </button>
-
-                        {existingMemo ? (
-                            <UpdateSelectorMemoForm
-                                memo={existingMemo}
-                                onSuccess={(updatedMemo) => {
-                                    if (updatedMemo) setExistingMemo(updatedMemo);
-                                    setShowMemoModal(false);
-                                }}
-                            />
-                        ) : (
-                            <CreateSelectorMemoForm
-                                videoId={video?.id || videoId}
-                                onSuccess={(newMemo) => {
-                                    if (newMemo) setExistingMemo(newMemo);
-                                    setShowMemoModal(false);
-                                }}
-                            />
-                        )}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };
