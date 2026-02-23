@@ -14,7 +14,9 @@ import WatchFilm from './pages/PublicSpace/WatchFilm';
 import AdminEvents from './pages/Admin/AdminEvents';
 import AdminSponsors from './pages/Admin/AdminSponsors';
 import AdminLayout from './components/admin/AdminLayout';
+import AdminAssignment from './pages/Admin/AdminAssignments';
 import { useAuth } from './context/AuthContext';
+
 
 const AdminEventsProtected = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
@@ -56,6 +58,7 @@ function App() {
         <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
         <Route path={ROUTES.ADMIN_EVENTS} element={<AdminEventsProtected />} />
         <Route path={ROUTES.ADMIN_SPONSORS} element={<AdminSponsorsProtected />} />
+        <Route path={ROUTES.ADMIN_ASSIGNMENT} element={<AdminAssignment/>} />
       </Routes>
     </Router>
     </AuthProvider>
