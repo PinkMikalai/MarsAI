@@ -17,20 +17,20 @@ async function createAssignmentModel({ video_id, user_id, assigned_by }) {
 }
 // assignation multiple : une video à plusieurs selectionneurs ou plusieurs videos à un selectionneur
 async function createMultipleAssignmentModel(assignments) {
- try{
-    // prépare le nombre de placeholders nécessaires qui correspondent aux nombre de valeurs saisies
-    const placeholders = assignments.map(() => "(?,?,?)").join(",");
-    // concaténation des tableaux en seul tableau
-    const array = assignments.flat();
-    const query = `INSERT IGNORE INTO assignation (video_id, user_id, assigned_by) VALUES ${placeholders}`
-    const [result] = await pool.execute(query, array)
+    try {
+        // prépare le nombre de placeholders nécessaires qui correspondent aux nombre de valeurs saisies
+        const placeholders = assignments.map(() => "(?,?,?)").join(",");
+        // concaténation des tableaux en seul tableau
+        const array = assignments.flat();
+        const query = `INSERT IGNORE INTO assignation (video_id, user_id, assigned_by) VALUES ${placeholders}`
+        const [result] = await pool.execute(query, array)
 
-    return result.affectedRows
+        return result.affectedRows
 
- }catch(error){
-    console.error("Multiassignment error:", error)
-    throw error
- }
+    } catch (error) {
+        console.error("Multiassignment error:", error)
+        throw error
+    }
 
 }
 
@@ -39,7 +39,7 @@ async function createMultipleAssignmentModel(assignments) {
 async function getAssignmentByVideoModel(video_id) {
 
     try {
-        const query = `SELECT a.id, a.assignate_at , u.name AS selector_name , admin.lastname AS admin_name
+        const query = `SELECT a.id, a.assignate_at , u.firstname AS selector_firstname , admin.firstname AS admin_firstname
             FROM  assignation a
             JOIN user u ON a.user_id = u.id
             JOIN user admin ON a.assigned_by = admin.id
@@ -72,6 +72,7 @@ async function getAssignmentByUserModel(user_id) {
         throw error;
     }
 }
+
 // Modification de l'assignement
 
 async function updateAssignmentModel(id, { video_id, user_id, assigned_by }) {
@@ -87,8 +88,8 @@ async function updateAssignmentModel(id, { video_id, user_id, assigned_by }) {
             fields.push('user_id = ?');
             values.push(user_id);
         }
-        
-      
+
+
         if (assigned_by) {
             fields.push('assigned_by = ?');
             values.push(assigned_by);
@@ -123,8 +124,30 @@ async function deleteAssignmentModel(id) {
         throw error;
     }
 }
-    
 
+// compteur du nombre d'assignations par user 
+
+async function getSelectorLoadModel() {
+
+    try { 
+        const query = `SELECT user.id, user.firstname , user.lastname,
+            COUNT(assignation.id) as current_load
+            FROM  user
+            LEFT JOIN assignation ON user.id = assignation.user_id 
+            WHERE user.role_id = 2
+            GROUP by user.id
+            ORDER by current_load ASC `
+
+        const [rows] = await pool.execute(query);
+        return rows;
+
+    } catch (error) {
+        console.error('Error fetching selector films load', error);
+        throw error;
+
+    }
+
+}
 
 export {
     createAssignmentModel,
@@ -132,5 +155,6 @@ export {
     getAssignmentByVideoModel,
     getAssignmentByUserModel,
     updateAssignmentModel,
-    deleteAssignmentModel
+    deleteAssignmentModel,
+    getSelectorLoadModel
 }
