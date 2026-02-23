@@ -45,4 +45,10 @@ export const authService = {
         method: 'PUT',
         body: JSON.stringify(data),
     }),
+
+    // inviter un membre (Super-admin uniquement) : email + rôle (Admin | Selector | Super-admin) //
+    inviteUser: (data) => api('/auth/admin/invite', {
+        method: 'POST',
+        body: JSON.stringify(data),
+    }),
 };

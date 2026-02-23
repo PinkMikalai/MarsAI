@@ -383,3 +383,105 @@
   text-align: center;
   margin: 1rem 0;
 }
+
+/* ─── SEARCH BAR ─────────────────────────────────────────────── */
+.gsearch-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.gsearch-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.gsearch-inner:focus-within {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(43, 127, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(43, 127, 255, 0.12);
+}
+
+.gsearch-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.gsearch-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gsearch-spinner {
+  animation: gsearch-spin 0.8s linear infinite;
+}
+
+@keyframes gsearch-spin {
+  to { transform: rotate(360deg); }
+}
+
+.gsearch-input {
+  flex: 1;
+  height: 42px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.875rem;
+  color: #ffffff;
+  padding: 0;
+}
+
+.gsearch-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* supprime le bouton natif du type="search" sur webkit */
+.gsearch-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.gsearch-clear {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: 0.375rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.gsearch-clear:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.gsearch-clear svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* badge résultats de recherche */
+.gsearch-results-info {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: -0.75rem 0 1rem;
+}
+
+.gsearch-results-info strong {
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+}
