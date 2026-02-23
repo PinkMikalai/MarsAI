@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 import Navbar from '../layout/Navbar';
 import heroVideo from '../../assets/videos/IRONMAN.mp4';
 
@@ -77,7 +78,7 @@ const Hero = () => {
           Participez au festival qui place l’humain et la créativité au cœur des futurs souhaitables.
         </p>
         <div className="hero-cta">
-          <Link to="/deposer-un-film" className="hero-btn hero-btn-primary">
+          <Link to={ROUTES.PARTICIPATE} className="hero-btn hero-btn-primary">
             PARTICIPER
           </Link>
           <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">

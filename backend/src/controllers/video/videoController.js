@@ -5,7 +5,7 @@ import {
     getAdminVideoDataByIdModel,
     getSelectorVideoDataByIdModel,
     updateVideoModel, 
-    deleteVideoModel
+    deleteVideoModel,
 } from "../../models/video/videoModel.js";
 import { 
     createAndLinkTagsService, 
@@ -28,18 +28,16 @@ async function createVideo(req, res) {
 async function getAllVideos(req, res) {
     try {
         const videos = await getAllVideosModel();
-        console.log("videos", videos);
-
         res.status(200).json({
             success: true,
             data: videos,
             message: "Videos recuperées avec succès",
-        })
-    } catch (error) {   
+        });
+    } catch (error) {
         res.status(500).json({
             success: false,
             data: [],
-            message: "Erreur lors de la recuperation de toutes les videos",
+            message: "Erreur lors de la recuperation des videos",
             error: error.message,
         });
     }

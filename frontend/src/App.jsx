@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './context/AuthContext';
 import Home from './pages/PublicSpace/Home';
-import GalerieFilms from './pages/PublicSpace/GalerieFilms';
+import GalleryFilms from './pages/PublicSpace/GalleryFilms';
 import DepositFilm from './pages/Users/DepositFilm';
 import RegisterForm from './components/auth/RegisterForm';
 import LoginForm from './components/auth/LoginForm';
@@ -71,8 +71,8 @@ function App() {
     <Router>
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
-        <Route path={ROUTES.GALERIE_FILMS} element={<GalerieFilms />} />
-        <Route path={ROUTES.DEPOSER_UN_FILM} element={<DepositFilm />} />
+        <Route path={ROUTES.GALLERY_FILMS} element={<GalleryFilms />} />
+        <Route path={ROUTES.PARTICIPATE} element={<DepositFilm />} />
         <Route path={ROUTES.REGISTER_USER} element={<RegisterForm/>}/>
         <Route path={ROUTES.LOGIN} element={<LoginForm />} />
         <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
