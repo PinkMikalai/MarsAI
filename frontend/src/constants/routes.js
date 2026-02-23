@@ -2,14 +2,14 @@
 
 export const ROUTES = {
   HOME: '/',
-  GALERIE_FILMS: '/galerie-des-films',
-  DEPOSER_UN_FILM: '/deposer-un-film',
+  GALLERY_FILMS: '/gallery-films',
+  PARTICIPATE: '/participate',
   PROFILE: '/profile',
   WATCH_FILM: '/watch/:videoId',
 
-  ADMIN_PROFILE: '/espace-admin/profile', // profil/dashboard après connexion ------------//
-  ADMIN_EVENTS: '/espace-admin/evenements',
-  ADMIN_SPONSORS: '/espace-admin/sponsors',
+  ADMIN_PROFILE: '/admin/profile', // profil/dashboard après connexion ------------//
+  ADMIN_EVENTS: '/admin/evenements',
+  ADMIN_SPONSORS: '/admin/sponsors',
 
   REGISTER_USER: '/register_user',
   LOGIN: '/login',
