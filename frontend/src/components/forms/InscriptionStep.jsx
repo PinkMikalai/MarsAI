@@ -672,7 +672,10 @@ const InscriptionStep = () => {
               <select
                 className="deposit-phone-prefix-select"
                 value={p.phone_country || p.country || ''}
-                onChange={(e) => setParticipant('phone_country', e.target.value)}
+                onChange={(e) => {
+                  setParticipant('phone_country', e.target.value);
+                  validateField('mobile_number', p.phone);
+                }} 
                 style={{ paddingLeft: '35px' }} 
               >
                 <option value="">--</option>
@@ -688,9 +691,14 @@ const InscriptionStep = () => {
               className="deposit-input"
               placeholder="612345678"
               value={getDisplayPhone(p.phone, p.phone_country || p.country)}
-              onChange={(e) => handlePhoneChange('phone', e.target.value, p.phone_country || p.country)}
+              onChange={(e) =>{
+                handlePhoneChange('phone', e.target.value, p.phone_country || p.country);
+                clearError('mobile_number'); // efface l'erreur pendant la saisie 
+              }} 
+              onBlur={() => validateField('mobile_number', p.phone)}
             />
           </div>
+          <ErrorMessage error={errors.mobile_number} />
         </div>
 
         {/* Téléphone Fixe */}
