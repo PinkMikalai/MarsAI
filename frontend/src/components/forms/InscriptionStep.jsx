@@ -1,11 +1,4 @@
 
-// import React, { useState, useRef, useEffect } from 'react';
-// import FormCard from './FormCard';
-// import Icons from '../ui/common/Icons';
-// import { useDepositForm } from '../../context/DepositFormContext';
-// import { CIVILITY_OPTIONS, COUNTRIES_ISO3166, COUNTRY_PHONE, PHONE_PREFIX_OPTIONS, SOCIAL_PLATFORMS, SOCIAL_LINKS_MAX } from '../../constants/submitForm';
-// import { SiYoutube, SiInstagram, SiFacebook, SiLinkedin, SiX, SiArtstation, SiBehance, SiVimeo, SiTiktok } from 'react-icons/si';
-// import { FiLink } from 'react-icons/fi';
 
 
 // import React, { useState, useRef, useEffect } from 'react';
@@ -427,24 +420,28 @@
 
 // export default InscriptionStep;
 
-import React from 'react';
+
+
+
+import React, { useState, useRef, useEffect } from 'react';
 import FormCard from './FormCard';
 import Icons from '../ui/common/Icons';
 import { useDepositForm } from '../../context/DepositFormContext';
 import { 
   CIVILITY_OPTIONS, 
-  COUNTRIES_ISO3166, 
+  COUNTRIES_ISO3166,
   PHONE_PREFIX_OPTIONS, 
   SOCIAL_PLATFORMS, 
   SOCIAL_LINKS_MAX 
 } from '../../constants/submitForm';
 import { SiYoutube, SiInstagram, SiFacebook, SiLinkedin, SiX, SiArtstation, SiBehance, SiVimeo, SiTiktok } from 'react-icons/si';
-import { FiLink } from 'react-icons/fi';
-
+import { FiLink } from 'react-icons/fi'; 
 import { useFormValidation } from '../../hooks/useFormValidation.js';
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
-import { participationSchema } from '@shared/schemas/participationSchema.js';
-import Select from 'react-select';
+import { participationSchema } from '@shared/schemas/participationSchema.js'
+
+// Import indispensable pour les drapeaux
+import "flag-icons/css/flag-icons.min.css";
 
 const SOCIAL_ICONS = {
   youtube: SiYoutube,
@@ -463,213 +460,361 @@ const InscriptionStep = () => {
   const { form, setParticipant } = useDepositForm();
   const { errors, validateField, clearError } = useFormValidation(participationSchema);
   const p = form.participant;
+  
+  const [countryOpen, setCountryOpen] = useState(false);
+  const countryRef = useRef(null);
+  const [platformOpenIndex, setPlatformOpenIndex] = useState(null);
+  const platformRowRefs = useRef([]);
 
-  // Calcul pour l'attribut "max" de l'input date (bloque visuellement les mineurs)
-  const getEighteenYearsAgo = () => {
-    const d = new Date();
-    d.setFullYear(d.getFullYear() - 18);
-    return d.toISOString().split("T")[0];
-  };
+  // Fermeture des listes déroulantes au clic à l'extérieur
+  useEffect(() => {
+    const close = (e) => {
+      if (countryRef.current && !countryRef.current.contains(e.target)) setCountryOpen(false);
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, []);
 
-  // HANDLER : Changement de pays avec mise à jour forcée des indicateurs
-  const handleCountryChange = (countryValue) => {
-    setParticipant('country', countryValue);
-    clearError('country');
-    
-    if (countryValue && countryValue !== 'OTHER') {
-      // On met à jour l'indicateur pour Mobile et Fixe
-      setParticipant('phone_country', countryValue);
-      setParticipant('phone_landline_country', countryValue);
+  useEffect(() => {
+    if (platformOpenIndex == null) return;
+    const close = (e) => {
+      if (platformRowRefs.current[platformOpenIndex] && !platformRowRefs.current[platformOpenIndex].contains(e.target)) {
+        setPlatformOpenIndex(null);
+      }
+    };
+    document.addEventListener('click', close);
+    return () => document.removeEventListener('click', close);
+  }, [platformOpenIndex]);
+
+  // --- LOGIQUE TÉLÉPHONE ---
+  const getPhoneConfig = (countryCode) => PHONE_PREFIX_OPTIONS.find(opt => opt.value === countryCode);
+
+  const handlePhoneChange = (field, value, countryCode) => {
+    const config = getPhoneConfig(countryCode);
+    const digits = value.replace(/\D/g, ''); 
+    if (config && digits) {
+      // On stocke avec le "+" et l'indicatif
+      setParticipant(field, `+${config.phone || config.prefix}${digits}`);
+    } else {
+      setParticipant(field, value);
     }
   };
 
-  const phoneData = COUNTRIES_ISO3166.find(c => c.value === (p.phone_country || p.country));
-  const landlineData = COUNTRIES_ISO3166.find(c => c.value === (p.phone_landline_country || p.country));
-
-  // Extraction propre du numéro sans le préfixe pour l'affichage
-  const getDisplayNumber = (fullNumber, prefixData) => {
-    if (!fullNumber) return '';
-    const prefix = `+${prefixData?.phone}`;
-    return fullNumber.startsWith(prefix) ? fullNumber.slice(prefix.length) : fullNumber;
-  };
-
-  const handlePhoneInput = (e, field, prefix) => {
-    const digits = e.target.value.replace(/\D/g, '');
-    const finalValue = prefix && digits ? `+${prefix}${digits}` : digits;
-    setParticipant(field, finalValue);
-    
-    // Validation immédiate via Zod pour vérifier le format
-    const errorKey = field === 'phone' ? 'realisator_phone' : 'realisator_phone_landline';
-    validateField(errorKey, finalValue);
+  const getDisplayPhone = (fullValue, countryCode) => {
+    const config = getPhoneConfig(countryCode);
+    if (!config || !fullValue) return fullValue || '';
+    const prefix = `+${config.phone || config.prefix}`;
+    if (fullValue.startsWith(prefix)) {
+      return fullValue.slice(prefix.length);
+    }
+    return fullValue;
   };
 
   return (
     <FormCard number="02" title="Inscription">
       <div className="deposit-info-box">
-        <div className="deposit-info-box-icon"><Icons.Info /></div>
+        <div className="deposit-info-box-icon" aria-hidden><Icons.Info /></div>
         <p className="deposit-info-box-text">
-          Renseignez vos informations personnelles. Tous les champs marqués d'une étoile (*) sont obligatoires.
+          Renseignez vos informations personnelles. Tous les champs marqués d&apos;une étoile (*) sont obligatoires.
         </p>
       </div>
 
-      {/* CIVILITÉ & PRÉNOM */}
+      {/* Civilité & Prénom */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Civilité *</label>
+          <label className="deposit-field-label">Civilité *</label>
           <div className="deposit-field-wrap">
-            <select 
-              className="deposit-input" 
-              value={p.civility || ''} 
-              onChange={(e) => { setParticipant('civility', e.target.value); clearError('realisator_civility'); }}
+            <select
+              className="deposit-input"
+              value={p.civility || ''}
+              onChange={(e) => {
+                setParticipant('civility', e.target.value);
+                clearError('realisator_civility'); 
+              }}
               onBlur={(e) => validateField('realisator_civility', e.target.value)}
             >
               <option value="">Sélectionner...</option>
-              {CIVILITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              {CIVILITY_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
             <ErrorMessage error={errors.realisator_civility} />
           </div>
         </div>
+
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Prénom *</label>
+          <label className="deposit-field-label">Prénom *</label>
           <div className="deposit-field-wrap">
-            <input type="text" className="deposit-input" placeholder="Jean" value={p.firstname || ''} 
-              onChange={(e) => { setParticipant('firstname', e.target.value); clearError('realisator_firstname'); }}
-              onBlur={(e) => validateField('realisator_firstname', e.target.value)} />
+            <input
+              type="text"
+              className="deposit-input"
+              value={p.firstname || ''}
+              onChange={(e) => {
+                setParticipant('firstname', e.target.value);
+                clearError('realisator_firstname');
+              }}
+              onBlur={(e) => validateField('realisator_firstname', e.target.value)}
+            />
             <ErrorMessage error={errors.realisator_firstname} />
           </div>
         </div>
       </div>
 
-      {/* NOM & EMAIL */}
+      {/* Nom & Email */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Nom *</label>
+          <label className="deposit-field-label">Nom *</label>
           <div className="deposit-field-wrap">
-            <input type="text" className="deposit-input" placeholder="Dupont" value={p.lastname || ''} 
-              onChange={(e) => { setParticipant('lastname', e.target.value); clearError('realisator_lastname'); }}
-              onBlur={(e) => validateField('realisator_lastname', e.target.value)} />
+            <input
+              type="text"
+              className="deposit-input"
+              value={p.lastname || ''}
+              onChange={(e) => {
+                setParticipant('lastname', e.target.value);
+                clearError('realisator_lastname');
+              }}
+              onBlur={(e) => validateField('realisator_lastname', e.target.value)}
+            />
             <ErrorMessage error={errors.realisator_lastname} />
           </div>
         </div>
+
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Email *</label>
+          <label className="deposit-field-label">Email *</label>
           <div className="deposit-field-wrap">
-            <input type="email" className="deposit-input" placeholder="jean.dupont@example.com" value={p.email || ''} 
-              onChange={(e) => { setParticipant('email', e.target.value); clearError('email'); }}
-              onBlur={(e) => validateField('email', e.target.value)} />
+            <input
+              type="email"
+              className="deposit-input"
+              value={p.email || ''}
+              onChange={(e) => {
+                setParticipant('email', e.target.value);
+                clearError('email');
+              }}
+              onBlur={(e) => validateField('email', e.target.value)}
+            />
             <ErrorMessage error={errors.email} />
           </div>
         </div>
       </div>
 
-      {/* DATE DE NAISSANCE & PAYS */}
+      {/* Date de naissance & Pays */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Date de naissance *</label>
+          <label className="deposit-field-label">Date de naissance *</label>
           <div className="deposit-field-wrap">
-            <input 
-              type="date" 
-              className="deposit-input" 
-              value={p.birthdate || ''} 
-              max={getEighteenYearsAgo()} 
-              onChange={(e) => { setParticipant('birthdate', e.target.value); clearError('birthdate'); }}
-              onBlur={(e) => validateField('birthdate', e.target.value)} 
+            <input
+              type="date"
+              className="deposit-input"
+              value={p.birthdate || ''}
+              onChange={(e) => setParticipant('birthdate', e.target.value)}
+              onBlur={(e) => validateField('birthdate', e.target.value)}
             />
             <ErrorMessage error={errors.birthdate} />
           </div>
         </div>
+
         <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Pays / Nationalité *</label>
-          <div className="deposit-field-wrap">
-            <select 
-              className="deposit-input" 
-              value={p.country || ''} 
-              onChange={(e) => handleCountryChange(e.target.value)}
-              onBlur={(e) => validateField('country', e.target.value)}
+          <label className="deposit-field-label">Pays / Nationalité *</label>
+          <div className="deposit-field-wrap deposit-country-select-container" ref={countryRef} style={{ position: 'relative' }}>
+            <button
+              type="button"
+              className="deposit-input deposit-country-trigger"
+              onClick={() => setCountryOpen(!countryOpen)}
+              style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
             >
-              <option value="">Sélectionner…</option>
-              {COUNTRIES_ISO3166.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-            <ErrorMessage error={errors.country} />
-          </div>
-        </div>
-      </div>
-
-      {/* TÉLÉPHONES */}
-      <div className="deposit-grid-2">
-        <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Téléphone mobile *</label>
-          <div className="deposit-field-wrap deposit-field-wrap--phone-prefix">
-            <select className="deposit-phone-prefix-select" value={p.phone_country || ''} onChange={(e) => setParticipant('phone_country', e.target.value)}>
-              {PHONE_PREFIX_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-            <input type="tel" className="deposit-input deposit-input--phone" placeholder="612345678"
-              value={getDisplayNumber(p.phone, phoneData)} 
-              onChange={(e) => handlePhoneInput(e, 'phone', phoneData?.phone)} 
-              onBlur={(e) => validateField('realisator_phone', p.phone)} />
-          </div>
-          <ErrorMessage error={errors.realisator_phone} />
-        </div>
-        <div className="deposit-field-group">
-          <label className="deposit-field-label deposit-field-label--jakarta">Téléphone fixe</label>
-          <div className="deposit-field-wrap deposit-field-wrap--phone-prefix">
-            <select className="deposit-phone-prefix-select" value={p.phone_landline_country || ''} onChange={(e) => setParticipant('phone_landline_country', e.target.value)}>
-              {PHONE_PREFIX_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-            <input type="tel" className="deposit-input deposit-input--phone" placeholder="123456789"
-              value={getDisplayNumber(p.phone_landline, landlineData)} 
-              onChange={(e) => handlePhoneInput(e, 'phone_landline', landlineData?.phone)} />
-          </div>
-        </div>
-      </div>
-
-      {/* ADRESSE */}
-      <div className="deposit-field-group">
-        <label className="deposit-field-label deposit-field-label--jakarta">Adresse complète *</label>
-        <div className="deposit-field-wrap">
-          <input type="text" className="deposit-input" placeholder="Votre adresse..." value={p.address || ''} 
-            onChange={(e) => { setParticipant('address', e.target.value); clearError('address'); }}
-            onBlur={(e) => validateField('address', e.target.value)} />
-          <ErrorMessage error={errors.address} />
-        </div>
-      </div>
-
-      {/* RÉSEAUX SOCIAUX */}
-      <div className="deposit-field-group">
-        <label className="deposit-field-label deposit-field-label--jakarta">Réseaux sociaux (max {SOCIAL_LINKS_MAX})</label>
-        <div className="deposit-social-links">
-          {(p.social_links || []).map((row, i) => {
-            const IconComponent = row.platform ? (SOCIAL_ICONS[row.platform] || FiLink) : null;
-            return (
-              <div key={i} className="deposit-social-link-row">
-                <div className="deposit-platform-trigger-wrapper" style={{ position: 'relative', flex: '0 0 160px' }}>
-                  {IconComponent && <IconComponent style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', zIndex: 1, pointerEvents: 'none', color: '#888' }} />}
-                  <select 
-                    className="deposit-input deposit-input--social-platform"
-                    style={{ paddingLeft: IconComponent ? '38px' : '12px' }}
-                    value={row.platform || ''}
-                    onChange={(e) => {
-                      const next = [...(p.social_links || [])];
-                      next[i] = { ...next[i], platform: e.target.value };
-                      setParticipant('social_links', next);
+              {p.country && p.country !== 'OTHER' && (
+                <span className={`fi fi-${p.country.toLowerCase()} deposit-flag-icon`}></span>
+              )}
+              <span>
+                {p.country ? (COUNTRIES_ISO3166.find((c) => c.value === p.country)?.label) : 'Sélectionner…'}
+              </span>
+            </button>
+            
+            {countryOpen && (
+              <ul className="deposit-country-list" style={{ position: 'absolute', width: '100%', zIndex: 100, maxHeight: '250px', overflowY: 'auto' }}>
+                {COUNTRIES_ISO3166.map((opt) => (
+                  <li
+                    key={opt.value}
+                    className="deposit-country-option"
+                    style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', cursor: 'pointer' }}
+                    onClick={() => {
+                      setParticipant('country', opt.value);
+                      // On pré-remplit les pays du téléphone pour aider l'utilisateur
+                      if(!p.phone_country) setParticipant('phone_country', opt.value);
+                      if(!p.phone_landline_country) setParticipant('phone_landline_country', opt.value);
+                      setCountryOpen(false);
                     }}
                   >
-                    <option value="">Plateforme</option>
-                    {SOCIAL_PLATFORMS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                  </select>
+                    {opt.value !== 'OTHER' && (
+                       <span className={`fi fi-${opt.value.toLowerCase()} deposit-flag-icon`}></span>
+                    )}
+                    <span>{opt.label}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      </div>
+
+{/* Section Téléphones (Mobile & Fixe) avec drapeaux */}
+      <div className="deposit-grid-2">
+        {/* Téléphone Mobile */}
+        <div className="deposit-field-group">
+          <label className="deposit-field-label">TÉLÉPHONE MOBILE *</label>
+          <div className="deposit-field-wrap deposit-field-wrap--phone-prefix">
+            <div className="deposit-phone-country-custom" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <div className="deposit-phone-selected-flag" style={{ position: 'absolute', left: '10px', pointerEvents: 'none', zIndex: 2, display: 'flex' }}>
+                {(p.phone_country || p.country) && (p.phone_country || p.country) !== 'OTHER' && (
+                  <span className={`fi fi-${(p.phone_country || p.country).toLowerCase()} deposit-flag-icon`}></span>
+                )}
+              </div>
+              <select
+                className="deposit-phone-prefix-select"
+                value={p.phone_country || p.country || ''}
+                onChange={(e) => setParticipant('phone_country', e.target.value)}
+                style={{ paddingLeft: '35px' }} 
+              >
+                <option value="">--</option>
+                {PHONE_PREFIX_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.value} +{opt.phone || opt.prefix}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <input
+              type="tel"
+              className="deposit-input"
+              placeholder="612345678"
+              value={getDisplayPhone(p.phone, p.phone_country || p.country)}
+              onChange={(e) => handlePhoneChange('phone', e.target.value, p.phone_country || p.country)}
+            />
+          </div>
+        </div>
+
+        {/* Téléphone Fixe */}
+        <div className="deposit-field-group">
+          <label className="deposit-field-label">TÉLÉPHONE FIXE (OPTIONNEL)</label>
+          <div className="deposit-field-wrap deposit-field-wrap--phone-prefix">
+            <div className="deposit-phone-country-custom" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <div className="deposit-phone-selected-flag" style={{ position: 'absolute', left: '10px', pointerEvents: 'none', zIndex: 2, display: 'flex' }}>
+                {(p.phone_landline_country || p.country) && (p.phone_landline_country || p.country) !== 'OTHER' && (
+                  <span className={`fi fi-${(p.phone_landline_country || p.country).toLowerCase()} deposit-flag-icon`}></span>
+                )}
+              </div>
+              <select
+                className="deposit-phone-prefix-select"
+                value={p.phone_landline_country || p.country || ''}
+                onChange={(e) => setParticipant('phone_landline_country', e.target.value)}
+                style={{ paddingLeft: '35px' }}
+              >
+                <option value="">--</option>
+                {PHONE_PREFIX_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.value} +{opt.phone || opt.prefix}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <input
+              type="tel"
+              className="deposit-input"
+              placeholder="123456789"
+              value={getDisplayPhone(p.phone_landline, p.phone_landline_country || p.country)}
+              onChange={(e) => handlePhoneChange('phone_landline', e.target.value, p.phone_landline_country || p.country)}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Adresse */}
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Adresse *</label>
+        <div className="deposit-field-wrap">
+          <input
+            type="text"
+            className="deposit-input"
+            placeholder="Rue, ville, code postal..."
+            value={p.address || ''}
+            onChange={(e) => setParticipant('address', e.target.value)}
+          />
+        </div>
+      </div>
+
+      {/* Réseaux Sociaux */}
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Réseaux sociaux (max {SOCIAL_LINKS_MAX})</label>
+        <div className="deposit-social-links">
+          {(p.social_links || []).map((row, i) => {
+            const IconComponent = SOCIAL_ICONS[row.platform] || FiLink;
+            return (
+              <div key={i} className="deposit-social-link-row" ref={(el) => (platformRowRefs.current[i] = el)} style={{ position: 'relative' }}>
+                <div className="deposit-platform-select">
+                  <button
+                    type="button"
+                    className="deposit-input deposit-platform-trigger"
+                    onClick={() => setPlatformOpenIndex(platformOpenIndex === i ? null : i)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                  >
+                    <IconComponent className="deposit-social-platform-icon" />
+                    <span>{SOCIAL_PLATFORMS.find(s => s.value === row.platform)?.label || 'Réseau'}</span>
+                  </button>
+                  
+                  {platformOpenIndex === i && (
+                    <ul className="deposit-platform-list" style={{ position: 'absolute', zIndex: 100, width: '200px' }}>
+                      {SOCIAL_PLATFORMS.map((opt) => {
+                        const OptIcon = SOCIAL_ICONS[opt.value] || FiLink;
+                        return (
+                          <li
+                            key={opt.value}
+                            className="deposit-platform-option"
+                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', cursor: 'pointer' }}
+                            onClick={() => {
+                              const next = [...p.social_links];
+                              next[i].platform = opt.value;
+                              setParticipant('social_links', next);
+                              setPlatformOpenIndex(null);
+                            }}
+                          >
+                            <OptIcon />
+                            {opt.label}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                 </div>
-                <input type="url" className="deposit-input deposit-input--social-url" placeholder="Lien vers votre profil..." value={row.url || ''}
+
+                <input
+                  type="url"
+                  className="deposit-input deposit-input--social-url"
+                  placeholder="https://..."
+                  value={row.url || ''}
                   onChange={(e) => {
-                    const next = [...(p.social_links || [])];
-                    next[i] = { ...next[i], url: e.target.value };
+                    const next = [...p.social_links];
+                    next[i].url = e.target.value;
                     setParticipant('social_links', next);
-                  }} />
-                <button type="button" className="deposit-social-link-remove" onClick={() => setParticipant('social_links', p.social_links.filter((_, j) => j !== i))}>×</button>
+                  }}
+                />
+                <button
+                  type="button"
+                  className="deposit-social-link-remove"
+                  onClick={() => setParticipant('social_links', p.social_links.filter((_, j) => j !== i))}
+                >
+                  ×
+                </button>
               </div>
             );
           })}
-          <button type="button" className="deposit-social-link-add" onClick={() => setParticipant('social_links', [...(p.social_links || []), { platform: '', url: '' }])} disabled={(p.social_links || []).length >= SOCIAL_LINKS_MAX}>
-            + 
+          
+          <button
+            type="button"
+            className="deposit-social-link-add"
+            disabled={(p.social_links || []).length >= SOCIAL_LINKS_MAX}
+            onClick={() => setParticipant('social_links', [...(p.social_links || []), { platform: '', url: '' }])}
+          >
+            + Ajouter un réseau
           </button>
         </div>
       </div>
