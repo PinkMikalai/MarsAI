@@ -195,17 +195,45 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Synopsis (anglais) * (max 500 car.)</label>
+        <label className="deposit-field-label">Synopsis (anglais) * (max 300 car.)</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
             placeholder="An exploration..."
-            maxLength={500}
+            maxLength={300}
             value={film.synopsis_en ?? ''}
             onChange={(e) => setFilm('synopsis_en', e.target.value)}
           />
         </div>
-        <div className="deposit-char-count">{(film.synopsis_en ?? '').length} / 500</div>
+        <div className="deposit-char-count">{(film.synopsis_en ?? '').length} / 300</div>
+      </div>
+
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Résumé technique * (max 500 car.)</label>
+        <div className="deposit-field-wrap">
+          <textarea
+            className="deposit-textarea deposit-textarea--short"
+            placeholder="Décrivez les aspects techniques (outils IA, pipeline, etc.)"
+            maxLength={500}
+            value={film.tech_resume ?? ''}
+            onChange={(e) => setFilm('tech_resume', e.target.value)}
+          />
+        </div>
+        <div className="deposit-char-count">{(film.tech_resume ?? '').length} / 500</div>
+      </div>
+
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Résumé créatif * (max 500 car.)</label>
+        <div className="deposit-field-wrap">
+          <textarea
+            className="deposit-textarea deposit-textarea--short"
+            placeholder="Décrivez l’approche créative, l’intention, le propos..."
+            maxLength={500}
+            value={film.creative_resume ?? ''}
+            onChange={(e) => setFilm('creative_resume', e.target.value)}
+          />
+        </div>
+        <div className="deposit-char-count">{(film.creative_resume ?? '').length} / 500</div>
       </div>
 
       <div className="deposit-field-group">
