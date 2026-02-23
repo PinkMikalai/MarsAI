@@ -10,6 +10,8 @@ export const ROUTES = {
   ADMIN_PROFILE: '/espace-admin/profile', // profil/dashboard après connexion ------------//
   ADMIN_EVENTS: '/espace-admin/evenements',
   ADMIN_SPONSORS: '/espace-admin/sponsors',
+  ADMIN_JURY: '/espace-admin/jury',
+  ADMIN_INVITATIONS: '/espace-admin/invitations',
 
   REGISTER_USER: '/register_user',
   LOGIN: '/login',

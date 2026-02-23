@@ -13,6 +13,8 @@ import ResetPassword from './pages/Users/ResetPassword';
 import WatchFilm from './pages/PublicSpace/WatchFilm';
 import AdminEvents from './pages/Admin/AdminEvents';
 import AdminSponsors from './pages/Admin/AdminSponsors';
+import AdminJury from './pages/Admin/AdminJury';
+import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
 import { useAuth } from './context/AuthContext';
 
@@ -40,6 +42,29 @@ const AdminSponsorsProtected = () => {
   );
 };
 
+const AdminJuryProtected = () => {
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const canAccess = isAdmin || isSuperAdmin;
+  if (!user) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (!canAccess) return <Navigate to={ROUTES.PROFILE} replace />;
+  return (
+    <AdminLayout>
+      <AdminJury />
+    </AdminLayout>
+  );
+};
+
+const AdminInvitationsProtected = () => {
+  const { user, isSuperAdmin } = useAuth();
+  if (!user) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (!isSuperAdmin) return <Navigate to={ROUTES.PROFILE} replace />;
+  return (
+    <AdminLayout>
+      <AdminInvitations />
+    </AdminLayout>
+  );
+};
+
 function App() {
   return (
     <AuthProvider>
@@ -56,6 +81,8 @@ function App() {
         <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
         <Route path={ROUTES.ADMIN_EVENTS} element={<AdminEventsProtected />} />
         <Route path={ROUTES.ADMIN_SPONSORS} element={<AdminSponsorsProtected />} />
+        <Route path={ROUTES.ADMIN_JURY} element={<AdminJuryProtected />} />
+        <Route path={ROUTES.ADMIN_INVITATIONS} element={<AdminInvitationsProtected />} />
       </Routes>
     </Router>
     </AuthProvider>
