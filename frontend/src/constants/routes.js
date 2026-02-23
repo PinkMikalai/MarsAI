@@ -7,9 +7,14 @@ export const ROUTES = {
   PROFILE: '/profile',
   WATCH_FILM: '/watch/:videoId',
 
+
+  ADMIN_JURY: '/espace-admin/jury',
+  ADMIN_INVITATIONS: '/espace-admin/invitations',
+
   ADMIN_PROFILE: '/admin/profile', // profil/dashboard après connexion ------------//
   ADMIN_EVENTS: '/admin/evenements',
   ADMIN_SPONSORS: '/admin/sponsors',
+
 
   REGISTER_USER: '/register_user',
   LOGIN: '/login',
