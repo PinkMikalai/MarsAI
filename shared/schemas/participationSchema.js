@@ -5,6 +5,10 @@ import { commonSchema } from './commonSchema.js';
 // Extraction des élèments dont on a besoin 
 const { email, firstname, lastname, id } = commonSchema;
 
+// constantes pour la validation des numéros de téléphone
+const phoneRegex = /^\+[1-9]\d{1,14}$/;
+const phoneMessage = "Please enter a valid phone number (e.g., +33612345678)";
+
 
 // validation des entrées du tableau des contributeurs 
 const contributorSchema = z.object({
@@ -123,17 +127,20 @@ const participationSchema = z.object({
     birthdate: z
         .string({ required_error: "Birthdate is required" })
         .regex(/^\d{4}-\d{2}-\d{2}$/, "Format: YYYY-MM-DD (e.g., 1990-05-15)"),
-    // TÉLÉPHONE : Format E.164 (ex: +33612345678)
+
+    // TÉLÉPHONE MOBILE : Format E.164 (ex: +33612345678), champs obligatoire 
     mobile_number: z
         .string({ required_error: "Mobile number is required" })
         .trim()
-        .max(20, "Phone number too long")
-        .regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number starting with '+' and your country code (e.g., +33612345678)"),
+        .min(1, "Mobile number is required")
+        .max(16, "Phone number too long")
+        .regex(phoneRegex, phoneMessage),
+
     // TÉLÉPHONE FIXE (optionnel)
     phone_number: z
         .union([
             z.literal(""),
-            z.string().trim().max(20, "Phone number too long").regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number (e.g., +33123456789)"),
+            z.string().trim().max(16, "Phone number too long").regex(phoneRegex, phoneMessage),
         ])
         .optional(),
     // ADDRESSE 
