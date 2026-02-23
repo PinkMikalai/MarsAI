@@ -1,21 +1,11 @@
-import { searchVideosModel } from '../models/video/videoModel.js';
+import { getSearchVideosModel } from '../models/video/videoModel.js';
 
 async function searchVideos(req, res) {
     try {
-        const searchQuery = req.query.q?.trim();
+     
 
-        if (!searchQuery) {
-            return res.status(400).json({
-                success: false,
-                data: [],
-                message: "Veuillez saisir un mot clé à rechercher",
-            });
-        }
 
-        const role = req.user?.role;
-        const userId = req.user?.id;
-
-        const rows = await searchVideosModel(searchQuery, { role, userId });
+        const rows = await getSearchVideosModel(req.query);
         // map les videos
         const videos = rows.map((row) => row.video_json);
 
