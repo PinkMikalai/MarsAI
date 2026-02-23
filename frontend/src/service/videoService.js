@@ -36,9 +36,8 @@ export function buildSubmitFormData(form) {
   fd.append('synopsis', form.film.description || '');
   const synopsisEn = (form.film.synopsis_en || form.film.description || '').trim();
   fd.append('synopsis_en', synopsisEn || '—');
-  const resumeText = (form.film.description || form.film.synopsis_en || '').trim();
-  fd.append('tech_resume', resumeText || '—');
-  fd.append('creative_resume', resumeText || '—');
+  fd.append('tech_resume', (form.film.tech_resume || '').trim());
+  fd.append('creative_resume', (form.film.creative_resume || '').trim());
   fd.append('language', form.film.language || 'FR');
   
   const durationVal = form.film.duration !== '' && form.film.duration != null
