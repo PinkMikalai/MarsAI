@@ -26,6 +26,8 @@ const initialState = {
     title_en: '',
     description: '',
     synopsis_en: '',
+    tech_resume: '',
+    creative_resume: '',
     language: 'FR',
     duration: '',
     classification: 'Hybrid',
