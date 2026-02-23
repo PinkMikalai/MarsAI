@@ -1,6 +1,6 @@
 import api from './api';
 
 export const searchService = {
-  searchVideos: (search) => api('/videos/search', { method: 'GET', body: search }),
+  getSearchVideos: (search) => api.get('/videos/search', { params: search }),
 };
 

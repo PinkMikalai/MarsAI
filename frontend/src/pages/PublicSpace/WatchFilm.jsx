@@ -4,6 +4,8 @@ import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../context/AuthContext';
 import { CreateSelectorMemoForm, UpdateSelectorMemoForm } from '../../components/forms/SelectorMemo';
+import { COUNTRIES_ISO3166 } from '../../constants/submitForm';
+import 'flag-icons/css/flag-icons.min.css';
 
 const STILL_INTERVAL_MS = 5000;
 const SCROLL_LOCK_MS    = 700;
@@ -572,7 +574,8 @@ const WatchFilm = () => {
     // =====================================================
     const title    = video?.title    || video?.title_en || 'Titre vidéo';
     const director = [video?.realisator_firstname, video?.realisator_lastname].filter(Boolean).join(' ') || '—';
-    const country  = video?.country  || '—';
+    const countryCode = video?.country || '';
+    const country = COUNTRIES_ISO3166.find(c => c.value === countryCode)?.name || countryCode || '—';
     const synopsis = video?.synopsis_en || video?.synopsis || '—';
     const coverUrl = getCoverUrl(video?.cover);
     const videoUrl = getVideoUrl(video?.video_file_name);
@@ -691,8 +694,8 @@ const WatchFilm = () => {
                                                 </p>
                                                 <span className="wf-meta-sep">·</span>
                                                 <p className="watch-film-info wf-country">
-                                                    {country !== '—' && (
-                                                        <span className={`fi fi-${country.toLowerCase()} wf-country-flag`} aria-hidden />
+                                                    {countryCode && (
+                                                        <span className={`fi fi-${countryCode.toLowerCase()} wf-country-flag`} aria-hidden />
                                                     )}
                                                     {country}
                                                 </p>
