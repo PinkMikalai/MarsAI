@@ -19,9 +19,10 @@ export const COUNTRIES_ISO3166 = [
 
 // préfixe téléphonique avec drapeaux 
 export const PHONE_PREFIX_OPTIONS = COUNTRIES_ISO3166
-    .filter(c => c.value !== 'OTHER')
+    .filter(c => c.value !== 'OTHER' && c.phone)
     .map(c => ({
-        value: c.value, 
+        value: c.value,
+        name: c.name,
         label: `${c.phone}`,
         prefix: `${c.phone}`,
         flagClass: c.flagClass
