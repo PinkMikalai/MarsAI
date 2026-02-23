@@ -1,6 +1,7 @@
 // MarsAINight , section soirée de clôture du festival ------------//
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 import { FiClock } from 'react-icons/fi';
 
 const MarsAINight = () => (
@@ -19,7 +20,7 @@ const MarsAINight = () => (
           <FiClock size={24} strokeWidth={2} aria-hidden />
           <span>13 JUIN</span>
         </div>
-        <Link to="/deposer-un-film" className="btn-reserve">RÉSERVER MA PLACE</Link>
+        <Link to={ROUTES.PARTICIPATE} className="btn-reserve">RÉSERVER MA PLACE</Link>
       </div>
     </div>
   </section>

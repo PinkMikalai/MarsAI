@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiCalendar, FiFilm, FiCpu, FiMapPin } from 'react-icons/fi';
+import { ROUTES } from '../../constants/routes';
 import { PROTOCOLE_METRICS } from '../../constants/homeData';
 
 const ICONS = [FiCalendar, FiFilm, FiCpu, FiMapPin];
@@ -25,7 +26,7 @@ const ProtocoleTemporel = () => {
             );
           })}
         </div>
-        <Link to="/deposer-un-film" className="home-btn-gradient">S&apos;INSCRIRE</Link>
+        <Link to={ROUTES.PARTICIPATE} className="home-btn-gradient">S&apos;INSCRIRE</Link>
       </div>
     </section>
   );
