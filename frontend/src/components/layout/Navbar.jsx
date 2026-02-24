@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Icons from '../ui/common/Icons';
 import { useTranslation } from 'react-i18next';
+import Icons from '../ui/common/Icons';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
-  const current = i18n.language === 'en' ? 'en' : 'fr';
+  const currentLang = i18n.resolvedLanguage || i18n.language || 'fr';
 
   const toggleLang = () => {
-    i18n.changeLanguage(current === 'fr' ? 'en' : 'fr');
+    i18n.changeLanguage(currentLang === 'fr' ? 'en' : 'fr');
   };
 
   return (
@@ -29,9 +29,9 @@ const Navbar = () => {
           type="button"
           className="deposit-navbar-lang"
           onClick={toggleLang}
-          aria-label="Changer de langue"
+          aria-label={currentLang === 'fr' ? 'Switch to English' : 'Passer en français'}
         >
-          {current.toUpperCase()}
+          {currentLang === 'fr' ? 'EN' : 'FR'}
         </button>
         <span className="deposit-navbar-icon" aria-hidden>
           <Icons.ChevronDown />

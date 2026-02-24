@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormCard from './FormCard';
 import Icons from '../ui/common/Icons';
 import { useDepositForm } from '../../context/DepositFormContext';
@@ -30,6 +31,7 @@ const SOCIAL_ICONS = {
 };
 
 const InscriptionStep = () => {
+  const { t } = useTranslation();
   const { form, setParticipant } = useDepositForm();
   const { errors, validateField, clearError } = useFormValidation(participationSchema);
   const p = form.participant;
@@ -97,18 +99,18 @@ const InscriptionStep = () => {
   }, [platformOpenIndex]);
 
   return (
-    <FormCard number="02" title="Inscription">
+    <FormCard number="02" title={t('deposit.inscriptionTitle')}>
       <div className="deposit-info-box">
         <div className="deposit-info-box-icon" aria-hidden><Icons.Info /></div>
         <p className="deposit-info-box-text">
-          Renseignez vos informations personnelles. Tous les champs marqués d&apos;une étoile (*) sont obligatoires.
+          {t('deposit.inscriptionInfo')}
         </p>
       </div>
 
       {/* CIVILITE */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Civilité *</label>
+          <label className="deposit-field-label">{t('deposit.civility')}</label>
           <div className="deposit-field-wrap">
             <select
               className="deposit-input"
@@ -119,7 +121,7 @@ const InscriptionStep = () => {
               }}
               onBlur={(e) => validateField('realisator_civility', e.target.value)}
             >
-              <option value="">Sélectionner...</option>
+              <option value="">{t('deposit.selectPlaceholder')}</option>
               {CIVILITY_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -131,7 +133,7 @@ const InscriptionStep = () => {
 
         {/* PRENOM */}
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Prénom *</label>
+          <label className="deposit-field-label">{t('deposit.firstname')}</label>
           <div className="deposit-field-wrap">
             <input
               type="text"
@@ -152,7 +154,7 @@ const InscriptionStep = () => {
       {/* NOM */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Nom *</label>
+          <label className="deposit-field-label">{t('deposit.lastname')}</label>
           <div className="deposit-field-wrap">
             <input
               type="text"
@@ -170,7 +172,7 @@ const InscriptionStep = () => {
 
         {/* EMAIL */}
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Email *</label>
+          <label className="deposit-field-label">{t('deposit.email')}</label>
           <div className="deposit-field-wrap">
             <input
               type="email"
@@ -191,7 +193,7 @@ const InscriptionStep = () => {
       {/* DATE DE NAISSANCE */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Date de naissance *</label>
+          <label className="deposit-field-label">{t('deposit.birthDate')}</label>
           <div className="deposit-field-wrap">
             <input
               type="date"
@@ -211,7 +213,7 @@ const InscriptionStep = () => {
 
         {/* PAYS */}
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Pays / Nationalité *</label>
+          <label className="deposit-field-label">{t('deposit.country')}</label>
           <div className="deposit-field-wrap deposit-country-select-container" ref={countryRef} style={{ position: 'relative' }}>
             <button
               type="button"
@@ -223,7 +225,7 @@ const InscriptionStep = () => {
                 <span className={`fi fi-${p.country.toLowerCase()} deposit-flag-icon`} />
               )}
               <span>
-                {p.country ? (COUNTRIES_ISO3166.find((c) => c.value === p.country)?.label) : 'Sélectionner…'}
+                {p.country ? (COUNTRIES_ISO3166.find((c) => c.value === p.country)?.label) : t('deposit.selectPlaceholder')}
               </span>
             </button>
 
@@ -269,7 +271,7 @@ const InscriptionStep = () => {
       {/* TELEPHONE MOBILE */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Téléphone mobile *</label>
+          <label className="deposit-field-label">{t('deposit.mobilePhone')}</label>
           <PhoneInput
             value={p.phone}
             countryCode={p.phone_country || p.country}
@@ -290,7 +292,7 @@ const InscriptionStep = () => {
 
         {/* TELEPHONE FIXE */}
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Téléphone fixe (optionnel)</label>
+          <label className="deposit-field-label">{t('deposit.landlinePhone')}</label>
           <PhoneInput
             value={p.phone_landline}
             countryCode={p.phone_landline_country || p.country}
@@ -312,12 +314,17 @@ const InscriptionStep = () => {
 
       {/* ADRESSE */}
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Adresse *</label>
+        <label className="deposit-field-label">{t('deposit.address')}</label>
         <div className="deposit-field-wrap">
           <input
             type="text"
+
+            className="deposit-input"
+            placeholder={t('deposit.addressPlaceholder')}
+
             className={`deposit-input ${errors.address ? 'is-invalid' : ''}`}
             placeholder="Rue, ville, code postal..."
+
             value={p.address || ''}
             onChange={(e) => {
               setParticipant('address', e.target.value);
@@ -333,7 +340,7 @@ const InscriptionStep = () => {
 
       {/* RESEAUX SOCIAUX
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Réseaux sociaux (max {SOCIAL_LINKS_MAX})</label>
+        <label className="deposit-field-label">{t('deposit.socialLinks', { max: SOCIAL_LINKS_MAX })}</label>
         <div className="deposit-social-links">
           {(p.social_links || []).map((row, i) => {
             const IconComponent = SOCIAL_ICONS[row.platform] || FiLink;
@@ -347,7 +354,7 @@ const InscriptionStep = () => {
                     style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
                     <IconComponent className="deposit-social-platform-icon" />
-                    <span>{SOCIAL_PLATFORMS.find(s => s.value === row.platform)?.label || 'Réseau'}</span>
+                    <span>{SOCIAL_PLATFORMS.find(s => s.value === row.platform)?.label || t('footer.navigationTitle')}</span>
                   </button>
                   
                   {platformOpenIndex === i && (
@@ -403,6 +410,9 @@ const InscriptionStep = () => {
             disabled={(p.social_links || []).length >= SOCIAL_LINKS_MAX}
             onClick={() => setParticipant('social_links', [...(p.social_links || []), { platform: '', url: '' }])}
           >
+
+            {t('deposit.addSocialLink')}
+
             + 
           </button>
         </div>
@@ -518,6 +528,7 @@ const InscriptionStep = () => {
             }}
           >
             + Ajouter un réseau
+
           </button>
         </div>
       </div>

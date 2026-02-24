@@ -1,49 +1,43 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { authService } from "../../service/authService.js";
+import { useTranslation } from 'react-i18next';
+import { authService } from '../../service/authService.js';
 import { ROUTES } from '../../constants/routes';
 
 const RegisterForm = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get('token');
 
-  // Données récupérées du token (Email / Role)
   const [userData, setUserData] = useState({ email: '', role: '' });
-  
-  // Données saisies par l'utilisateur
-  const [form, setForm] = useState({ firstname: '', lastname: '', password: '', passwordConfirm: ''});
+  const [form, setForm] = useState({ firstname: '', lastname: '', password: '', passwordConfirm: '' });
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  //Vérification du token 
   useEffect(() => {
-    // verification de la présence du token
     const checkToken = async () => {
-    if (!token) {
-
-      
-      setError("A token is mandatory")
-      setLoading(false)
-      return;
+      if (!token) {
+        setError(t('auth.tokenRequired'));
+        setLoading(false);
+        return;
       }
-    // récupération de la data du token
-    try {
-      const response = await authService.verifyInvitation(token);
-      
-      if(response) {
-      setUserData({ email: response.email , role: response.role}) }
-      //enlever le token de l'url 
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } catch(err){
-      setError(err.response?.data.message || 'Invalid or expired link')
-    } finally {
-      setLoading(false);
-    } 
-  }; checkToken();}, [token]);
+      try {
+        const response = await authService.verifyInvitation(token);
+        if (response) {
+          setUserData({ email: response.email, role: response.role });
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } catch (err) {
+        setError(err.response?.data.message || t('auth.invalidOrExpiredLink'));
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkToken();
+  }, [token, t]);
 
-// remplissage du formulaire
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -53,64 +47,58 @@ const RegisterForm = () => {
     e.preventDefault();
     setError('');
 
-    // Validation de la saise de password
     if (form.password !== form.passwordConfirm) {
-      setError(`Passwords don't match`);
+      setError(t('auth.passwordsMismatch'));
       return;
     }
 
     try {
-      // Envoi au backend : on fusionne les données du formulaire + le token
       await authService.register({
-        token: token,
+        token,
         firstname: form.firstname,
         lastname: form.lastname,
         password: form.password,
-        confirmPassword: form.passwordConfirm
-        
+        confirmPassword: form.passwordConfirm,
       });
 
-      alert('Profile created successfully !');
+      alert(t('auth.profileCreatedSuccess'));
       navigate(ROUTES.LOGIN);
     } catch (err) {
-        console.log("Détail erreur reçue:", err.response?.data);
-      setError(err.response?.data?.message || "An error occured during the registration");
+      console.log('Détail erreur reçue:', err.response?.data);
+      setError(err.response?.data?.message || t('auth.registrationError'));
     }
   };
- 
-  // Chargement
+
   if (loading) {
-    return <div className="admin-inscription-page" >Loading...</div>;
+    return <div className="admin-inscription-page">{t('auth.loadingToken')}</div>;
   }
 
-  // Erreur ou probléme de token
   if (error && !userData.email) {
     return (
       <div className="admin-inscription-page">
         <div className="admin-inscription-card">
-          <h2 className='admin-inscription-card-error'>{error}</h2>
-          <Link to={ROUTES.LOGIN} className="admin-inscription-back">Return to login</Link>
+          <h2 className="admin-inscription-card-error">{error}</h2>
+          <Link to={ROUTES.LOGIN} className="admin-inscription-back">
+            {t('auth.backToLogin')}
+          </Link>
         </div>
       </div>
     );
   }
 
-
   return (
     <div className="admin-inscription-page">
       <div className="admin-inscription-card">
-        <h1 className="admin-inscription-title">Finalise your registration</h1>
+        <h1 className="admin-inscription-title">{t('auth.registerTitle')}</h1>
         <p className="admin-inscription-desc">
-          Welcome to the marsAI film festival team <strong>{userData.role}</strong>.
+          {t('auth.welcomeTeam')} <strong>{userData.role}</strong>.
         </p>
 
-        {error && <div className="login-form-error" >{error}</div>}
+        {error && <div className="login-form-error">{error}</div>}
 
         <form onSubmit={handleSubmit} className="admin-inscription-form">
-          
-          {/* Email pré-rempli et verrouillé) */}
           <div className="admin-inscription-field">
-            <label className="admin-inscription-label">Email</label>
+            <label className="admin-inscription-label">{t('auth.emailLabel')}</label>
             <input
               type="email"
               value={userData.email}
@@ -121,9 +109,8 @@ const RegisterForm = () => {
           </div>
 
           <div className="admin-inscription-row">
-            {/* Prénom à compléter par user*/}
             <div className="admin-inscription-field">
-              <label htmlFor="firstname" className="admin-inscription-label">Prénom</label>
+              <label htmlFor="firstname" className="admin-inscription-label">{t('auth.firstnameLabel')}</label>
               <input
                 id="firstname"
                 type="text"
@@ -131,13 +118,12 @@ const RegisterForm = () => {
                 value={form.firstname}
                 onChange={handleChange}
                 className="admin-inscription-input"
-                placeholder="Votre prénom"
+                placeholder={t('auth.firstnamePlaceholder')}
                 required
               />
             </div>
-            {/* Nom  à compléter par user*/}
             <div className="admin-inscription-field">
-              <label htmlFor="lastname" className="admin-inscription-label">Nom</label>
+              <label htmlFor="lastname" className="admin-inscription-label">{t('auth.lastnameName')}</label>
               <input
                 id="lastname"
                 type="text"
@@ -145,15 +131,14 @@ const RegisterForm = () => {
                 value={form.lastname}
                 onChange={handleChange}
                 className="admin-inscription-input"
-                placeholder="Votre nom"
+                placeholder={t('auth.lastnamePlaceholder')}
                 required
               />
             </div>
           </div>
 
-          {/* Rôle pré-rempli et verrouillé) */}
           <div className="admin-inscription-field">
-            <label className="admin-inscription-label">Rôle attribué</label>
+            <label className="admin-inscription-label">{t('auth.assignedRole')}</label>
             <input
               type="text"
               value={userData.role}
@@ -163,9 +148,8 @@ const RegisterForm = () => {
             />
           </div>
 
-          {/* Mot de passe à compléter par user */}
           <div className="admin-inscription-field">
-            <label htmlFor="password" className="admin-inscription-label">Mot de passe</label>
+            <label htmlFor="password" className="admin-inscription-label">{t('auth.passwordLabel2')}</label>
             <input
               id="password"
               type="password"
@@ -173,15 +157,14 @@ const RegisterForm = () => {
               value={form.password}
               onChange={handleChange}
               className="admin-inscription-input"
-              placeholder="6 caractères minimum"
+              placeholder={t('auth.passwordMinPlaceholder')}
               minLength={6}
               required
             />
           </div>
 
-          {/* Confirmation du mot passe par user */}
           <div className="admin-inscription-field">
-            <label htmlFor="passwordConfirm" className="admin-inscription-label">Confirmation mot de passe</label>
+            <label htmlFor="passwordConfirm" className="admin-inscription-label">{t('auth.confirmPasswordLabel')}</label>
             <input
               id="passwordConfirm"
               type="password"
@@ -189,18 +172,18 @@ const RegisterForm = () => {
               value={form.passwordConfirm}
               onChange={handleChange}
               className="admin-inscription-input"
-              placeholder="Confirmez votre mot de passe"
+              placeholder={t('auth.confirmPasswordPlaceholder')}
               required
             />
           </div>
 
           <button type="submit" className="admin-inscription-submit">
-            Submit
+            {t('auth.submitBtn')}
           </button>
         </form>
 
         <Link to={ROUTES.LOGIN} className="admin-inscription-back">
-          I already have a profile ? Log in
+          {t('auth.alreadyHaveProfile')}
         </Link>
       </div>
     </div>

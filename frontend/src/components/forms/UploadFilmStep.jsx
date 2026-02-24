@@ -1,4 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react';
+﻿import React, { useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import FormCard from './FormCard';
 import Icons from '../ui/common/Icons';
 import TagInput from '../ui/tags/TagInput';
@@ -12,6 +13,7 @@ import { participationSchema } from '@shared/schemas/participationSchema';
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 
 const UploadFilmStep = () => {
+  const { t } = useTranslation();
   const { form, setFilm, setFile, setTags } = useDepositForm();
   // Utilisation du hook de validation
   const { errors, validateField, clearError } = useFormValidation(participationSchema);
@@ -128,18 +130,18 @@ const UploadFilmStep = () => {
 
 
   return (
-    <FormCard number="03" title="Upload du film">
+    <FormCard number="03" title={t('deposit.uploadTitle')}>
       <div className="deposit-info-box">
         <div className="deposit-info-box-icon" aria-hidden><Icons.Info /></div>
         <p className="deposit-info-box-text">
-          Titre, descriptif et langue du film. Puis envoyez la vidéo, la vignette et éventuellement les sous-titres et les stills. On ne gère que le fichier (nom), pas de chemin.
+          {t('deposit.uploadInfo')}
         </p>
       </div>
 
       {/* TITRE FR */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Titre du film *</label>
+          <label className="deposit-field-label">{t('deposit.filmTitle')}</label>
           <div className="deposit-field-wrap">
             <input
               type="text"
@@ -151,7 +153,7 @@ const UploadFilmStep = () => {
           </div>
         </div>
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Langue * (ISO 639-1)</label>
+          <label className="deposit-field-label">{t('deposit.language')}</label>
           <div className="deposit-field-wrap">
             <select
               className="deposit-input"
@@ -168,7 +170,7 @@ const UploadFilmStep = () => {
 
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Titre (anglais) *</label>
+          <label className="deposit-field-label">{t('deposit.filmTitleEn')}</label>
           <div className="deposit-field-wrap">
             <input
               type="text"
@@ -180,7 +182,7 @@ const UploadFilmStep = () => {
           </div>
         </div>
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Classification *</label>
+          <label className="deposit-field-label">{t('deposit.classification')}</label>
           <div className="deposit-field-wrap">
             <select
               className="deposit-input"
@@ -195,7 +197,7 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Descriptif / Synopsis (max 500 car.)</label>
+        <label className="deposit-field-label">{t('deposit.synopsis')}</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
@@ -209,7 +211,7 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Synopsis (anglais) * (max 300 car.)</label>
+        <label className="deposit-field-label">{t('deposit.synopsisEn')}</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
@@ -223,11 +225,11 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Résumé technique * (max 500 car.)</label>
+        <label className="deposit-field-label">{t('deposit.techResume')}</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
-            placeholder="Décrivez les aspects techniques (outils IA, pipeline, etc.)"
+            placeholder={t('deposit.techResumePlaceholder')}
             maxLength={500}
             value={film.tech_resume ?? ''}
             onChange={(e) => setFilm('tech_resume', e.target.value)}
@@ -237,11 +239,11 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Résumé créatif * (max 500 car.)</label>
+        <label className="deposit-field-label">{t('deposit.creativeResume')}</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
-            placeholder="Décrivez l’approche créative, l’intention, le propos..."
+            placeholder={t('deposit.creativeResumePlaceholder')}
             maxLength={500}
             value={film.creative_resume ?? ''}
             onChange={(e) => setFilm('creative_resume', e.target.value)}
@@ -251,7 +253,7 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Tags</label>
+        <label className="deposit-field-label">{t('deposit.tags')}</label>
         <TagInput 
           tags={form.tags || []} 
           onChange={setTags}
@@ -260,7 +262,7 @@ const UploadFilmStep = () => {
         {/* Tags les plus utilisés */}
         {mostUsedTags.length > 0 && (
           <div className="deposit-popular-tags">
-            <p className="deposit-popular-tags-label">Tags populaires :</p>
+            <p className="deposit-popular-tags-label">{t('deposit.popularTags')}</p>
             <div className="deposit-popular-tags-list">
               {mostUsedTags.map((tag) => {
                 const isSelected = form.tags?.includes(tag);
@@ -282,7 +284,7 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Vidéo * (mp4, mov, webm – max 300 Mo)</label>
+        <label className="deposit-field-label">{t('deposit.videoField')}</label>
         <div
           className={`deposit-upload-vignette deposit-upload-vignette--video ${videoPreviewUrl ? 'deposit-upload-vignette--preview' : ''} ${videoDragOver ? 'deposit-upload-vignette--drag-over' : ''}`}
           onClick={() => !videoPreviewUrl && videoRef.current?.click()}
@@ -292,7 +294,7 @@ const UploadFilmStep = () => {
           onDragLeave={handleVideoDragLeave}
           role="button"
           tabIndex={0}
-          aria-label={videoPreviewUrl ? 'Changer la vidéo' : 'Choisir ou glisser la vidéo'}
+          aria-label={videoPreviewUrl ? t('deposit.videoAriaChange') : t('deposit.videoAriaChoose')}
         >
           <input
             ref={videoRef}
@@ -315,7 +317,7 @@ const UploadFilmStep = () => {
                 className="deposit-upload-btn"
                 onClick={(e) => { e.stopPropagation(); videoRef.current?.click(); }}
               >
-                Changer la vidéo
+                {t('deposit.changeVideo')}
               </button>
             </>
           ) : (
@@ -326,7 +328,7 @@ const UploadFilmStep = () => {
                 className="deposit-upload-btn"
                 onClick={(e) => { e.stopPropagation(); videoRef.current?.click(); }}
               >
-                Choisir ou glisser la vidéo
+                {t('deposit.chooseOrDropVideo')}
               </button>
             </>
           )}
@@ -335,7 +337,7 @@ const UploadFilmStep = () => {
 
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Vignette (cover) * (jpg, png – max 5 Mo)</label>
+          <label className="deposit-field-label">{t('deposit.coverField')}</label>
           <div
             className="deposit-upload-vignette deposit-upload-vignette--preview"
             onClick={() => coverRef.current?.click()}
@@ -351,7 +353,7 @@ const UploadFilmStep = () => {
               className="deposit-file-input-hidden"
             />
             {coverPreview ? (
-              <img src={coverPreview} alt="Aperçu vignette" className="deposit-upload-preview-img" />
+              <img src={coverPreview} alt={t('deposit.coverPreviewAlt')} className="deposit-upload-preview-img" />
             ) : (
               <div className="deposit-upload-vignette-icon" aria-hidden><Icons.Upload /></div>
             )}
@@ -360,12 +362,12 @@ const UploadFilmStep = () => {
               className="deposit-upload-btn"
               onClick={(e) => { e.stopPropagation(); coverRef.current?.click(); }}
             >
-              {files.cover ? 'Changer la vignette' : 'Choisir la vignette'}
+              {files.cover ? t('deposit.changeCover') : t('deposit.chooseCover')}
             </button>
           </div>
         </div>
         <div className="deposit-field-group">
-          <label className="deposit-field-label">Sous-titres (srt – max 1 Mo)</label>
+          <label className="deposit-field-label">{t('deposit.subtitlesField')}</label>
           <div className="deposit-upload-vignette">
             <div className="deposit-upload-vignette-icon" aria-hidden><Icons.Upload /></div>
             <input
@@ -380,13 +382,31 @@ const UploadFilmStep = () => {
               className="deposit-upload-btn"
               onClick={() => subtitlesRef.current?.click()}
             >
-              {files.subtitles ? files.subtitles.name : 'Choisir un fichier .srt'}
+              {files.subtitles ? files.subtitles.name : t('deposit.chooseSubtitles')}
             </button>
           </div>
         </div>
       </div>
 
       <div className="deposit-field-group">
+
+        <label className="deposit-field-label">{t('deposit.stillsField')}</label>
+        <div className="deposit-upload-gallery">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="deposit-upload-gallery-item deposit-upload-gallery-item--preview"
+              onClick={() => stillsRef.current?.click()}
+              onKeyDown={(e) => e.key === 'Enter' && stillsRef.current?.click()}
+              role="button"
+              tabIndex={0}
+            >
+              {stillsPreviews[i] ? (
+                <img src={stillsPreviews[i]} alt={`Still ${i + 1}`} className="deposit-upload-preview-img deposit-upload-preview-img--still" />
+              ) : (
+                <span aria-hidden className="deposit-upload-gallery-placeholder"><Icons.Image /></span>
+              )}
+
         <label className="deposit-field-label">Stills (jpg, png – max {STILLS_MAX_COUNT}, 5 Mo chacun)</label>
 
         <div className="deposit-social-links">
@@ -405,6 +425,7 @@ const UploadFilmStep = () => {
               >
                 ×
               </button>
+
             </div>
           ))}
         </div>
@@ -423,7 +444,11 @@ const UploadFilmStep = () => {
           disabled={(form.files.stills || []).length >= STILLS_MAX_COUNT}
           onClick={() => stillsRef.current?.click()}
         >
+
+          {t('deposit.chooseStills')}
+
           + Ajouter un still ({(form.files.stills || []).length} / {STILLS_MAX_COUNT})
+
         </button>
       </div>
     </FormCard>
