@@ -52,11 +52,18 @@ export const SOCIAL_LINKS_MAX = 10;
 // formatBirthdateForApi , formate la date de naissance pour l'API ------------//
 export const formatBirthdateForApi = (dateStr) => {
   if (!dateStr) return '';
+
+  if (typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return dateStr;
+  }
+
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return '';
+
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
+  
   return `${y}-${m}-${day}`;
 };
 

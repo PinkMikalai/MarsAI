@@ -126,23 +126,42 @@ const participationSchema = z.object({
     email: email, 
     birthdate: z
         .string({ required_error: "Birthdate is required" })
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Format: YYYY-MM-DD (e.g., 1990-05-15)"),
+        .min(1, "Birthdate is required")
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
+        .refine((val) => {
+            const birthDate = new Date(val);
+            if (isNaN(birthDate.getTime())) return false;
+            
+            const today = new Date();
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+
+            // La date doit être AVANT ou EGALE à il y a 18 ans
+            return birthDate <= eighteenYearsAgo;
+        }, { 
+            // Message d'erreur
+            message: "You must be at least 18 years old to participate" 
+        }),
 
     // TÉLÉPHONE MOBILE : Format E.164 (ex: +33612345678), champs obligatoire 
     mobile_number: z
         .string({ required_error: "Mobile number is required" })
         .trim()
-        .min(1, "Mobile number is required")
-        .max(16, "Phone number too long")
+        .min(10, "Mobile number is too short")
+        .max(17, "Mobile number is too long")
         .regex(phoneRegex, phoneMessage),
 
     // TÉLÉPHONE FIXE (optionnel)
     phone_number: z
         .union([
             z.literal(""),
-            z.string().trim().max(16, "Phone number too long").regex(phoneRegex, phoneMessage),
-        ])
-        .optional(),
+            z.string()
+                .trim()
+                .min(10, "Phone number is too short")
+                .max(17, "Phone number is too long")
+                .regex(phoneRegex, phoneMessage),
+        ]).optional(),
+
     // ADDRESSE 
     address: z
         .string({ required_error: "Address is required" })
