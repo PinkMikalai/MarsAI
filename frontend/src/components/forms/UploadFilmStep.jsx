@@ -9,8 +9,12 @@ import { tagsService } from '../../service/tags';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { participationSchema } from '@shared/schemas/participationSchema';
 
+import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
+
 const UploadFilmStep = () => {
   const { form, setFilm, setFile, setTags } = useDepositForm();
+  // Utilisation du hook de validation
+  const { errors, validateField, clearError } = useFormValidation(participationSchema);
   const { film, files } = form; 
 
   const videoRef = useRef(null);
@@ -123,6 +127,7 @@ const UploadFilmStep = () => {
         </p>
       </div>
 
+      {/* TITRE FR */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">Titre du film *</label>
