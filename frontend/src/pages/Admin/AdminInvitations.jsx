@@ -1,13 +1,16 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../service/authService';
 
-const ROLES = [
-  { value: 'Admin', label: 'Admin' },
-  { value: 'Selector', label: 'Sélectionneur' },
-  { value: 'Super-admin', label: 'Super Admin' },
-];
-
 const AdminInvitations = () => {
+  const { t } = useTranslation();
+
+  const ROLES = [
+    { value: 'Admin', label: 'Admin' },
+    { value: 'Selector', label: t('profile.roleSelector') },
+    { value: 'Super-admin', label: 'Super Admin' },
+  ];
+
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('Selector');
   const [submitting, setSubmitting] = useState(false);
@@ -20,17 +23,20 @@ const AdminInvitations = () => {
     setSuccessMessage('');
     const trimmedEmail = email.trim();
     if (!trimmedEmail) {
-      setFormError('Veuillez saisir une adresse email.');
+      setFormError(t('admin.enterEmail'));
       return;
     }
     setSubmitting(true);
     try {
       await authService.inviteUser({ email: trimmedEmail, role });
-      setSuccessMessage(`Invitation envoyée à ${trimmedEmail} avec le rôle ${ROLES.find((r) => r.value === role)?.label || role}.`);
+      setSuccessMessage(t('admin.invitationSentMsg', {
+        email: trimmedEmail,
+        role: ROLES.find((r) => r.value === role)?.label || role,
+      }));
       setEmail('');
       setRole('Selector');
     } catch (err) {
-      setFormError(err.message || 'Erreur lors de l\'envoi de l\'invitation.');
+      setFormError(err.message || t('admin.invitationError'));
     } finally {
       setSubmitting(false);
     }
@@ -40,16 +46,16 @@ const AdminInvitations = () => {
     <section className="admin-overview">
       <div className="admin-overview-header">
         <div>
-          <p className="admin-overview-kicker">Super Admin</p>
-          <h2 className="admin-overview-title">Invitations</h2>
+          <p className="admin-overview-kicker">{t('admin.kickerSuperAdmin')}</p>
+          <h2 className="admin-overview-title">{t('admin.invitationsTitle')}</h2>
           <p className="admin-overview-text">
-            Envoyez une invitation par email pour ajouter un membre à l&apos;équipe (Admin, Sélectionneur ou Super Admin). Le lien expire sous 48 h.
+            {t('admin.invitationsSubtitle')}
           </p>
         </div>
       </div>
 
       <div className="admin-events-form-wrap">
-        <h3 className="admin-events-form-title">Inviter un membre</h3>
+        <h3 className="admin-events-form-title">{t('admin.inviteMemberTitle')}</h3>
         <form onSubmit={handleSubmit} className="admin-events-form">
           {formError && (
             <p className="admin-events-form-error" role="alert">
@@ -63,20 +69,20 @@ const AdminInvitations = () => {
           )}
           <div className="admin-events-form-grid">
             <label className="admin-events-form-label admin-events-form-label--full">
-              Email *
+              {t('admin.inviteEmailField')}
               <input
                 type="email"
                 name="email"
                 required
                 className="admin-events-form-input"
-                placeholder="exemple@marsai.com"
+                placeholder={t('admin.inviteEmailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={submitting}
               />
             </label>
             <label className="admin-events-form-label admin-events-form-label--full">
-              Rôle *
+              {t('admin.inviteRoleField')}
               <select
                 name="role"
                 required
@@ -94,7 +100,7 @@ const AdminInvitations = () => {
             </label>
           </div>
           <button type="submit" className="admin-profile-btn admin-profile-btn--primary" disabled={submitting}>
-            {submitting ? 'Envoi…' : 'Envoyer l\'invitation'}
+            {submitting ? t('common.sending') : t('admin.sendInvitation')}
           </button>
         </form>
       </div>

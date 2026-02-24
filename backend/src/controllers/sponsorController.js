@@ -123,7 +123,7 @@ async function updateSponsor(req, res) {
 
         if (result) {
             if (req.files && req.files.img && oldImageFileName) {
-                deleteOldFile(oldImageFileName, 'images');
+                await deleteOldFile(oldImageFileName, 'images');
             }
             const updatedSponsor = await getSponsorByIdModel(req.params.id);
             
@@ -167,7 +167,7 @@ async function deleteSponsor(req, res) {
         const result = await deleteSponsorModel(req.params.id);
         console.log("result", result);
 
-        deleteOldFile(imageFileName, 'images');
+        await deleteOldFile(imageFileName, 'images');
 
         if (result) {
             res.status(200).json({

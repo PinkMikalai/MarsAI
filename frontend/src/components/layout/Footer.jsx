@@ -1,8 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../constants/routes';
 
 const Footer = () => {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
   const isHome = pathname === '/';
 
@@ -16,79 +18,79 @@ const Footer = () => {
               <span className="deposit-footer-brand-ai">A.I</span>
             </div>
             <p className="deposit-footer-tagline">
-              Imaginez des futurs souhaitables.
+              {t('footer.tagline')}
             </p>
           </div>
 
           <div>
-            <h3 className="deposit-footer-col-title">Explorer</h3>
+            <h3 className="deposit-footer-col-title">{t('footer.exploreTitle')}</h3>
             <ul className="deposit-footer-list">
-              <li><Link to="/" className="deposit-footer-link">Accueil</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Festival</Link></li>
-              <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">Galerie des films</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Compétition</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Conférences</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Contact</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.home')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.festival')}</Link></li>
+              <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">{t('footer.filmGallery')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.competition')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.conferences')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.contact')}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="deposit-footer-col-title">Festival</h3>
+            <h3 className="deposit-footer-col-title">{t('footer.festivalTitle')}</h3>
             <ul className="deposit-footer-list">
-              <li><Link to="/" className="deposit-footer-link">Programme</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Lieu</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Billetterie</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.programme')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.venue')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.ticketing')}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="deposit-footer-col-title">Compétition</h3>
+            <h3 className="deposit-footer-col-title">{t('footer.competitionTitle')}</h3>
             <ul className="deposit-footer-list">
-              <li><Link to={ROUTES.PARTICIPATE} className="deposit-footer-link">Soumission</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Règlement</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Prix</Link></li>
+              <li><Link to={ROUTES.PARTICIPATE} className="deposit-footer-link">{t('footer.submission')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.rules')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.prizes')}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="deposit-footer-col-title">Ressources</h3>
+            <h3 className="deposit-footer-col-title">{t('footer.resourcesTitle')}</h3>
             <ul className="deposit-footer-list">
-              <li><Link to="/" className="deposit-footer-link">FAQ</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Presse</Link></li>
-              <li><Link to="/" className="deposit-footer-link">Mentions légales</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.faq')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.press')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.legalNotices')}</Link></li>
             </ul>
           </div>
 
           <div className="home-footer-connect">
-            <h3 className="deposit-footer-col-title">RESTEZ CONNECTÉ</h3>
+            <h3 className="deposit-footer-col-title">{t('footer.stayConnected')}</h3>
             <div className="home-footer-socials">
-              <a href="#" className="home-footer-social" aria-label="Facebook">Facebook</a>
-              <a href="#" className="home-footer-social" aria-label="Instagram">Instagram</a>
-              <a href="#" className="home-footer-social" aria-label="Twitter">Twitter</a>
-              <a href="#" className="home-footer-social" aria-label="LinkedIn">LinkedIn</a>
+              <a href="#" className="home-footer-social" aria-label={t('footer.facebook')}>{t('footer.facebook')}</a>
+              <a href="#" className="home-footer-social" aria-label={t('footer.instagram')}>{t('footer.instagram')}</a>
+              <a href="#" className="home-footer-social" aria-label={t('footer.twitter')}>{t('footer.twitter')}</a>
+              <a href="#" className="home-footer-social" aria-label={t('footer.linkedin')}>{t('footer.linkedin')}</a>
             </div>
             <div className="home-footer-newsletter">
-              <input type="email" placeholder="Votre email" className="home-footer-input" aria-label="Email newsletter" />
-              <button type="button" className="home-footer-go">GO</button>
+              <input type="email" placeholder={t('footer.emailPlaceholder')} className="home-footer-input" aria-label={t('footer.emailNewsletter')} />
+              <button type="button" className="home-footer-go">{t('footer.go')}</button>
             </div>
           </div>
         </div>
 
         <div className="deposit-footer-bottom">
           <span className="deposit-footer-copyright">
-            © 2026 MARS.A.I • Tous droits réservés
+            {t('footer.copyright')}
           </span>
           <Link to={ROUTES.REGISTER_USER} className="deposit-footer-btn-connexion">
-            Connexion
+            {t('footer.connexion')}
           </Link>
           <div className="footer-admin-stars">
-            <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title="Mon profil" aria-label="Aller au profil">
+            <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title={t('footer.myProfile')} aria-label={t('footer.goToProfile')}>
               <span className="footer-admin-star" aria-hidden>★</span>
             </Link>
-            <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title="Inscription Admin & Sélectionneurs" aria-label="S'inscrire (Admin et Sélectionneurs)">
+            <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title={t('footer.registerAdminSelector')} aria-label={t('footer.signUpAdminSelector')}>
               <span className="footer-admin-star" aria-hidden>★</span>
             </Link>
-            <Link to={ROUTES.LOGIN} className="footer-admin-link" title="Connexion Admin & Sélectionneurs" aria-label="Connexion Admin et Sélectionneurs">
+            <Link to={ROUTES.LOGIN} className="footer-admin-link" title={t('footer.loginAdminSelector')} aria-label={t('footer.loginAdminSelectorAria')}>
               <span className="footer-admin-star" aria-hidden>★</span>
             </Link>
           </div>
@@ -106,61 +108,61 @@ const Footer = () => {
             <span className="deposit-footer-brand-ai">AI</span>
           </div>
           <p className="deposit-footer-tagline">
-            La plateforme mondiale de la narration générative.
+            {t('footer.taglineAlt')}
           </p>
         </div>
 
         <div>
-          <h3 className="deposit-footer-col-title">Navigation</h3>
+          <h3 className="deposit-footer-col-title">{t('footer.navigationTitle')}</h3>
           <ul className="deposit-footer-list">
-            <li><Link to="/" className="deposit-footer-link">Programme</Link></li>
-            <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">Films</Link></li>
-            <li><Link to="/" className="deposit-footer-link">Jury</Link></li>
-            <li><Link to="/" className="deposit-footer-link">Billetterie</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.programme')}</Link></li>
+            <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">{t('footer.films')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.jury')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.ticketing')}</Link></li>
           </ul>
         </div>
 
         <div>
-          <h3 className="deposit-footer-col-title">Compétition</h3>
+          <h3 className="deposit-footer-col-title">{t('footer.competitionTitle')}</h3>
           <ul className="deposit-footer-list">
-            <li><Link to="/" className="deposit-footer-link">Règlement</Link></li>
-            <li><Link to={ROUTES.PARTICIPATE} className="deposit-footer-link">Soumission</Link></li>
-            <li><Link to="/" className="deposit-footer-link">Prix</Link></li>
-            <li><Link to="/" className="deposit-footer-link">FAQ</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.rules')}</Link></li>
+            <li><Link to={ROUTES.PARTICIPATE} className="deposit-footer-link">{t('footer.submission')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.prizes')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.faq')}</Link></li>
           </ul>
         </div>
 
         <div>
-          <h3 className="deposit-footer-col-title">Légal</h3>
+          <h3 className="deposit-footer-col-title">{t('footer.legalTitle')}</h3>
           <ul className="deposit-footer-list">
-            <li><Link to="/" className="deposit-footer-link">Mentions</Link></li>
-            <li><Link to="/" className="deposit-footer-link">Confidentialité</Link></li>
-            <li><Link to="/" className="deposit-footer-link">Cookies</Link></li>
-            <li><Link to="/" className="deposit-footer-link">Presse</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.mentions')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.privacy')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.cookies')}</Link></li>
+            <li><Link to="/" className="deposit-footer-link">{t('footer.press')}</Link></li>
           </ul>
         </div>
       </div>
 
       <div className="deposit-footer-bottom">
         <span className="deposit-footer-copyright">
-          © 2026 marsAI Protocol • Tous droits réservés
+          {t('footer.copyrightAlt')}
         </span>
         <Link to={ROUTES.REGISTER_USER} className="deposit-footer-btn-connexion">
-          Connexion
+          {t('footer.connexion')}
         </Link>
         <div className="deposit-footer-socials">
-          <a href="#" className="deposit-footer-social">Twitter</a>
-          <a href="#" className="deposit-footer-social">Instagram</a>
-          <a href="#" className="deposit-footer-social">LinkedIn</a>
+          <a href="#" className="deposit-footer-social">{t('footer.twitter')}</a>
+          <a href="#" className="deposit-footer-social">{t('footer.instagram')}</a>
+          <a href="#" className="deposit-footer-social">{t('footer.linkedin')}</a>
         </div>
         <div className="footer-admin-stars">
-          <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title="Mon profil" aria-label="Aller au profil">
+          <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title={t('footer.myProfile')} aria-label={t('footer.goToProfile')}>
             <span className="footer-admin-star" aria-hidden>★</span>
           </Link>
-          <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title="Inscription Admin & Sélectionneurs" aria-label="S'inscrire (Admin et Sélectionneurs)">
+          <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title={t('footer.registerAdminSelector')} aria-label={t('footer.signUpAdminSelector')}>
             <span className="footer-admin-star" aria-hidden>★</span>
           </Link>
-          <Link to={ROUTES.LOGIN} className="footer-admin-link" title="Connexion Admin & Sélectionneurs" aria-label="Connexion Admin et Sélectionneurs">
+          <Link to={ROUTES.LOGIN} className="footer-admin-link" title={t('footer.loginAdminSelector')} aria-label={t('footer.loginAdminSelectorAria')}>
             <span className="footer-admin-star" aria-hidden>★</span>
           </Link>
         </div>

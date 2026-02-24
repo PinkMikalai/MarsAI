@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../service/authService';
 import { ROUTES } from '../../constants/routes';
 import '../../styles/pages/admin/login-admin.css';
 
 const ResetPassword = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get('token');
@@ -16,22 +18,22 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!token) setError('Lien invalide ou expiré. Demandez un nouveau lien.');
-  }, [token]);
+    if (!token) setError(t('auth.invalidLinkError'));
+  }, [token, t]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     if (!newPassword || !confirmNewPassword) {
-      setError('Veuillez remplir les deux champs.');
+      setError(t('auth.fillBothFields'));
       return;
     }
     if (newPassword !== confirmNewPassword) {
-      setError('Les deux mots de passe ne correspondent pas.');
+      setError(t('auth.passwordsDoNotMatch'));
       return;
     }
     if (newPassword.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères.');
+      setError(t('auth.passwordMinLength'));
       return;
     }
     setLoading(true);
@@ -44,7 +46,7 @@ const ResetPassword = () => {
       setSuccess(true);
       setTimeout(() => navigate(ROUTES.LOGIN, { replace: true }), 2500);
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue. Le lien a peut-être expiré.');
+      setError(err.message || t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -54,14 +56,14 @@ const ResetPassword = () => {
     return (
       <div className="admin-login-page">
         <div className="admin-login-card">
-          <h2 className="admin-login-title">Réinitialisation</h2>
+          <h2 className="admin-login-title">{t('auth.resetTitle')}</h2>
           <p className="login-form-error">{error}</p>
           <Link to={ROUTES.FORGOT_PASSWORD} className="admin-login-inscription">
-            Demander un nouveau lien
+            {t('auth.requestNewLink')}
           </Link>
           <div className="admin-login-footer">
             <Link to={ROUTES.LOGIN} className="admin-login-back">
-              Retour à la connexion
+              {t('auth.backToLogin')}
             </Link>
           </div>
         </div>
@@ -72,9 +74,9 @@ const ResetPassword = () => {
   return (
     <div className="admin-login-page">
       <div className="admin-login-card">
-        <h2 className="admin-login-title">Nouveau mot de passe</h2>
+        <h2 className="admin-login-title">{t('auth.resetPasswordTitle')}</h2>
         <p className="admin-login-desc">
-          Choisissez un nouveau mot de passe sécurisé (min. 6 caractères, au moins un chiffre).
+          {t('auth.resetPasswordDesc')}
         </p>
 
         {error && (
@@ -85,16 +87,16 @@ const ResetPassword = () => {
 
         {success ? (
           <div className="login-form-success" role="status">
-            <p>Votre mot de passe a été réinitialisé. Redirection vers la connexion…</p>
+            <p>{t('auth.passwordResetSuccess')}</p>
             <Link to={ROUTES.LOGIN} className="admin-login-inscription">
-              Aller à la connexion
+              {t('auth.goToLogin')}
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="login-form" noValidate>
             <div className="login-form-field">
               <label htmlFor="new-password" className="login-form-label">
-                Nouveau mot de passe
+                {t('auth.newPasswordLabel')}
               </label>
               <input
                 id="new-password"
@@ -111,7 +113,7 @@ const ResetPassword = () => {
             </div>
             <div className="login-form-field">
               <label htmlFor="confirm-new-password" className="login-form-label">
-                Confirmer le mot de passe
+                {t('auth.confirmNewPasswordLabel')}
               </label>
               <input
                 id="confirm-new-password"
@@ -131,14 +133,14 @@ const ResetPassword = () => {
               className="login-form-submit"
               disabled={loading}
             >
-              {loading ? 'Enregistrement…' : 'Enregistrer le mot de passe'}
+              {loading ? t('auth.savingPassword') : t('auth.savePassword')}
             </button>
           </form>
         )}
 
         <div className="admin-login-footer">
           <Link to={ROUTES.LOGIN} className="admin-login-back">
-            Retour à la connexion
+            {t('auth.backToLogin')}
           </Link>
         </div>
       </div>
