@@ -6,6 +6,7 @@ export const useFormValidation = (schema) => {
     // Quand l'utilisateur quitte un champ → valider
     const validateField = (fieldName, value) => {
         try {
+            console.log("Validating", fieldName, "with value:", value);
             schema.shape[fieldName].parse(value); // on demande à zod de vérifier uniquement la règle associée à ce champs 
             setErrors((prev) => ({ ...prev, [fieldName]: null }));
         } catch (error) {

@@ -5,6 +5,10 @@ import { commonSchema } from './commonSchema.js';
 // Extraction des élèments dont on a besoin 
 const { email, firstname, lastname, id } = commonSchema;
 
+// constantes pour la validation des numéros de téléphone
+const phoneRegex = /^\+[1-9]\d{1,14}$/;
+const phoneMessage = "Please enter a valid phone number (e.g., +33612345678)";
+
 
 // validation des entrées du tableau des contributeurs 
 const contributorSchema = z.object({
@@ -29,6 +33,18 @@ const tagSchema = z.object({
         .trim()
         .min(1, "Tag name cannot be empty")
 }); 
+
+// validation d'un lien social unique
+const socialLinkSchema = z.object({
+  platform: z
+    .string()
+    .min(1, "Please select a platform"),
+  url: z
+    .string()
+    .trim()
+    .url("Invalid format (must start with https://)")
+    .min(1, "URL cannot be empty if a platform is selected")
+});
 
 // validation des entrées du tableau des stills
 const stillSchema = z.object({
@@ -120,45 +136,83 @@ const participationSchema = z.object({
 
     // CONTACT
     email: email, 
+
+    country: z
+        .string({ required_error: "Country is required" })
+        .min(1, "Please select your country"), // Bloque si la valeur est ""
+
     birthdate: z
         .string({ required_error: "Birthdate is required" })
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Format: YYYY-MM-DD (e.g., 1990-05-15)"),
-    // TÉLÉPHONE : Format E.164 (ex: +33612345678)
+        .min(1, "Birthdate is required")
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
+        .refine((val) => {
+            const birthDate = new Date(val);
+            if (isNaN(birthDate.getTime())) return false;
+            
+            const today = new Date();
+            const eighteenYearsAgo = new Date();
+            eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+
+            // La date doit être AVANT ou EGALE à il y a 18 ans
+            return birthDate <= eighteenYearsAgo;
+        }, { 
+            // Message d'erreur
+            message: "You must be at least 18 years old to participate" 
+        }),
+
+    // TÉLÉPHONE MOBILE : Format E.164 (ex: +33612345678), champs obligatoire 
     mobile_number: z
         .string({ required_error: "Mobile number is required" })
         .trim()
-        .max(20, "Phone number too long")
-        .regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number starting with '+' and your country code (e.g., +33612345678)"),
+        .min(10, "Mobile number is too short")
+        .max(17, "Mobile number is too long")
+        .regex(phoneRegex, phoneMessage),
+
     // TÉLÉPHONE FIXE (optionnel)
     phone_number: z
         .union([
             z.literal(""),
-            z.string().trim().max(20, "Phone number too long").regex(/^\+[1-9]\d{1,14}$/, "Please enter a valid phone number (e.g., +33123456789)"),
-        ])
-        .optional(),
+            z.string()
+                .trim()
+                .min(10, "Phone number is too short")
+                .max(17, "Phone number is too long")
+                .regex(phoneRegex, phoneMessage),
+        ]).optional(),
+
     // ADDRESSE 
     address: z
         .string({ required_error: "Address is required" })
         .trim()
-        .min(5, "Please enter a complete address (minimum 5 characters)")
-        .max(255, "Address too long (max 255)"),
+        .min(5, "Please enter a complete address")
+        .max(255, "Address too long (max 255)")
+        .refine((val) => !/[<>]/.test(val), {
+            message: "Characters < and > are not allowed for security reasons"
+        }),
     
     // LIEN DES RESEAUX SOCIAUX
-    social_media_links_json: z
-        .string({ required_error: "Social media links are required" })
-        .min(1, "Social media links cannot be empty")
-        .max(1000, "JSON data too large (max 1000 chars)")
-        // refine permet de créer une règle de validation sur mesure 
-        .refine((val) => {
-            try {
-                // on tente de transformer la chaîne de caractères en objet JS réel
-                const parsed = JSON.parse(val);
-                // On vérifie que c'est bien un objet et pas juste un chiffre ou un booléen
-                return typeof parsed === 'object' && parsed !== null;
-            } catch (e) {
-                return false;
-            }
-        }, "Social media links must be a valid JSON object"),
+    // social_media_links_json: z
+    //     .string({ required_error: "Social media links are required" })
+    //     .min(1, "Social media links cannot be empty")
+    //     .max(1000, "JSON data too large (max 1000 chars)")
+    //     // refine permet de créer une règle de validation sur mesure 
+    //     .refine((val) => {
+    //         try {
+    //             // on tente de transformer la chaîne de caractères en objet JS réel
+    //             const parsed = JSON.parse(val);
+    //             // On vérifie que c'est bien un objet et pas juste un chiffre ou un booléen
+    //             return typeof parsed === 'object' && parsed !== null;
+    //         } catch (e) {
+    //             return false;
+    //         }
+    //     }, "Social media links must be a valid JSON object"),
+
+
+    // Dans ton participationSchema principal :
+    social_links: z
+        .array(socialLinkSchema)
+        .max(10, "Maximum 10 social links allowed")
+        .optional() 
+        .default([]), // Permet de ne rien envoyer du tout (tableau vide)
 
     
     // COVER
