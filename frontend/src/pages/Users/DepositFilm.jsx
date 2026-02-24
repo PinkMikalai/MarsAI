@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
 import { DepositFormProvider, useDepositForm } from '../../context/DepositFormContext';
 import Navbar from '../../components/layout/Navbar';
@@ -15,12 +15,6 @@ import Stepper from '../../components/ui/navigation/Stepper';
 import SuccessModal from '../../components/ui/feedback/SuccessModal';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
-
-const STEP_HINTS = [
-  "Cochez les cases ci-dessus (age 18 ans et acceptation des conditions) pour passer a l'etape suivante.",
-  "Remplissez tous les champs obligatoires (*) pour passer a l'etape suivante.",
-  "Ajoutez au minimum la video, la vignette, le titre anglais et les synopsis pour continuer.",
-];
 
 const DepositFilmInner = () => {
   const { t } = useTranslation();
@@ -37,8 +31,7 @@ const DepositFilmInner = () => {
 
   const { participant: p, film, files } = form;
 
-  // --- validation par etape ---
-
+  // Validation par étape
   const consentComplete =
     form.consent.accept_age_18 &&
     form.consent.accept_rules &&
@@ -67,7 +60,7 @@ const DepositFilmInner = () => {
     (currentStepIndex === 1 && inscriptionComplete) ||
     (currentStepIndex === 2 && uploadComplete);
 
-  // animation "bouton vient de s'activer" (etape 0 seulement)
+  // Animation "bouton vient de s'activer" (étape 0 seulement)
   const [justEnabled, setJustEnabled] = useState(false);
   const prevConsentRef = React.useRef(consentComplete);
   React.useEffect(() => {
@@ -79,10 +72,14 @@ const DepositFilmInner = () => {
     prevConsentRef.current = consentComplete;
   }, [consentComplete, currentStepIndex]);
 
-  // --- handlers ---
+  const STEP_HINTS = [
+    t('deposit.consentHint'),
+    t('deposit.inscriptionHint'),
+    t('deposit.uploadHint'),
+  ];
 
+  // Handlers
   const handleSuccess = (result) => {
-
     if (result?.videoId) {
       setSuccessData({
         ...result,
@@ -91,17 +88,6 @@ const DepositFilmInner = () => {
       setShowSuccessModal(true);
     } else {
       handleError({ message: t('deposit.errorNotRecordedRetry') });
-
-    console.log('Succes recu:', result);
-    if (result?.videoId) {
-      setSuccessData({
-        ...result,
-        message: result.message || 'Votre participation a bien ete enregistree.',
-      });
-      setShowSuccessModal(true);
-    } else {
-      handleError({ message: "La video n'a pas pu etre enregistree correctement. Veuillez reessayer." });
-
     }
   };
 
@@ -111,11 +97,7 @@ const DepositFilmInner = () => {
   };
 
   const handleError = (err) => {
-
     let errorMessage = t('deposit.errorSending');
-
-    let errorMessage = "Erreur lors de l'envoi.";
-
     if (err?.message) errorMessage = err.message;
     if (err?.errors && typeof err.errors === 'string') {
       errorMessage += '\n\nDetails:\n' + err.errors;
@@ -124,9 +106,7 @@ const DepositFilmInner = () => {
     } else if (err?.error) {
       errorMessage += '\n\n' + err.error;
     }
-
-    console.error('Erreur complete:', err);
-
+    console.error('Erreur complète :', err);
     alert(errorMessage);
   };
 
@@ -139,11 +119,7 @@ const DepositFilmInner = () => {
     <div className="deposit-page">
       <div className="deposit-container">
         <Navbar />
-
         <Header badge={t('deposit.badge')} title={t('deposit.title')} />
-
-        <Header badge="APPEL A PROJETS 2026" title="DEPOSER UN FILM" />
-
 
         <div className="deposit-form-zone">
           <Stepper currentStep={currentStepIndex} totalSteps={4} />
@@ -166,11 +142,7 @@ const DepositFilmInner = () => {
                 onClick={back}
                 className="deposit-btn-collab deposit-btn-collab--nav"
               >
-
                 {t('deposit.previous')}
-
-                Precedent
-
               </button>
             )}
             {!isLastStep && (
@@ -180,11 +152,7 @@ const DepositFilmInner = () => {
                 className={`deposit-btn-submit ${justEnabled ? 'deposit-btn-submit--just-enabled' : ''}`}
                 disabled={!canGoNext}
               >
-
-                {t('deposit.step')} {currentStepIndex + 2}
-
-                Etape {currentStepIndex + 2}
-
+                {t('deposit.stepBtn', { n: currentStepIndex + 2 })}
               </button>
             )}
             <AnimatePresence mode="wait">
@@ -198,11 +166,7 @@ const DepositFilmInner = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                 >
-ront-AntoineProfileCMS3
-                  {t('deposit.consentHint')}
-
                   {STEP_HINTS[currentStepIndex]}
-
                 </motion.p>
               )}
             </AnimatePresence>
