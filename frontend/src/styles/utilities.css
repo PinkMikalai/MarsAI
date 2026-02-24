@@ -1,2 +1,16 @@
 /* utilities.css - Classes utilitaires */
 
+/* Lisibilité globale : letter-spacing sur tout le texte courant */
+p, li, label, span, td, th, blockquote, figcaption {
+  letter-spacing: 0.025em;
+}
+
+/* Les textes en UPPERCASE ont déjà leur propre spacing, on ne touche pas */
+[class*="title"],
+[class*="badge"],
+[class*="kicker"],
+[class*="uppercase"],
+.text-uppercase {
+  letter-spacing: inherit;
+}
+

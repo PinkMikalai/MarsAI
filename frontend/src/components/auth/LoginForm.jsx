@@ -1,11 +1,12 @@
-
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../service/authService';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../context/AuthContext';
 
 const LoginForm = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -14,15 +15,11 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-
   const handleSubmit = async (e) => {
-
-    console.log("Data", email, password);
-
     e.preventDefault();
     setError('');
     if (!email.trim() || !password) {
-      setError('Email and password are required!')
+      setError(t('auth.emailPasswordRequired'));
       return;
     }
     setLoading(true);
@@ -30,13 +27,12 @@ const LoginForm = () => {
     try {
       const data = await authService.login({
         email: email.trim(),
-        password
-      })
+        password,
+      });
       const token = data.token?.access_token || data.token;
       const user = data.user || data.token?.user;
 
       if (token && user) {
-
         if (typeof login === 'function') {
           try {
             login(token, user);
@@ -45,27 +41,21 @@ const LoginForm = () => {
             console.error("ERREUR DANS L'EXÉCUTION DE LOGIN:", e);
           }
         } else {
-
           navigate(ROUTES.PROFILE);
         }
       }
-
     } catch (err) {
-      setError(err.message || 'Username or password not valid')
-
+      setError(err.message || t('auth.invalidCredentials'));
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
+  };
 
-  }
   return (
     <div className="admin-login-page">
       <div className="admin-login-card">
-        <h2 className="admin-login-title">Connection</h2>
-        <p className="admin-login-desc">
-          Restricted access
-        </p>
-
+        <h2 className="admin-login-title">{t('auth.connexionTitle')}</h2>
+        <p className="admin-login-desc">{t('auth.restrictedAccess')}</p>
 
         {error && (
           <div className="login-form-error" role="alert">
@@ -74,15 +64,14 @@ const LoginForm = () => {
         )}
 
         <form onSubmit={handleSubmit} className="login-form" noValidate>
-
           <div className="login-form-field">
-            <label htmlFor="email" className="login-form-label">Email</label>
+            <label htmlFor="email" className="login-form-label">{t('auth.emailLabel')}</label>
             <input
               id="email"
               name="email"
               type="email"
-              autoComplete="none"
-              placeholder="vous@exemple.fr"
+              autoComplete="email"
+              placeholder={t('auth.emailPlaceholder')}
               className="login-form-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -92,15 +81,15 @@ const LoginForm = () => {
           </div>
 
           <div className="login-form-field">
-            <label htmlFor="password" className="login-form-label">Password</label>
+            <label htmlFor="password" className="login-form-label">{t('auth.passwordLabel')}</label>
             <Link to={ROUTES.FORGOT_PASSWORD} className="login-form-forgot">
-              Mot de passe oublié ?
+              {t('auth.forgotPasswordLink')}
             </Link>
             <input
               id="password"
               name="password"
               type="password"
-              autoComplete="new-password"
+              autoComplete="current-password"
               placeholder="••••••••"
               className="login-form-input"
               value={password}
@@ -115,19 +104,18 @@ const LoginForm = () => {
             className="login-form-submit"
             disabled={loading}
           >
-            {loading ? 'Connexion en cours...' : 'Se connecter'}
+            {loading ? t('auth.signingIn') : t('auth.signIn')}
           </button>
         </form>
 
         <div className="admin-login-footer">
           <Link to={ROUTES.HOME} className="admin-login-back">
-            Home
+            {t('auth.homeBack')}
           </Link>
         </div>
       </div>
     </div>
   );
+};
 
-
-}
 export default LoginForm;

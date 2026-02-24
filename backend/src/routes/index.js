@@ -23,5 +23,4 @@ router.use('/selection-status', selectionStatusRoutes);
 router.use('/events', eventsRoutes);
 router.use('/admin', assignmentRoutes);
 
-
 export default router;
