@@ -1,7 +1,6 @@
 import { createInvitationToken } from '../../services/user/authService.js';
 import { sendInvitationEmail } from '../../services/admin/mailService.js';
 import { assignVideoToUser, multipleAssignments, getAssignmentByVideo, getAssignmentByUser, updateAssignment, deleteAssignment, getSelectorVideoLoad } from '../../services/admin/assignmentService.js';
-import { success } from 'zod';
 
 
 
@@ -114,11 +113,11 @@ const getSelectorVideoLoadController = async (req, res, next) => {
     try {
         const result = await getSelectorVideoLoad();
         res.status(200).json({
-            success : true,
+            success: true,
             data: result
         })
 
-    }catch(error){
+    } catch (error) {
         next(error);
     }
 
