@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { PHONE_PREFIX_OPTIONS } from '../../constants/submitForm';
 
-const PhoneInput = ({ value, countryCode, onPhoneChange, onCountryChange, placeholder = '612345678' }) => {
+const PhoneInput = ({ value, countryCode, onPhoneChange, onCountryChange, onBlur, placeholder = '612345678' }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   const wrapRef = useRef(null);
@@ -124,6 +124,7 @@ const PhoneInput = ({ value, countryCode, onPhoneChange, onCountryChange, placeh
         placeholder={placeholder}
         value={getDisplayValue()}
         onChange={handleInputChange}
+        onBlur={onBlur}
       />
     </div>
   );

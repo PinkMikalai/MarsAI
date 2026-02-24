@@ -4,34 +4,62 @@ import * as stillModel from '../models/video/stillModel.js';
 import * as tagModel from '../models/video/tagModel.js';
 import { uploadToYouTube } from '../services/video/youtubeService.js';
 import { getVideoMetada } from '../services/video/metadataService.js';
+import { deleteFileFromS3 } from '../services/uploadService.js';
 import { UPLOAD_BASE } from '../middlewares/uploadMiddleware.js';
 import { confirmParticipationEmail } from '../services/admin/mailService.js';
 import path from 'path';
 import fs from 'fs';
 
+// nettoyage : supprimer tous les fichiers S3 deja uploades en cas d erreur
+async function cleanupS3Files(req) {
+    if (!req.files) return;
+    for (const files of Object.values(req.files)) {
+        for (const file of files) {
+            if (file.s3Url) await deleteFileFromS3(file.s3Url);
+        }
+    }
+}
+
+// nettoyage : supprimer les fichiers temporaires locaux
+function cleanupTempFiles(...paths) {
+    for (const p of paths) {
+        if (p && fs.existsSync(p)) fs.unlinkSync(p);
+    }
+}
+
 async function addParticipation(req, res) {
     console.log("je teste ma route addParticipation");
 
+    let tempVideoPath = null;
+    let tempCoverPath = null;
+    let tempSrtPath = null;
+
     try {
         const validatedData = req.body;
-       
-        const videoFileName = req.files['video_file_name'] ? req.files['video_file_name'][0].filename : null;
-        if (!videoFileName) {
+
+        // recuperer le fichier video depuis multer (buffer en memoire)
+        const videoFile = req.files['video_file_name'] ? req.files['video_file_name'][0] : null;
+        if (!videoFile) {
             throw new Error("Fichier vidéo introuvable dans la requête");
         }
 
-        const fullVideoPath = path.join(UPLOAD_BASE, 'videos', videoFileName);
-        const meta = await getVideoMetada(fullVideoPath);
+        // ecrire le buffer video dans un fichier temporaire pour ffmpeg + youtube
+        tempVideoPath = path.join(UPLOAD_BASE, 'videos', videoFile.generatedName);
+        fs.writeFileSync(tempVideoPath, videoFile.buffer);
+
+        const meta = await getVideoMetada(tempVideoPath);
 
         if (!meta.is169) {
-            if (fs.existsSync(fullVideoPath)) fs.unlinkSync(fullVideoPath);
+            cleanupTempFiles(tempVideoPath);
+            await cleanupS3Files(req);
             return res.status(400).json({
                 message: `Format invalide : ${meta.width}*${meta.height}.cLe format 16/9 est obligatoire.`
             });
         }
 
         if (meta.duration > 180) {
-            if (fs.existsSync(fullVideoPath)) fs.unlinkSync(fullVideoPath);
+            cleanupTempFiles(tempVideoPath);
+            await cleanupS3Files(req);
             return res.status(400).json({
                 message: `Vidéo trop longue : ${meta.duration} secondes. La durée maximale autorisée est de 3 minutes (180s).`
             });
@@ -100,28 +128,36 @@ async function addParticipation(req, res) {
 
         console.log('Démarrage de lupload Youtube');
 
-        const cover = req.files['cover'] ? req.files['cover'][0].filename : null;
-        const srt_file_name = req.files['srt_file_name'] ? req.files['srt_file_name'][0].filename : null;
+        // ecrire cover et srt en fichiers temporaires pour youtube
+        const coverFile = req.files['cover'] ? req.files['cover'][0] : null;
+        const srtFile = req.files['srt_file_name'] ? req.files['srt_file_name'][0] : null;
 
-        if (!videoFileName) {
-            throw new Error("Le fichier vidéo est manquant dans la requête");
+        if (coverFile) {
+            tempCoverPath = path.join(UPLOAD_BASE, 'images', coverFile.generatedName);
+            fs.writeFileSync(tempCoverPath, coverFile.buffer);
+        }
+
+        if (srtFile) {
+            tempSrtPath = path.join(UPLOAD_BASE, 'srt', srtFile.generatedName);
+            fs.writeFileSync(tempSrtPath, srtFile.buffer);
         }
 
         const youtubeResult = await uploadToYouTube(
-            `videos/${videoFileName}`,
+            `videos/${videoFile.generatedName}`,
             youtubeDisplayTitle,
             fullDescription,
-            cover ? `images/${cover}` : null,
-            srt_file_name ? `srt/${srt_file_name}` : null
+            coverFile ? `images/${coverFile.generatedName}` : null,
+            srtFile ? `srt/${srtFile.generatedName}` : null
         );
+
+        // nettoyage des fichiers temporaires apres youtube
+        cleanupTempFiles(tempVideoPath, tempCoverPath, tempSrtPath);
 
         const youtubeUrl = `https://www.youtube.com/watch?v=${youtubeResult.id}`;
         await videoModel.updateYoutubeId(newVideoId, youtubeResult.id);
 
         try {
-            // récupération du mail du rélidsateur
             const candidateEmail = validatedData.email
-            // envoi de mail de confirmation de la la reception de la candidature
             if (candidateEmail) {
                 await confirmParticipationEmail(candidateEmail, {
                     title_en: validatedData.title_en || validatedData.title,
@@ -146,6 +182,7 @@ async function addParticipation(req, res) {
         })
 
     } catch (error) {
+        cleanupTempFiles(tempVideoPath, tempCoverPath, tempSrtPath);
         console.error("Erreur lors de addParticipation :", error.message);
         res.status(500).json({
             message: "Une erreur est survenue lors de l'enregistrement",
