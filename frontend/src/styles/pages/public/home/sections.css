@@ -97,7 +97,8 @@
 .section-desc {
   font-family: 'Arimo', sans-serif;
   font-size: 0.9rem;
-  line-height: 1.5;
+  line-height: 1.6;
+  letter-spacing: 0.025em;
   color: rgba(255, 255, 255, 0.8);
   margin: 0 0 0.75rem;
   max-width: 640px;
@@ -106,6 +107,7 @@
 .home-section-subtitle {
   font-family: 'Arimo', sans-serif;
   font-size: 0.9rem;
+  letter-spacing: 0.02em;
   color: rgba(255, 255, 255, 0.6);
   margin: 0 0 0.5rem;
 }
@@ -174,7 +176,8 @@
 .home-card-desc {
   font-family: 'Arimo', sans-serif;
   font-size: 0.8rem;
-  line-height: 1.4;
+  line-height: 1.55;
+  letter-spacing: 0.025em;
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }
@@ -255,6 +258,8 @@
 .home-film-card-desc {
   font-family: 'Arimo', sans-serif;
   font-size: 0.75rem;
+  line-height: 1.55;
+  letter-spacing: 0.025em;
   color: rgba(255, 255, 255, 0.6);
   padding: 0.35rem 0.75rem 0.85rem;
   margin: 0;

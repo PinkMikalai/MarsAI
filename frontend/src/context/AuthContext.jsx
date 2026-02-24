@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { authService } from "../service/authService";
+import i18n from "../i18n";
 
 //systéme d'authentification global : les infos de connexions sont accaessibles partourt dans l'appli
 
@@ -75,7 +76,7 @@ export const AuthProvider = ({ children }) => {
         return (
             <div className="loader-container">
                 <div className="loader-spinner"></div>
-                <p className="loader-text">Loading...</p>
+                <p className="loader-text">{i18n.t('loader.text')}</p>
             </div>
         )
     }

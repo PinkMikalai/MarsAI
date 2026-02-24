@@ -1162,3 +1162,27 @@
     margin-left: 0;
   }
 }
+/* ---------- Admin CMS ---------- */
+.admin-cms-element {
+  font-size: 0.8rem;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--color-mars-muted-40);
+}
+.admin-cms-hint {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(43, 127, 255, 0.1);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--color-mars-muted-40);
+}
+.admin-cms-form-wrap {
+  margin-top: 1.5rem;
+}
+.admin-cms-form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}

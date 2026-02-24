@@ -1,9 +1,17 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { FILMS } from '../../constants/homeData';
 import { ROUTES } from '../../constants/routes';
 
 const FilmsCompetition = () => {
+  const { t } = useTranslation();
+
+  const FILMS = useMemo(() => [
+    { id: '1', titleKey: 'home.films.film1Title', descKey: 'home.films.film1Desc' },
+    { id: '2', titleKey: 'home.films.film2Title', descKey: 'home.films.film2Desc' },
+    { id: '3', titleKey: 'home.films.film3Title', descKey: 'home.films.film3Desc' },
+  ], []);
+
   const filmsToShow = useMemo(() => {
     const shuffled = [...FILMS];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -11,18 +19,16 @@ const FilmsCompetition = () => {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled.slice(0, 3);
-  }, []);
+  }, [FILMS]);
 
   return (
     <section className="home-section home-films" aria-label="Films en compétition">
       <div className="home-container">
         <h2 className="home-section-title">
-          FILMS EN <span className="home-section-title-accent">COMPÉTITION</span>
+          {t('home.films.sectionTitle')} <span className="home-section-title-accent">{t('home.films.sectionAccent')}</span>
         </h2>
-        <p className="home-section-desc">
-          Découvrez les films en compétition cette année et votez pour votre favori.
-        </p>
-        <Link to={ROUTES.GALLERY_FILMS} className="home-section-link">VOIR TOUS LES FILMS &gt;</Link>
+        <p className="home-section-desc">{t('home.films.desc')}</p>
+        <Link to={ROUTES.GALLERY_FILMS} className="home-section-link">{t('home.films.seeAll')}</Link>
         <div className="home-films-grid">
           {filmsToShow.map((film) => (
             <Link
@@ -31,17 +37,9 @@ const FilmsCompetition = () => {
               className="home-film-card-link"
             >
               <article className="home-film-card">
-                <div className="home-film-card-image">
-                  {film.cover && (
-                    <img
-                      src={film.cover}
-                      alt={film.title}
-                      className="home-film-card-image-img"
-                    />
-                  )}
-                </div>
-                <h3 className="home-film-card-title">{film.title}</h3>
-                <p className="home-film-card-desc">{film.description}</p>
+                <div className="home-film-card-image" />
+                <h3 className="home-film-card-title">{t(film.titleKey)}</h3>
+                <p className="home-film-card-desc">{t(film.descKey)}</p>
               </article>
             </Link>
           ))}

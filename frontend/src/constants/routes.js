@@ -14,6 +14,7 @@ export const ROUTES = {
   ADMIN_PROFILE: '/admin/profile', // profil/dashboard après connexion ------------//
   ADMIN_EVENTS: '/admin/evenements',
   ADMIN_SPONSORS: '/admin/sponsors',
+  ADMIN_CMS: '/admin/cms',
   REGISTER_USER: '/register_user',
   LOGIN: '/login',
   FORGOT_PASSWORD: '/forgot-password',
