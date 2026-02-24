@@ -117,3 +117,56 @@ export async function submitVideo(formData, token) {
   return data;
 }
 
+// version avec suivi de progression (XHR requis — fetch ne supporte pas upload progress)
+export function submitVideoWithProgress(formData, token, onProgress) {
+  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai';
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        onProgress?.({ phase: 'upload', percent });
+      }
+    });
+
+    xhr.upload.addEventListener('load', () => {
+      onProgress?.({ phase: 'processing', percent: 100 });
+    });
+
+    xhr.addEventListener('load', () => {
+      try {
+        const contentType = xhr.getResponseHeader('Content-Type') || '';
+        if (contentType.includes('application/json')) {
+          const data = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(data);
+          } else {
+            reject(data);
+          }
+        } else {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve(xhr.responseText);
+          } else {
+            reject(new Error(xhr.responseText || 'Erreur serveur'));
+          }
+        }
+      } catch {
+        reject(new Error('Réponse invalide du serveur'));
+      }
+    });
+
+    xhr.addEventListener('error', () => reject(new Error('Erreur réseau — vérifiez votre connexion.')));
+    xhr.addEventListener('abort', () => reject(new Error('Envoi annulé.')));
+
+    xhr.open('POST', `${BASE_URL}${SUBMIT_URL}`);
+
+    if (token) {
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    }
+
+    xhr.send(formData);
+  });
+}
+

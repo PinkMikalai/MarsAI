@@ -10,9 +10,13 @@ import { tagsService } from '../../service/tags';
 import { useFormValidation } from '../../hooks/useFormValidation';
 import { participationSchema } from '@shared/schemas/participationSchema';
 
+import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
+
 const UploadFilmStep = () => {
   const { t } = useTranslation();
   const { form, setFilm, setFile, setTags } = useDepositForm();
+  // Utilisation du hook de validation
+  const { errors, validateField, clearError } = useFormValidation(participationSchema);
   const { film, files } = form; 
 
   const videoRef = useRef(null);
@@ -100,8 +104,17 @@ const UploadFilmStep = () => {
   };
 
   const handleStillsChange = (e) => {
-    const files = Array.from(e.target.files || []).slice(0, STILLS_MAX_COUNT);
-    setFile('stills', files);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const current = form.files.stills || [];
+    if (current.length >= STILLS_MAX_COUNT) return;
+    setFile('stills', [...current, file]);
+    e.target.value = '';
+  };
+
+  const handleRemoveStill = (index) => {
+    const current = form.files.stills || [];
+    setFile('stills', current.filter((_, i) => i !== index));
   };
 
   // Ajouter un tag populaire aux tags sélectionnés
@@ -125,6 +138,7 @@ const UploadFilmStep = () => {
         </p>
       </div>
 
+      {/* TITRE FR */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.filmTitle')}</label>
@@ -375,6 +389,7 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
+
         <label className="deposit-field-label">{t('deposit.stillsField')}</label>
         <div className="deposit-upload-gallery">
           {[0, 1, 2].map((i) => (
@@ -391,23 +406,49 @@ const UploadFilmStep = () => {
               ) : (
                 <span aria-hidden className="deposit-upload-gallery-placeholder"><Icons.Image /></span>
               )}
+
+        <label className="deposit-field-label">Stills (jpg, png – max {STILLS_MAX_COUNT}, 5 Mo chacun)</label>
+
+        <div className="deposit-social-links">
+          {stillsPreviews.map((previewUrl, i) => (
+            <div key={i} className="deposit-social-link-row deposit-still-row">
+              <img
+                src={previewUrl}
+                alt={`Still ${i + 1}`}
+                className="deposit-still-thumb"
+              />
+              <span className="deposit-still-name">{(form.files.stills || [])[i]?.name || `Still ${i + 1}`}</span>
+              <button
+                type="button"
+                className="deposit-social-link-remove"
+                onClick={() => handleRemoveStill(i)}
+              >
+                ×
+              </button>
+
             </div>
           ))}
         </div>
+
         <input
           ref={stillsRef}
           type="file"
           accept=".jpg,.jpeg,.png"
-          multiple
           onChange={handleStillsChange}
           className="deposit-file-input-hidden"
         />
+
         <button
           type="button"
-          className="deposit-upload-btn deposit-upload-btn--stills"
+          className="deposit-social-link-add"
+          disabled={(form.files.stills || []).length >= STILLS_MAX_COUNT}
           onClick={() => stillsRef.current?.click()}
         >
+
           {t('deposit.chooseStills')}
+
+          + Ajouter un still ({(form.files.stills || []).length} / {STILLS_MAX_COUNT})
+
         </button>
       </div>
     </FormCard>
