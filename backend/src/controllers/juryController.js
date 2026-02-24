@@ -130,7 +130,7 @@ async function updateJury(req, res) {
 
         if (result) {
             if (req.files && req.files.illustration && oldIllustrationFileName) {
-                deleteOldFile(oldIllustrationFileName, 'images');
+                await deleteOldFile(oldIllustrationFileName, 'images');
             }
 
             const updatedJury = await getJuryByIdModel(req.params.id);
@@ -179,7 +179,7 @@ async function deleteJury(req, res) {
 
         if (result) {
             if (illustrationFileName) {
-                deleteOldFile(illustrationFileName, 'images');
+                await deleteOldFile(illustrationFileName, 'images');
             }
 
             res.status(200).json({

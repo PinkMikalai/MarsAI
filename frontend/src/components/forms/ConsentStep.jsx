@@ -1,25 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
 import Checkbox from '../ui/forms/Checkbox';
 
-const CONDITIONS = [
-  'Courts-métrages de 30 secondes minimum à 120 secondes maximum',
-  'Création assistée par IA dans au moins une phase de production',
-  'Production datant de 2025 ou 2026',
-  'Première soumission au festival marsAI',
-  'Toutes langues acceptées (sous-titres anglais ou français requis)',
-];
-
-const FORMATS_GUIDE = [
-  { title: 'Vidéo du film', items: ['Formats acceptés : MP4, MOV, WebM', 'Poids maximum : 300 Mo', 'Durée : entre 30 secondes et 2 minutes (120 s)'] },
-  { title: 'Vignette (cover)', items: ['Formats : JPG, JPEG ou PNG', 'Poids maximum : 5 Mo', 'Recommandé : 1280×720 pixels (16:9)'] },
-  { title: 'Sous-titres (optionnel)', items: ['Format : fichier SRT', 'Langue : français ou anglais recommandé'] },
-  { title: 'Stills (optionnel)', items: ['Jusqu’à 3 images (JPG/PNG)', 'Extraits ou visuels du film'] },
-  { title: 'Documents à préparer', items: ['Titre du film (français et anglais)', 'Synopsis (français et anglais, max 500 caractères)', 'Vos infos : civilité, nom, prénom, email, date de naissance, pays, téléphone, téléphone fixe (optionnel), adresse', 'Réseaux : un lien vers votre site ou profil (optionnel)', 'Classification : Hybrid ou 100 % AI', 'Tags (mots-clés) pour le référencement'] },
-];
-
 const ConsentStep = () => {
+  const { t } = useTranslation();
   const { form, setConsent, setSubscribeNewsletter } = useDepositForm();
   const { accept_rules, accept_ownership, accept_age_18 } = form.consent;
 
@@ -28,14 +14,52 @@ const ConsentStep = () => {
     setConsent('accept_ownership', checked);
   };
 
+  const CONDITIONS = [
+    t('deposit.condition1'),
+    t('deposit.condition2'),
+    t('deposit.condition3'),
+    t('deposit.condition4'),
+    t('deposit.condition5'),
+  ];
+
+  const FORMATS_GUIDE = [
+    {
+      title: t('deposit.formatVideoTitle'),
+      items: [t('deposit.formatVideoItem1'), t('deposit.formatVideoItem2'), t('deposit.formatVideoItem3')],
+    },
+    {
+      title: t('deposit.formatCoverTitle'),
+      items: [t('deposit.formatCoverItem1'), t('deposit.formatCoverItem2'), t('deposit.formatCoverItem3')],
+    },
+    {
+      title: t('deposit.formatSubtitlesTitle'),
+      items: [t('deposit.formatSubtitlesItem1'), t('deposit.formatSubtitlesItem2')],
+    },
+    {
+      title: t('deposit.formatStillsTitle'),
+      items: [t('deposit.formatStillsItem1'), t('deposit.formatStillsItem2')],
+    },
+    {
+      title: t('deposit.formatDocsTitle'),
+      items: [
+        t('deposit.formatDocsItem1'),
+        t('deposit.formatDocsItem2'),
+        t('deposit.formatDocsItem3'),
+        t('deposit.formatDocsItem4'),
+        t('deposit.formatDocsItem5'),
+        t('deposit.formatDocsItem6'),
+      ],
+    },
+  ];
+
   return (
-    <FormCard number="01" title="Conditions">
+    <FormCard number="01" title={t('deposit.consentTitle')}>
       <section className="deposit-formats-guide" aria-labelledby="deposit-formats-title">
         <h2 id="deposit-formats-title" className="deposit-formats-guide-title">
-          Préparer vos documents et fichiers
+          {t('deposit.prepareDocsTitle')}
         </h2>
         <p className="deposit-formats-guide-intro">
-          Avant de commencer, assurez-vous d’avoir sous la main les fichiers et informations suivants (formats recommandés) :
+          {t('deposit.prepareDocsIntro')}
         </p>
         <ul className="deposit-formats-guide-list">
           {FORMATS_GUIDE.map((block, i) => (
@@ -51,7 +75,7 @@ const ConsentStep = () => {
         </ul>
       </section>
 
-      <h3 className="deposit-conditions-title">CONDITIONS</h3>
+      <h3 className="deposit-conditions-title">{t('deposit.conditionsTitle')}</h3>
 
       <ul className="deposit-conditions-list">
         {CONDITIONS.map((text, i) => (
@@ -62,7 +86,7 @@ const ConsentStep = () => {
       <div className="deposit-field-group">
         <Checkbox
           id="accept_age_18"
-          label="Je certifie avoir 18 ans ou plus *"
+          label={t('deposit.acceptAge18')}
           checked={accept_age_18}
           onChange={(checked) => setConsent('accept_age_18', checked)}
           required
@@ -72,7 +96,7 @@ const ConsentStep = () => {
       <div className="deposit-field-group">
         <Checkbox
           id="accept_rules"
-          label="J'accepte les conditions du règlement du festival marsAI et certifie que toutes les informations fournies sont exactes."
+          label={t('deposit.acceptRules')}
           checked={accept_rules}
           onChange={handleAcceptRules}
           required
@@ -82,7 +106,7 @@ const ConsentStep = () => {
       <div className="deposit-field-group">
         <Checkbox
           id="subscribe_newsletter"
-          label="Je souhaite m'inscrire à la newsletter marsAI pour recevoir les dernières actualités du festival."
+          label={t('deposit.subscribeNewsletter')}
           checked={form.subscribe_newsletter}
           onChange={setSubscribeNewsletter}
         />

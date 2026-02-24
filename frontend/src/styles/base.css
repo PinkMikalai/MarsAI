@@ -3,6 +3,7 @@
 @import "tailwindcss";
 @import "flag-icons/css/flag-icons.min.css";
 @import "./theme.css";
+@import "./utilities.css";
 @import "./layout.css";
 @import "./deposit.css";
 @import "./components.css";
