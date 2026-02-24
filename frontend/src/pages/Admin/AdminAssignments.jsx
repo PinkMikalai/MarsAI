@@ -3,18 +3,18 @@ import { assignmentService } from '../../service/assignmentService.js'
 import { useAuth } from '../../context/AuthContext.jsx'
 
 
-const AdminAssignment = ({ videos, selectors }) => {
+const AdminAssignment = ({ videos,isOpen, onClose, onSuccess, selectors }) => {
     const { user } = useAuth();
     const [assigned, setAssigned] = useState([]);
     const [available, setAvailable] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (selectors) {
+        if (isOpen && selectors) {
             setAvailable(selectors),
                 setAssigned([])
         }
-    }, [selectors, videos]);
+    }, [isOpen, selectors, videos]);
 
     const handleAdd = (id) => {
         const selector = available.find(user => user.id === parseInt(id))
@@ -32,9 +32,13 @@ const handleConfirm = async () => {
             user_ids : assigned.map( user => user.id),
             admin_id: user?.id
         })
+        onSuccess(video.id, assigned.length);
+            onClose();
 
     }catch (error) {
-
+        console.error(error);
+    }finally{
+        setLoading(false)
     }
 
 
