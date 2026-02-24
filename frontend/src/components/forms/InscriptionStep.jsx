@@ -105,6 +105,7 @@ const InscriptionStep = () => {
         </p>
       </div>
 
+      {/* CIVILITE */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">Civilité *</label>
@@ -127,6 +128,8 @@ const InscriptionStep = () => {
           </div>
         </div>
 
+
+        {/* PRENOM */}
         <div className="deposit-field-group">
           <label className="deposit-field-label">Prénom *</label>
           <div className="deposit-field-wrap">
@@ -145,6 +148,8 @@ const InscriptionStep = () => {
         </div>
       </div>
 
+
+      {/* NOM */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">Nom *</label>
@@ -163,6 +168,7 @@ const InscriptionStep = () => {
           </div>
         </div>
 
+        {/* EMAIL */}
         <div className="deposit-field-group">
           <label className="deposit-field-label">Email *</label>
           <div className="deposit-field-wrap">
@@ -181,27 +187,35 @@ const InscriptionStep = () => {
         </div>
       </div>
 
+
+      {/* DATE DE NAISSANCE */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">Date de naissance *</label>
           <div className="deposit-field-wrap">
             <input
               type="date"
-              className="deposit-input"
+              className={`deposit-input ${errors.birthdate ? 'is-invalid' : ''}`}
               value={p.birthdate || ''}
-              onChange={(e) => setParticipant('birthdate', e.target.value)}
+              onChange={(e) => {
+                setParticipant('birthdate', e.target.value);
+                clearError('birthdate');
+              }}
               onBlur={(e) => validateField('birthdate', e.target.value)}
             />
             <ErrorMessage error={errors.birthdate} />
           </div>
         </div>
 
+
+
+        {/* PAYS */}
         <div className="deposit-field-group">
           <label className="deposit-field-label">Pays / Nationalité *</label>
           <div className="deposit-field-wrap deposit-country-select-container" ref={countryRef} style={{ position: 'relative' }}>
             <button
               type="button"
-              className="deposit-input deposit-country-trigger"
+              className={`deposit-input deposit-country-trigger ${errors.country ? 'is-invalid' : ''}`}
               onClick={() => setCountryOpen(!countryOpen)}
               style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
             >
@@ -212,6 +226,8 @@ const InscriptionStep = () => {
                 {p.country ? (COUNTRIES_ISO3166.find((c) => c.value === p.country)?.label) : 'Sélectionner…'}
               </span>
             </button>
+
+            <ErrorMessage error={errors.country} />
             
             {countryOpen && (
               <ul
@@ -230,6 +246,8 @@ const InscriptionStep = () => {
                     style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px', cursor: 'pointer' }}
                     onClick={() => {
                       setParticipant('country', opt.value);
+                      validateField('country', opt.value); // validation de la nouvelle valeur 
+                      clearError('country'); //efface l'erreur 
                       if (!p.phone_country) setParticipant('phone_country', opt.value);
                       if (!p.phone_landline_country) setParticipant('phone_landline_country', opt.value);
                       setCountryOpen(false);
@@ -248,7 +266,7 @@ const InscriptionStep = () => {
       </div>
 
 
-      {/* Téléphone mobile */}
+      {/* TELEPHONE MOBILE */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">Téléphone mobile *</label>
@@ -270,7 +288,7 @@ const InscriptionStep = () => {
         </div>
 
 
-        {/* Téléphone fixe */}
+        {/* TELEPHONE FIXE */}
         <div className="deposit-field-group">
           <label className="deposit-field-label">Téléphone fixe (optionnel)</label>
           <PhoneInput
@@ -291,19 +309,29 @@ const InscriptionStep = () => {
         </div>
       </div>
 
+
+      {/* ADRESSE */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">Adresse *</label>
         <div className="deposit-field-wrap">
           <input
             type="text"
-            className="deposit-input"
+            className={`deposit-input ${errors.address ? 'is-invalid' : ''}`}
             placeholder="Rue, ville, code postal..."
             value={p.address || ''}
-            onChange={(e) => setParticipant('address', e.target.value)}
+            onChange={(e) => {
+              setParticipant('address', e.target.value);
+              clearError('address');
+            }}
+            onBlur={(e) => validateField('address', e.target.value)}
           />
+          <ErrorMessage error={errors.address} />
         </div>
       </div>
 
+
+
+      {/* RESEAUX SOCIAUX
       <div className="deposit-field-group">
         <label className="deposit-field-label">Réseaux sociaux (max {SOCIAL_LINKS_MAX})</label>
         <div className="deposit-social-links">
@@ -375,10 +403,125 @@ const InscriptionStep = () => {
             disabled={(p.social_links || []).length >= SOCIAL_LINKS_MAX}
             onClick={() => setParticipant('social_links', [...(p.social_links || []), { platform: '', url: '' }])}
           >
+            + 
+          </button>
+        </div>
+      </div> */}
+
+      {/* RESEAUX SOCIAUX */}
+      <div className="deposit-field-group">
+        <label className="deposit-field-label">Réseaux sociaux (max {SOCIAL_LINKS_MAX})</label>
+        <div className="deposit-social-links">
+          {(p.social_links || []).map((row, i) => {
+            const IconComponent = SOCIAL_ICONS[row.platform] || FiLink;
+            
+            // DÉFINITION DES CLÉS POUR ZOD
+            const platformKey = `social_links.${i}.platform`;
+            const urlKey = `social_links.${i}.url`;
+
+            return (
+              <div key={i} className="deposit-social-link-wrapper" style={{ marginBottom: '1rem' }}>
+                <div 
+                  className="deposit-social-link-row" 
+                  ref={(el) => (platformRowRefs.current[i] = el)} 
+                  style={{ position: 'relative' }}
+                >
+                  <div className="deposit-platform-select">
+                    <button
+                      type="button"
+                      // Ajout de la classe d'erreur si la plateforme est manquante
+                      className={`deposit-input deposit-platform-trigger ${errors[platformKey] ? 'is-invalid' : ''}`}
+                      onClick={() => setPlatformOpenIndex(platformOpenIndex === i ? null : i)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                      <IconComponent className="deposit-social-platform-icon" />
+                      <span>{SOCIAL_PLATFORMS.find(s => s.value === row.platform)?.label || 'Réseau'}</span>
+                    </button>
+                    
+                    {platformOpenIndex === i && (
+                      <ul className="deposit-platform-list" style={{ position: 'absolute', zIndex: 100, width: '200px' }}>
+                        {SOCIAL_PLATFORMS.map((opt) => (
+                          <li
+                            key={opt.value}
+                            className="deposit-platform-option"
+                            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px', cursor: 'pointer' }}
+                            onClick={() => {
+                              const next = [...p.social_links];
+                              next[i].platform = opt.value;
+                              setParticipant('social_links', next);
+                              setPlatformOpenIndex(null);
+                              
+                              // Nettoyage de l'erreur au choix
+                              clearError(platformKey);
+                              // Validation du groupe pour vérifier la cohérence
+                              validateField('social_links', next);
+                            }}
+                          >
+                            {opt.label}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <input
+                    type="url"
+                    // Bordure rouge si l'URL est invalide selon Zod
+                    className={`deposit-input deposit-input--social-url ${errors[urlKey] ? 'is-invalid' : ''}`}
+                    placeholder="https://..."
+                    value={row.url || ''}
+                    onChange={(e) => {
+                      const next = [...p.social_links];
+                      next[i].url = e.target.value;
+                      setParticipant('social_links', next);
+                      // On efface l'erreur dès que l'utilisateur tape
+                      clearError(urlKey);
+                    }}
+                    // Validation quand on quitte le champ
+                    onBlur={() => validateField('social_links', p.social_links)}
+                  />
+                  
+                  <button
+                    type="button"
+                    className="deposit-social-link-remove"
+                    onClick={() => {
+                      const next = p.social_links.filter((_, j) => j !== i);
+                      setParticipant('social_links', next);
+                      // On re-valide le tableau après suppression
+                      validateField('social_links', next);
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                {/* AFFICHAGE DES MESSAGES D'ERREURS SOUS LA LIGNE */}
+                <div className="social-field-errors" style={{ marginTop: '4px' }}>
+                  {errors[platformKey] && <ErrorMessage error={errors[platformKey]} />}
+                  {errors[urlKey] && <ErrorMessage error={errors[urlKey]} />}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Message d'erreur global pour le tableau social_links */}
+          <ErrorMessage error={errors.social_links} />
+          
+          <button
+            type="button"
+            className="deposit-social-link-add"
+            disabled={(p.social_links || []).length >= SOCIAL_LINKS_MAX}
+            onClick={() => {
+              const next = [...(p.social_links || []), { platform: '', url: '' }];
+              setParticipant('social_links', next);
+              // On ne valide pas à l'ajout pour ne pas effrayer l'utilisateur avec du rouge
+            }}
+          >
             + Ajouter un réseau
           </button>
         </div>
       </div>
+
     </FormCard>
   );
 };

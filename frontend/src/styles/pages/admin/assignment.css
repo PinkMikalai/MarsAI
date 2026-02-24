@@ -1,0 +1,134 @@
+/* Overlay d'arrière-plan */
+.wf-admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 998;
+}
+
+.wf-admin-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Le Panel */
+.wf-admin-panel {
+    position: fixed;
+    top: 0;
+    right: -450px;
+    /* Caché à droite par défaut */
+    width: 400px;
+    height: 100%;
+    background: #1a1a1a;
+    color: white;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 999;
+}
+
+.wf-admin-panel--open {
+    right: 0;
+    /* Apparaît */
+}
+
+.wf-admin-panel-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-film-target {
+    color: #3498db;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.wf-admin-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.wf-admin-section {
+    margin-bottom: 25px;
+}
+
+.wf-admin-section-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+/* Badges des sélectionneurs assignés */
+.admin-card-pill {
+    background: rgba(52, 152, 219, 0.15);
+    border: 1px solid #3498db;
+    padding: 8px 12px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 4px;
+    font-size: 0.9rem;
+}
+
+.remove-pill {
+    cursor: pointer;
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.remove-pill:hover {
+    color: #ff7675;
+}
+
+@media (max-width: 768px) {
+    .wf-admin-panel {
+        right: 0;
+        bottom: -100%;
+        /* Part du bas */
+        top: auto;
+        width: 100%;
+        height: 85vh;
+        /* Ne couvre pas tout pour garder le contexte */
+        border-radius: 20px 20px 0 0;
+        transition: bottom 0.4s ease;
+    }
+
+    .wf-admin-panel--open {
+        bottom: 0;
+    }
+
+    /* Barre de préhension (Handle) */
+    .mobile-drawer-handle {
+        display: flex;
+        justify-content: center;
+        padding: 12px 0;
+    }
+
+    .mobile-drawer-handle span {
+        width: 40px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 2px;
+    }
+
+    /* Optimisation des boutons pour le pouce */
+    .admin-profile-btn {
+        min-height: 50px;
+        font-size: 1rem;
+    }
+}

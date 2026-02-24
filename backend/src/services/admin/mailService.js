@@ -129,10 +129,10 @@ const welcomeEmail = async (email, firstname) => {
 };
 
 const passwordResetEmail = async (email, token, firstname = 'User') => {
- const newPasswordLink = `${frontendUrl}/reset_password?token=${token}`;
+    const newPasswordLink = `${frontendUrl}/reset_password?token=${token}`;
 
- const mailOptions = {
-    from: '"MarsAI Security" <no-reply@marsai-festival.com>',
+    const mailOptions = {
+        from: '"MarsAI Security" <no-reply@marsai-festival.com>',
         to: email,
         subject: 'Reset your password | Réinitialisation de mot de passe',
         html: `
@@ -161,7 +161,7 @@ const passwordResetEmail = async (email, token, firstname = 'User') => {
             </div>
         `
 
- }
+    }
     try {
         return await transporter.sendMail(mailOptions);
     } catch (error) {
@@ -170,6 +170,54 @@ const passwordResetEmail = async (email, token, firstname = 'User') => {
     }
 };
 
+const confirmParticipationEmail = async (email, { title_en, realisator_firstname, realisator_lastname }) => {
 
+    const mailOptions = {
+        from: '"MarsAI Security" <no-reply@marsai-festival.com>',
+        to: email,
+        subject: `Confirmation de réception : ${title_en} - MarsAI`,
+        html:
+            `
+            <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; color: #2c3e50; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="color: #2980b9; margin: 0;">MarsAI Festival</h1>
+                </div>
 
-export { sendInvitationEmail, welcomeEmail, passwordResetEmail };
+                <div lang="en" style="color: #7f8c8d; margin-bottom: 30px;">
+                    <h2 style="color: #2c3e50;">Submission Received!</h2>
+                    <p>Hello ${realisator_firstname} ${realisator_lastname},</p>
+                    <p>We have successfully received your film: <strong>${title_en}</strong>.</p>
+                    <p>Your entry is now being processed by our team. Our selectors will review it shortly. You will be notified of the official selection results by email.</p>
+                    <p>Thank you for being part of the MarsAI adventure!</p>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+                <div lang="fr">
+                    <h2 style="color: #3498db;">Candidature reçue !</h2>
+                    <p>Bonjour ${realisator_firstname} ${realisator_lastname},</p>
+                    <p>Nous avons bien reçu votre film : <strong>${title_en}</strong>.</p>
+                    <p>Votre participation est maintenant enregistrée. Nos sélectionneurs vont prochainement visionner votre œuvre. Vous serez informé des résultats de la sélection officielle par e-mail.</p>
+                    <p>Merci de participer à l'aventure MarsAI !</p>
+                </div>
+
+                <div style="margin-top: 40px; text-align: center; font-size: 11px; color: #bdc3c7;">
+                    &copy; 2026 MarsAI Festival - Marseille, France<br>
+                    This is an automated confirmation of your submission.
+                </div>
+            </div>
+        
+        `
+
+    }
+    try {
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Confirmation participation envoyée !');
+        return info;
+    } catch (error) {
+        console.error(":", error);
+        throw new Error("");
+    }
+};
+
+export { sendInvitationEmail, welcomeEmail, passwordResetEmail, confirmParticipationEmail };

@@ -34,6 +34,18 @@ const tagSchema = z.object({
         .min(1, "Tag name cannot be empty")
 }); 
 
+// validation d'un lien social unique
+const socialLinkSchema = z.object({
+  platform: z
+    .string()
+    .min(1, "Please select a platform"),
+  url: z
+    .string()
+    .trim()
+    .url("Invalid format (must start with https://)")
+    .min(1, "URL cannot be empty if a platform is selected")
+});
+
 // validation des entrées du tableau des stills
 const stillSchema = z.object({
     file_name: z
@@ -124,6 +136,11 @@ const participationSchema = z.object({
 
     // CONTACT
     email: email, 
+
+    country: z
+        .string({ required_error: "Country is required" })
+        .min(1, "Please select your country"), // Bloque si la valeur est ""
+
     birthdate: z
         .string({ required_error: "Birthdate is required" })
         .min(1, "Birthdate is required")
@@ -166,25 +183,36 @@ const participationSchema = z.object({
     address: z
         .string({ required_error: "Address is required" })
         .trim()
-        .min(5, "Please enter a complete address (minimum 5 characters)")
-        .max(255, "Address too long (max 255)"),
+        .min(5, "Please enter a complete address")
+        .max(255, "Address too long (max 255)")
+        .refine((val) => !/[<>]/.test(val), {
+            message: "Characters < and > are not allowed for security reasons"
+        }),
     
     // LIEN DES RESEAUX SOCIAUX
-    social_media_links_json: z
-        .string({ required_error: "Social media links are required" })
-        .min(1, "Social media links cannot be empty")
-        .max(1000, "JSON data too large (max 1000 chars)")
-        // refine permet de créer une règle de validation sur mesure 
-        .refine((val) => {
-            try {
-                // on tente de transformer la chaîne de caractères en objet JS réel
-                const parsed = JSON.parse(val);
-                // On vérifie que c'est bien un objet et pas juste un chiffre ou un booléen
-                return typeof parsed === 'object' && parsed !== null;
-            } catch (e) {
-                return false;
-            }
-        }, "Social media links must be a valid JSON object"),
+    // social_media_links_json: z
+    //     .string({ required_error: "Social media links are required" })
+    //     .min(1, "Social media links cannot be empty")
+    //     .max(1000, "JSON data too large (max 1000 chars)")
+    //     // refine permet de créer une règle de validation sur mesure 
+    //     .refine((val) => {
+    //         try {
+    //             // on tente de transformer la chaîne de caractères en objet JS réel
+    //             const parsed = JSON.parse(val);
+    //             // On vérifie que c'est bien un objet et pas juste un chiffre ou un booléen
+    //             return typeof parsed === 'object' && parsed !== null;
+    //         } catch (e) {
+    //             return false;
+    //         }
+    //     }, "Social media links must be a valid JSON object"),
+
+
+    // Dans ton participationSchema principal :
+    social_links: z
+        .array(socialLinkSchema)
+        .max(10, "Maximum 10 social links allowed")
+        .optional() 
+        .default([]), // Permet de ne rien envoyer du tout (tableau vide)
 
     
     // COVER
