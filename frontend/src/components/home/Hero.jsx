@@ -2,14 +2,16 @@
 
 import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../constants/routes';
 import Navbar from '../layout/Navbar';
-import heroVideo from '../../assets/videos/IRONMAN.mp4';
+import heroVideo from '../../assets/videos/videoloop3.mp4';
 
 const USE_VIDEO_BACKGROUND = true; /* true = vidéo MP4, false = animation FX bleu/magenta seamless */
 const PARALLAX_FACTOR = 0.25; /* 0.25 = vidéo bouge à 25% de la vitesse du scroll */
 
 const Hero = () => {
+  const { t } = useTranslation();
   const videoHome = useRef(null);
   const [scrollY, setScrollY] = useState(0);
 
@@ -36,7 +38,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="hero" aria-label="Accueil MARSAI">
+    <section className="hero" aria-label={t('hero.ariaLabel')}>
       {USE_VIDEO_BACKGROUND ? (
         <div
           className="hero-video-wrap"
@@ -73,16 +75,16 @@ const Hero = () => {
           <span className="hero-title-mars">MARS.</span>
           <span className="hero-title-ai">A.I</span>
         </h1>
-        <p className="hero-tagline">IMAGINEZ DES FUTURS SOUHAITABLES</p>
+        <p className="hero-tagline">{t('hero.tagline')}</p>
         <p className="hero-description">
-          Participez au festival qui place l’humain et la créativité au cœur des futurs souhaitables.
+          {t('hero.description')}
         </p>
         <div className="hero-cta">
           <Link to={ROUTES.PARTICIPATE} className="hero-btn hero-btn-primary">
-            PARTICIPER
+            {t('hero.ctaParticipate')}
           </Link>
           <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">
-            EN SAVOIR PLUS
+            {t('hero.ctaLearnMore')}
           </a>
         </div>
       </div>

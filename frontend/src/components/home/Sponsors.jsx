@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { sponsorService } from '../../service/sponsorService';
 
 const getClearbitLogoUrl = (url) => {
@@ -12,6 +13,7 @@ const getClearbitLogoUrl = (url) => {
 };
 
 const Sponsors = () => {
+  const { t } = useTranslation();
   const [sponsors, setSponsors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -24,9 +26,9 @@ const Sponsors = () => {
         const list = res?.sponsors ?? [];
         setSponsors(Array.isArray(list) ? list : []);
       })
-      .catch((err) => setError(err?.message || 'Erreur lors du chargement des partenaires.'))
+      .catch((err) => setError(err?.message || t('common.error')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [t]);
 
   const handleLogoError = (id) => {
     setFailedLogos((prev) => new Set(prev).add(id));
@@ -36,9 +38,9 @@ const Sponsors = () => {
     <section className="home-section home-sponsors" aria-label="Partenaires">
       <div className="home-container home-sponsors-container">
         <h2 className="home-section-title home-sponsors-title">
-          ILS SOUTIENNENT <span className="home-section-title-blue">LE FUTUR</span>
+          {t('home.sponsors.sectionTitle')} <span className="home-section-title-blue">{t('home.sponsors.sectionAccent')}</span>
         </h2>
-        {loading && <p className="home-sponsors-loading">Chargement des partenaires…</p>}
+        {loading && <p className="home-sponsors-loading">{t('home.sponsors.loading')}</p>}
         {error && <p className="home-sponsors-error">{error}</p>}
         {!loading && !error && sponsors.length > 0 && (
           <div className="home-sponsors-grid">
@@ -49,7 +51,7 @@ const Sponsors = () => {
               const imageUrl = uploadedImg || (useClearbit ? clearbitUrl : null);
               const showName = !imageUrl || failedLogos.has(`img-${sponsor.id}`);
               const linkUrl = sponsor.url?.trim() || null;
-              const name = sponsor.name || 'Partenaire';
+              const name = sponsor.name || t('home.sponsors.partner');
 
               const content = (
                 <>
@@ -74,7 +76,7 @@ const Sponsors = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="home-sponsor-link"
-                      aria-label={`${name} - ouvrir le site`}
+                      aria-label={`${name} - ${t('home.sponsors.openSite')}`}
                     >
                       {content}
                     </a>
@@ -87,7 +89,7 @@ const Sponsors = () => {
           </div>
         )}
         {!loading && !error && sponsors.length === 0 && (
-          <p className="home-sponsors-empty">Aucun partenaire pour le moment.</p>
+          <p className="home-sponsors-empty">{t('home.sponsors.empty')}</p>
         )}
       </div>
     </section>

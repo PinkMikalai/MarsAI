@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { videoApi, getCoverUrl } from '../../service/galleryService';
@@ -7,22 +8,16 @@ import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import Icons from '../../components/ui/common/Icons';
 
-
-// ─────────────────────────────────────────────────────────────────
-// Cache module-level : persiste entre les navigations (pas de refetch
-// inutile quand l'utilisateur revient depuis WatchFilm)
-// ─────────────────────────────────────────────────────────────────
 let _cachedVideos = null;
 
 const GalerieFilms = () => {
+  const { t } = useTranslation();
   const [scrollY, setScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [videos, setVideos] = useState(_cachedVideos || []);
   const [loading, setLoading] = useState(!_cachedVideos);
   const [error, setError] = useState(null);
   const [imageErrors, setImageErrors] = useState(new Set());
-
-
 
   useEffect(() => {
     if (_cachedVideos) return;
@@ -48,7 +43,7 @@ const GalerieFilms = () => {
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(err?.response?.data?.error || err?.message || 'Impossible de charger les vidéos.');
+          setError(err?.response?.data?.error || err?.message || t('gallery.loadError'));
           setVideos([]);
         }
       })
@@ -73,14 +68,12 @@ const GalerieFilms = () => {
   }, []);
 
   const filteredVideos = videos;
-
   const totalPages = Math.max(1, Math.ceil(filteredVideos.length / FILMS_PER_PAGE));
   const start = (currentPage - 1) * FILMS_PER_PAGE;
   const filmsOnPage = filteredVideos.slice(start, start + FILMS_PER_PAGE);
 
   return (
     <div className="galerie-page">
-      {/* Parallax background */}
       <div
         className="galerie-parallax-bg"
         style={{ transform: `translate3d(0, ${scrollY * 0.2}px, 0)` }}
@@ -97,12 +90,12 @@ const GalerieFilms = () => {
 
       <main className="galerie-main">
         <h1 className="galerie-title">
-          LA GALERIE <span className="galerie-title-accent">DES FILMS</span>
+          {t('gallery.title')} <span className="galerie-title-accent">{t('gallery.titleAccent')}</span>
         </h1>
 
         {loading && (
           <ProgressBar
-            label="Chargement des films…"
+            label={t('gallery.loadingFilms')}
             value={45}
             variant="brand"
             className="my-8 w-full"
@@ -114,11 +107,11 @@ const GalerieFilms = () => {
           <>
             <div className="galerie-grid">
               {filmsOnPage.map((film) => {
-                const title = film.title || film.title_en || 'Sans titre';
+                const title = film.title || film.title_en || t('gallery.noImage');
                 const director = [film.realisator_firstname, film.realisator_lastname].filter(Boolean).join(' ') || '–';
                 const coverUrl = getCoverUrl(film.cover);
                 const hasImageError = imageErrors.has(film.id);
-                
+
                 return (
                   <article key={film.id} className="galerie-card">
                     <Link to={`/watch/${film.id}`} className="galerie-card-link">
@@ -138,7 +131,7 @@ const GalerieFilms = () => {
                               <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M4 16L8.586 11.414C9.367 10.633 10.633 10.633 11.414 11.414L16 16M14 14L15.586 12.414C16.367 11.633 17.633 11.633 18.414 12.414L20 14M14 8H14.01M6 20H18C19.105 20 20 19.105 20 18V6C20 4.895 19.105 4 18 4H6C4.895 4 4 4.895 4 6V18C4 19.105 4.895 20 6 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                               </svg>
-                              <span className="galerie-card-image-placeholder-text">Pas d'image</span>
+                              <span className="galerie-card-image-placeholder-text">{t('gallery.noImage')}</span>
                             </div>
                           </div>
                         )}
@@ -146,11 +139,11 @@ const GalerieFilms = () => {
                       <div className="galerie-card-body">
                         <h2 className="galerie-card-title">{title}</h2>
                         <p className="galerie-card-meta">
-                          <span className="galerie-card-meta-label">Réalisateur</span> {director}
+                          <span className="galerie-card-meta-label">{t('gallery.director')}</span> {director}
                         </p>
                         {film.country && (
                           <p className="galerie-card-meta">
-                            <span className="galerie-card-meta-label">Origine</span> {film.country}
+                            <span className="galerie-card-meta-label">{t('gallery.origin')}</span> {film.country}
                           </p>
                         )}
                       </div>
@@ -160,7 +153,7 @@ const GalerieFilms = () => {
               })}
             </div>
 
-            {videos.length === 0 && <p className="galerie-empty">Aucun film pour le moment.</p>}
+            {videos.length === 0 && <p className="galerie-empty">{t('gallery.noFilms')}</p>}
 
             {filteredVideos.length > 0 && (
               <>
@@ -170,7 +163,7 @@ const GalerieFilms = () => {
                     className="galerie-pagination-btn"
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    aria-label="Page précédente"
+                    aria-label={t('gallery.prevPage')}
                   >
                     <Icons.ChevronLeft />
                   </button>
@@ -191,13 +184,13 @@ const GalerieFilms = () => {
                     className="galerie-pagination-btn"
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    aria-label="Page suivante"
+                    aria-label={t('gallery.nextPage')}
                   >
                     <Icons.ChevronRight />
                   </button>
                 </nav>
                 <p className="galerie-pagination-info">
-                  PAGE {currentPage} SUR {totalPages} – {filteredVideos.length} FILM{filteredVideos.length > 1 ? 'S' : ''} TROUVÉ{filteredVideos.length > 1 ? 'S' : ''}
+                  PAGE {currentPage} SUR {totalPages} – {filteredVideos.length} FILM{filteredVideos.length > 1 ? 'S' : ''} {t('gallery.found', { count: filteredVideos.length, defaultValue: 'TROUVÉ' })}
                 </p>
               </>
             )}

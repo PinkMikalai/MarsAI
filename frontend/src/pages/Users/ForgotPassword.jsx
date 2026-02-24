@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authService } from '../../service/authService';
 import { ROUTES } from '../../constants/routes';
 import '../../styles/pages/admin/login-admin.css';
 
 const ForgotPassword = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -14,7 +16,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError('');
     if (!email.trim()) {
-      setError('Veuillez saisir votre adresse email.');
+      setError(t('auth.enterEmail'));
       return;
     }
     setLoading(true);
@@ -22,7 +24,7 @@ const ForgotPassword = () => {
       await authService.forgotPassword(email.trim());
       setSuccess(true);
     } catch (err) {
-      setError(err.message || 'Une erreur est survenue. Réessayez plus tard.');
+      setError(err.message || t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -31,9 +33,9 @@ const ForgotPassword = () => {
   return (
     <div className="admin-login-page">
       <div className="admin-login-card">
-        <h2 className="admin-login-title">Mot de passe oublié</h2>
+        <h2 className="admin-login-title">{t('auth.forgotPasswordTitle')}</h2>
         <p className="admin-login-desc">
-          Saisissez votre email pour recevoir un lien de réinitialisation.
+          {t('auth.forgotPasswordDesc')}
         </p>
 
         {error && (
@@ -44,23 +46,23 @@ const ForgotPassword = () => {
 
         {success ? (
           <div className="login-form-success" role="status">
-            <p>Si un compte existe pour cette adresse, un lien de réinitialisation a été envoyé par email. Vérifiez votre boîte de réception.</p>
+            <p>{t('auth.resetLinkSentMsg')}</p>
             <Link to={ROUTES.LOGIN} className="admin-login-inscription">
-              Retour à la connexion
+              {t('auth.backToLogin')}
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="login-form" noValidate>
             <div className="login-form-field">
               <label htmlFor="forgot-email" className="login-form-label">
-                Email
+                {t('auth.emailLabel')}
               </label>
               <input
                 id="forgot-email"
                 name="email"
                 type="email"
                 autoComplete="email"
-                placeholder="vous@exemple.fr"
+                placeholder={t('auth.emailPlaceholder')}
                 className="login-form-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -73,14 +75,14 @@ const ForgotPassword = () => {
               className="login-form-submit"
               disabled={loading}
             >
-              {loading ? 'Envoi en cours…' : 'Envoyer le lien'}
+              {loading ? t('auth.sendingLink') : t('auth.sendLink')}
             </button>
           </form>
         )}
 
         <div className="admin-login-footer">
           <Link to={ROUTES.LOGIN} className="admin-login-back">
-            Retour à la connexion
+            {t('auth.backToLogin')}
           </Link>
         </div>
       </div>

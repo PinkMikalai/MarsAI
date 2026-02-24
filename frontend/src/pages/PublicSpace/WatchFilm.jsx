@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
 import { ROUTES } from '../../constants/routes';
@@ -70,6 +71,7 @@ function parseVideoResponse(res, fallback) {
 // PANNEAU INFOS — Admin et Selector (stills, commentaires, données)
 // =====================================================
 const InfoPanel = ({
+    t,
     isAdmin,
     isSelector,
     adminData,
@@ -90,8 +92,8 @@ const InfoPanel = ({
     return (
         <div className={`wf-admin-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}>
             <div className="wf-admin-panel-header">
-                <h3 className="wf-admin-panel-title">Infos</h3>
-                <button className="wf-admin-panel-close" onClick={onClose} aria-label="Fermer">✕</button>
+                <h3 className="wf-admin-panel-title">{t('watchFilm.infosTitle')}</h3>
+                <button className="wf-admin-panel-close" onClick={onClose} aria-label={t('watchFilm.close')}>✕</button>
             </div>
 
             <div className="wf-admin-panel-body">
@@ -100,22 +102,22 @@ const InfoPanel = ({
                 {isSelector && (
                     <>
                         <div className="wf-admin-section">
-                            <h4 className="wf-admin-section-title">Ma notation</h4>
+                            <h4 className="wf-admin-section-title">{t('watchFilm.myRating')}</h4>
                             <div className="wf-admin-row wf-admin-row--selector">
-                                <span className="wf-admin-label">Note</span>
+                                <span className="wf-admin-label">{t('watchFilm.ratingLabel')}</span>
                                 <span className="wf-admin-value">
                                     {existingMemo?.rating ?? '—'} / 10
                                 </span>
                             </div>
                             <div className="wf-admin-row wf-admin-row--selector">
-                                <span className="wf-admin-label">Statut</span>
+                                <span className="wf-admin-label">{t('watchFilm.statusLabel')}</span>
                                 <span className="wf-admin-value">
                                     {existingMemo?.selection_status?.name ?? (memoStatus ?? '—')}
                                 </span>
                             </div>
                             {existingMemo?.created_at && (
                                 <div className="wf-admin-row wf-admin-row--selector">
-                                    <span className="wf-admin-label">Noté le</span>
+                                    <span className="wf-admin-label">{t('watchFilm.ratedOn')}</span>
                                     <span className="wf-admin-value">
                                         {new Date(existingMemo.created_at).toLocaleDateString('fr-FR')}
                                     </span>
@@ -123,7 +125,7 @@ const InfoPanel = ({
                             )}
                             {existingMemo?.comment && (
                                 <div className="wf-admin-section">
-                                    <h4 className="wf-admin-section-title">Mon commentaire</h4>
+                                    <h4 className="wf-admin-section-title">{t('watchFilm.myComment')}</h4>
                                     <p className="wf-admin-text">{existingMemo.comment}</p>
                                 </div>
                             )}
@@ -132,13 +134,13 @@ const InfoPanel = ({
                                 onClick={onNoterClick}
                             >
                                 <span className="wf-action-btn-icon">{existingMemo ? '✏️' : '⭐'}</span>
-                                <span className="wf-action-btn-label">{existingMemo ? 'Modifier' : 'Noter'}</span>
+                                <span className="wf-action-btn-label">{existingMemo ? t('watchFilm.editMemo') : t('watchFilm.rateMemo')}</span>
                             </button>
                         </div>
                         {/* Description (synopsis) en double */}
                         {(video?.synopsis_en || video?.synopsis) && (
                             <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">Description</h4>
+                                <h4 className="wf-admin-section-title">{t('watchFilm.description')}</h4>
                                 <p className="wf-admin-text">
                                     {video.synopsis_en || video.synopsis}
                                 </p>
@@ -147,22 +149,22 @@ const InfoPanel = ({
                         {/* selectorVideoData : Technique, Contributeurs */}
                         {(video?.tech_resume || video?.classification || video?.creative_resume) && (
                             <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">Technique</h4>
+                                <h4 className="wf-admin-section-title">{t('watchFilm.technique')}</h4>
                                 {video.classification && (
                                     <div className="wf-admin-row">
-                                        <span className="wf-admin-label">Classification</span>
+                                        <span className="wf-admin-label">{t('watchFilm.classification')}</span>
                                         <span className="wf-admin-value">{video.classification}</span>
                                     </div>
                                 )}
                                 {video.tech_resume && (
                                     <div className="wf-admin-text-block">
-                                        <span className="wf-admin-text-label">Résumé technique</span>
+                                        <span className="wf-admin-text-label">{t('watchFilm.techResume')}</span>
                                         <p className="wf-admin-text">{video.tech_resume}</p>
                                     </div>
                                 )}
                                 {video.creative_resume && (
                                     <div className="wf-admin-text-block">
-                                        <span className="wf-admin-text-label">Résumé créatif</span>
+                                        <span className="wf-admin-text-label">{t('watchFilm.creativeResume')}</span>
                                         <p className="wf-admin-text">{video.creative_resume}</p>
                                     </div>
                                 )}
@@ -171,7 +173,7 @@ const InfoPanel = ({
                         {contributors.length > 0 && (
                             <div className="wf-admin-section">
                                 <h4 className="wf-admin-section-title">
-                                    Contributeurs <span className="wf-admin-count">{contributors.length}</span>
+                                    {t('watchFilm.contributors')} <span className="wf-admin-count">{contributors.length}</span>
                                 </h4>
                                 <ul className="wf-admin-list">
                                     {contributors.map((c) => (
@@ -195,16 +197,16 @@ const InfoPanel = ({
                 {isAdmin && adminData && (
                     <>
                         <div className="wf-admin-section">
-                            <h4 className="wf-admin-section-title">Technique</h4>
+                            <h4 className="wf-admin-section-title">{t('watchFilm.technique')}</h4>
                             {adminData.classification && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Classification</span>
+                                    <span className="wf-admin-label">{t('watchFilm.classification')}</span>
                                     <span className="wf-admin-value">{adminData.classification}</span>
                                 </div>
                             )}
                             {adminData.youtube_url && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">YouTube</span>
+                                    <span className="wf-admin-label">{t('watchFilm.youtube')}</span>
                                     <a className="wf-admin-link" href={adminData.youtube_url} target="_blank" rel="noreferrer">
                                         Voir ↗
                                     </a>
@@ -212,25 +214,25 @@ const InfoPanel = ({
                             )}
                             {adminData.srt_file_name && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Sous-titres</span>
+                                    <span className="wf-admin-label">{t('watchFilm.subtitles')}</span>
                                     <span className="wf-admin-value">{adminData.srt_file_name}</span>
                                 </div>
                             )}
                             {adminData.acquisition_source && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Source</span>
+                                    <span className="wf-admin-label">{t('watchFilm.source')}</span>
                                     <span className="wf-admin-value">{adminData.acquisition_source.name}</span>
                                 </div>
                             )}
                             {adminData.tech_resume && (
                                 <div className="wf-admin-text-block">
-                                    <span className="wf-admin-text-label">Résumé technique</span>
+                                    <span className="wf-admin-text-label">{t('watchFilm.techResume')}</span>
                                     <p className="wf-admin-text">{adminData.tech_resume}</p>
                                 </div>
                             )}
                             {adminData.creative_resume && (
                                 <div className="wf-admin-text-block">
-                                    <span className="wf-admin-text-label">Résumé créatif</span>
+                                    <span className="wf-admin-text-label">{t('watchFilm.creativeResume')}</span>
                                     <p className="wf-admin-text">{adminData.creative_resume}</p>
                                 </div>
                             )}
@@ -238,16 +240,16 @@ const InfoPanel = ({
 
                         {(adminData.realisator_civility || adminData.email || adminData.birthdate || adminData.mobile_number || adminData.phone_number || adminData.address) && (
                         <div className="wf-admin-section">
-                            <h4 className="wf-admin-section-title">Réalisateur</h4>
+                            <h4 className="wf-admin-section-title">{t('watchFilm.director')}</h4>
                             {adminData.realisator_civility && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Civilité</span>
+                                    <span className="wf-admin-label">{t('watchFilm.civility')}</span>
                                     <span className="wf-admin-value">{adminData.realisator_civility}</span>
                                 </div>
                             )}
                             {adminData.email && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Email</span>
+                                    <span className="wf-admin-label">{t('watchFilm.email')}</span>
                                     <a className="wf-admin-link" href={`mailto:${adminData.email}`}>
                                         {adminData.email}
                                     </a>
@@ -255,7 +257,7 @@ const InfoPanel = ({
                             )}
                             {adminData.birthdate && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Date de naissance</span>
+                                    <span className="wf-admin-label">{t('watchFilm.birthdate')}</span>
                                     <span className="wf-admin-value">
                                         {new Date(adminData.birthdate).toLocaleDateString('fr-FR')}
                                     </span>
@@ -263,19 +265,19 @@ const InfoPanel = ({
                             )}
                             {adminData.mobile_number && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Mobile</span>
+                                    <span className="wf-admin-label">{t('watchFilm.mobile')}</span>
                                     <span className="wf-admin-value">{adminData.mobile_number}</span>
                                 </div>
                             )}
                             {adminData.phone_number && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Téléphone fixe</span>
+                                    <span className="wf-admin-label">{t('watchFilm.landline')}</span>
                                     <span className="wf-admin-value">{adminData.phone_number}</span>
                                 </div>
                             )}
                             {adminData.address && (
                                 <div className="wf-admin-row">
-                                    <span className="wf-admin-label">Adresse</span>
+                                    <span className="wf-admin-label">{t('watchFilm.address')}</span>
                                     <span className="wf-admin-value">{adminData.address}</span>
                                 </div>
                             )}
@@ -285,7 +287,7 @@ const InfoPanel = ({
                         {adminContributors.length > 0 && (
                             <div className="wf-admin-section">
                                 <h4 className="wf-admin-section-title">
-                                    Contributeurs <span className="wf-admin-count">{adminContributors.length}</span>
+                                    {t('watchFilm.contributors')} <span className="wf-admin-count">{adminContributors.length}</span>
                                 </h4>
                                 <ul className="wf-admin-list">
                                     {adminContributors.map((c) => (
@@ -305,7 +307,7 @@ const InfoPanel = ({
 
                         {adminVideos.length > 0 && (
                             <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">Historique statuts</h4>
+                                <h4 className="wf-admin-section-title">{t('watchFilm.statusHistory')}</h4>
                                 <ul className="wf-admin-list">
                                     {adminVideos.map((av) => (
                                         <li key={av.id} className="wf-admin-list-item">
@@ -324,7 +326,7 @@ const InfoPanel = ({
                 {/* STILLS — pour Admin et Selector */}
                 {stillUrls.length > 0 && (
                     <div className="wf-admin-section">
-                        <h4 className="wf-admin-section-title">Stills</h4>
+                        <h4 className="wf-admin-section-title">{t('watchFilm.stills')}</h4>
                         <div className="wf-drawer-stills wf-drawer-stills--in-panel">
                             {stillUrls.map((url, idx) => (
                                 <img
@@ -356,6 +358,7 @@ const ActionBtn = ({ icon, label, onClick, className = '' }) => (
 // COMPOSANT PRINCIPAL
 // =====================================================
 const WatchFilm = () => {
+    const { t } = useTranslation();
     const { videoId }                           = useParams();
     const { isSelector, isAdmin, isSuperAdmin } = useAuth();
     const isAdminUser = isAdmin || isSuperAdmin;
@@ -595,7 +598,7 @@ const WatchFilm = () => {
                 {loading && (
                     <div className="wf-loading">
                         <div className="wf-loading-spinner" />
-                        <p>Chargement…</p>
+                        <p>{t('watchFilm.loading')}</p>
                     </div>
                 )}
                 {error && <p className="wf-error">{error}</p>}
@@ -639,7 +642,7 @@ const WatchFilm = () => {
 
                                     {/* PLAY — absolute centré */}
                                     <div className="watch-film-play-center">
-                                        <button className="watch-film-play" onClick={handlePlayClick} aria-label="Lire la vidéo">
+                                        <button className="watch-film-play" onClick={handlePlayClick} aria-label={t('watchFilm.loading')}>
                                             <svg className="watch-film-play-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                                 <path fillRule="evenodd" d="M10.271 5.575C8.967 4.501 7 5.43 7 7.12v9.762c0 1.69 1.967 2.618 3.271 1.544l5.927-4.881a2 2 0 0 0 0-3.088l-5.927-4.88Z" clipRule="evenodd" />
                                             </svg>
@@ -663,7 +666,7 @@ const WatchFilm = () => {
                                                     </div>
                                                     <ActionBtn
                                                         icon={existingMemo ? '✏️' : '⭐'}
-                                                        label={existingMemo ? 'Modifier' : 'Noter'}
+                                                        label={existingMemo ? t('watchFilm.editMemo') : t('watchFilm.rateMemo')}
                                                         className={`wf-action-btn--noter ${existingMemo ? 'wf-action-btn--noter-done' : ''}`}
                                                         onClick={() => {
                                                             setShowAdminPanel(false);
@@ -674,7 +677,7 @@ const WatchFilm = () => {
                                             )}
                                             <ActionBtn
                                                 icon="ℹ️"
-                                                label="Infos"
+                                                label={t('watchFilm.infosTitle')}
                                                 className={`wf-action-btn--admin ${showAdminPanel ? 'wf-action-btn--active' : ''}`}
                                                 onClick={() => setShowAdminPanel((prev) => !prev)}
                                             />
@@ -690,7 +693,7 @@ const WatchFilm = () => {
                                             <h1 className="watch-film-title">{title}</h1>
                                             <div className="wf-meta-row">
                                                 <p className="watch-film-info">
-                                                    <strong>Réalisateur</strong> {director}
+                                                    {t('watchFilm.director')} {director}
                                                 </p>
                                                 <span className="wf-meta-sep">·</span>
                                                 <p className="watch-film-info wf-country">
@@ -721,6 +724,7 @@ const WatchFilm = () => {
                                     {/* PANNEAU INFOS — Admin et Selector (stills, commentaires, données) */}
                                     {(isAdminUser || isSelector) && (
                                         <InfoPanel
+                                            t={t}
                                             isAdmin={isAdminUser}
                                             isSelector={isSelector}
                                             adminData={adminData}
@@ -753,7 +757,7 @@ const WatchFilm = () => {
                                         <button
                                             className="watch-film-memo-close"
                                             onClick={() => setShowMemoModal(false)}
-                                            aria-label="Fermer"
+                                            aria-label={t('watchFilm.close')}
                                         >
                                             ✕
                                         </button>

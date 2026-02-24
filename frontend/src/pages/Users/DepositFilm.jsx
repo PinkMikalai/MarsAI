@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
 import { DepositFormProvider, useDepositForm } from '../../context/DepositFormContext';
@@ -16,6 +17,7 @@ import SuccessModal from '../../components/ui/feedback/SuccessModal';
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
 const DepositFilmInner = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { form } = useDepositForm();
   const { currentStepIndex, isFirstStep, isLastStep, back, next } =
@@ -35,25 +37,21 @@ const DepositFilmInner = () => {
   React.useEffect(() => {
     if (currentStepIndex === 0 && consentComplete && !prevConsentRef.current) {
       setJustEnabled(true);
-      const t = setTimeout(() => setJustEnabled(false), 900);
-      return () => clearTimeout(t);
+      const timer = setTimeout(() => setJustEnabled(false), 900);
+      return () => clearTimeout(timer);
     }
     prevConsentRef.current = consentComplete;
   }, [consentComplete, currentStepIndex]);
 
   const handleSuccess = (result) => {
-    console.log('🎉 Succès reçu:', result);
-    
     if (result?.videoId) {
-      console.log('✅ Vidéo enregistrée en base et envoyée sur YouTube, ID:', result.videoId);
       setSuccessData({
         ...result,
-        message: result.message || 'Votre participation a bien été enregistrée : le film est enregistré dans notre base de données et a été envoyé sur la chaîne YouTube du festival.',
+        message: result.message || t('deposit.successDefaultMsg'),
       });
       setShowSuccessModal(true);
     } else {
-      console.warn('⚠️ Pas de videoId dans la réponse:', result);
-      handleError({ message: 'La vidéo n\'a pas pu être enregistrée correctement. Veuillez réessayer.' });
+      handleError({ message: t('deposit.errorNotRecordedRetry') });
     }
   };
 
@@ -61,13 +59,10 @@ const DepositFilmInner = () => {
     setShowSuccessModal(false);
     navigate('/');
   };
+
   const handleError = (err) => {
-    let errorMessage = 'Erreur lors de l\'envoi.';
-    
-    if (err?.message) {
-      errorMessage = err.message;
-    }
-    
+    let errorMessage = t('deposit.errorSending');
+    if (err?.message) errorMessage = err.message;
     if (err?.errors && typeof err.errors === 'string') {
       errorMessage += '\n\nDétails:\n' + err.errors;
     } else if (err?.errors && Array.isArray(err.errors)) {
@@ -75,8 +70,6 @@ const DepositFilmInner = () => {
     } else if (err?.error) {
       errorMessage += '\n\n' + err.error;
     }
-    
-    console.error('🔴 Erreur complète:', err);
     alert(errorMessage);
   };
 
@@ -89,7 +82,7 @@ const DepositFilmInner = () => {
     <div className="deposit-page">
       <div className="deposit-container">
         <Navbar />
-        <Header badge="APPEL À PROJETS 2026" title="DÉPOSER UN FILM" />
+        <Header badge={t('deposit.badge')} title={t('deposit.title')} />
 
         <div className="deposit-form-zone">
           <Stepper currentStep={currentStepIndex} totalSteps={4} />
@@ -112,7 +105,7 @@ const DepositFilmInner = () => {
                 onClick={back}
                 className="deposit-btn-collab deposit-btn-collab--nav"
               >
-                ← Précédent
+                {t('deposit.previous')}
               </button>
             )}
             {!isLastStep && (
@@ -122,7 +115,7 @@ const DepositFilmInner = () => {
                 className={`deposit-btn-submit ${justEnabled ? 'deposit-btn-submit--just-enabled' : ''}`}
                 disabled={!canGoNext}
               >
-                Étape {currentStepIndex + 2}
+                {t('deposit.step')} {currentStepIndex + 2}
               </button>
             )}
             <AnimatePresence mode="wait">
@@ -135,7 +128,7 @@ const DepositFilmInner = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  Cochez les cases ci-dessus (âge 18 ans et acceptation des conditions) pour passer à l’étape suivante.
+                  {t('deposit.consentHint')}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -144,7 +137,7 @@ const DepositFilmInner = () => {
 
         <Footer />
       </div>
-      
+
       {showSuccessModal && successData?.videoId && (
         <SuccessModal
           isOpen={showSuccessModal}

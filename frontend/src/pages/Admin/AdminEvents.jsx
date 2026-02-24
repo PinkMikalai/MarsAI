@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { eventService } from '../../service/eventService';
 
@@ -25,6 +26,7 @@ const formatDateForInput = (d) => {
 };
 
 const AdminEvents = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ const AdminEvents = () => {
       const data = await eventService.getAll();
       setEvents(data.events || []);
     } catch (err) {
-      setError(err.message || 'Erreur lors du chargement des événements.');
+      setError(err.message || t('admin.loadingError'));
     } finally {
       setLoading(false);
     }
@@ -66,7 +68,7 @@ const AdminEvents = () => {
       form.reset();
       loadEvents();
     } catch (err) {
-      setFormError(err.message || 'Erreur lors de la création.');
+      setFormError(err.message || t('admin.creationError'));
     } finally {
       setSubmitting(false);
     }
@@ -89,14 +91,14 @@ const AdminEvents = () => {
       setEditingId(null);
       loadEvents();
     } catch (err) {
-      setFormError(err.message || 'Erreur lors de la mise à jour.');
+      setFormError(err.message || t('admin.updateError'));
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Supprimer cet événement ?')) return;
+    if (!window.confirm(t('admin.deleteEventConfirm'))) return;
     setDeletingId(id);
     try {
       await eventService.delete(id);
@@ -104,7 +106,7 @@ const AdminEvents = () => {
       setEditingId(null);
       loadEvents();
     } catch (err) {
-      setError(err.message || 'Erreur lors de la suppression.');
+      setError(err.message || t('admin.deleteError'));
     } finally {
       setDeletingId(null);
     }
@@ -117,10 +119,10 @@ const AdminEvents = () => {
     <section className="admin-overview">
       <div className="admin-overview-header">
         <div>
-          <p className="admin-overview-kicker">Gestion</p>
-          <h2 className="admin-overview-title">Événements</h2>
+          <p className="admin-overview-kicker">{t('admin.kicker')}</p>
+          <h2 className="admin-overview-title">{t('admin.eventsTitle')}</h2>
           <p className="admin-overview-text">
-            Liste des événements du festival. Aperçu, modification et suppression.
+            {t('admin.eventsSubtitle')}
           </p>
         </div>
         <div className="admin-overview-header-actions">
@@ -129,14 +131,14 @@ const AdminEvents = () => {
             className="admin-profile-btn admin-profile-btn--primary"
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? 'Annuler' : 'Ajouter un événement'}
+            {showForm ? t('common.cancel') : t('admin.addEvent')}
           </button>
         </div>
       </div>
 
       {showForm && (
         <div className="admin-events-form-wrap">
-          <h3 className="admin-events-form-title">Nouvel événement</h3>
+          <h3 className="admin-events-form-title">{t('admin.newEventTitle')}</h3>
           <form onSubmit={handleCreateSubmit} className="admin-events-form">
             {formError && !editingId && (
               <p className="admin-events-form-error" role="alert">
@@ -145,42 +147,42 @@ const AdminEvents = () => {
             )}
             <div className="admin-events-form-grid">
               <label className="admin-events-form-label">
-                Titre *
-                <input type="text" name="title" required className="admin-events-form-input" placeholder="Ex. Soirée de clôture" />
+                {t('admin.eventTitleField')}
+                <input type="text" name="title" required className="admin-events-form-input" placeholder={t('admin.eventTitlePlaceholder')} />
               </label>
               <label className="admin-events-form-label">
-                Date *
+                {t('admin.eventDateField')}
                 <input type="date" name="date" required className="admin-events-form-input" />
               </label>
               <label className="admin-events-form-label admin-events-form-label--full">
-                Description
-                <textarea name="description" rows={3} className="admin-events-form-input" placeholder="Description de l'événement" />
+                {t('admin.eventDescField')}
+                <textarea name="description" rows={3} className="admin-events-form-input" placeholder={t('admin.eventDescPlaceholder')} />
               </label>
               <label className="admin-events-form-label">
-                Durée (min)
+                {t('admin.eventDuration')}
                 <input type="number" name="duration" min={0} className="admin-events-form-input" placeholder="120" />
               </label>
               <label className="admin-events-form-label">
-                Capacité
+                {t('admin.eventCapacity')}
                 <input type="number" name="capacity" min={0} className="admin-events-form-input" placeholder="100" />
               </label>
               <label className="admin-events-form-label">
-                Lieu
-                <input type="text" name="location" className="admin-events-form-input" placeholder="Marseille" />
+                {t('admin.eventLocation')}
+                <input type="text" name="location" className="admin-events-form-input" placeholder={t('admin.eventLocationPlaceholder')} />
               </label>
               <label className="admin-events-form-label admin-events-form-label--full">
-                Illustration (image)
+                {t('admin.eventIllustration')}
                 <input type="file" name="illustration" accept=".jpg,.jpeg,.png,.webp" className="admin-events-form-input" />
               </label>
             </div>
             <button type="submit" className="admin-profile-btn admin-profile-btn--primary" disabled={submitting}>
-              {submitting ? 'Création…' : "Créer l'événement"}
+              {submitting ? t('admin.creating') : t('admin.createEvent')}
             </button>
           </form>
         </div>
       )}
 
-      {loading && <p className="admin-profile-loading">Chargement des événements…</p>}
+      {loading && <p className="admin-profile-loading">{t('admin.loadingEvents')}</p>}
       {error && (
         <p className="admin-events-error" role="alert">
           {error}
@@ -190,17 +192,17 @@ const AdminEvents = () => {
       {!loading && !error && (
         <div className="admin-events-list">
           {events.length === 0 ? (
-            <p className="admin-events-empty">Aucun événement pour le moment.</p>
+            <p className="admin-events-empty">{t('admin.noEvents')}</p>
           ) : (
             <div className="admin-events-table-wrap">
               <table className="admin-events-table">
                 <thead>
                   <tr>
-                    <th className="admin-events-th admin-events-th--img">Aperçu</th>
-                    <th className="admin-events-th">Titre</th>
-                    <th className="admin-events-th">Date</th>
-                    <th className="admin-events-th">Lieu</th>
-                    <th className="admin-events-th admin-events-th--actions">Actions</th>
+                    <th className="admin-events-th admin-events-th--img">{t('admin.thPreview')}</th>
+                    <th className="admin-events-th">{t('admin.thTitle')}</th>
+                    <th className="admin-events-th">{t('admin.thDate')}</th>
+                    <th className="admin-events-th">{t('admin.thLocation')}</th>
+                    <th className="admin-events-th admin-events-th--actions">{t('admin.thActions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -219,27 +221,14 @@ const AdminEvents = () => {
                       <td className="admin-events-td">{formatDate(event.date)}</td>
                       <td className="admin-events-td">{event.location || '—'}</td>
                       <td className="admin-events-td admin-events-td--actions">
-                        <button
-                          type="button"
-                          className="admin-events-btn admin-events-btn--preview"
-                          onClick={() => setPreviewId(event.id)}
-                        >
-                          Aperçu
+                        <button type="button" className="admin-events-btn admin-events-btn--preview" onClick={() => setPreviewId(event.id)}>
+                          {t('admin.previewBtn')}
                         </button>
-                        <button
-                          type="button"
-                          className="admin-events-btn admin-events-btn--edit"
-                          onClick={() => setEditingId(event.id)}
-                        >
-                          Modifier
+                        <button type="button" className="admin-events-btn admin-events-btn--edit" onClick={() => setEditingId(event.id)}>
+                          {t('admin.editBtn')}
                         </button>
-                        <button
-                          type="button"
-                          className="admin-events-btn admin-events-btn--delete"
-                          onClick={() => handleDelete(event.id)}
-                          disabled={deletingId === event.id}
-                        >
-                          {deletingId === event.id ? '…' : 'Supprimer'}
+                        <button type="button" className="admin-events-btn admin-events-btn--delete" onClick={() => handleDelete(event.id)} disabled={deletingId === event.id}>
+                          {deletingId === event.id ? t('admin.deletingBtn') : t('admin.deleteBtn')}
                         </button>
                       </td>
                     </tr>
@@ -251,60 +240,58 @@ const AdminEvents = () => {
         </div>
       )}
 
-      {/* Modal Aperçu */}
       {previewId && eventPreview && (
         <div className="admin-events-modal-overlay" onClick={() => setPreviewId(null)} role="dialog" aria-modal="true" aria-labelledby="modal-preview-title">
           <div className="admin-events-modal admin-events-modal--preview" onClick={(e) => e.stopPropagation()}>
-            <h3 id="modal-preview-title" className="admin-events-modal-title">Aperçu de l&apos;événement</h3>
+            <h3 id="modal-preview-title" className="admin-events-modal-title">{t('admin.previewEventTitle')}</h3>
             <div className="admin-events-preview-media">
               {eventPreview.illustration ? (
                 <img src={getImageUrl(eventPreview.illustration)} alt="" className="admin-events-preview-img" />
               ) : (
-                <div className="admin-events-preview-placeholder">Sans image</div>
+                <div className="admin-events-preview-placeholder">{t('admin.noImage')}</div>
               )}
             </div>
             <dl className="admin-events-preview-dl">
-              <dt>Titre</dt>
+              <dt>{t('admin.eventFieldTitle')}</dt>
               <dd>{eventPreview.title}</dd>
-              <dt>Date</dt>
+              <dt>{t('admin.eventFieldDate')}</dt>
               <dd>{formatDate(eventPreview.date)}</dd>
               {eventPreview.location && (
                 <>
-                  <dt>Lieu</dt>
+                  <dt>{t('admin.eventFieldLocation')}</dt>
                   <dd>{eventPreview.location}</dd>
                 </>
               )}
               {eventPreview.duration != null && (
                 <>
-                  <dt>Durée (min)</dt>
+                  <dt>{t('admin.eventFieldDuration')}</dt>
                   <dd>{eventPreview.duration}</dd>
                 </>
               )}
               {eventPreview.capacity != null && (
                 <>
-                  <dt>Capacité</dt>
+                  <dt>{t('admin.eventFieldCapacity')}</dt>
                   <dd>{eventPreview.capacity}</dd>
                 </>
               )}
               {eventPreview.description && (
                 <>
-                  <dt>Description</dt>
+                  <dt>{t('admin.eventFieldDesc')}</dt>
                   <dd className="admin-events-preview-desc">{eventPreview.description}</dd>
                 </>
               )}
             </dl>
             <button type="button" className="admin-profile-btn admin-profile-btn--primary" onClick={() => setPreviewId(null)}>
-              Fermer
+              {t('common.close')}
             </button>
           </div>
         </div>
       )}
 
-      {/* Modal Modifier */}
       {editingId && eventEditing && (
         <div className="admin-events-modal-overlay" onClick={() => setEditingId(null)} role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
           <div className="admin-events-modal admin-events-modal--form" onClick={(e) => e.stopPropagation()}>
-            <h3 id="modal-edit-title" className="admin-events-modal-title">Modifier l&apos;événement</h3>
+            <h3 id="modal-edit-title" className="admin-events-modal-title">{t('admin.editEventTitle')}</h3>
             <form onSubmit={handleEditSubmit} className="admin-events-form">
               {formError && editingId && (
                 <p className="admin-events-form-error" role="alert">
@@ -313,40 +300,40 @@ const AdminEvents = () => {
               )}
               <div className="admin-events-form-grid">
                 <label className="admin-events-form-label">
-                  Titre *
+                  {t('admin.eventTitleField')}
                   <input type="text" name="title" required className="admin-events-form-input" defaultValue={eventEditing.title} />
                 </label>
                 <label className="admin-events-form-label">
-                  Date *
+                  {t('admin.eventDateField')}
                   <input type="date" name="date" required className="admin-events-form-input" defaultValue={formatDateForInput(eventEditing.date)} />
                 </label>
                 <label className="admin-events-form-label admin-events-form-label--full">
-                  Description
-                  <textarea name="description" rows={3} className="admin-events-form-input" defaultValue={eventEditing.description || ''} placeholder="Description" />
+                  {t('admin.eventDescField')}
+                  <textarea name="description" rows={3} className="admin-events-form-input" defaultValue={eventEditing.description || ''} placeholder={t('admin.eventDescField')} />
                 </label>
                 <label className="admin-events-form-label">
-                  Durée (min)
+                  {t('admin.eventDuration')}
                   <input type="number" name="duration" min={0} className="admin-events-form-input" defaultValue={eventEditing.duration ?? ''} placeholder="120" />
                 </label>
                 <label className="admin-events-form-label">
-                  Capacité
+                  {t('admin.eventCapacity')}
                   <input type="number" name="capacity" min={0} className="admin-events-form-input" defaultValue={eventEditing.capacity ?? ''} placeholder="100" />
                 </label>
                 <label className="admin-events-form-label">
-                  Lieu
-                  <input type="text" name="location" className="admin-events-form-input" defaultValue={eventEditing.location || ''} placeholder="Marseille" />
+                  {t('admin.eventLocation')}
+                  <input type="text" name="location" className="admin-events-form-input" defaultValue={eventEditing.location || ''} placeholder={t('admin.eventLocationPlaceholder')} />
                 </label>
                 <label className="admin-events-form-label admin-events-form-label--full">
-                  Nouvelle illustration (laisser vide pour conserver l&apos;actuelle)
+                  {t('admin.eventNewIllustration')}
                   <input type="file" name="illustration" accept=".jpg,.jpeg,.png,.webp" className="admin-events-form-input" />
                 </label>
               </div>
               <div className="admin-events-modal-actions">
                 <button type="button" className="admin-profile-btn admin-profile-btn--secondary" onClick={() => setEditingId(null)}>
-                  Annuler
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="admin-profile-btn admin-profile-btn--primary" disabled={submitting}>
-                  {submitting ? 'Enregistrement…' : 'Enregistrer'}
+                  {submitting ? t('common.saving') : t('common.save')}
                 </button>
               </div>
             </form>
