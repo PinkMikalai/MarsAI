@@ -52,7 +52,7 @@ const stillSchema = z.object({
         .string()
         .trim()
         .min(1, "File name cannot be empty")
-        .max(100, "Filename too long")
+        .max(512, "Filename too long")
 });
 
 // validation de toutes les entrées du formulaire 
@@ -220,7 +220,7 @@ const participationSchema = z.object({
         .string({ required_error: "Cover image is required" })
         .trim()
         .min(5, "Filename too short")
-        .max(100, "Filename is too long (max 100 characters)")
+        .max(512, "Filename is too long")
         .regex(/\.(jpg|jpeg|png|webp)$/i, "Cover must be an image (jpg, png, webp)"),
 
     // VIDEO
@@ -228,13 +228,13 @@ const participationSchema = z.object({
         .string({ required_error: "Video file is required" })
         .trim()
         .min(5, "Filename too short")
-        .max(100, "Filename too long")
+        .max(512, "Filename too long")
         .regex(/\.(mp4|mov|avi|mkv)$/i, "Invalid video format"),
     
     // FICHIER SOUS-TITRES 
     srt_file_name: z
         .string()
-        .max(100, "Filename too long")
+        .max(512, "Filename too long")
         .trim()
         .regex(/\.(srt|vtt)$/i, "Invalid subtitle format (.srt or .vtt)")
         .optional()
