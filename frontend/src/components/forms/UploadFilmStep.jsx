@@ -98,8 +98,17 @@ const UploadFilmStep = () => {
   };
 
   const handleStillsChange = (e) => {
-    const files = Array.from(e.target.files || []).slice(0, STILLS_MAX_COUNT);
-    setFile('stills', files);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const current = form.files.stills || [];
+    if (current.length >= STILLS_MAX_COUNT) return;
+    setFile('stills', [...current, file]);
+    e.target.value = '';
+  };
+
+  const handleRemoveStill = (index) => {
+    const current = form.files.stills || [];
+    setFile('stills', current.filter((_, i) => i !== index));
   };
 
   // Ajouter un tag populaire aux tags sélectionnés
@@ -373,39 +382,43 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">Stills (jpg, png – max 3, 5 Mo chacun)</label>
-        <div className="deposit-upload-gallery">
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="deposit-upload-gallery-item deposit-upload-gallery-item--preview"
-              onClick={() => stillsRef.current?.click()}
-              onKeyDown={(e) => e.key === 'Enter' && stillsRef.current?.click()}
-              role="button"
-              tabIndex={0}
-            >
-              {stillsPreviews[i] ? (
-                <img src={stillsPreviews[i]} alt={`Still ${i + 1}`} className="deposit-upload-preview-img deposit-upload-preview-img--still" />
-              ) : (
-                <span aria-hidden className="deposit-upload-gallery-placeholder"><Icons.Image /></span>
-              )}
+        <label className="deposit-field-label">Stills (jpg, png – max {STILLS_MAX_COUNT}, 5 Mo chacun)</label>
+
+        <div className="deposit-social-links">
+          {stillsPreviews.map((previewUrl, i) => (
+            <div key={i} className="deposit-social-link-row deposit-still-row">
+              <img
+                src={previewUrl}
+                alt={`Still ${i + 1}`}
+                className="deposit-still-thumb"
+              />
+              <span className="deposit-still-name">{(form.files.stills || [])[i]?.name || `Still ${i + 1}`}</span>
+              <button
+                type="button"
+                className="deposit-social-link-remove"
+                onClick={() => handleRemoveStill(i)}
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
+
         <input
           ref={stillsRef}
           type="file"
           accept=".jpg,.jpeg,.png"
-          multiple
           onChange={handleStillsChange}
           className="deposit-file-input-hidden"
         />
+
         <button
           type="button"
-          className="deposit-upload-btn deposit-upload-btn--stills"
+          className="deposit-social-link-add"
+          disabled={(form.files.stills || []).length >= STILLS_MAX_COUNT}
           onClick={() => stillsRef.current?.click()}
         >
-          Choisir les stills (0–3)
+          + Ajouter un still ({(form.files.stills || []).length} / {STILLS_MAX_COUNT})
         </button>
       </div>
     </FormCard>
