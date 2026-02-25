@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import FormCard from './FormCard';
 import Icons from '../ui/common/Icons';
 import { useDepositForm } from '../../context/DepositFormContext';
-import {
-  CIVILITY_OPTIONS,
+import { 
+  CIVILITY_OPTIONS, 
   COUNTRIES_ISO3166,
-  SOCIAL_PLATFORMS,
-  SOCIAL_LINKS_MAX
+  SOCIAL_PLATFORMS, 
+  SOCIAL_LINKS_MAX 
 } from '../../constants/submitForm';
 import { SiYoutube, SiInstagram, SiFacebook, SiLinkedin, SiX, SiArtstation, SiBehance, SiVimeo, SiTiktok } from 'react-icons/si';
-import { FiLink } from 'react-icons/fi';
+import { FiLink } from 'react-icons/fi'; 
 import { useFormValidation } from '../../hooks/useFormValidation.js';
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 import { participationSchema } from '@shared/schemas/participationSchema.js';
@@ -35,7 +35,7 @@ const InscriptionStep = () => {
   const { form, setParticipant } = useDepositForm();
   const { errors, validateField, clearError } = useFormValidation(participationSchema);
   const p = form.participant;
-
+  
   const [countryOpen, setCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
   const countryRef = useRef(null);
@@ -117,7 +117,7 @@ const InscriptionStep = () => {
               value={p.civility || ''}
               onChange={(e) => {
                 setParticipant('civility', e.target.value);
-                clearError('realisator_civility');
+                clearError('realisator_civility'); 
               }}
               onBlur={(e) => validateField('realisator_civility', e.target.value)}
             >
@@ -230,7 +230,7 @@ const InscriptionStep = () => {
             </button>
 
             <ErrorMessage error={errors.country} />
-
+            
             {countryOpen && (
               <ul
                 ref={countryListRef}
@@ -256,7 +256,7 @@ const InscriptionStep = () => {
                     }}
                   >
                     {opt.value !== 'OTHER' && (
-                      <span className={`fi fi-${opt.value.toLowerCase()} deposit-flag-icon`} />
+                       <span className={`fi fi-${opt.value.toLowerCase()} deposit-flag-icon`} />
                     )}
                     <span>{opt.label}</span>
                   </li>
@@ -318,11 +318,8 @@ const InscriptionStep = () => {
         <div className="deposit-field-wrap">
           <input
             type="text"
-
             className={`deposit-input ${errors.address ? 'is-invalid' : ''}`}
-
             placeholder={t('deposit.addressPlaceholder')}
-
             value={p.address || ''}
             onChange={(e) => {
               setParticipant('address', e.target.value);
@@ -422,16 +419,16 @@ const InscriptionStep = () => {
         <div className="deposit-social-links">
           {(p.social_links || []).map((row, i) => {
             const IconComponent = SOCIAL_ICONS[row.platform] || FiLink;
-
+            
             // DÉFINITION DES CLÉS POUR ZOD
             const platformKey = `social_links.${i}.platform`;
             const urlKey = `social_links.${i}.url`;
 
             return (
               <div key={i} className="deposit-social-link-wrapper" style={{ marginBottom: '1rem' }}>
-                <div
-                  className="deposit-social-link-row"
-                  ref={(el) => (platformRowRefs.current[i] = el)}
+                <div 
+                  className="deposit-social-link-row" 
+                  ref={(el) => (platformRowRefs.current[i] = el)} 
                   style={{ position: 'relative' }}
                 >
                   <div className="deposit-platform-select">
@@ -445,7 +442,7 @@ const InscriptionStep = () => {
                       <IconComponent className="deposit-social-platform-icon" />
                       <span>{SOCIAL_PLATFORMS.find(s => s.value === row.platform)?.label || 'Réseau'}</span>
                     </button>
-
+                    
                     {platformOpenIndex === i && (
                       <ul className="deposit-platform-list" style={{ position: 'absolute', zIndex: 100, width: '200px' }}>
                         {SOCIAL_PLATFORMS.map((opt) => (
@@ -458,7 +455,7 @@ const InscriptionStep = () => {
                               next[i].platform = opt.value;
                               setParticipant('social_links', next);
                               setPlatformOpenIndex(null);
-
+                              
                               // Nettoyage de l'erreur au choix
                               clearError(platformKey);
                               // Validation du groupe pour vérifier la cohérence
@@ -488,7 +485,7 @@ const InscriptionStep = () => {
                     // Validation quand on quitte le champ
                     onBlur={() => validateField('social_links', p.social_links)}
                   />
-
+                  
                   <button
                     type="button"
                     className="deposit-social-link-remove"
@@ -514,7 +511,7 @@ const InscriptionStep = () => {
 
           {/* Message d'erreur global pour le tableau social_links */}
           <ErrorMessage error={errors.social_links} />
-
+          
           <button
             type="button"
             className="deposit-social-link-add"

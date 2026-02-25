@@ -25,18 +25,25 @@ export const getCountryFlag = (code) => {
 
 
 
-/** Même liste que les pays (libellés en français) pour le sélecteur langue. */
-export const LANGUAGES_ISO6391 = ISO6391.getAllCodes().map((code) => ({
+/** Langues ISO 639-1 pour le sélecteur (libellés en écriture native) + option muet. */
+const _raw = ISO6391.getAllCodes().map((code) => ({
   value: code,
-  label: ISO6391.getNativeName(code),
-})).sort((a, b) => a.label.localeCompare(b.label));
+  label: ISO6391.getNativeName(code) || code,
+}));
+// Dédupliquer par value (certains codes peuvent être dupliqués)
+const _byValue = new Map();
+_raw.forEach((o) => { if (!_byValue.has(o.value)) _byValue.set(o.value, o); });
+export const LANGUAGES_ISO6391 = [
+  { value: 'silent', label: '🔇 Muet / Sans parole / Pas de langue' },
+  ...Array.from(_byValue.values()).sort((a, b) => a.label.localeCompare(b.label)),
+];
 
 
 
 /** Options pour le sélecteur d’indicatif téléphonique (+33 FR, +32 BE, …). */
 // export const PHONE_PREFIX_OPTIONS = COUNTRIES_ISO3166
 //   .filter((c) => c.value !== 'OTHER' && COUNTRY_PHONE[c.value])
-//   .map((c) => ({ value: c.value, label: `${c.value} +${COUNTRY_PHONE[c.value].code}` }));
+//   .map((c) => ({ value: c.value, label: ${c.value} +${COUNTRY_PHONE[c.value].code} }));
 
 /** Réseaux sociaux : plateforme au choix + lien (max 10). */
 export const SOCIAL_PLATFORMS = [

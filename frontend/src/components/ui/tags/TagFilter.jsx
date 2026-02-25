@@ -63,11 +63,11 @@ const TagFilter = ({ selectedTags = [], onFilterChange }) => {
         <div className="galerie-tag-filter-popular">
           <p className="galerie-tag-filter-popular-label">Tags populaires :</p>
           <div className="galerie-tag-filter-popular-list">
-            {popularTags.map((tag) => {
+            {popularTags.map((tag, idx) => {
               const isActive = selectedTags.includes(tag);
               return (
                 <button
-                  key={tag}
+                  key={`popular-${tag}-${idx}`}
                   type="button"
                   className={`galerie-tag-filter-popular-tag ${isActive ? 'galerie-tag-filter-popular-tag--active' : ''}`}
                   onClick={() => handlePopularTagClick(tag)}
