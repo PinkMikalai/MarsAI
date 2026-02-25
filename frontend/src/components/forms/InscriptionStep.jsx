@@ -318,13 +318,8 @@ const InscriptionStep = () => {
         <div className="deposit-field-wrap">
           <input
             type="text"
-
-            className="deposit-input"
-            placeholder={t('deposit.addressPlaceholder')}
-
             className={`deposit-input ${errors.address ? 'is-invalid' : ''}`}
-            placeholder="Rue, ville, code postal..."
-
+            placeholder={t('deposit.addressPlaceholder')}
             value={p.address || ''}
             onChange={(e) => {
               setParticipant('address', e.target.value);

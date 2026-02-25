@@ -169,6 +169,7 @@ export {
     getCountDownModel,
     getAllCmsModel, 
     getCmsByIdModel, 
-    updateCmsModel };
-};
+    updateCmsModel
+ };
+
 

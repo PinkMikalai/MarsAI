@@ -7,21 +7,28 @@ import { useDepositForm } from '../../context/DepositFormContext';
 import { LANGUAGES_ISO6391, STILLS_MAX_COUNT } from '../../constants/submitForm';
 import { tagsService } from '../../service/tags';
 
+import { useFormValidation } from '../../hooks/useFormValidation';
+import { participationSchema } from '@shared/schemas/participationSchema';
+
+import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
+
 const UploadFilmStep = () => {
   const { t } = useTranslation();
   const { form, setFilm, setFile, setTags } = useDepositForm();
-  const { film, files } = form;
+  // Utilisation du hook de validation
+  const { errors, validateField, clearError } = useFormValidation(participationSchema);
+  const { film, files } = form; 
 
-  const videoRef     = useRef(null);
-  const coverRef     = useRef(null);
+  const videoRef = useRef(null);
+  const coverRef = useRef(null);
   const subtitlesRef = useRef(null);
-  const stillsRef    = useRef(null);
+  const stillsRef = useRef(null);
 
-  const [coverPreview,    setCoverPreview]    = useState(null);
+  const [coverPreview, setCoverPreview] = useState(null);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
-  const [stillsPreviews,  setStillsPreviews]  = useState([]);
-  const [mostUsedTags,    setMostUsedTags]    = useState([]);
-  const [videoDragOver,   setVideoDragOver]   = useState(false);
+  const [stillsPreviews, setStillsPreviews] = useState([]);
+  const [mostUsedTags, setMostUsedTags] = useState([]);
+  const [videoDragOver, setVideoDragOver] = useState(false);
 
   useEffect(() => {
     if (form.files.video instanceof File) {
@@ -43,22 +50,26 @@ const UploadFilmStep = () => {
 
   useEffect(() => {
     const stills = form.files.stills || [];
-    const urls = stills.map((f) => URL.createObjectURL(f));
+    const urls = stills.map((file) => URL.createObjectURL(file));
     setStillsPreviews(urls);
     return () => urls.forEach((url) => URL.revokeObjectURL(url));
   }, [form.files.stills]);
 
+  // Charger les tags les plus utilisés
   useEffect(() => {
-    tagsService.getMostUsedTags()
-      .then((data) => {
+    const loadMostUsedTags = async () => {
+      try {
+        const data = await tagsService.getMostUsedTags();
         const list = Array.isArray(data) ? data : (data?.tags || data?.data || []);
-        setMostUsedTags(
-          list.slice(0, 5)
-            .map((tag) => (typeof tag === 'string' ? tag : tag?.name || '').toLowerCase())
-            .filter(Boolean)
-        );
-      })
-      .catch(() => setMostUsedTags([]));
+        const topTags = list.slice(0, 5).map((t) => (typeof t === 'string' ? t : (t?.name || t)).toLowerCase()).filter(Boolean);
+        setMostUsedTags(topTags);
+      } catch (error) {
+        console.error('Erreur lors du chargement des tags populaires:', error);
+        setMostUsedTags([]);
+      }
+    };
+
+    loadMostUsedTags();
   }, []);
 
   const handleVideoChange = (e) => {
@@ -82,8 +93,15 @@ const UploadFilmStep = () => {
 
   const handleVideoDragLeave = () => setVideoDragOver(false);
 
-  const handleCoverChange     = (e) => setFile('cover',     e.target.files?.[0] || null);
-  const handleSubtitlesChange = (e) => setFile('subtitles', e.target.files?.[0] || null);
+  const handleCoverChange = (e) => {
+    const file = e.target.files?.[0];
+    setFile('cover', file || null);
+  };
+
+  const handleSubtitlesChange = (e) => {
+    const file = e.target.files?.[0];
+    setFile('subtitles', file || null);
+  };
 
   const handleStillsChange = (e) => {
     const file = e.target.files?.[0];
@@ -95,23 +113,32 @@ const UploadFilmStep = () => {
   };
 
   const handleRemoveStill = (index) => {
-    setFile('stills', (form.files.stills || []).filter((_, i) => i !== index));
+    const current = form.files.stills || [];
+    setFile('stills', current.filter((_, i) => i !== index));
   };
 
+  // Ajouter un tag populaire aux tags sélectionnés
   const handleAddPopularTag = (tag) => {
-    const normalized = tag.toLowerCase().trim();
-    const current = form.tags || [];
-    if (!current.includes(normalized)) setTags([...current, normalized]);
+    const currentTags = form.tags || [];
+    // Normaliser le tag (lowercase, trim) pour correspondre au format de TagInput
+    const normalizedTag = tag.toLowerCase().trim();
+    // Vérifier si le tag n'est pas déjà présent
+    if (!currentTags.includes(normalizedTag)) {
+      setTags([...currentTags, normalizedTag]);
+    }
   };
+
 
   return (
     <FormCard number="03" title={t('deposit.uploadTitle')}>
       <div className="deposit-info-box">
         <div className="deposit-info-box-icon" aria-hidden><Icons.Info /></div>
-        <p className="deposit-info-box-text">{t('deposit.uploadInfo')}</p>
+        <p className="deposit-info-box-text">
+          {t('deposit.uploadInfo')}
+        </p>
       </div>
 
-      {/* TITRE + LANGUE */}
+      {/* TITRE FR */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.filmTitle')}</label>
@@ -141,7 +168,6 @@ const UploadFilmStep = () => {
         </div>
       </div>
 
-      {/* TITRE EN + CLASSIFICATION */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.filmTitleEn')}</label>
@@ -170,28 +196,26 @@ const UploadFilmStep = () => {
         </div>
       </div>
 
-      {/* SYNOPSIS FR */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.synopsis')}</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
-            placeholder="Une exploration de la créativité assistée par l'IA…"
-            maxLength={300}
+            placeholder="Une exploration..."
+            maxLength={500}
             value={film.description}
             onChange={(e) => setFilm('description', e.target.value)}
           />
         </div>
-        <div className="deposit-char-count">{film.description.length} / 300</div>
+        <div className="deposit-char-count">{film.description.length} / 500</div>
       </div>
 
-      {/* SYNOPSIS EN */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.synopsisEn')}</label>
         <div className="deposit-field-wrap">
           <textarea
             className="deposit-textarea deposit-textarea--short"
-            placeholder="An exploration of AI-assisted creativity…"
+            placeholder="An exploration..."
             maxLength={300}
             value={film.synopsis_en ?? ''}
             onChange={(e) => setFilm('synopsis_en', e.target.value)}
@@ -200,7 +224,6 @@ const UploadFilmStep = () => {
         <div className="deposit-char-count">{(film.synopsis_en ?? '').length} / 300</div>
       </div>
 
-      {/* RÉSUMÉ TECHNIQUE */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.techResume')}</label>
         <div className="deposit-field-wrap">
@@ -215,7 +238,6 @@ const UploadFilmStep = () => {
         <div className="deposit-char-count">{(film.tech_resume ?? '').length} / 500</div>
       </div>
 
-      {/* RÉSUMÉ CRÉATIF */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.creativeResume')}</label>
         <div className="deposit-field-wrap">
@@ -230,19 +252,23 @@ const UploadFilmStep = () => {
         <div className="deposit-char-count">{(film.creative_resume ?? '').length} / 500</div>
       </div>
 
-      {/* TAGS */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.tags')}</label>
-        <TagInput tags={form.tags || []} onChange={setTags} />
+        <TagInput 
+          tags={form.tags || []} 
+          onChange={setTags}
+        />
+        
+        {/* Tags les plus utilisés */}
         {mostUsedTags.length > 0 && (
           <div className="deposit-popular-tags">
             <p className="deposit-popular-tags-label">{t('deposit.popularTags')}</p>
             <div className="deposit-popular-tags-list">
-              {mostUsedTags.map((tag) => {
+              {mostUsedTags.map((tag, idx) => {
                 const isSelected = form.tags?.includes(tag);
                 return (
                   <button
-                    key={tag}
+                    key={`popular-${tag}-${idx}`}
                     type="button"
                     onClick={() => handleAddPopularTag(tag)}
                     disabled={isSelected}
@@ -257,7 +283,6 @@ const UploadFilmStep = () => {
         )}
       </div>
 
-      {/* VIDÉO */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.videoField')}</label>
         <div
@@ -310,7 +335,6 @@ const UploadFilmStep = () => {
         </div>
       </div>
 
-      {/* VIGNETTE + SOUS-TITRES */}
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.coverField')}</label>
@@ -342,7 +366,6 @@ const UploadFilmStep = () => {
             </button>
           </div>
         </div>
-
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.subtitlesField')}</label>
           <div className="deposit-upload-vignette">
@@ -365,46 +388,55 @@ const UploadFilmStep = () => {
         </div>
       </div>
 
-      {/* STILLS */}
       <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.stillsField')}</label>
-
-        <div className="deposit-social-links">
-          {stillsPreviews.map((previewUrl, i) => (
-            <div key={i} className="deposit-social-link-row deposit-still-row">
-              <img
-                src={previewUrl}
-                alt={`Still ${i + 1}`}
-                className="deposit-still-thumb"
-              />
-              <span className="deposit-still-name">
-                {(form.files.stills || [])[i]?.name || `Still ${i + 1}`}
-              </span>
-              <button
-                type="button"
-                className="deposit-social-link-remove"
-                onClick={() => handleRemoveStill(i)}
-              >
-                ×
-              </button>
+        <div className="deposit-upload-gallery">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="deposit-upload-gallery-item deposit-upload-gallery-item--preview"
+              onClick={() => stillsRef.current?.click()}
+              onKeyDown={(e) => e.key === 'Enter' && stillsRef.current?.click()}
+              role="button"
+              tabIndex={0}
+            >
+              {stillsPreviews[i] ? (
+                <img src={stillsPreviews[i]} alt={`Still ${i + 1}`} className="deposit-upload-preview-img deposit-upload-preview-img--still" />
+              ) : (
+                <span aria-hidden className="deposit-upload-gallery-placeholder"><Icons.Image /></span>
+              )}
             </div>
           ))}
         </div>
+
+        {stillsPreviews.length > 0 && (
+          <div className="deposit-stills-list">
+            {stillsPreviews.map((previewUrl, i) => (
+              <div key={i} className="deposit-still-row">
+                <img src={previewUrl} alt={`Still ${i + 1}`} className="deposit-still-thumb" />
+                <span className="deposit-still-name">{(form.files.stills || [])[i]?.name || `Still ${i + 1}`}</span>
+                <button type="button" className="deposit-social-link-remove" onClick={() => handleRemoveStill(i)}>×</button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <input
           ref={stillsRef}
           type="file"
           accept=".jpg,.jpeg,.png"
+          multiple
           onChange={handleStillsChange}
           className="deposit-file-input-hidden"
         />
+
         <button
           type="button"
           className="deposit-social-link-add"
           disabled={(form.files.stills || []).length >= STILLS_MAX_COUNT}
           onClick={() => stillsRef.current?.click()}
         >
-          + {t('deposit.chooseStills')} ({(form.files.stills || []).length} / {STILLS_MAX_COUNT})
+          {t('deposit.chooseStills')}
         </button>
       </div>
     </FormCard>
