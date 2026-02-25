@@ -223,25 +223,64 @@
 }
 
 .home-film-card-image {
-  height: 120px;
-  background: linear-gradient(135deg, #6b21a8 0%, #0d9488 100%);
+  height: 200px;
+  width: 100%;
   overflow: hidden;
   position: relative;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  flex-shrink: 0;
 }
 
-.home-film-card:nth-child(2) .home-film-card-image {
-  background: linear-gradient(135deg, #be185d 0%, #1d4ed8 100%);
-}
-
-.home-film-card:nth-child(3) .home-film-card-image {
-  background: linear-gradient(135deg, #1d4ed8 0%, #eab308 100%);
-}
-
-.home-film-card-image-img {
+.home-film-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 0.35s ease;
+}
+
+.home-film-card:hover .home-film-card-image img {
+  transform: scale(1.04);
+}
+
+.home-film-card-image-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.home-film-card-body {
+  padding: 0.75rem;
+}
+
+/* Squelettes de chargement */
+.home-films-loading {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.home-film-card--skeleton {
+  height: 240px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.home-films-empty {
+  color: rgba(255,255,255,0.45);
+  font-size: 0.9rem;
+  margin-top: 2rem;
+  text-align: center;
 }
 
 .home-film-card-title {

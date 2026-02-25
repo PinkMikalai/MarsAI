@@ -1,4 +1,3 @@
-
 import { useTranslation } from 'react-i18next';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -312,3 +311,4 @@ const FinalisationStep = ({ onSuccess, onError }) => {
 };
 
 export default FinalisationStep;
+

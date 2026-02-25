@@ -70,7 +70,7 @@ const LoginForm = () => {
               id="email"
               name="email"
               type="email"
-              autoComplete="email"
+              autoComplete="off"
               placeholder={t('auth.emailPlaceholder')}
               className="login-form-input"
               value={email}
@@ -82,14 +82,12 @@ const LoginForm = () => {
 
           <div className="login-form-field">
             <label htmlFor="password" className="login-form-label">{t('auth.passwordLabel')}</label>
-            <Link to={ROUTES.FORGOT_PASSWORD} className="login-form-forgot">
-              {t('auth.forgotPasswordLink')}
-            </Link>
+            
             <input
               id="password"
               name="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               placeholder="••••••••"
               className="login-form-input"
               value={password}
@@ -107,6 +105,11 @@ const LoginForm = () => {
             {loading ? t('auth.signingIn') : t('auth.signIn')}
           </button>
         </form>
+        <div className="admin-login-footer">
+          <Link to={ROUTES.FORGOT_PASSWORD} className="login-form-forgot">
+              {t('auth.forgotPasswordLink')}
+            </Link>
+        </div>
 
         <div className="admin-login-footer">
           <Link to={ROUTES.HOME} className="admin-login-back">
