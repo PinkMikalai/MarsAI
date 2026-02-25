@@ -1,0 +1,1011 @@
+/* ================================================================
+   light-theme.css — Thème clair MarsAI
+   Inspiré de la maquette éditoriale :
+   - Fond : dégradé ciel bleu / blanc
+   - Navbar : blanche, flat, texte sombre
+   - Typographie : sombre sur clair
+   - Boutons hero : noir plein + contour sombre
+   - Sections : blanc / gris très clair
+   ================================================================ */
+
+/* ── BODY / HTML ─────────────────────────────────────────────── */
+[data-theme="light"] body {
+  background: #f2f4f8;
+  color: #0f1923;
+}
+
+/* ── HOME PAGE ───────────────────────────────────────────────── */
+[data-theme="light"] .home-page {
+  background-color: #f2f4f8;
+}
+
+/* ── HERO : ciel bleu inspiré de la maquette ─────────────────── */
+[data-theme="light"] .hero {
+  background: linear-gradient(
+    180deg,
+    #b8cfe8 0%,
+    #a0bcd8 20%,
+    #c4d8ee 50%,
+    #dce8f4 80%,
+    #eef4fc 100%
+  );
+}
+
+/* Video : pas de dégradé en mode clair — la vidéo reste visible telle quelle */
+[data-theme="light"] .hero-video-overlay {
+  background: transparent;
+}
+
+/* Titre hero — texte blanc sur la vidéo */
+[data-theme="light"] .hero-title-mars {
+  color: #ffffff;
+}
+
+[data-theme="light"] .hero-tagline {
+  color: #e0e0e0;
+}
+
+[data-theme="light"] .hero-description {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* Boutons hero */
+[data-theme="light"] .hero-btn-primary {
+  background: #0f1923;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(15,25,35,0.25);
+}
+
+[data-theme="light"] .hero-btn-primary:hover {
+  background: #1a2d42;
+  box-shadow: 0 8px 28px rgba(15,25,35,0.35);
+}
+
+[data-theme="light"] .hero-btn-secondary {
+  background: rgba(255,255,255,0.85);
+  color: #0f1923;
+  border: 2px solid rgba(15,25,35,0.55);
+  backdrop-filter: blur(4px);
+}
+
+[data-theme="light"] .hero-btn-secondary:hover {
+  background: #ffffff;
+  border-color: #0f1923;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* ── NAVBAR (dans hero et sur deposit) ───────────────────────── */
+[data-theme="light"] .deposit-navbar {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="light"] .deposit-navbar-logo-mars {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .deposit-navbar-lang {
+  color: #0f1923 !important;
+  border-color: rgba(0, 0, 0, 0.25) !important;
+}
+
+[data-theme="light"] .deposit-navbar-lang:hover {
+  border-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ── SECTIONS HOME ───────────────────────────────────────────── */
+[data-theme="light"] .home-features,
+[data-theme="light"] .home-films,
+[data-theme="light"] .home-objectifs,
+[data-theme="light"] .home-protocole,
+[data-theme="light"] .home-conferences,
+[data-theme="light"] .night-section,
+[data-theme="light"] .home-plateforme,
+[data-theme="light"] .home-chiffres,
+[data-theme="light"] .home-sponsors,
+[data-theme="light"] .home-events {
+  background: #f2f4f8 !important;
+}
+
+/* ── EVENTS — cartes et textes ───────────────────────────────── */
+[data-theme="light"] .home-event-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] .home-event-card:hover {
+  border-color: rgba(26, 111, 239, 0.25) !important;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .home-event-card-title       { color: #0f1923 !important; }
+[data-theme="light"] .home-event-card-meta-item   { color: rgba(15, 25, 35, 0.5) !important; }
+[data-theme="light"] .home-event-card-meta-item--date { color: #1a6fef !important; }
+[data-theme="light"] .home-event-card-desc        { color: rgba(15, 25, 35, 0.55) !important; }
+[data-theme="light"] .home-event-card-date-badge  {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .home-event-card-date-day    { color: #0f1923 !important; }
+[data-theme="light"] .home-event-card-date-month  { color: rgba(15, 25, 35, 0.45) !important; }
+[data-theme="light"] .home-event-card-media {
+  background: linear-gradient(135deg, rgba(26,111,239,0.08), rgba(124,58,237,0.08)) !important;
+}
+
+/* Sections alternées légèrement */
+[data-theme="light"] .home-films,
+[data-theme="light"] .home-protocole,
+[data-theme="light"] .home-plateforme {
+  background: #ffffff !important;
+}
+
+[data-theme="light"] .night-section {
+  background: linear-gradient(180deg, #1a2d42 0%, #0f1923 100%) !important;
+}
+
+/* Textes sections */
+[data-theme="light"] .home-section-title {
+  color: #0f1923;
+}
+
+[data-theme="light"] .home-section-desc,
+[data-theme="light"] .section-desc {
+  color: rgba(15, 25, 35, 0.7);
+}
+
+/* Accent gardé (gradient bleu→violet→rose) */
+[data-theme="light"] .home-section-title-accent {
+  background: linear-gradient(135deg, #1a6fef 0%, #7c3aed 50%, #db2777 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── FEATURE CARDS ───────────────────────────────────────────── */
+[data-theme="light"] .feature-card {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.08);
+  color: #0f1923;
+}
+
+[data-theme="light"] .feature-card:hover {
+  border-color: rgba(26,111,239,0.25);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+[data-theme="light"] .feature-card-title { color: #0f1923; }
+[data-theme="light"] .feature-card-desc  { color: rgba(15,25,35,0.65); }
+
+/* ── FILM CARDS ──────────────────────────────────────────────── */
+[data-theme="light"] .film-card {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .film-card:hover {
+  border-color: rgba(26,111,239,0.2);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+[data-theme="light"] .film-card-title  { color: #0f1923; }
+[data-theme="light"] .film-card-desc   { color: rgba(15,25,35,0.6); }
+[data-theme="light"] .film-card-meta   { color: rgba(15,25,35,0.45); }
+
+/* ── OBJECTIFS ───────────────────────────────────────────────── */
+[data-theme="light"] .objectif-card {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .objectif-card-title { color: #0f1923; }
+[data-theme="light"] .objectif-card-desc  { color: rgba(15,25,35,0.65); }
+
+/* ── PROTOCOLE ───────────────────────────────────────────────── */
+[data-theme="light"] .protocole-label  { color: rgba(15,25,35,0.6); }
+[data-theme="light"] .protocole-value  { color: #0f1923; }
+
+/* ── NIGHT SECTION (soirée) ──────────────────────────────────── */
+[data-theme="light"] .night-section .home-section-title,
+[data-theme="light"] .night-section .night-desc,
+[data-theme="light"] .night-section .night-date {
+  color: #ffffff;
+}
+
+/* ── SPONSORS ────────────────────────────────────────────────── */
+[data-theme="light"] .home-sponsor-card {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .home-sponsor-card:hover {
+  border-color: rgba(26,111,239,0.2);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+[data-theme="light"] .deposit-footer {
+  border-top-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .deposit-footer-col-title {
+  color: rgba(15,25,35,0.35);
+}
+
+[data-theme="light"] .deposit-footer-link {
+  color: rgba(15,25,35,0.55);
+}
+
+[data-theme="light"] .deposit-footer-link:hover {
+  color: rgba(15,25,35,0.85);
+}
+
+[data-theme="light"] .deposit-footer-tagline {
+  color: rgba(15,25,35,0.45);
+}
+
+[data-theme="light"] .deposit-footer-copyright,
+[data-theme="light"] .deposit-footer-btn-connexion {
+  color: rgba(15,25,35,0.45);
+}
+
+[data-theme="light"] .deposit-footer-social { color: #0f1923; }
+
+[data-theme="light"] .deposit-footer-brand-mars { color: #0f1923; }
+
+/* ── GALERIE PAGE ────────────────────────────────────────────── */
+[data-theme="light"] .galerie-page {
+  background: #f2f4f8 !important;
+}
+
+/* Formes parallaxe trop sombres en light → adoucir */
+[data-theme="light"] .galerie-parallax-shape { opacity: 0.07 !important; }
+
+/* Cartes galerie */
+[data-theme="light"] .galerie-tag-filter-clear {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.1);
+  color: rgba(15,25,35,0.5);
+}
+[data-theme="light"] .galerie-tag-filter-clear:hover {
+  background: rgba(0,0,0,0.07);
+  color: #0f1923;
+}
+
+/* Barre de recherche (anciens sélecteurs galerie-search-*) */
+[data-theme="light"] .galerie-search-select option { background: #fff; color: #0f1923; }
+
+/* Résultats info */
+[data-theme="light"] .galerie-results-info { color: rgba(15,25,35,0.45); }
+
+/* Tag filter popular popular border top */
+[data-theme="light"] .galerie-tag-filter-popular {
+  border-color: rgba(0,0,0,0.06) !important;
+}
+
+[data-theme="light"] .galerie-card {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .galerie-card:hover {
+  border-color: rgba(26,111,239,0.2) !important;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.1) !important;
+}
+
+[data-theme="light"] .galerie-card-title { color: #0f1923; }
+[data-theme="light"] .galerie-card-meta  { color: rgba(15,25,35,0.5); }
+[data-theme="light"] .galerie-card-meta-label { color: rgba(15,25,35,0.35); }
+
+[data-theme="light"] .galerie-pagination-btn,
+[data-theme="light"] .galerie-pagination-num {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.12);
+  color: #0f1923;
+}
+
+[data-theme="light"] .galerie-pagination-num--current {
+  background: linear-gradient(135deg, #1a6fef 0%, #7c3aed 100%);
+  color: #ffffff;
+}
+
+[data-theme="light"] .gsearch-inner {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.1);
+}
+
+[data-theme="light"] .gsearch-inner:focus-within {
+  border-color: rgba(26,111,239,0.5);
+  box-shadow: 0 0 0 3px rgba(26,111,239,0.1);
+}
+
+[data-theme="light"] .gsearch-input { color: #0f1923; }
+[data-theme="light"] .gsearch-input::placeholder { color: rgba(15,25,35,0.35); }
+[data-theme="light"] .gsearch-icon { color: rgba(15,25,35,0.4); }
+
+/* ── TEXTES GLOBAUX sections ─────────────────────────────────── */
+[data-theme="light"] .home-section-title {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-section-title--outline {
+  color: #0f1923 !important;
+  text-shadow: none !important;
+}
+
+[data-theme="light"] .home-section-desc,
+[data-theme="light"] .section-desc {
+  color: rgba(15, 25, 35, 0.68) !important;
+}
+
+[data-theme="light"] .home-section-subtitle {
+  color: rgba(15, 25, 35, 0.55) !important;
+}
+
+[data-theme="light"] .home-section-link {
+  color: #1a6fef !important;
+}
+
+/* ── HOME CARDS (features, conférences, etc.) ────────────────── */
+[data-theme="light"] .home-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .home-card:hover {
+  border-color: rgba(26, 111, 239, 0.2) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1) !important;
+}
+
+[data-theme="light"] .home-card-title {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-card-desc {
+  color: rgba(15, 25, 35, 0.62) !important;
+}
+
+/* ── FILM CARDS ──────────────────────────────────────────────── */
+[data-theme="light"] .home-film-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .home-film-card:hover {
+  border-color: rgba(26, 111, 239, 0.2) !important;
+}
+
+[data-theme="light"] .home-film-card-title {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-film-card-desc {
+  color: rgba(15, 25, 35, 0.6) !important;
+}
+
+/* ── CONFÉRENCES ─────────────────────────────────────────────── */
+[data-theme="light"] .home-conf-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .home-conf-card--highlight {
+  background: rgba(26, 111, 239, 0.06) !important;
+  border-color: rgba(26, 111, 239, 0.2) !important;
+}
+
+[data-theme="light"] .home-conf-card-title {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-conf-card-icon {
+  color: rgba(15, 25, 35, 0.65) !important;
+}
+
+[data-theme="light"] .home-conf-card--highlight .home-conf-card-icon {
+  color: #7c3aed !important;
+}
+
+/* ── PROTOCOLE ───────────────────────────────────────────────── */
+[data-theme="light"] .home-protocole-value {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-protocole-label {
+  color: rgba(15, 25, 35, 0.55) !important;
+}
+
+/* ── CHIFFRES CARDS ──────────────────────────────────────────── */
+[data-theme="light"] .home-chiffre-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .home-chiffre-value {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-chiffre-label {
+  color: rgba(15, 25, 35, 0.6) !important;
+}
+
+/* ── SPONSORS ────────────────────────────────────────────────── */
+[data-theme="light"] .home-sponsor-card {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .home-sponsor-card:hover {
+  border-color: rgba(26, 111, 239, 0.2) !important;
+  background: #f8f9fe !important;
+}
+
+[data-theme="light"] .home-sponsor-name {
+  color: rgba(15, 25, 35, 0.75) !important;
+}
+
+[data-theme="light"] .home-sponsor-img {
+  filter: brightness(0.85) !important;
+}
+
+[data-theme="light"] .home-sponsors-loading,
+[data-theme="light"] .home-sponsors-empty {
+  color: rgba(15, 25, 35, 0.5) !important;
+}
+
+/* ── PLATEFORME ──────────────────────────────────────────────── */
+[data-theme="light"] .home-map-wrap {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .home-map-placeholder {
+  background: #f0f2f8 !important;
+  color: rgba(15, 25, 35, 0.4) !important;
+}
+
+[data-theme="light"] .home-plateforme-city,
+[data-theme="light"] .home-plateforme-hall-title {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .home-plateforme-hall-desc {
+  color: rgba(15, 25, 35, 0.6) !important;
+}
+
+/* ── NIGHT SECTION (gardée sombre) ──────────────────────────── */
+[data-theme="light"] .night-section {
+  background: linear-gradient(180deg, #1a2d42 0%, #0f1923 100%) !important;
+}
+
+[data-theme="light"] .night-section .home-section-title,
+[data-theme="light"] .night-section .home-section-title--outline {
+  color: #ffffff !important;
+  text-shadow: none !important;
+}
+
+[data-theme="light"] .night-section .home-section-desc,
+[data-theme="light"] .night-section .section-desc {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+[data-theme="light"] .night-card {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── FOOTER HOME (newsletter) ────────────────────────────────── */
+[data-theme="light"] .home-footer-input {
+  color: #0f1923 !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-theme="light"] .home-footer-input::placeholder {
+  color: rgba(15, 25, 35, 0.35) !important;
+}
+
+[data-theme="light"] .deposit-footer-stay-connected,
+[data-theme="light"] .deposit-footer-col-title {
+  color: rgba(15, 25, 35, 0.35) !important;
+}
+
+/* ── GALERIE TITLE ───────────────────────────────────────────── */
+[data-theme="light"] .galerie-title {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .galerie-loading-tags {
+  color: rgba(15, 25, 35, 0.5) !important;
+}
+
+[data-theme="light"] .galerie-tag-filter-title {
+  color: rgba(15, 25, 35, 0.5) !important;
+}
+
+[data-theme="light"] .galerie-tag-filter-popular-label {
+  color: rgba(15, 25, 35, 0.4) !important;
+}
+
+[data-theme="light"] .galerie-tag-filter-popular-tag {
+  color: rgba(15, 25, 35, 0.6) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme="light"] .galerie-tag-filter-popular-tag:hover,
+[data-theme="light"] .galerie-tag-filter-popular-tag--active {
+  color: #1a6fef !important;
+  background: rgba(26, 111, 239, 0.08) !important;
+  border-color: rgba(26, 111, 239, 0.2) !important;
+}
+
+[data-theme="light"] .galerie-pagination-info {
+  color: rgba(15, 25, 35, 0.45) !important;
+}
+
+[data-theme="light"] .gsearch-results-info {
+  color: rgba(15, 25, 35, 0.45) !important;
+}
+
+[data-theme="light"] .gsearch-results-info strong {
+  color: rgba(15, 25, 35, 0.75) !important;
+}
+
+/* ── DEPOSIT FORM ZONE ───────────────────────────────────────── */
+[data-theme="light"] .deposit-page {
+  background: linear-gradient(180deg, #eef2f8 0%, #f4f6fc 100%) !important;
+}
+
+[data-theme="light"] .deposit-form-zone {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.06) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05) !important;
+}
+
+[data-theme="light"] .deposit-field-wrap {
+  background: rgba(240,242,248,0.9) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .deposit-field-wrap:focus-within {
+  border-color: rgba(26,111,239,0.4) !important;
+  box-shadow: 0 0 0 3px rgba(26,111,239,0.1) !important;
+}
+
+[data-theme="light"] .deposit-input,
+[data-theme="light"] .deposit-textarea {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .deposit-input::placeholder,
+[data-theme="light"] .deposit-textarea::placeholder {
+  color: rgba(15,25,35,0.3) !important;
+}
+
+[data-theme="light"] .deposit-field-label,
+[data-theme="light"] .deposit-field-label--jakarta,
+[data-theme="light"] .deposit-info-box-text,
+[data-theme="light"] .deposit-conditions-title,
+[data-theme="light"] .deposit-conditions-list li,
+[data-theme="light"] .deposit-radio-label,
+[data-theme="light"] .deposit-checkbox-label,
+[data-theme="light"] .deposit-certificate-title,
+[data-theme="light"] .deposit-certificate-text,
+[data-theme="light"] .deposit-char-count,
+[data-theme="light"] .deposit-still-name,
+[data-theme="light"] .deposit-form-zone .deposit-field-label {
+  color: #2a2a35 !important;
+}
+
+[data-theme="light"] .deposit-certificate {
+  background: rgba(240,242,248,0.9) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .deposit-upload-vignette {
+  background: rgba(235,238,248,0.8) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .deposit-upload-vignette--drag-over {
+  border-color: rgba(26,111,239,0.5) !important;
+  background: rgba(26,111,239,0.06) !important;
+}
+
+[data-theme="light"] .deposit-formats-guide {
+  background: rgba(235,238,248,0.8) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+[data-theme="light"] .deposit-formats-guide-title,
+[data-theme="light"] .deposit-formats-guide-intro,
+[data-theme="light"] .deposit-formats-guide-block ul {
+  color: #2a2a35 !important;
+}
+
+[data-theme="light"] .deposit-formats-guide-block-title { color: #1a6fef !important; }
+
+[data-theme="light"] .deposit-btn-collab {
+  background: #e4e4ec !important;
+  color: #0f1923 !important;
+  border-color: rgba(0,0,0,0.18) !important;
+}
+
+[data-theme="light"] .deposit-btn-collab:hover {
+  background: #d8d8e4 !important;
+}
+
+[data-theme="light"] .deposit-social-link-remove {
+  border-color: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.04);
+  color: #0f1923;
+}
+
+[data-theme="light"] .deposit-social-link-remove:hover {
+  background: rgba(200,60,60,0.12);
+  border-color: rgba(200,60,60,0.35);
+}
+
+[data-theme="light"] .deposit-social-link-add {
+  border-color: rgba(0,0,0,0.25);
+  color: #0f1923;
+}
+
+[data-theme="light"] .deposit-social-link-add:hover:not(:disabled) {
+  background: rgba(26,111,239,0.06);
+  border-color: rgba(26,111,239,0.35);
+}
+
+[data-theme="light"] .deposit-stepper-dot--inactive {
+  color: rgba(15,25,35,0.35);
+  border-color: rgba(15,25,35,0.2);
+}
+
+[data-theme="light"] .deposit-stepper-dot--active {
+  background: #0f1923;
+  color: #ffffff;
+  border-color: #0f1923;
+}
+
+[data-theme="light"] .deposit-stepper-line {
+  background: rgba(15,25,35,0.15);
+}
+
+[data-theme="light"] .deposit-stepper-line--done {
+  background: #0f1923;
+}
+
+/* Select natif */
+[data-theme="light"] .deposit-field-wrap select.deposit-input {
+  background: rgba(240,242,248,0.9) !important;
+  color: #0f1923 !important;
+}
+
+/* Dropdown pays / plateforme */
+[data-theme="light"] .deposit-country-list,
+[data-theme="light"] .deposit-platform-list,
+[data-theme="light"] .phone-input-dropdown {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+}
+
+[data-theme="light"] .deposit-country-option,
+[data-theme="light"] .deposit-platform-option,
+[data-theme="light"] .phone-input-option {
+  color: #0f1923 !important;
+}
+
+[data-theme="light"] .deposit-country-option:hover,
+[data-theme="light"] .deposit-country-option--selected,
+[data-theme="light"] .deposit-platform-option:hover,
+[data-theme="light"] .deposit-platform-option--selected,
+[data-theme="light"] .phone-input-option:hover,
+[data-theme="light"] .phone-input-option--selected {
+  background: rgba(26,111,239,0.08) !important;
+}
+
+/* Phone input */
+[data-theme="light"] .phone-input {
+  background: rgba(240,242,248,0.9);
+  border-color: rgba(0,0,0,0.12);
+}
+
+[data-theme="light"] .phone-input-prefix {
+  background: rgba(220,224,235,0.8);
+  border-right-color: rgba(0,0,0,0.1);
+  color: #0f1923;
+}
+
+/* Upload overlay */
+[data-theme="light"] .upload-overlay {
+  background: rgba(238,242,250,0.92) !important;
+  backdrop-filter: blur(12px);
+}
+
+[data-theme="light"] .upload-overlay-card {
+  background: linear-gradient(160deg, #f8f9fe 0%, #f2f4fc 100%);
+  border-color: rgba(26,111,239,0.15);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.1), 0 0 60px rgba(26,111,239,0.06);
+}
+
+[data-theme="light"] .upload-overlay-title { color: #0f1923; }
+
+[data-theme="light"] .upload-overlay-bar-wrap {
+  background: rgba(0,0,0,0.08);
+}
+
+[data-theme="light"] .upload-overlay-label { color: rgba(15,25,35,0.6); }
+[data-theme="light"] .upload-overlay-timer { color: rgba(15,25,35,0.4); }
+
+[data-theme="light"] .upload-overlay-warning {
+  color: rgba(160, 80, 0, 0.9);
+  background: rgba(255,160,0,0.06);
+  border-color: rgba(255,140,0,0.2);
+}
+
+/* Step hint */
+[data-theme="light"] .deposit-step1-hint {
+  background: linear-gradient(135deg, #FBC700 0%, #F0B100 100%);
+  color: #1a1a1a;
+}
+
+/* Tags populaires */
+[data-theme="light"] .deposit-popular-tag {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.1);
+  color: rgba(15,25,35,0.7);
+}
+
+[data-theme="light"] .deposit-popular-tag:hover:not(:disabled) {
+  background: rgba(26,111,239,0.08);
+  border-color: rgba(26,111,239,0.25);
+  color: #1a6fef;
+}
+
+[data-theme="light"] .deposit-popular-tag--selected {
+  background: rgba(26,111,239,0.15);
+  border-color: rgba(26,111,239,0.35);
+  color: #1a6fef;
+}
+
+[data-theme="light"] .deposit-popular-tags-label { color: rgba(15,25,35,0.5); }
+
+/* ================================================================
+   TEXTES BLANCS RÉSIDUELS — visibilité globale thème clair
+   ================================================================ */
+
+/* ── Titres de section du formulaire (FormCard header) ─────── */
+[data-theme="light"] .deposit-step-title-text { color: #0f1923 !important; }
+[data-theme="light"] .deposit-step-title-icon { color: #0f1923 !important; }
+[data-theme="light"] .deposit-badge {
+  background: linear-gradient(90deg, #1a6fef, #7c3aed) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+[data-theme="light"] .deposit-title { color: #0f1923 !important; }
+
+/* ── Upload zones — icône et bouton ──────────────────────────── */
+[data-theme="light"] .deposit-upload-vignette-icon,
+[data-theme="light"] .deposit-upload-gallery-placeholder { color: rgba(15,25,35,0.35) !important; }
+
+[data-theme="light"] .deposit-upload-btn {
+  color: #0f1923 !important;
+  border-color: rgba(0,0,0,0.2) !important;
+  background: rgba(255,255,255,0.7) !important;
+}
+[data-theme="light"] .deposit-upload-btn:hover { background: rgba(255,255,255,0.9) !important; }
+
+/* ── Bouton submit (principal) ────────────────────────────────── */
+[data-theme="light"] .deposit-btn-submit {
+  background: linear-gradient(180deg, #FBC700 0%, #D08700 100%) !important;
+  color: #000000 !important;
+  border-color: #a06000 !important;
+  box-shadow: 0 4px 16px rgba(200,120,0,0.35) !important;
+}
+
+/* ── Séparateur de tags populaires ───────────────────────────── */
+[data-theme="light"] .deposit-popular-tags {
+  border-top-color: rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .deposit-popular-tags-label { color: rgba(15,25,35,0.5) !important; }
+
+/* ── Certificat icon ─────────────────────────────────────────── */
+[data-theme="light"] .deposit-certificate-icon { color: #1a6fef !important; }
+
+/* ── Séparateur collaborateur ────────────────────────────────── */
+[data-theme="light"] .deposit-collab-row {
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+
+/* ── Stepper ligne ────────────────────────────────────────────── */
+[data-theme="light"] .deposit-stepper-line {
+  background: rgba(15,25,35,0.12) !important;
+}
+
+/* ── Nouveaux éléments réseaux sociaux (deposit-social-entry) ── */
+[data-theme="light"] .deposit-social-entry {
+  background: rgba(240,242,248,0.9) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+[data-theme="light"] .deposit-social-entry:focus-within {
+  border-color: rgba(26,111,239,0.4) !important;
+  box-shadow: 0 0 0 3px rgba(26,111,239,0.1) !important;
+}
+[data-theme="light"] .deposit-social-entry-platform {
+  border-right-color: rgba(0,0,0,0.1) !important;
+}
+[data-theme="light"] .deposit-social-entry-platform select {
+  color: #0f1923 !important;
+}
+[data-theme="light"] .deposit-social-entry-platform select option {
+  background: #ffffff !important;
+  color: #0f1923 !important;
+}
+[data-theme="light"] .deposit-social-entry-platform-icon { color: rgba(15,25,35,0.5) !important; }
+[data-theme="light"] .deposit-social-entry-platform-chevron { color: rgba(15,25,35,0.3) !important; }
+[data-theme="light"] .deposit-social-entry-url {
+  color: #0f1923 !important;
+}
+[data-theme="light"] .deposit-social-entry-url::placeholder {
+  color: rgba(15,25,35,0.3) !important;
+}
+[data-theme="light"] .deposit-social-entry-remove {
+  color: rgba(15,25,35,0.35) !important;
+  border-left-color: rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .deposit-social-entry-remove:hover {
+  color: #c03030 !important;
+  background: rgba(200,60,60,0.08) !important;
+}
+
+/* ── Chevron select custom ────────────────────────────────────── */
+[data-theme="light"] .deposit-select-chevron { color: rgba(15,25,35,0.4) !important; }
+
+/* ── Date picker indicator ────────────────────────────────────── */
+[data-theme="light"] .deposit-input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0) opacity(0.5) !important;
+}
+
+/* ── Still thumb border ───────────────────────────────────────── */
+[data-theme="light"] .deposit-still-thumb { border-color: rgba(0,0,0,0.12) !important; }
+
+/* ── Hint step ────────────────────────────────────────────────── */
+[data-theme="light"] .deposit-step1-hint { color: rgba(15,25,35,0.65) !important; }
+
+/* ── Country/Flag dropdown trigger ───────────────────────────── */
+[data-theme="light"] .deposit-country-trigger { color: #0f1923 !important; }
+
+/* ── Info box ─────────────────────────────────────────────────── */
+[data-theme="light"] .deposit-info-box {
+  background: rgba(26,111,239,0.05) !important;
+  border-color: rgba(26,111,239,0.15) !important;
+}
+[data-theme="light"] .deposit-info-box-icon { color: #1a6fef !important; }
+
+/* ── Age warning ──────────────────────────────────────────────── */
+[data-theme="light"] .deposit-age-warning { color: #c03030 !important; }
+
+/* ── Char count ───────────────────────────────────────────────── */
+[data-theme="light"] .deposit-char-count { color: rgba(15,25,35,0.4) !important; }
+
+/* ── Composants globaux (components.css) ─────────────────────── */
+[data-theme="light"] .btn--outline {
+  border-color: rgba(15,25,35,0.25) !important;
+  color: rgba(15,25,35,0.7) !important;
+}
+[data-theme="light"] .btn--outline:hover {
+  border-color: #1a6fef !important;
+  color: #1a6fef !important;
+}
+[data-theme="light"] .loader-text { color: rgba(15,25,35,0.6) !important; }
+[data-theme="light"] .loader-spinner {
+  border-color: rgba(15,25,35,0.08) !important;
+  border-top-color: #1a6fef !important;
+}
+[data-theme="light"] .progress-bar-track { background: rgba(15,25,35,0.08) !important; }
+
+/* ── Watch film page ──────────────────────────────────────────── */
+[data-theme="light"] .watch-film-page { background: #f2f4f8 !important; }
+[data-theme="light"] .watch-film-title,
+[data-theme="light"] .watch-film-meta,
+[data-theme="light"] .watch-film-desc { color: #0f1923 !important; }
+
+/* ── Login / Register page ────────────────────────────────────── */
+[data-theme="light"] .login-page,
+[data-theme="light"] .register-page { background: #f2f4f8 !important; }
+[data-theme="light"] .login-title,
+[data-theme="light"] .register-title,
+[data-theme="light"] .login-label,
+[data-theme="light"] .register-label { color: #0f1923 !important; }
+[data-theme="light"] .login-input,
+[data-theme="light"] .register-input {
+  color: #0f1923 !important;
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.15) !important;
+}
+
+/* ── Texte global — filet de sécurité ────────────────────────── */
+[data-theme="light"] p,
+[data-theme="light"] span:not([class*="gradient"]):not([class*="ai"]),
+[data-theme="light"] li,
+[data-theme="light"] td,
+[data-theme="light"] th,
+[data-theme="light"] label {
+  color: inherit;
+}
+
+/* ── Liens de section ────────────────────────────────────────── */
+[data-theme="light"] .home-section-link {
+  color: #1a6fef !important;
+}
+[data-theme="light"] .home-section-link:hover {
+  color: #0d50c0 !important;
+  opacity: 1 !important;
+}
+
+/* ── Valeur searchbar pays/plateforme ─────────────────────────── */
+[data-theme="light"] .deposit-searchbar-value {
+  color: #0f1923 !important;
+}
+
+/* ── Flèche upload ────────────────────────────────────────────── */
+[data-theme="light"] .deposit-upload-arrow {
+  color: rgba(15,25,35,0.3) !important;
+}
+
+/* ── Bordure card still ───────────────────────────────────────── */
+[data-theme="light"] .deposit-still-name { color: #2a2a35 !important; }
+[data-theme="light"] .deposit-still-thumb { border-color: rgba(0,0,0,0.12) !important; }
+
+/* ── Dropdown de langue (FilmInfoStep) ───────────────────────── */
+[data-theme="light"] .deposit-lang-list {
+  background: #ffffff !important;
+  border-color: rgba(0,0,0,0.1) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+}
+[data-theme="light"] .deposit-lang-option { color: #0f1923 !important; }
+[data-theme="light"] .deposit-lang-option:hover,
+[data-theme="light"] .deposit-lang-option--selected {
+  background: rgba(26,111,239,0.08) !important;
+}
+[data-theme="light"] .deposit-lang-search {
+  color: #0f1923 !important;
+  background: rgba(240,242,248,0.9) !important;
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+[data-theme="light"] .deposit-lang-search::placeholder { color: rgba(15,25,35,0.35) !important; }
+
+/* ── Textes upload overlay steps ─────────────────────────────── */
+[data-theme="light"] .upload-overlay-step.done .upload-overlay-step-label {
+  color: rgba(15,25,35,0.6) !important;
+}
+[data-theme="light"] .upload-overlay-step.active .upload-overlay-step-label {
+  color: #0f1923 !important;
+}
+[data-theme="light"] .upload-overlay-step.pending .upload-overlay-step-icon {
+  color: rgba(15,25,35,0.2) !important;
+}
+[data-theme="light"] .upload-overlay-step.pending .upload-overlay-step-label {
+  color: rgba(15,25,35,0.3) !important;
+}
+[data-theme="light"] .upload-overlay-percent { color: rgba(15,25,35,0.4) !important; }
+
+/* ── Night section — carte contenu (garde fond sombre) ───────── */
+[data-theme="light"] .night-section .night-card {
+  background: rgba(255,255,255,0.08) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+[data-theme="light"] .night-section .night-date { color: #ff2b7f; }
+
+/* ── Inscription button navbar ───────────────────────────────── */
+[data-theme="light"] .deposit-btn-inscription {
+  color: #000000 !important;
+}
+
+/* ── Navbar lang flag text ───────────────────────────────────── */
+[data-theme="light"] .deposit-navbar-lang-text { color: #0f1923 !important; }
