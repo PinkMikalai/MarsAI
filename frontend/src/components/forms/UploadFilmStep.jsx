@@ -1,4 +1,4 @@
-﻿import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FormCard from './FormCard';
 import Icons from '../ui/common/Icons';
@@ -264,11 +264,11 @@ const UploadFilmStep = () => {
           <div className="deposit-popular-tags">
             <p className="deposit-popular-tags-label">{t('deposit.popularTags')}</p>
             <div className="deposit-popular-tags-list">
-              {mostUsedTags.map((tag) => {
+              {mostUsedTags.map((tag, idx) => {
                 const isSelected = form.tags?.includes(tag);
                 return (
                   <button
-                    key={tag}
+                    key={`popular-${tag}-${idx}`}
                     type="button"
                     onClick={() => handleAddPopularTag(tag)}
                     disabled={isSelected}
@@ -389,7 +389,6 @@ const UploadFilmStep = () => {
       </div>
 
       <div className="deposit-field-group">
-
         <label className="deposit-field-label">{t('deposit.stillsField')}</label>
         <div className="deposit-upload-gallery">
           {[0, 1, 2].map((i) => (
@@ -406,34 +405,27 @@ const UploadFilmStep = () => {
               ) : (
                 <span aria-hidden className="deposit-upload-gallery-placeholder"><Icons.Image /></span>
               )}
-
-        <label className="deposit-field-label">Stills (jpg, png – max {STILLS_MAX_COUNT}, 5 Mo chacun)</label>
-
-        <div className="deposit-social-links">
-          {stillsPreviews.map((previewUrl, i) => (
-            <div key={i} className="deposit-social-link-row deposit-still-row">
-              <img
-                src={previewUrl}
-                alt={`Still ${i + 1}`}
-                className="deposit-still-thumb"
-              />
-              <span className="deposit-still-name">{(form.files.stills || [])[i]?.name || `Still ${i + 1}`}</span>
-              <button
-                type="button"
-                className="deposit-social-link-remove"
-                onClick={() => handleRemoveStill(i)}
-              >
-                ×
-              </button>
-
             </div>
           ))}
         </div>
+
+        {stillsPreviews.length > 0 && (
+          <div className="deposit-stills-list">
+            {stillsPreviews.map((previewUrl, i) => (
+              <div key={i} className="deposit-still-row">
+                <img src={previewUrl} alt={`Still ${i + 1}`} className="deposit-still-thumb" />
+                <span className="deposit-still-name">{(form.files.stills || [])[i]?.name || `Still ${i + 1}`}</span>
+                <button type="button" className="deposit-social-link-remove" onClick={() => handleRemoveStill(i)}>×</button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <input
           ref={stillsRef}
           type="file"
           accept=".jpg,.jpeg,.png"
+          multiple
           onChange={handleStillsChange}
           className="deposit-file-input-hidden"
         />
@@ -444,11 +436,7 @@ const UploadFilmStep = () => {
           disabled={(form.files.stills || []).length >= STILLS_MAX_COUNT}
           onClick={() => stillsRef.current?.click()}
         >
-
           {t('deposit.chooseStills')}
-
-          + Ajouter un still ({(form.files.stills || []).length} / {STILLS_MAX_COUNT})
-
         </button>
       </div>
     </FormCard>

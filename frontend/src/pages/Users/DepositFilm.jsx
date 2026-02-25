@@ -82,7 +82,6 @@ const DepositFilmInner = () => {
   // --- handlers ---
 
   const handleSuccess = (result) => {
-
     if (result?.videoId) {
       setSuccessData({
         ...result,
@@ -91,17 +90,6 @@ const DepositFilmInner = () => {
       setShowSuccessModal(true);
     } else {
       handleError({ message: t('deposit.errorNotRecordedRetry') });
-
-    console.log('Succes recu:', result);
-    if (result?.videoId) {
-      setSuccessData({
-        ...result,
-        message: result.message || 'Votre participation a bien ete enregistree.',
-      });
-      setShowSuccessModal(true);
-    } else {
-      handleError({ message: "La video n'a pas pu etre enregistree correctement. Veuillez reessayer." });
-
     }
   };
 
@@ -111,10 +99,7 @@ const DepositFilmInner = () => {
   };
 
   const handleError = (err) => {
-
     let errorMessage = t('deposit.errorSending');
-
-    let errorMessage = "Erreur lors de l'envoi.";
 
     if (err?.message) errorMessage = err.message;
     if (err?.errors && typeof err.errors === 'string') {
@@ -142,8 +127,6 @@ const DepositFilmInner = () => {
 
         <Header badge={t('deposit.badge')} title={t('deposit.title')} />
 
-        <Header badge="APPEL A PROJETS 2026" title="DEPOSER UN FILM" />
-
 
         <div className="deposit-form-zone">
           <Stepper currentStep={currentStepIndex} totalSteps={4} />
@@ -168,9 +151,6 @@ const DepositFilmInner = () => {
               >
 
                 {t('deposit.previous')}
-
-                Precedent
-
               </button>
             )}
             {!isLastStep && (
@@ -182,9 +162,6 @@ const DepositFilmInner = () => {
               >
 
                 {t('deposit.step')} {currentStepIndex + 2}
-
-                Etape {currentStepIndex + 2}
-
               </button>
             )}
             <AnimatePresence mode="wait">
@@ -198,11 +175,7 @@ const DepositFilmInner = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                 >
-ront-AntoineProfileCMS3
-                  {t('deposit.consentHint')}
-
-                  {STEP_HINTS[currentStepIndex]}
-
+                  {t('deposit.consentHint', STEP_HINTS[currentStepIndex])}
                 </motion.p>
               )}
             </AnimatePresence>
