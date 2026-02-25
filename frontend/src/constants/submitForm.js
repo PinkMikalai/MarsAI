@@ -1,3 +1,6 @@
+// liste des langues
+import ISO6391 from 'iso-639-1';
+
 // On importe la liste dynamique depuis shared
 import { COUNTRIES_ISO3166, PHONE_PREFIX_OPTIONS } from '@shared/constants/countries.js';
 
@@ -23,7 +26,10 @@ export const getCountryFlag = (code) => {
 
 
 /** Même liste que les pays (libellés en français) pour le sélecteur langue. */
-export const LANGUAGES_ISO6391 = COUNTRIES_ISO3166;
+export const LANGUAGES_ISO6391 = ISO6391.getAllCodes().map((code) => ({
+  value: code,
+  label: ISO6391.getNativeName(code),
+})).sort((a, b) => a.label.localeCompare(b.label));
 
 
 
@@ -76,6 +82,8 @@ export const formatPhoneE164 = (raw) => {
   if (digits.length >= 10) return `+${digits}`;
   return raw.startsWith('+') ? raw : `+${digits}`;
 };
+
+
 
 export const VIDEO_MAX_SIZE_MB = 100;
 export const COVER_MAX_SIZE_MB = 5;
