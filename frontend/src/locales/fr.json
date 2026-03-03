@@ -525,5 +525,20 @@
       "openSite": "ouvrir le site",
       "partner": "Partenaire"
     }
+  },
+  "onboarding": {
+    "step1Title": "LE FESTIVAL",
+    "step1Desc": "2 jours de projections, workshops et remise des prix à Marseille. Entrée libre, ouvert à tous.",
+    "step1Item1": "Courts-métrages de 30 secondes à 2 minutes",
+    "step1Item2": "L'IA doit intervenir dans au moins une phase de production",
+    "step1Item3": "Production datant de 2025 ou 2026",
+    "step1Item4": "Gratuit — première soumission au festival requise",
+    "step2Title": "PRÊT À PARTICIPER ?",
+    "step2Desc": "Rejoignez des cinéastes du monde entier et soumettez votre vision de l'avenir. C'est gratuit, c'est ouvert, c'est maintenant.",
+    "cta": "PARTICIPER",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "close": "Fermer",
+    "stepOf": "{{current}} / {{total}}"
   }
 }

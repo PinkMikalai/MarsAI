@@ -1,10 +1,10 @@
 // Hero , section hero de la page d'accueil MarsAI avec vidéo ou FX en boucle ------------//
 
-import React, { useRef, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../constants/routes';
 import Navbar from '../layout/Navbar';
+import OnboardingModal from '../ui/modal/OnboardingModal';
 import heroVideo from '../../assets/videos/videoloop3.mp4';
 
 const USE_VIDEO_BACKGROUND = true; /* true = vidéo MP4, false = animation FX bleu/magenta seamless */
@@ -13,7 +13,11 @@ const PARALLAX_FACTOR = 0.25; /* 0.25 = vidéo bouge à 25% de la vitesse du scr
 const Hero = () => {
   const { t } = useTranslation();
   const videoHome = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
+  const [scrollY,       setScrollY]       = useState(0);
+  const [modalOpen,     setModalOpen]     = useState(false);
+
+  const openModal  = useCallback(() => setModalOpen(true),  []);
+  const closeModal = useCallback(() => setModalOpen(false), []);
 
   useEffect(() => {
     if (!USE_VIDEO_BACKGROUND) return;
@@ -80,14 +84,16 @@ const Hero = () => {
           {t('hero.description')}
         </p>
         <div className="hero-cta">
-          <Link to={ROUTES.PARTICIPATE} className="hero-btn hero-btn-primary">
+          <button type="button" className="hero-btn hero-btn-primary" onClick={openModal}>
             {t('hero.ctaParticipate')}
-          </Link>
-          <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">
+          </button>
+          <button type="button" className="hero-btn hero-btn-secondary" onClick={openModal}>
             {t('hero.ctaLearnMore')}
-          </a>
+          </button>
         </div>
       </div>
+
+      {modalOpen && <OnboardingModal onClose={closeModal} />}
     </section>
   );
 };

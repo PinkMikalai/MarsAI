@@ -525,5 +525,20 @@
       "openSite": "visit website",
       "partner": "Partner"
     }
+  },
+  "onboarding": {
+    "step1Title": "THE FESTIVAL",
+    "step1Desc": "2 days of screenings, workshops and awards in Marseille. Free entry, open to everyone.",
+    "step1Item1": "Short films from 30 seconds to 2 minutes",
+    "step1Item2": "AI must be used in at least one production phase",
+    "step1Item3": "Production from 2025 or 2026",
+    "step1Item4": "Free — first submission to the festival required",
+    "step2Title": "READY TO JOIN?",
+    "step2Desc": "Join filmmakers from around the world and submit your vision of the future. It's free, it's open, it's now.",
+    "cta": "PARTICIPATE",
+    "prev": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "stepOf": "{{current}} / {{total}}"
   }
 }

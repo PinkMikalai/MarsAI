@@ -5,9 +5,7 @@ async function searchVideos(req, res) {
      
 
 
-        const rows = await getSearchVideosModel(req.query);
-        // map les videos
-        const videos = rows.map((row) => row.video_json);
+        const videos = await getSearchVideosModel(req.query);
 
         res.status(200).json({
             success: true,
