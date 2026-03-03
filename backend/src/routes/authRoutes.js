@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { getInviteController, registerController, loginController, updateUserController, deleteUserController, profileUserController, forgotPasswordController, resetPasswordController, updatePasswordController } from '../controllers/user/authController.js';
+import { getInviteController, registerController, loginController, updateUserController, updateUserBySuperAdminController, deleteUserController, profileUserController, forgotPasswordController, resetPasswordController, updatePasswordController } from '../controllers/user/authController.js';
 import {inviteUserController} from '../controllers/admin/adminController.js';
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 import authMiddleware from '../middlewares/authMiddleware.js';
 import checkRole from '../middlewares/checkRoleMiddleware.js';
 import { validate } from '../middlewares/validate.js';
-import { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema } from '../validators/authSchema.js';
+import { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserShema } from '../validators/authSchema.js';
 import loginSchema from '../validators/loginShema.js';
 
 
@@ -19,9 +19,9 @@ router.post('/login', validate(loginSchema), loginController);
 
 router.get('/profile', authMiddleware, profileUserController);
 
-router.put('/update_profile', authMiddleware, updateUserController);
-router.put('/admin/user_update/:id', authMiddleware, checkRole(['Super-admin', 'Admin']), updateUserController);
-router.delete('/admin/user_delete/:id', authMiddleware, checkRole(['Super-admin', 'Admin']), deleteUserController);
+router.put('/update_profile', authMiddleware, validate(updateUserShema), updateUserController);
+router.put('/admin/user_update/:id', authMiddleware, checkRole(['Super-admin']), updateUserBySuperAdminController);
+router.delete('/admin/user_delete/:id', authMiddleware, checkRole(['Super-admin']), deleteUserController);
 router.post('/forgot_password', forgotPasswordController);
 router.post('/reset_password', validate(resetPasswordSchema), resetPasswordController);
 router.put('/update_password', authMiddleware, validate(updatePasswordSchema), updatePasswordController);

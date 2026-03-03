@@ -440,7 +440,23 @@ async function getSearchVideosModel(search = {}) {
         OR realisator_lastname LIKE '%${search}%' 
         OR language LIKE '%${search}%' 
         OR country LIKE '%${search}%' 
-        OR classification LIKE '%${search}%'`;
+        OR tech_resume LIKE '%${search}%'
+        OR creative_resume LIKE '%${search}%'
+        OR classification LIKE '%${search}%'
+        OR tag.name LIKE '%${search}%'
+        OR award.title LIKE '%${search}%'
+        WHERE video.id = tag.video_id
+        AND video.id = award.video_id
+        AND video.id = contributor.video_id
+        AND video.id = selector_memo.video_id
+        AND video.id = admin_video.video_id
+        AND video.id = admin_status.video_id
+        AND video.id = acquisition_source.video_id
+        AND video.id = contributor.video_id
+        AND video.id = selector_memo.video_id
+        AND video.id = admin_video.video_id
+        AND video.id = admin_status.video_id
+        AND video.id = acquisition_source.video_id`;
         const [rows] = await pool.execute(query);
         return rows;
         console.log('query search', rows);

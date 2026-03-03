@@ -61,7 +61,7 @@ const ForgotPassword = () => {
                 id="forgot-email"
                 name="email"
                 type="email"
-                autoComplete="email"
+                autoComplete="new-password"
                 placeholder={t('auth.emailPlaceholder')}
                 className="login-form-input"
                 value={email}
