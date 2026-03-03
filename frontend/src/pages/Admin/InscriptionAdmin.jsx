@@ -88,20 +88,6 @@ const InscriptionAdmin = () => {
             </div>
           </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           <div className="admin-inscription-field">
             <label htmlFor="inscription-role" className="admin-inscription-label">Rôle</label>
             <select
@@ -118,18 +104,6 @@ const InscriptionAdmin = () => {
             </select>
           </div>
         
-
-
-
-
-
-
-
-
-
-
-
-
 
           <div className="admin-inscription-field">
             <label htmlFor="inscription-password" className="admin-inscription-label">Mot de passe</label>

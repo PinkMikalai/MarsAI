@@ -46,6 +46,20 @@ const updateUserController = async (req, res, next) => {
     }
 };
 
+const updateUserBySuperAdminController = async (req, res, next) => {
+    try {
+        const id = req.params.id || req.user.id;
+        const result = await authService.updateUserBySuperAdmin(id, req.body);
+        res.status(200).json({
+            status: "success",
+            message: `User n° ${id}  updated with success`,
+            result: result
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 const deleteUserController = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -82,7 +96,7 @@ const forgotPasswordController = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             message: 'Link to reset password created',
-            result: result
+           
         })
     } catch (error) {
         next(error)
@@ -96,7 +110,7 @@ const resetPasswordController = async (req, res, next) => {
         res.status(200).json({
             status: 'success',
             message: 'New password created',
-            result: result
+           
         })
     } catch (error) {
         next(error)
@@ -106,12 +120,12 @@ const resetPasswordController = async (req, res, next) => {
 const updatePasswordController = async (req, res, next) => {
     try {
         const userId = req.user.id;
-        const { oldPassword, newPassword } = req.body
+        const { oldPassword, newPassword , confirmNewPassword} = req.body
         const result = await authService.updatePassword(userId, oldPassword, newPassword);
         res.status(200).json({
             status: 'success',
-            message: 'Password updated successfully',
-            result: result
+            message: 'Password updated successfully'
+           
         })
     } catch (error) {
         next(error)
@@ -123,6 +137,7 @@ export {
     registerController,
     loginController,
     updateUserController,
+    updateUserBySuperAdminController,
     deleteUserController,
     profileUserController,
     forgotPasswordController,

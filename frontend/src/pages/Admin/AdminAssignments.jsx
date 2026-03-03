@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { assignmentService } from '../../service/assignmentService.js'
+import { assignmentService } from '../../service/assignmentService.js';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext.jsx'
 
 
-const AdminAssignment = ({ videos,isOpen, onClose, onSuccess, selectors }) => {
+const AdminAssignment = ({ videos, isOpen, onClose, onSuccess, selectors }) => {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const [assigned, setAssigned] = useState([]);
     const [available, setAvailable] = useState([]);
@@ -11,7 +13,7 @@ const AdminAssignment = ({ videos,isOpen, onClose, onSuccess, selectors }) => {
 
     useEffect(() => {
         if (isOpen && selectors) {
-            setAvailable(selectors),
+            setAvailable(selectors);
                 setAssigned([])
         }
     }, [isOpen, selectors, videos]);
@@ -23,31 +25,28 @@ const AdminAssignment = ({ videos,isOpen, onClose, onSuccess, selectors }) => {
             setAvailable(available.filter(user => user.id !== selector.id))
         }
     }
-const handleConfirm = async () => {
-    setLoading(true);
+    const handleConfirm = async () => {
+        if(!currenVideo) {
+            return;
+        }
+        setLoading(true);
 
-    try{
-        await assignmentService.createAssignment({
-            video_ids : [video.id],
-            user_ids : assigned.map( user => user.id),
-            admin_id: user?.id
-        })
-        onSuccess(video.id, assigned.length);
+        try {
+            await assignmentService.createAssignment({
+                video_ids: [currenVideo.id],
+                user_ids: assigned.map(user => user.id),
+                admin_id: user?.id
+            })
+            onSuccess(video.id, assigned.length);
             onClose();
 
-    }catch (error) {
-        console.error(error);
-    }finally{
-        setLoading(false)
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false)
+        }
+
     }
-
-
-}
- 
-
-
-
-
 
     return (
         <>
@@ -55,7 +54,7 @@ const handleConfirm = async () => {
 
             <div className={`wf-admin-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}>
 
-                {/* BARRE DE PRÉHENSION MOBILE (Handle) */}
+                {/* Pour la version mobile */}
                 <div className="mobile-drawer-handle" onClick={onClose}>
                     <span></span>
                 </div>
@@ -63,7 +62,7 @@ const handleConfirm = async () => {
                 <div className="wf-admin-panel-header">
                     <div>
                         <h3 className="wf-admin-panel-title">Assignation Rapide</h3>
-                        <span className="admin-film-target">{film?.title}</span>
+                        <span className="admin-film-target">{videos[0]?.title}</span>
                     </div>
                     <button className="wf-admin-panel-close" onClick={onClose}>✕</button>
                 </div>
@@ -78,7 +77,7 @@ const handleConfirm = async () => {
                                 setAvailable(available.slice(3));
                             }}
                         >
-                            ⚡ Les 3 plus disponibles
+                            Les 3 plus disponibles
                         </button>
                     </div>
 
@@ -90,9 +89,9 @@ const handleConfirm = async () => {
                             value=""
                         >
                             <option value="" disabled>Choisir un membre...</option>
-                            {available.map(u => (
-                                <option key={u.id} value={u.id}>
-                                    {u.firstname} {u.lastname} ({u.current_load})
+                            {available.map(user => (
+                                <option key={user.id} value={user.id}>
+                                    {user.firstname} {user.lastname} ({user.current_load})
                                 </option>
                             ))}
                         </select>
@@ -101,14 +100,14 @@ const handleConfirm = async () => {
                     <div className="wf-admin-section">
                         <h4 className="wf-admin-section-title">Équipe actuelle</h4>
                         <div className="admin-assigned-scroll">
-                            {assigned.map(u => (
-                                <div key={u.id} className="admin-card-pill">
-                                    <span>{u.firstname} {u.lastname}</span>
+                            {assigned.map(user => (
+                                <div key={user.id} className="admin-card-pill">
+                                    <span>{user.firstname} {user.lastname}</span>
                                     <span
                                         className="remove-pill"
                                         onClick={() => {
-                                            setAvailable([...available, u]);
-                                            setAssigned(assigned.filter(a => a.id !== u.id));
+                                            setAvailable([...available, user]);
+                                            setAssigned(assigned.filter(assigned => assigned.id !== user.id));
                                         }}
                                     >✕</span>
                                 </div>
@@ -129,12 +128,9 @@ const handleConfirm = async () => {
             </div>
 
 
-
         </>
 
-
     )
-
 
 };
 

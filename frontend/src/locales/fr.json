@@ -125,8 +125,15 @@
     "resetTitle": "Réinitialisation",
     "invalidLinkError": "Lien invalide ou expiré. Demandez un nouveau lien.",
     "requestNewLink": "Demander un nouveau lien",
-    "newPasswordLabel": "Nouveau mot de passe",
-    "confirmNewPasswordLabel": "Confirmer le mot de passe"
+    "updatePasswordTitle": "Modifier le mot de passe",
+  "oldPasswordLabel": "Mot de passe actuel",
+  "newPasswordLabel": "Nouveau mot de passe",
+  "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
+  "updatePasswordButton": "Mettre à jour",
+  "updating": "Mise à jour...",
+  "passwordUpdateSuccess": "Votre mot de passe a été modifié avec succès !",
+  "backToProfile": "Retour au profil",
+  "fillAllFields": "Veuillez remplir tous les champs."
   },
   "deposit": {
     "badge": "APPEL À PROJETS 2026",

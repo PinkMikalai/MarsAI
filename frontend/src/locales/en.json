@@ -126,7 +126,14 @@
     "invalidLinkError": "Invalid or expired link. Request a new one.",
     "requestNewLink": "Request a new link",
     "newPasswordLabel": "New password",
-    "confirmNewPasswordLabel": "Confirm password"
+    "confirmNewPasswordLabel": "Confirm password",
+    "updatePasswordTitle": "Update password",
+  "oldPasswordLabel": "Current password",
+  "updatePasswordButton": "Update password",
+  "updating": "Updating...",
+  "passwordUpdateSuccess": "Your password has been updated successfully!",
+  "backToProfile": "Back to profile",
+  "fillAllFields": "Please fill in all fields."
   },
   "deposit": {
     "badge": "OPEN CALL 2026",
