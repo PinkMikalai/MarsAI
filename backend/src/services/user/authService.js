@@ -97,9 +97,9 @@ export async function login({ email, password }) {
 
     const role = await getRoleByIdModel(user.role_id);
     const roleLabel = role ? role.name : 'Unknown';
-   
+
     const token = jwt.sign(
-        { sub: user.id, email: user.email, role: roleLabel },
+        { sub: user.id, email: user.email, role_id: user.role_id },
         process.env.JWT_SECRET,
         { expiresIn: '12h' }
     );
@@ -110,6 +110,7 @@ export async function login({ email, password }) {
             email: user.email,
             firstname: user.firstname,
             lastname: user.lastname,
+            role_id: user.role_id,
             role: roleLabel
         }
     }
@@ -192,6 +193,7 @@ export async function profileUser(id) {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
+        role_id: user.role_id,
         role: role ? role.name : "Unknown",
         message: `User n° ${id} connected`,
         status: "success"

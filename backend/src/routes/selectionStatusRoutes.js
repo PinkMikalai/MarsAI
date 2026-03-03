@@ -6,6 +6,6 @@ import checkRole from "../middlewares/checkRoleMiddleware.js";
 const router = Router();
 
 // Récupérer tous les statuts de sélection (accessible aux selectors, admins)
-router.get("/", authMiddleware, checkRole(["Selector", "Admin", "Super-admin"]), getAllSelectionStatus);
+router.get("/", authMiddleware, checkRole([2, 1, 3]), getAllSelectionStatus);
 
 export default router;

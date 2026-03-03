@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
 import { videoApi, getCoverUrl } from '../../service/galleryService';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import Icons from '../../components/ui/common/Icons';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AdminAssignment from '../Admin/AdminAssignments.jsx';
+import SearchBar from '../../components/ui/search/SearchBar';
 
 let _cachedVideos = null;
 
@@ -27,12 +26,20 @@ const GalerieFilms = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [selector, setSelector] = useState([]);
 
+  // Etats pour la recherche
+  const [search, setSearch] = useState('');
+  const [selectionStatus, setSelectionStatus] = useState(null);
+  const [adminStatus, setAdminStatus] = useState(null);
+  const [rated, setRated] = useState(null);
+  const [unrated, setUnrated] = useState(null);
+
   useEffect(() => {
     if (_cachedVideos) return;
 
     let cancelled = false;
     setLoading(true);
     setError(null);
+    //ici on gene notre liste de films aleatoirement
 
     videoApi.getAllVideos()
       .then((res) => {
@@ -75,6 +82,8 @@ const GalerieFilms = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  
+
   const filteredVideos = videos;
   const totalPages = Math.max(1, Math.ceil(filteredVideos.length / FILMS_PER_PAGE));
   const start = (currentPage - 1) * FILMS_PER_PAGE;
@@ -87,14 +96,9 @@ const GalerieFilms = () => {
         style={{ transform: `translate3d(0, ${scrollY * 0.2}px, 0)` }}
         aria-hidden
       >
-        <div className="galerie-parallax-shape galerie-parallax-shape--1" />
-        <div className="galerie-parallax-shape galerie-parallax-shape--2" />
-        <div className="galerie-parallax-shape galerie-parallax-shape--3" />
+     
       </div>
 
-      <header className="galerie-header">
-        <Navbar />
-      </header>
 
       <main className="galerie-main">
         <h1 className="galerie-title">
@@ -206,7 +210,6 @@ const GalerieFilms = () => {
         )}
       </main>
 
-      <Footer />
     </div>
   );
 };

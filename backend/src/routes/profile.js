@@ -9,7 +9,7 @@ import checkRole from "../middlewares/checkRoleMiddleware.js";
 
 
 
-router.get("/selector/memos", authMiddleware, checkRole(["Selector"]), getSelectorAllMemoByUserId);
+router.get("/selector/memos", authMiddleware, checkRole([2]), getSelectorAllMemoByUserId);
 
 
 export default router;

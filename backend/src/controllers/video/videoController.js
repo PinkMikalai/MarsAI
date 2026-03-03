@@ -1,6 +1,6 @@
 import {
     createVideoModel, 
-    getAllVideosModel,
+    getSearchVideosModel,
     getVideoByIdModel,
     getAdminVideoDataByIdModel,
     getSelectorVideoDataByIdModel,
@@ -25,9 +25,9 @@ async function createVideo(req, res) {
     console.log("test creation de video");
 }
 
-async function getAllVideos(req, res) {
+async function getSearchVideos(req, res) {
     try {
-        const videos = await getAllVideosModel();
+        const videos = await getSearchVideosModel(req.query);
         res.status(200).json({
             success: true,
             data: videos,
@@ -55,7 +55,7 @@ async function getVideoById(req, res) {
                 status: false
             });
         }
-        else if (role === "Admin" || role === "Super-admin") {
+        else if (role === "Admin" || role === "Super_admin") {
             const adminVideoData = await getAdminVideoDataByIdModel(req.params.id);
             console.log("admin video data", adminVideoData);
             return res.status(200).json({
@@ -152,7 +152,7 @@ async function deleteVideo(req, res) {
 
 export {
     createVideo,
-    getAllVideos,
+    getSearchVideos,
     getVideoById,
     updateVideo,
     deleteVideo,

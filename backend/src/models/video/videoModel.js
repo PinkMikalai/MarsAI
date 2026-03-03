@@ -56,15 +56,7 @@ async function createVideoModel(videoData) {
     }
 }
 
-// get all videos
-async function getAllVideosModel() {
-   
-    const [rows] = await pool.execute(  
-        'SELECT * FROM video'
-    );
-    return rows;
-    
-}
+
 
 // get video by id, infos pour tout les mondes
 async function getVideoByIdModel(id) {
@@ -426,49 +418,61 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 }
 
 
-// search videos — conditions selon le rôle (Public, Selector, Admin/Super-admin)
-async function getSearchVideosModel(search = {}) {
-
+// search videos — recherche textuelle dans video, tag, award, contributor, admin_status, acquisition_source
+// Paramètres : { q, search, role, userId } — q ou search = terme de recherche
+async function getSearchVideosModel(params = {}) {
     try {
-        const { search, role, userId } = search;
-        const query = `SELECT * 
-        FROM video 
-        WHERE title LIKE '%${search}%' 
-        OR title_en LIKE '%${search}%' 
-        OR synopsis LIKE '%${search}%' 
-        OR realisator_firstname LIKE '%${search}%' 
-        OR realisator_lastname LIKE '%${search}%' 
-        OR language LIKE '%${search}%' 
-        OR country LIKE '%${search}%' 
-        OR tech_resume LIKE '%${search}%'
-        OR creative_resume LIKE '%${search}%'
-        OR classification LIKE '%${search}%'
-        OR tag.name LIKE '%${search}%'
-        OR award.title LIKE '%${search}%'
-        WHERE video.id = tag.video_id
-        AND video.id = award.video_id
-        AND video.id = contributor.video_id
-        AND video.id = selector_memo.video_id
-        AND video.id = admin_video.video_id
-        AND video.id = admin_status.video_id
-        AND video.id = acquisition_source.video_id
-        AND video.id = contributor.video_id
-        AND video.id = selector_memo.video_id
-        AND video.id = admin_video.video_id
-        AND video.id = admin_status.video_id
-        AND video.id = acquisition_source.video_id`;
-        const [rows] = await pool.execute(query);
+        const { q, search: searchVal, role, userId } = params;
+        const searchTerm = (q ?? searchVal ?? '').toString().trim();
+
+        // Pas de terme → retourner toutes les vidéos
+        if (!searchTerm) {
+            const [rows] = await pool.execute('SELECT * FROM video');
+            return rows;
+        }
+
+        // Terme fourni → recherche avec JOINs (video_tag, tag, video_award, award, contributor, admin_video, admin_status, acquisition_source)
+        const term = `%${searchTerm}%`;
+        const query = `
+            SELECT DISTINCT v.*
+            FROM video v
+            LEFT JOIN video_tag vt ON v.id = vt.video_id
+            LEFT JOIN tag t ON vt.tag_id = t.id
+            LEFT JOIN video_award va ON v.id = va.video_id
+            LEFT JOIN award a ON va.award_id = a.id
+            LEFT JOIN contributor c ON v.id = c.video_id
+            LEFT JOIN admin_video av ON v.id = av.video_id
+            LEFT JOIN admin_status ast ON av.admin_status_id = ast.id
+            LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id
+            WHERE v.title LIKE ?
+               OR v.title_en LIKE ?
+               OR v.synopsis LIKE ?
+               OR v.realisator_firstname LIKE ?
+               OR v.realisator_lastname LIKE ?
+               OR v.language LIKE ?
+               OR v.country LIKE ?
+               OR v.tech_resume LIKE ?
+               OR v.creative_resume LIKE ?
+               OR v.classification LIKE ?
+               OR t.name LIKE ?
+               OR a.title LIKE ?
+               OR c.firstname LIKE ?
+               OR c.last_name LIKE ?
+               OR ast.name LIKE ?
+               OR ac.name LIKE ?
+        `;
+        const placeholders = [term, term, term, term, term, term, term, term, term, term, term, term, term, term, term, term];
+        const [rows] = await pool.execute(query, placeholders);
         return rows;
-        console.log('query search', rows);
-    }catch (error) {
+    } catch (error) {
         console.error('erreur lors de la recherche des videos(cote model): ', error);
+        throw error;
     }
 }
 
 
 export {
     createVideoModel,
-    getAllVideosModel,
     getVideoByIdModel,
     getAdminVideoDataByIdModel,
     getSelectorVideoDataByIdModel,
