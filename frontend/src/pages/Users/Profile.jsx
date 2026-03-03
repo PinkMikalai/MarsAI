@@ -7,6 +7,7 @@ import { ROUTES } from '../../constants/routes';
 import { authService } from '../../service/authService';
 import { useAuth } from '../../context/AuthContext';
 import AdminLayout from '../../components/admin/AdminLayout';
+import { useNavigate } from 'react-router-dom';
 
 const getRoleLabel = (role, t) => {
   const r = (role || '').replace(/-/g, '_');
@@ -19,6 +20,7 @@ const getRoleLabel = (role, t) => {
 const AdminProfileContent = ({ profile, loading }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [modalEdit, setModalEdit] = useState(false);
   const [modalPassword, setModalPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
@@ -68,7 +70,7 @@ const AdminProfileContent = ({ profile, loading }) => {
               <button
                 type="button"
                 className="admin-profile-btn admin-profile-btn--secondary"
-                onClick={() => setModalPassword(true)}
+                onClick={() => navigate(ROUTES.UPDATE_PASSWORD)}
               >
                 {t('profile.changePassword')}
               </button>

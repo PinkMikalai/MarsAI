@@ -5,7 +5,6 @@ import FilmsCompetition from '../../components/home/FilmsCompetition';
 import ObjectifsFestival from '../../components/home/ObjectifsFestival';
 import ProtocoleTemporel from '../../components/home/ProtocoleTemporel';
 import ConferencesGratuites from '../../components/home/ConferencesGratuites';
-import MarsAINight from '../../components/home/MarsAINight';
 import LaPlateforme from '../../components/home/LaPlateforme';
 import ChiffresProjetes from '../../components/home/ChiffresProjetes';
 import Sponsors from '../../components/home/Sponsors';
@@ -22,7 +21,6 @@ const Home = () => {
       <ObjectifsFestival />
       <ProtocoleTemporel />
       <ConferencesGratuites />
-      <MarsAINight />
       <LaPlateforme />
       <ChiffresProjetes />
       <Sponsors />

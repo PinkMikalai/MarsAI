@@ -7,17 +7,30 @@ import { videoApi, getCoverUrl } from '../../service/galleryService';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import Icons from '../../components/ui/common/Icons';
+import { useAuth } from '../../context/AuthContext.jsx';
+import AdminAssignment from '../Admin/AdminAssignments.jsx';
+
+let _cachedVideos = null;
 
 let _cachedVideos = null;
 
 const GalerieFilms = () => {
   const { t } = useTranslation();
+<<<<<<< HEAD
+=======
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'Admin' || 'Super_admin';
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   const [scrollY, setScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [videos, setVideos] = useState(_cachedVideos || []);
   const [loading, setLoading] = useState(!_cachedVideos);
   const [error, setError] = useState(null);
   const [imageErrors, setImageErrors] = useState(new Set());
+  // Etats pour l'assignation des films aux selectionneurs par l'admin
+  const [isAssignPanelOpen, setIsAssignPanelOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selector, setSelector] = useState([]);
 
   useEffect(() => {
     if (_cachedVideos) return;

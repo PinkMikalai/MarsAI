@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }) => {
                         const data = await authService.profile();
                         setUser(data.result || data);
                     } catch (error) {
-                        console.error("Server error")
+                        console.error("Session expired");
+                        logout();
                     }
                 }
             // en cas d'erreur grave : le localstorage est vidé

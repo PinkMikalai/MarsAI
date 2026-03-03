@@ -70,7 +70,11 @@ const LoginForm = () => {
               id="email"
               name="email"
               type="email"
+<<<<<<< HEAD
               autoComplete="email"
+=======
+              autoComplete="off"
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
               placeholder={t('auth.emailPlaceholder')}
               className="login-form-input"
               value={email}
@@ -82,9 +86,13 @@ const LoginForm = () => {
 
           <div className="login-form-field">
             <label htmlFor="password" className="login-form-label">{t('auth.passwordLabel')}</label>
+<<<<<<< HEAD
             <Link to={ROUTES.FORGOT_PASSWORD} className="login-form-forgot">
               {t('auth.forgotPasswordLink')}
             </Link>
+=======
+            
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
             <input
               id="password"
               name="password"
@@ -107,6 +115,11 @@ const LoginForm = () => {
             {loading ? t('auth.signingIn') : t('auth.signIn')}
           </button>
         </form>
+        <div className="admin-login-footer">
+          <Link to={ROUTES.FORGOT_PASSWORD} className="login-form-forgot">
+              {t('auth.forgotPasswordLink')}
+            </Link>
+        </div>
 
         <div className="admin-login-footer">
           <Link to={ROUTES.HOME} className="admin-login-back">

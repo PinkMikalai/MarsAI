@@ -427,25 +427,23 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 
 
 // search videos — conditions selon le rôle (Public, Selector, Admin/Super-admin)
-async function getSearchVideosModel(params = {}) {
+async function getSearchVideosModel(search = {}) {
     try {
-        const { search } = params;
-        const term = `%${search ?? ''}%`;
-        const query = `SELECT * 
-            FROM video 
-            WHERE title LIKE ? 
-            OR title_en LIKE ? 
-            OR synopsis LIKE ? 
-            OR realisator_firstname LIKE ? 
-            OR realisator_lastname LIKE ? 
-            OR language LIKE ? 
-            OR country LIKE ? 
-            OR classification LIKE ?`;
-        const [rows] = await pool.execute(query, [term, term, term, term, term, term, term, term]);
+        const { search, role, userId } = search;
+        const query = `SELECT *
+        FROM video
+        WHERE title LIKE '%${search}%'
+        OR title_en LIKE '%${search}%'
+        OR synopsis LIKE '%${search}%'
+        OR realisator_firstname LIKE '%${search}%'
+        OR realisator_lastname LIKE '%${search}%'
+        OR language LIKE '%${search}%'
+        OR country LIKE '%${search}%'
+        OR classification LIKE '%${search}%'`;
+        const [rows] = await pool.execute(query);
         return rows;
     } catch (error) {
         console.error('erreur lors de la recherche des videos(cote model): ', error);
-        throw error;
     }
 }
 

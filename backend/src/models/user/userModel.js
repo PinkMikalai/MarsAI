@@ -28,6 +28,16 @@ async function createUserModel(userData) {
     }
 }
 
+//  Récupérer tous les users 
+async function getAllUsersModel() {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT id, email,firstname,lastname, password_hash, role_id AS role_id FROM user ');
+        return rows;
+    } catch (error) {
+        throw error;
+    }
+}
 
 //  Récupérer un utilisateur par son email 
 async function getUserByEmailModel(email) {
@@ -36,7 +46,7 @@ async function getUserByEmailModel(email) {
             'SELECT id, email,firstname,lastname, password_hash, role_id AS role_id FROM user WHERE email = ?',
             [email]
         );
-        console.log("DEBUG SQL", rows[0]); 
+        console.log("DEBUG SQL", rows[0]);
         return rows[0];
     } catch (error) {
         throw error;
@@ -44,7 +54,7 @@ async function getUserByEmailModel(email) {
 }
 
 // Récuparation d'un user par son id
- 
+
 async function getUserByIdModel(id) {
     try {
         const [rows] = await pool.execute(
@@ -58,7 +68,43 @@ async function getUserByIdModel(id) {
     }
 }
 // Modification d'un user
-async function updateUserModel(id, userData){
+async function updateUserModel(id, userData) {
+    try {
+        const fields = [];
+        const values = [];
+
+        if (userData.firstname !== undefined) {
+            fields.push('firstname = ?');
+            values.push(userData.firstname);
+        }
+        if (userData.lastname !== undefined) {
+            fields.push('lastname = ?');
+            values.push(userData.lastname);
+        }
+
+        if (userData.password_hash !== undefined) {
+            fields.push('password_hash = ?');
+            values.push(userData.password_hash);
+        }
+
+
+        if (fields.length === 0) return true;
+
+        const query = `UPDATE user SET ${fields.join(',')} WHERE id = ?`; values.push(id);
+
+        const [result] = await pool.execute(query, values);
+        return result.affectedRows > 0;
+
+    } catch (error) {
+        console.error('Erreur SQL updateUserModel:', error);
+        throw error;
+
+    }
+
+}
+
+// modification d'un email ou d'un role par le super_admin
+async function updateUserBySuperAdminModel(id, userData) {
     try {
         const fields = [];
         const values = [];
@@ -89,19 +135,16 @@ async function updateUserModel(id, userData){
         const query = `UPDATE user SET ${fields.join(',')} WHERE id=?`; values.push(id);
 
         const [result] = await pool.execute(query, values);
-        return result.affectedRows > 0 ;
+        return result.affectedRows > 0;
 
-    }catch(error) {
+    } catch (error) {
         console.error('Erreur SQL updateUserModel:', error);
         throw error;
 
     }
 
-    
 }
-
 //suppression d'un user
-
 async function deleteUserModel(id) {
     try {
         const [result] = await pool.execute(
@@ -110,15 +153,75 @@ async function deleteUserModel(id) {
         );
         return result.affectedRows > 0;
     } catch (error) {
-        console.error( `Error while delating user n°: ${id} `, error);
+        console.error(`Error while delating user n°: ${id} `, error);
+        throw error;
+    }
+}
+// récupérattion de tous les roles
+async function getAllRolesModel() {
+    try {
+        const [rows] = await pool.execute('SELECT id, name FROM role');
+        return rows;
+    } catch (error) {
+        console.error('Error occurred while retrieving data ', error);
+        throw error;
+    }
+
+}
+// récuparation des roles par leur id
+async function getRoleByIdModel(id) {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT id, name FROM role WHERE id = ?',
+            [id]
+        );
+        return rows[0];
+    } catch (error) {
+        console.error('Error occurred while retrieving data by ID: ', error);
+        throw error;
+    }
+}
+// récuparation des roles par leur NOM
+async function getRoleByNameModel(name) {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT id, name FROM role WHERE name = ?',
+            [name]
+        );
+        return rows[0];
+    } catch (error) {
+        console.error('Error occurred while retrieving data by NAME: ', error);
+        throw error;
+    }
+}
+// création d'un role
+async function createRoleModel(name) {
+    if (!name) {
+        throw new Error('Role is required')
+    }
+    try {
+        const query =
+            ` INSERT INTO role (name) VALUES (?)`;
+
+        const [result] = await pool.execute(query, [name || null]);
+
+        return result.insertId;
+    } catch (error) {
+        console.error('Error occurred while creating an user profile: ', error);
         throw error;
     }
 }
 
 export {
     createUserModel,
+    getAllUsersModel,
     getUserByEmailModel,
     getUserByIdModel,
     updateUserModel,
-    deleteUserModel
+    updateUserBySuperAdminModel,
+    deleteUserModel,
+    getAllRolesModel,
+    getRoleByIdModel,
+    getRoleByNameModel,
+    createRoleModel
 };

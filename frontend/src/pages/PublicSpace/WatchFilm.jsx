@@ -150,6 +150,15 @@ const InfoPanel = ({
                         {(video?.tech_resume || video?.classification || video?.creative_resume) && (
                             <div className="wf-admin-section">
                                 <h4 className="wf-admin-section-title">{t('watchFilm.technique')}</h4>
+<<<<<<< HEAD
+=======
+                                {video?.language && (
+                                    <div className="wf-admin-row">
+                                        <span className="wf-admin-label">{t('watchFilm.language')}</span>
+                                        <span className="wf-admin-value">{video.language}</span>
+                                    </div>
+                                )}
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                                 {video.classification && (
                                     <div className="wf-admin-row">
                                         <span className="wf-admin-label">{t('watchFilm.classification')}</span>
@@ -198,6 +207,15 @@ const InfoPanel = ({
                     <>
                         <div className="wf-admin-section">
                             <h4 className="wf-admin-section-title">{t('watchFilm.technique')}</h4>
+<<<<<<< HEAD
+=======
+                            {video?.language && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">{t('watchFilm.language')}</span>
+                                    <span className="wf-admin-value">{video.language}</span>
+                                </div>
+                            )}
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                             {adminData.classification && (
                                 <div className="wf-admin-row">
                                     <span className="wf-admin-label">{t('watchFilm.classification')}</span>
@@ -238,9 +256,19 @@ const InfoPanel = ({
                             )}
                         </div>
 
+<<<<<<< HEAD
                         {(adminData.realisator_civility || adminData.email || adminData.birthdate || adminData.mobile_number || adminData.phone_number || adminData.address) && (
                         <div className="wf-admin-section">
                             <h4 className="wf-admin-section-title">{t('watchFilm.director')}</h4>
+=======
+                        {((video?.realisator_firstname || video?.realisator_lastname) || adminData.realisator_civility || adminData.email || adminData.birthdate || adminData.mobile_number || adminData.phone_number || adminData.address) && (
+                        <div className="wf-admin-section">
+                            <h4 className="wf-admin-section-title">{t('watchFilm.director')}</h4>
+                            <div className="wf-admin-row">
+                                <span className="wf-admin-label">{t('watchFilm.director')}</span>
+                                <span className="wf-admin-value">{video?.realisator_firstname} {video?.realisator_lastname}</span>
+                            </div>
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                             {adminData.realisator_civility && (
                                 <div className="wf-admin-row">
                                     <span className="wf-admin-label">{t('watchFilm.civility')}</span>
@@ -275,6 +303,15 @@ const InfoPanel = ({
                                     <span className="wf-admin-value">{adminData.phone_number}</span>
                                 </div>
                             )}
+<<<<<<< HEAD
+=======
+                            {adminData.acquisition_source && (
+                                <div className="wf-admin-row">
+                                    <span className="wf-admin-label">{t('watchFilm.acquisitionSource')}</span>
+                                    <span className="wf-admin-value">{adminData.acquisition_source.name}</span>
+                                </div>
+                            )}
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                             {adminData.address && (
                                 <div className="wf-admin-row">
                                     <span className="wf-admin-label">{t('watchFilm.address')}</span>
@@ -367,6 +404,10 @@ const WatchFilm = () => {
     const wrapRef       = useRef(null);
     const scrollLockRef = useRef(false);
     const touchStartRef = useRef(null);
+<<<<<<< HEAD
+=======
+    const touchInPanelRef = useRef(false);
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     const navigateRef   = useRef(null);
 
     const [videos, setVideos]             = useState([]);
@@ -434,7 +475,14 @@ const WatchFilm = () => {
         document.body.style.top                = `-${scrollY}px`;
         document.body.style.width              = '100%';
 
+<<<<<<< HEAD
         const prevent = (e) => e.preventDefault();
+=======
+        const prevent = (e) => {
+            if (e.target?.closest?.('.wf-admin-panel')) return;
+            e.preventDefault();
+        };
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
         window.addEventListener('wheel', prevent, { passive: false });
         window.addEventListener('touchmove', prevent, { passive: false });
 
@@ -548,6 +596,10 @@ const WatchFilm = () => {
 
     useEffect(() => {
         const onWheel = (e) => {
+<<<<<<< HEAD
+=======
+            if (e.target?.closest?.('.wf-admin-panel')) return;
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
             e.preventDefault();
             const dir = Math.sign(e.deltaY);
             if (dir > 0) navigateRef.current('down');
@@ -559,11 +611,24 @@ const WatchFilm = () => {
 
     const handleTouchStart = (e) => {
         touchStartRef.current = e.touches?.[0]?.clientY ?? null;
+<<<<<<< HEAD
     };
 
     const handleTouchMove = (e) => e.preventDefault();
 
     const handleTouchEnd = (e) => {
+=======
+        touchInPanelRef.current = !!e.target?.closest?.('.wf-admin-panel');
+    };
+
+    const handleTouchMove = (e) => {
+        if (e.target?.closest?.('.wf-admin-panel')) return;
+        e.preventDefault();
+    };
+
+    const handleTouchEnd = (e) => {
+        if (touchInPanelRef.current) return;
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
         const startY = touchStartRef.current;
         const endY   = e.changedTouches?.[0]?.clientY ?? null;
         if (startY == null || endY == null) return;

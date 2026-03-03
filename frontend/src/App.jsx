@@ -18,6 +18,9 @@ import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
 import { useAuth } from './context/AuthContext';
+import UpdatePassword from './pages/Users/updatePassword';
+
+
 
 
 const AdminEventsProtected = () => {
@@ -67,6 +70,14 @@ const AdminInvitationsProtected = () => {
   );
 };
 
+<<<<<<< HEAD
+=======
+const PrivateRoute = ({children}) =>{
+  const {user} = useAuth();
+  return user ? children : <Navigate to={ROUTES.LOGIN} replace />
+}
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 function App() {
   return (
     <AuthProvider>
@@ -79,7 +90,8 @@ function App() {
         <Route path={ROUTES.LOGIN} element={<LoginForm />} />
         <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
         <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
-        <Route path={ROUTES.PROFILE} element={<Profile />} />
+        <Route path={ROUTES.UPDATE_PASSWORD} element={<PrivateRoute><UpdatePassword /></PrivateRoute>} />
+        <Route path={ROUTES.PROFILE} element={<PrivateRoute><Profile /> </PrivateRoute>} />
         <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
         <Route path={ROUTES.ADMIN_EVENTS} element={<AdminEventsProtected />} />
         <Route path={ROUTES.ADMIN_SPONSORS} element={<AdminSponsorsProtected />} />
@@ -88,6 +100,7 @@ function App() {
         <Route path={ROUTES.ADMIN_INVITATIONS} element={<AdminInvitationsProtected />} />
 
       </Routes>
+
     </Router>
     </AuthProvider>
   );

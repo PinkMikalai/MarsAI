@@ -2,7 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Icons from '../ui/common/Icons';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.resolvedLanguage || i18n.language || 'fr';

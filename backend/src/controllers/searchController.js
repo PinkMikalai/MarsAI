@@ -4,8 +4,9 @@ async function searchVideos(req, res) {
     try {
      
 
-
-        const videos = await getSearchVideosModel(req.query);
+        const rows = await getSearchVideosModel(req.query);
+        // map les videos
+        const videos = rows.map((row) => row.video_json);
 
         res.status(200).json({
             success: true,

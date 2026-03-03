@@ -1,6 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
+=======
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 import { FiCalendar, FiFilm, FiCpu, FiMapPin } from 'react-icons/fi';
 import { ROUTES } from '../../constants/routes';
 import { PROTOCOLE_METRICS } from '../../constants/homeData';
@@ -30,7 +33,10 @@ const ProtocoleTemporel = () => {
             );
           })}
         </div>
+<<<<<<< HEAD
         <Link to={ROUTES.PARTICIPATE} className="home-btn-gradient">{t('home.protocole.cta')}</Link>
+=======
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
       </div>
     </section>
   );

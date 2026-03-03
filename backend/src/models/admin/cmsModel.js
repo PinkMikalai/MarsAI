@@ -169,6 +169,12 @@ export {
     getCountDownModel,
     getAllCmsModel, 
     getCmsByIdModel, 
+<<<<<<< HEAD
     updateCmsModel };
 };
+=======
+    updateCmsModel
+ };
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 

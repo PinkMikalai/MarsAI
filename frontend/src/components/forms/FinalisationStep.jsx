@@ -1,16 +1,30 @@
+<<<<<<< HEAD
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+=======
+import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
 import Icons from '../ui/common/Icons';
 import { buildSubmitFormData, submitVideoWithProgress } from '../../service/videoService';
 
+<<<<<<< HEAD
 function getUploadLabel(percent, t) {
   if (percent < 20) return t('deposit.uploadProgress0');
   if (percent < 50) return t('deposit.uploadProgress20');
   if (percent < 80) return t('deposit.uploadProgress50');
   return t('deposit.uploadProgress80');
+=======
+function getUploadLabel(percent) {
+  if (percent < 20)  return 'Envoi de la vidéo…';
+  if (percent < 50)  return 'Envoi des images et stills…';
+  if (percent < 80)  return 'Envoi des données du film…';
+  return 'Finalisation de l\'envoi…';
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 }
 
 function formatElapsed(seconds) {
@@ -22,20 +36,42 @@ function formatElapsed(seconds) {
 
 const SpinnerRing = () => (
   <svg className="upload-overlay-spinner" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<<<<<<< HEAD
     <circle cx="32" cy="32" r="26" stroke="rgba(81,162,255,0.15)" strokeWidth="5" />
     <path d="M32 6 A26 26 0 0 1 58 32" stroke="url(#spinGrad)" strokeWidth="5" strokeLinecap="round" />
     <defs>
       <linearGradient id="spinGrad" x1="32" y1="6" x2="58" y2="32" gradientUnits="userSpaceOnUse">
         <stop stopColor="#51A2FF" />
         <stop offset="1" stopColor="#FF2B7F" />
+=======
+    <circle cx="32" cy="32" r="26" stroke="rgba(81,162,255,0.15)" strokeWidth="5"/>
+    <path
+      d="M32 6 A26 26 0 0 1 58 32"
+      stroke="url(#spinGrad)"
+      strokeWidth="5"
+      strokeLinecap="round"
+    />
+    <defs>
+      <linearGradient id="spinGrad" x1="32" y1="6" x2="58" y2="32" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#51A2FF"/>
+        <stop offset="1" stopColor="#FF2B7F"/>
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
       </linearGradient>
     </defs>
   </svg>
 );
 
+<<<<<<< HEAD
 const UploadPhaseView = ({ percent, t }) => (
   <>
     <h2 className="upload-overlay-title">{t('deposit.uploadSendingFilm')}</h2>
+=======
+// Phase 1 : envoi fichiers vers backend (barre de progression réelle)
+const UploadPhaseView = ({ percent }) => (
+  <>
+    <h2 className="upload-overlay-title">Envoi de votre film</h2>
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     <div className="upload-overlay-percent">
       <motion.span
         key={percent}
@@ -47,6 +83,10 @@ const UploadPhaseView = ({ percent, t }) => (
       </motion.span>
       <span className="upload-overlay-percent-sign">%</span>
     </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     <div className="upload-overlay-bar-wrap">
       <motion.div
         className="upload-overlay-bar-fill"
@@ -54,6 +94,7 @@ const UploadPhaseView = ({ percent, t }) => (
         transition={{ duration: 0.4, ease: 'easeOut' }}
       />
     </div>
+<<<<<<< HEAD
     <p className="upload-overlay-label">{getUploadLabel(percent, t)}</p>
   </>
 );
@@ -64,6 +105,20 @@ const ProcessingPhaseView = ({ elapsed, t }) => {
     { label: t('deposit.uploadStep2'), done: elapsed > 5 },
     { label: t('deposit.uploadStep3'), done: false, active: elapsed > 5 },
     { label: t('deposit.uploadStep4'), done: false, active: false },
+=======
+
+    <p className="upload-overlay-label">{getUploadLabel(percent)}</p>
+  </>
+);
+
+// Phase 2 : serveur traite (S3 + YouTube + BDD)
+const ProcessingPhaseView = ({ elapsed }) => {
+  const steps = [
+    { label: 'Fichiers reçus par le serveur', done: true },
+    { label: 'Upload S3 (stockage cloud)', done: elapsed > 5 },
+    { label: 'Envoi vers YouTube', done: false, active: elapsed > 5 },
+    { label: 'Enregistrement en base', done: false, active: false },
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   ];
 
   return (
@@ -74,7 +129,13 @@ const ProcessingPhaseView = ({ elapsed, t }) => {
       >
         <SpinnerRing />
       </motion.div>
+<<<<<<< HEAD
       <h2 className="upload-overlay-title">{t('deposit.uploadProcessingTitle')}</h2>
+=======
+
+      <h2 className="upload-overlay-title">Traitement en cours…</h2>
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
       <div className="upload-overlay-steps">
         {steps.map((step, i) => (
           <div key={i} className={`upload-overlay-step ${step.done ? 'done' : step.active ? 'active' : 'pending'}`}>
@@ -85,23 +146,43 @@ const ProcessingPhaseView = ({ elapsed, t }) => {
           </div>
         ))}
       </div>
+<<<<<<< HEAD
       <div className="upload-overlay-timer">
         {t('deposit.uploadElapsed', { time: formatElapsed(elapsed) })}
       </div>
       <p className="upload-overlay-warning">{t('deposit.uploadWarning')}</p>
+=======
+
+      <div className="upload-overlay-timer">
+        {formatElapsed(elapsed)} écoulées
+      </div>
+
+      <p className="upload-overlay-warning">
+        Ne fermez pas cette page — traitement YouTube en cours, cela peut prendre quelques minutes.
+      </p>
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     </>
   );
 };
 
 const UploadOverlay = ({ phase, percent }) => {
+<<<<<<< HEAD
   const { t } = useTranslation();
+=======
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   const [elapsed, setElapsed] = useState(0);
   const timerRef = useRef(null);
 
   useEffect(() => {
     if (phase === 'processing') {
       setElapsed(0);
+<<<<<<< HEAD
       timerRef.current = setInterval(() => setElapsed((s) => s + 1), 1000);
+=======
+      timerRef.current = setInterval(() => {
+        setElapsed((s) => s + 1);
+      }, 1000);
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     } else {
       clearInterval(timerRef.current);
     }
@@ -125,11 +206,19 @@ const UploadOverlay = ({ phase, percent }) => {
         <AnimatePresence mode="wait">
           {phase === 'upload' ? (
             <motion.div key="upload" className="upload-overlay-phase" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+<<<<<<< HEAD
               <UploadPhaseView percent={percent} t={t} />
             </motion.div>
           ) : (
             <motion.div key="processing" className="upload-overlay-phase" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
               <ProcessingPhaseView elapsed={elapsed} t={t} />
+=======
+              <UploadPhaseView percent={percent} />
+            </motion.div>
+          ) : (
+            <motion.div key="processing" className="upload-overlay-phase" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+              <ProcessingPhaseView elapsed={elapsed} />
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
             </motion.div>
           )}
         </AnimatePresence>
@@ -159,12 +248,30 @@ const FinalisationStep = ({ onSuccess, onError }) => {
       if (result?.videoId) {
         onSuccess?.(result);
       } else {
+<<<<<<< HEAD
         onError?.({ message: t('deposit.errorNotRecorded') });
       }
     } catch (err) {
       if (err?.errors && Array.isArray(err.errors)) {
         const msgs = err.errors.map(e => `${e.path?.join('.')}: ${e.message}`).join('\n');
         onError?.({ message: t('deposit.validationErrors'), errors: msgs });
+=======
+
+        onError?.({ message: t('deposit.errorNotRecorded') });
+      }
+    } catch (err) {
+      if (err?.response?.status === 400 && err?.response?.data?.errors) {
+        const errors = err.response.data.errors;
+        const errorMessages = errors.map(e => `${e.path?.join('.')}: ${e.message}`).join('\n');
+        onError?.({
+          message: t('common.error'),
+          errors: errorMessages,
+          details: errors
+        });
+      } else if (err?.errors && Array.isArray(err.errors)) {
+        const msgs = err.errors.map(e => `${e.path?.join('.')}: ${e.message}`).join('\n');
+        onError?.({ message: t('deposit.errorNotRecorded'), errors: msgs });
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
       } else {
         onError?.(err?.message ? err : { message: String(err) });
       }
@@ -181,6 +288,7 @@ const FinalisationStep = ({ onSuccess, onError }) => {
           <UploadOverlay phase={uploadState.phase} percent={uploadState.percent} />
         )}
       </AnimatePresence>
+<<<<<<< HEAD
 
       <FormCard number="04" title={t('deposit.finalisationTitle')}>
         <div className="deposit-info-box">
@@ -193,6 +301,59 @@ const FinalisationStep = ({ onSuccess, onError }) => {
             <div className="deposit-grid-2 deposit-collab-grid">
               <div className="deposit-field-group deposit-field-group--no-margin">
                 <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabFirstname')}</label>
+=======
+
+      <FormCard number="04" title={t('deposit.finalisationTitle')}>
+      <div className="deposit-info-box">
+        <div className="deposit-info-box-icon" aria-hidden><Icons.Info /></div>
+        <p className="deposit-info-box-text">
+          {t('deposit.finalisationInfo')}
+        </p>
+      </div>
+
+      {form.collaborators.map((col, index) => (
+        <div key={index} className="deposit-field-group deposit-collab-row">
+          <div className="deposit-grid-2 deposit-collab-grid">
+            <div className="deposit-field-group deposit-field-group--no-margin">
+              <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabFirstname')}</label>
+              <div className="deposit-field-wrap">
+                <input
+                  type="text"
+                  className="deposit-input"
+                  placeholder="Marie"
+                  value={col.firstname ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'firstname', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="deposit-field-group deposit-field-group--no-margin">
+              <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabLastname')}</label>
+              <div className="deposit-field-wrap">
+                <input
+                  type="text"
+                  className="deposit-input"
+                  placeholder="Martin"
+                  value={col.lastname ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'lastname', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="deposit-field-group deposit-field-group--no-margin">
+              <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabEmail')}</label>
+              <div className="deposit-field-wrap">
+                <input
+                  type="email"
+                  className="deposit-input"
+                  placeholder="marie@example.com"
+                  value={col.email ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'email', e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="deposit-field-group deposit-field-group--no-margin deposit-field-group--inline">
+              <div className="deposit-field-group--flex-1">
+                <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabRole')}</label>
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                 <div className="deposit-field-wrap">
                   <input
                     type="text"
@@ -203,6 +364,7 @@ const FinalisationStep = ({ onSuccess, onError }) => {
                   />
                 </div>
               </div>
+<<<<<<< HEAD
               <div className="deposit-field-group deposit-field-group--no-margin">
                 <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabLastname')}</label>
                 <div className="deposit-field-wrap">
@@ -248,6 +410,15 @@ const FinalisationStep = ({ onSuccess, onError }) => {
                   {t('deposit.collabRemove')}
                 </button>
               </div>
+=======
+              <button
+                type="button"
+                className="deposit-btn-collab deposit-btn-collab--compact"
+                onClick={() => removeCollaborator(index)}
+              >
+                {t('deposit.collabRemove')}
+              </button>
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
             </div>
           </div>
         ))}
@@ -262,6 +433,7 @@ const FinalisationStep = ({ onSuccess, onError }) => {
           <p className="deposit-certificate-text">{t('deposit.certificateText')}</p>
         </div>
 
+<<<<<<< HEAD
         {!form.consent.accept_age_18 && (
           <p className="deposit-age-warning" role="alert">{t('deposit.ageWarning')}</p>
         )}
@@ -275,8 +447,37 @@ const FinalisationStep = ({ onSuccess, onError }) => {
           {submitting ? t('deposit.submitting') : t('deposit.finaliseSubmission')}
         </button>
       </FormCard>
+=======
+      <button type="button" className="deposit-btn-collab" onClick={addCollaborator}>
+        {t('deposit.addCollaborator')}
+      </button>
+
+      <div className="deposit-certificate deposit-certificate--spaced">
+        <div className="deposit-certificate-icon" aria-hidden><Icons.Lock /></div>
+        <h3 className="deposit-certificate-title">{t('deposit.certificateTitle')}</h3>
+        <p className="deposit-certificate-text">
+          {t('deposit.certificateText')}
+        </p>
+      </div>
+
+      {!form.consent.accept_age_18 && (
+        <p className="deposit-age-warning" role="alert">
+          {t('deposit.ageWarning')}
+        </p>
+      )}
+      <button
+        type="button"
+        className="deposit-btn-submit deposit-btn-submit-wrap"
+        disabled={submitting || !form.consent.accept_age_18}
+        onClick={handleSubmit}
+      >
+        {submitting ? t('deposit.submitting') : t('deposit.finaliseSubmission')}
+      </button>
+    </FormCard>
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     </>
   );
 };
 
 export default FinalisationStep;
+

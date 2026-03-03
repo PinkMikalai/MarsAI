@@ -9,7 +9,7 @@ const ResetPassword = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const token = searchParams.get('token');
+  const [token] = useState(() => searchParams.get('token'));
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -17,9 +17,17 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
+<<<<<<< HEAD
     if (!token) setError(t('auth.invalidLinkError'));
   }, [token, t]);
+=======
+    if (!token) {setError(t('auth.invalidLinkError'));
+
+    } else {window.history.replaceState({}, document.title, window.location.pathname);}
+  }, []);
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 
   const handleSubmit = async (e) => {
     e.preventDefault();

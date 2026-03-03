@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
@@ -16,6 +17,12 @@ import SuccessModal from '../../components/ui/feedback/SuccessModal';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
+const STEP_HINTS = [
+  "Cochez les cases ci-dessus (age 18 ans et acceptation des conditions) pour passer a l'etape suivante.",
+  "Remplissez tous les champs obligatoires (*) pour passer a l'etape suivante.",
+  "Ajoutez au minimum la video, la vignette, le titre anglais et les synopsis pour continuer.",
+];
+
 const DepositFilmInner = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,7 +38,12 @@ const DepositFilmInner = () => {
 
   const { participant: p, film, files } = form;
 
+<<<<<<< HEAD
   // Validation par étape
+=======
+  // --- validation par etape ---
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   const consentComplete =
     form.consent.accept_age_18 &&
     form.consent.accept_rules &&
@@ -60,7 +72,11 @@ const DepositFilmInner = () => {
     (currentStepIndex === 1 && inscriptionComplete) ||
     (currentStepIndex === 2 && uploadComplete);
 
+<<<<<<< HEAD
   // Animation "bouton vient de s'activer" (étape 0 seulement)
+=======
+  // animation "bouton vient de s'activer" (etape 0 seulement)
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   const [justEnabled, setJustEnabled] = useState(false);
   const prevConsentRef = React.useRef(consentComplete);
   React.useEffect(() => {
@@ -72,6 +88,7 @@ const DepositFilmInner = () => {
     prevConsentRef.current = consentComplete;
   }, [consentComplete, currentStepIndex]);
 
+<<<<<<< HEAD
   const STEP_HINTS = [
     t('deposit.consentHint'),
     t('deposit.inscriptionHint'),
@@ -79,6 +96,10 @@ const DepositFilmInner = () => {
   ];
 
   // Handlers
+=======
+  // --- handlers ---
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   const handleSuccess = (result) => {
     if (result?.videoId) {
       setSuccessData({
@@ -98,6 +119,10 @@ const DepositFilmInner = () => {
 
   const handleError = (err) => {
     let errorMessage = t('deposit.errorSending');
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     if (err?.message) errorMessage = err.message;
     if (err?.errors && typeof err.errors === 'string') {
       errorMessage += '\n\nDetails:\n' + err.errors;
@@ -106,7 +131,13 @@ const DepositFilmInner = () => {
     } else if (err?.error) {
       errorMessage += '\n\n' + err.error;
     }
+<<<<<<< HEAD
     console.error('Erreur complète :', err);
+=======
+
+    console.error('Erreur complete:', err);
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
     alert(errorMessage);
   };
 
@@ -119,7 +150,13 @@ const DepositFilmInner = () => {
     <div className="deposit-page">
       <div className="deposit-container">
         <Navbar />
+<<<<<<< HEAD
         <Header badge={t('deposit.badge')} title={t('deposit.title')} />
+=======
+
+        <Header badge={t('deposit.badge')} title={t('deposit.title')} />
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 
         <div className="deposit-form-zone">
           <Stepper currentStep={currentStepIndex} totalSteps={4} />
@@ -142,6 +179,10 @@ const DepositFilmInner = () => {
                 onClick={back}
                 className="deposit-btn-collab deposit-btn-collab--nav"
               >
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                 {t('deposit.previous')}
               </button>
             )}
@@ -152,7 +193,12 @@ const DepositFilmInner = () => {
                 className={`deposit-btn-submit ${justEnabled ? 'deposit-btn-submit--just-enabled' : ''}`}
                 disabled={!canGoNext}
               >
+<<<<<<< HEAD
                 {t('deposit.stepBtn', { n: currentStepIndex + 2 })}
+=======
+
+                {t('deposit.step')} {currentStepIndex + 2}
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
               </button>
             )}
             <AnimatePresence mode="wait">
@@ -166,7 +212,11 @@ const DepositFilmInner = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                 >
+<<<<<<< HEAD
                   {STEP_HINTS[currentStepIndex]}
+=======
+                  {t('deposit.consentHint', STEP_HINTS[currentStepIndex])}
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
                 </motion.p>
               )}
             </AnimatePresence>

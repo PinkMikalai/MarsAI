@@ -125,8 +125,20 @@
     "resetTitle": "Réinitialisation",
     "invalidLinkError": "Lien invalide ou expiré. Demandez un nouveau lien.",
     "requestNewLink": "Demander un nouveau lien",
+<<<<<<< HEAD
     "newPasswordLabel": "Nouveau mot de passe",
     "confirmNewPasswordLabel": "Confirmer le mot de passe"
+=======
+    "updatePasswordTitle": "Modifier le mot de passe",
+  "oldPasswordLabel": "Mot de passe actuel",
+  "newPasswordLabel": "Nouveau mot de passe",
+  "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
+  "updatePasswordButton": "Mettre à jour",
+  "updating": "Mise à jour...",
+  "passwordUpdateSuccess": "Votre mot de passe a été modifié avec succès !",
+  "backToProfile": "Retour au profil",
+  "fillAllFields": "Veuillez remplir tous les champs."
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   },
   "deposit": {
     "badge": "APPEL À PROJETS 2026",
@@ -525,6 +537,7 @@
       "openSite": "ouvrir le site",
       "partner": "Partenaire"
     }
+<<<<<<< HEAD
   },
   "onboarding": {
     "step1Title": "LE FESTIVAL",
@@ -540,5 +553,7 @@
     "next": "Suivant",
     "close": "Fermer",
     "stepOf": "{{current}} / {{total}}"
+=======
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   }
 }

@@ -126,7 +126,18 @@
     "invalidLinkError": "Invalid or expired link. Request a new one.",
     "requestNewLink": "Request a new link",
     "newPasswordLabel": "New password",
+<<<<<<< HEAD
     "confirmNewPasswordLabel": "Confirm password"
+=======
+    "confirmNewPasswordLabel": "Confirm password",
+    "updatePasswordTitle": "Update password",
+  "oldPasswordLabel": "Current password",
+  "updatePasswordButton": "Update password",
+  "updating": "Updating...",
+  "passwordUpdateSuccess": "Your password has been updated successfully!",
+  "backToProfile": "Back to profile",
+  "fillAllFields": "Please fill in all fields."
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   },
   "deposit": {
     "badge": "OPEN CALL 2026",
@@ -525,6 +536,7 @@
       "openSite": "visit website",
       "partner": "Partner"
     }
+<<<<<<< HEAD
   },
   "onboarding": {
     "step1Title": "THE FESTIVAL",
@@ -540,5 +552,7 @@
     "next": "Next",
     "close": "Close",
     "stepOf": "{{current}} / {{total}}"
+=======
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
   }
 }

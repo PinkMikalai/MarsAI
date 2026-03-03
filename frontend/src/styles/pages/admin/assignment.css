@@ -37,7 +37,11 @@
 
 .wf-admin-panel--open {
     right: 0;
+<<<<<<< HEAD
     /* Apparaît */
+=======
+   
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 }
 
 .wf-admin-panel-header {
@@ -131,4 +135,39 @@
         min-height: 50px;
         font-size: 1rem;
     }
+<<<<<<< HEAD
+=======
+}
+
+ /* Bouton d'assignement */
+.quick-assign-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(41, 128, 185, 0.9);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.quick-assign-btn:hover {
+    transform: scale(1.05);
+    background: #3498db;
+}
+
+/* Btn d'assignement pour vue mobile */
+@media (max-width: 768px) {
+    .quick-assign-btn {
+        position: relative;
+        top: 0;
+        right: 0;
+        width: 100%;
+        margin-top: 10px;
+        padding: 12px;
+    }
+>>>>>>> 5130f1082994f660d9baf7631f065267e6e68921
 }

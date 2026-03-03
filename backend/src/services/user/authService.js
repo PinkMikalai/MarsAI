@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
-import { createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, deleteUserModel } from '../../models/user/userModel.js';
+import { createUserModel, getUserByEmailModel, getUserByIdModel, updateUserModel, updateUserBySuperAdminModel, deleteUserModel, getRoleByIdModel, getRoleByNameModel } from '../../models/user/userModel.js';
 import { createInvitationModel, getInvitationByJtiModel, markInvitationAsUsedModel } from '../../models/admin/invitationModel.js';
 import { welcomeEmail, passwordResetEmail } from '../admin/mailService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+// création du token d'invitation (à usage unique) à créer un compte user
 export async function createInvitationToken({ email, role }) {
     const jti = uuidv4();
     await createInvitationModel({ jti, email, role })
@@ -16,7 +16,7 @@ export async function createInvitationToken({ email, role }) {
         { expiresIn: '48h' }
     );
 }
-
+// vérification du token
 export async function decodeInvitationToken(token) {
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
@@ -43,9 +43,10 @@ export async function decodeInvitationToken(token) {
     }
 }
 
+// Reception et traitement du formuliare de création du compte user
 export async function register({ token, firstname, lastname, password }) {
     const decoded = await decodeInvitationToken(token);
-    console.log("Contenu du token aprés decode :", decoded);
+    // console.log("Contenu du token aprés decode :", decoded);
 
     const existing = await getUserByEmailModel(decoded.email);
     if (existing) {
@@ -53,13 +54,10 @@ export async function register({ token, firstname, lastname, password }) {
         error.status = 409;
         throw error;
     }
+    const roleData = await getRoleByNameModel(decoded.role);
+    if(!roleData) {`Role ${decoded.role} not found in db`}
 
-    const roleMapping = {
-        'Admin': 1,
-        'Selector': 2,
-        'Super-admin': 3
-    };
-    const roleId = roleMapping[decoded.role] || 2;
+    const roleId = roleData.id || 2
 
     const hash = await bcrypt.hash(password, 10);
 
@@ -72,7 +70,7 @@ export async function register({ token, firstname, lastname, password }) {
     });
 
     const marked = await markInvitationAsUsedModel(decoded.jti);
-    console.log("Marquage de l'invitation", marked);
+    // console.log("Marquage de l'invitation", marked);
 
     try {
         await welcomeEmail(decoded.email, firstname);
@@ -86,7 +84,7 @@ export async function register({ token, firstname, lastname, password }) {
         message: `User n° ${userId} created with success `
     };
 }
-
+// login
 export async function login({ email, password }) {
     const user = await getUserByEmailModel(email);
     console.log("Objet user récupéré :", user);
@@ -96,16 +94,10 @@ export async function login({ email, password }) {
         error.status = 401;
         throw error;
     }
-    const idDuRole = user.role_id || user.ROLE_ID || user.roleId;
-    const roleNames = {
-        1: 'Admin',
-        2: 'Selector',
-        3: 'Super-admin'
-    };
 
-    const roleLabel = roleNames[idDuRole];
-    console.log(`VERIFICATION FINALE : ID trouvé = ${idDuRole} -> Nom = ${roleLabel}`);
-
+    const role = await getRoleByIdModel(user.role_id);
+    const roleLabel = role ? role.name : 'Unknown';
+   
     const token = jwt.sign(
         { sub: user.id, email: user.email, role: roleLabel },
         process.env.JWT_SECRET,
@@ -122,18 +114,16 @@ export async function login({ email, password }) {
         }
     }
 }
-
+// modification du profil par le user
 export async function updateUser(userId, userData) {
-    const { firstname, lastname, password, email, role_id } = userData;
+    const { firstname, lastname, password } = userData;
     const dataToUpdate = {};
     if (firstname) dataToUpdate.firstname = firstname;
     if (lastname) dataToUpdate.lastname = lastname;
-    if (email) dataToUpdate.email = email;
-    if (role_id) dataToUpdate.role_id = role_id;
     if (password && password.trim() !== "") {
         dataToUpdate.password_hash = await bcrypt.hash(password, 10);
     }
-    const success = await updateUserModel(userId, userData);
+    const success = await updateUserModel(userId, dataToUpdate);
 
     if (!success) {
         const error = new Error('User not found or no changes made');
@@ -146,7 +136,31 @@ export async function updateUser(userId, userData) {
         message: `Profile ${userId} updated successfully`
     };
 }
+// update du user par le super_admin
+export async function updateUserBySuperAdmin(userId, userData) {
+    const { firstname, lastname, password, email, role_id } = userData;
+    const dataToUpdate = {};
+    if (firstname) dataToUpdate.firstname = firstname;
+    if (lastname) dataToUpdate.lastname = lastname;
+    if (email) dataToUpdate.email = email;
+    if (role_id) dataToUpdate.role_id = role_id;
+    if (password && password.trim() !== "") {
+        dataToUpdate.password_hash = await bcrypt.hash(password, 10);
+    }
+    const success = await updateUserBySuperAdminModel(userId, dataToUpdate);
 
+    if (!success) {
+        const error = new Error('User not found or no changes made');
+        error.status = 404;
+        throw error;
+    }
+
+    return {
+        status: "success",
+        message: `Profile ${userId} updated successfully`
+    };
+}
+// suppression du user par le super-admin
 export async function deleteUser(id) {
     const result = await deleteUserModel(id);
     if (!result) {
@@ -160,6 +174,7 @@ export async function deleteUser(id) {
     }
 }
 
+// profil des user
 export async function profileUser(id) {
     const user = await getUserByIdModel(id);
     if (!user) {
@@ -167,22 +182,22 @@ export async function profileUser(id) {
         error.status = 404;
         throw error;
     }
-    const roleNames = {
-        1: 'Admin',
-        2: 'Selector',
-        3: 'Super-admin'
-    };
+    
+    const role = await getRoleByIdModel(user.role_id);
+
+   console.log("User Role", role);
+
     return {
         id: user.id,
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        role: roleNames[user.role_id],
+        role: role ? role.name : "Unknown",
         message: `User n° ${id} connected`,
         status: "success"
     }
 }
-
+// gestion du password oublié
 export async function passwordReset(email) {
     const user = await getUserByEmailModel(email);
     if (!user) {
@@ -208,10 +223,10 @@ export async function passwordReset(email) {
     return {
         status: 'success',
         message: `A reset link has been sent the email address provided `,
-        token: token
+        
     }
 }
-
+// confirmation de la modification du password oublié
 export async function confirmPasswordReset(token, newPassword) {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -236,13 +251,13 @@ export async function confirmPasswordReset(token, newPassword) {
         throw error;
     }
 }
-
+// modification du password par user connecté
 export async function updatePassword(userId, oldPassword, newPassword) {
     const user = await getUserByIdModel(userId);
     if (!user) {
         throw new Error('User not found');
     }
-    console.log("user récupéré :", { id: user.id, pshash: !!user.password_hash });
+    // console.log("user récupéré :", { id: user.id, pshash: !!user.password_hash });
 
     const checkPasswords = await bcrypt.compare(oldPassword, user.password_hash);
     if (!checkPasswords) {
