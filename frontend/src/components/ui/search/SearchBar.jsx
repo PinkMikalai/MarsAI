@@ -1,28 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
+import { useAuth } from '../../../context/AuthContext.jsx';
 
-/**
- * SearchBar — barre de recherche réutilisable
- * Props :
- *   onSearch(query: string)  — appelée après debounce (défaut 400ms)
- *   loading                  — affiche un spinner à la place de l'icône
- *   resultsCount             — si fourni, affiche "X film(s)"
- *   placeholder              — texte placeholder (optionnel)
- *   debounceMs               — délai debounce en ms (défaut 400)
- */
+
+
+
+//=====================================================
+// SEARCHBAR
+//=====================================================
+
 const SearchBar = ({
     onSearch,
+    onFilterChange,
     loading = false,
     resultsCount = null,
     placeholder,
     debounceMs = 400,
 }) => {
     const { t } = useTranslation();
-    const [value, setValue] = useState('');
-    const timerRef = useRef(null); //
+    const { isAdmin, isSuperAdmin, isSelector } = useAuth();
 
-    // debounce — on attend que l'utilisateur arrête de taper
+    const [value, setValue] = useState('');
+    const [adminStatus, setAdminStatus] = useState('');
+    const [selectionStatus, setSelectionStatus] = useState('');
+    const [rated, setRated] = useState('');
+    const timerRef = useRef(null);
+
+    // debounce — on attend que l'utilisateur arrete de taper
     useEffect(() => {
         if (timerRef.current) clearTimeout(timerRef.current);
         timerRef.current = setTimeout(() => {
@@ -31,15 +36,43 @@ const SearchBar = ({
         return () => clearTimeout(timerRef.current);
     }, [value, debounceMs]);
 
-    const handleClear = () => {
+    function handleClear() {
         setValue('');
         onSearch?.('');
-    };
+    }
+
+    // filtre pour les admins
+    function handleAdminStatusChange(e) {
+        const val = e.target.value;
+        setAdminStatus(val);
+        onFilterChange?.({ adminStatus: val });
+    }
+
+    // filtre pour les selectors
+    function handleSelectionStatusChange(e) {
+        const val = e.target.value;
+        console.log("SearchBar — selectionStatus:", val);
+        setSelectionStatus(val);
+        onFilterChange?.({ selectionStatus: val });
+    }
+
+    function handleRatedChange(e) {
+        const val = e.target.value;
+        console.log("SearchBar — rated:", val);
+        setRated(val);
+        onFilterChange?.({ rated: val });
+    }
 
     const ph = placeholder ?? t('gallery.searchPlaceholder', { defaultValue: 'Rechercher un film, réalisateur, tag…' });
 
+    //=====================================================
+    // RENDER
+    //=====================================================
+
     return (
         <div className="gsearch-wrap">
+
+            {/* --- barre de recherche publique --- */}
             <div className="gsearch-inner">
                 <span className="gsearch-icon" aria-hidden>
                     {loading ? (
@@ -74,14 +107,50 @@ const SearchBar = ({
                 )}
             </div>
 
-            {resultsCount !== null && (
-                <p className="gsearch-results-info">
-                    {value.trim()
-                        ? <><strong>{resultsCount}</strong> résultat{resultsCount !== 1 ? 's' : ''} pour « {value.trim()} »</>
-                        : <><strong>{resultsCount}</strong> film{resultsCount !== 1 ? 's' : ''}</>
-                    }
-                </p>
-            )}
+            {/* --- filtres selector (role 2) --- */}
+         
+                <div className="gsearch-filters-wrap">
+
+                    {/* filtre : videos notees ou non notees par le selector */}
+                    <select
+                         
+                    >
+                     
+                    </select>
+
+                    {/* filtre : selection_status */}
+                    <select
+                       
+                    >
+                        
+                    </select>
+
+                </div>
+            
+
+            {/* --- filtre admin_status (role 1 et 3) --- */}
+          
+                <div className="gsearch-filters-wrap">
+                    <select
+                        
+                    >
+                       
+                    </select>
+                </div>
+         
+
+            {/* --- compteur de resultats --- */}
+            <div className="gsearch-results-info-wrap">
+                {resultsCount !== null && (
+                    <p className="gsearch-results-info">
+                        {value.trim()
+                            ? <><strong>{resultsCount}</strong> résultat{resultsCount !== 1 ? 's' : ''} pour « {value.trim()} »</>
+                            : <><strong>{resultsCount}</strong> film{resultsCount !== 1 ? 's' : ''}</>
+                        }
+                    </p>
+                )}
+            </div>
+
         </div>
     );
 };

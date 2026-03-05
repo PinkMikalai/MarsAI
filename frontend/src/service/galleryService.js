@@ -18,7 +18,7 @@ export const videoApi = {
   },
 
   searchVideos: async (searchQuery) => {
-    const data = await api(`/videos/search?q=${encodeURIComponent(searchQuery.trim())}`, { method: 'GET' });
+    const data = await api(`/videos?q=${encodeURIComponent(searchQuery.trim())}`, { method: 'GET' });
     return data;
   },
 

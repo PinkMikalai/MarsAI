@@ -128,6 +128,7 @@ async function getVideoByIdModel(id) {
         throw error;
     }
 }
+
 // get video by id, infos pour l'admin
 async function getAdminVideoDataByIdModel(id) {
     try {
@@ -441,6 +442,7 @@ async function getSearchVideosModel(params = {}) {
             LEFT JOIN video_award va ON v.id = va.video_id
             LEFT JOIN award a ON va.award_id = a.id
             LEFT JOIN contributor c ON v.id = c.video_id
+            LEFT JOIN selection_status ss ON v.id = ss.video_id
             LEFT JOIN admin_video av ON v.id = av.video_id
             LEFT JOIN admin_status ast ON av.admin_status_id = ast.id
             LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id
@@ -458,6 +460,7 @@ async function getSearchVideosModel(params = {}) {
                OR a.title LIKE ?
                OR c.firstname LIKE ?
                OR c.last_name LIKE ?
+               OR ss.name LIKE ?
                OR ast.name LIKE ?
                OR ac.name LIKE ?
         `;
