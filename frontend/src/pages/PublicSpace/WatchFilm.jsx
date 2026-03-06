@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useScrollNav } from '../../hooks/useScrollNav';
+import { useLightbox } from '../../hooks/useLightbox';
+import Lightbox from '../../components/ui/display/Lightbox';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
@@ -81,6 +83,7 @@ const InfoPanel = ({
     memoStatus,
     stillUrls,
     stillIndex,
+    onStillClick,
     onNoterClick,
     isOpen,
     onClose,
@@ -91,7 +94,10 @@ const InfoPanel = ({
     const adminVideos  = adminData?.admin_videos  || [];
 
     return (
-        <div className={`wf-admin-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}>
+        <div
+            className={`wf-admin-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}
+            onClick={(e) => e.stopPropagation()}
+        >
             <div className="wf-admin-panel-header">
                 <h3 className="wf-admin-panel-title">{t('watchFilm.infosTitle')}</h3>
                 <button className="wf-admin-panel-close" onClick={onClose} aria-label={t('watchFilm.close')}>✕</button>
@@ -220,7 +226,16 @@ const InfoPanel = ({
                             {adminData.youtube_url && (
                                 <div className="wf-admin-row">
                                     <span className="wf-admin-label">{t('watchFilm.youtube')}</span>
-                                    <a className="wf-admin-link" href={adminData.youtube_url} target="_blank" rel="noreferrer">
+                                    <a
+                                        className="wf-admin-link"
+                                        href={
+                                            /^https?:\/\//i.test(adminData.youtube_url)
+                                                ? adminData.youtube_url
+                                                : `https://www.youtube.com/watch?v=${adminData.youtube_url}`
+                                        }
+                                        target="_blank"
+                                        rel="noreferrer noopener"
+                                    >
                                         Voir ↗
                                     </a>
                                 </div>
@@ -357,6 +372,8 @@ const InfoPanel = ({
                                     src={url}
                                     alt={`still ${idx + 1}`}
                                     className={`wf-drawer-still-img ${idx === stillIndex ? 'wf-drawer-still-img--active' : ''}`}
+                                    style={{ cursor: 'zoom-in' }}
+                                    onClick={() => onStillClick?.(stillUrls, idx)}
                                 />
                             ))}
                         </div>
@@ -388,6 +405,8 @@ const WatchFilm = () => {
 
     const videoRef      = useRef(null);
     const wrapRef       = useRef(null);
+
+    const { openLightbox, lightboxProps } = useLightbox();
 
     const [videos, setVideos]             = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -519,7 +538,7 @@ const WatchFilm = () => {
     const { scrollDirection, touchHandlers } = useScrollNav({
         onNext: () => setCurrentIndex((prev) => Math.min(prev + 1, videos.length - 1)),
         onPrev: () => setCurrentIndex((prev) => Math.max(prev - 1, 0)),
-        panelSelector: '.wf-admin-panel, .watch-film-memo-modal',
+        panelSelector: '.wf-admin-panel, .watch-film-memo-modal, .lightbox-overlay',
         lockMs: SCROLL_LOCK_MS,
         enabled: videos.length > 0,
     });
@@ -685,6 +704,7 @@ const WatchFilm = () => {
                                             memoStatus={memoStatus}
                                             stillUrls={stillUrls}
                                             stillIndex={stillIndex}
+                                            onStillClick={openLightbox}
                                             onNoterClick={() => {
                                                 setShowAdminPanel(false);
                                                 setShowMemoModal(true);
@@ -745,6 +765,9 @@ const WatchFilm = () => {
                     <video key={url} src={url} preload="metadata" />
                 ))}
             </div>
+
+            {/* LIGHTBOX — visionneuse de stills */}
+            <Lightbox {...lightboxProps} />
         </div>
     );
 };
