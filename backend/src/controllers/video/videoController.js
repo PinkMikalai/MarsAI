@@ -45,17 +45,18 @@ async function getSearchVideos(req, res) {
 
 async function getVideoById(req, res) {
     try {
-        let role = req.user?.role;
-        
+        const role_id = req.user?.role_id;
+        console.log("getVideoById — role_id:", role_id);
+
         const basicVideoData = await getVideoByIdModel(req.params.id);
- 
+
         if (!basicVideoData) {
             return res.status(404).json({
                 message: "Video non trouvée",
                 status: false
             });
         }
-        else if (role === "Admin" || role === "Super_admin") {
+        else if (role_id === 1 || role_id === 3) {
             const adminVideoData = await getAdminVideoDataByIdModel(req.params.id);
             console.log("admin video data", adminVideoData);
             return res.status(200).json({
@@ -67,7 +68,7 @@ async function getVideoById(req, res) {
                 status: true,
             });
         }
-        else if (role === "Selector") {
+        else if (role_id === 2) {
             const selectorVideoData = await getSelectorVideoDataByIdModel(req.params.id, req.user?.id);
             console.log("selector video data", selectorVideoData);
 

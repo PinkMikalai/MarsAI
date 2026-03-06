@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useScrollNav } from '../../hooks/useScrollNav';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
@@ -387,10 +388,6 @@ const WatchFilm = () => {
 
     const videoRef      = useRef(null);
     const wrapRef       = useRef(null);
-    const scrollLockRef = useRef(false);
-    const touchStartRef = useRef(null);
-    const touchInPanelRef = useRef(false);
-    const navigateRef   = useRef(null);
 
     const [videos, setVideos]             = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -402,10 +399,9 @@ const WatchFilm = () => {
     const [stills, setStills]       = useState([]);
     const [adminData, setAdminData] = useState(null);
 
-    const [isPlaying, setIsPlaying]             = useState(false);
-    const [stillIndex, setStillIndex]           = useState(0);
-    const [isSwitching, setIsSwitching]         = useState(false);
-    const [scrollDirection, setScrollDirection] = useState(null);
+    const [isPlaying, setIsPlaying]   = useState(false);
+    const [stillIndex, setStillIndex] = useState(0);
+    const [isSwitching, setIsSwitching] = useState(false);
 
     const [showMemoModal, setShowMemoModal]   = useState(false);
     const [showAdminPanel, setShowAdminPanel] = useState(false);
@@ -439,42 +435,6 @@ const WatchFilm = () => {
         return () => { cancelled = true; };
     }, [videoId]);
 
-    // =====================================================
-    // BLOCAGE DU SCROLL BODY (TikTok-style)
-    // =====================================================
-    useEffect(() => {
-        const scrollY = window.scrollY;
-        const prev = {
-            overflow:   document.body.style.overflow,
-            overscroll: document.body.style.overscrollBehavior,
-            position:   document.body.style.position,
-            top:        document.body.style.top,
-            width:      document.body.style.width,
-        };
-        document.body.style.overflow           = 'hidden';
-        document.body.style.overscrollBehavior = 'none';
-        document.body.style.position           = 'fixed';
-        document.body.style.top                = `-${scrollY}px`;
-        document.body.style.width              = '100%';
-
-        const prevent = (e) => {
-            if (e.target?.closest?.('.wf-admin-panel')) return;
-            e.preventDefault();
-        };
-        window.addEventListener('wheel', prevent, { passive: false });
-        window.addEventListener('touchmove', prevent, { passive: false });
-
-        return () => {
-            document.body.style.overflow           = prev.overflow;
-            document.body.style.overscrollBehavior = prev.overscroll;
-            document.body.style.position           = prev.position;
-            document.body.style.top                = prev.top;
-            document.body.style.width              = prev.width;
-            window.scrollTo(0, scrollY);
-            window.removeEventListener('wheel', prevent);
-            window.removeEventListener('touchmove', prevent);
-        };
-    }, []);
 
     // =====================================================
     // CHARGEMENT DÉTAILS VIDÉO COURANTE
@@ -554,55 +514,15 @@ const WatchFilm = () => {
     };
 
     // =====================================================
-    // NAVIGATION (scroll / swipe entre vidéos)
+    // NAVIGATION (scroll / swipe) — via useScrollNav
     // =====================================================
-    const navigate = (direction) => {
-        if (scrollLockRef.current || videos.length === 0) return;
-        scrollLockRef.current = true;
-        setTimeout(() => { scrollLockRef.current = false; }, SCROLL_LOCK_MS);
-
-        setScrollDirection(direction);
-        if (direction === 'down') {
-            setCurrentIndex((prev) => Math.min(prev + 1, videos.length - 1));
-        } else {
-            setCurrentIndex((prev) => Math.max(prev - 1, 0));
-        }
-    };
-
-    // Ref stable vers la dernière version de navigate — évite les re-binds du listener wheel
-    navigateRef.current = navigate;
-
-    useEffect(() => {
-        const onWheel = (e) => {
-            if (e.target?.closest?.('.wf-admin-panel')) return;
-            e.preventDefault();
-            const dir = Math.sign(e.deltaY);
-            if (dir > 0) navigateRef.current('down');
-            else if (dir < 0) navigateRef.current('up');
-        };
-        document.addEventListener('wheel', onWheel, { passive: false });
-        return () => document.removeEventListener('wheel', onWheel);
-    }, []);
-
-    const handleTouchStart = (e) => {
-        touchStartRef.current = e.touches?.[0]?.clientY ?? null;
-        touchInPanelRef.current = !!e.target?.closest?.('.wf-admin-panel');
-    };
-
-    const handleTouchMove = (e) => {
-        if (e.target?.closest?.('.wf-admin-panel')) return;
-        e.preventDefault();
-    };
-
-    const handleTouchEnd = (e) => {
-        if (touchInPanelRef.current) return;
-        const startY = touchStartRef.current;
-        const endY   = e.changedTouches?.[0]?.clientY ?? null;
-        if (startY == null || endY == null) return;
-        const delta = startY - endY;
-        if (Math.abs(delta) < 40) return;
-        navigate(delta > 0 ? 'down' : 'up');
-    };
+    const { scrollDirection, touchHandlers } = useScrollNav({
+        onNext: () => setCurrentIndex((prev) => Math.min(prev + 1, videos.length - 1)),
+        onPrev: () => setCurrentIndex((prev) => Math.max(prev - 1, 0)),
+        panelSelector: '.wf-admin-panel, .watch-film-memo-modal',
+        lockMs: SCROLL_LOCK_MS,
+        enabled: videos.length > 0,
+    });
 
     // =====================================================
     // DONNÉES AFFICHÉES
@@ -622,9 +542,9 @@ const WatchFilm = () => {
     return (
         <div
             className="watch-film-page"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+            onTouchStart={touchHandlers.onTouchStart}
+            onTouchMove={touchHandlers.onTouchMove}
+            onTouchEnd={touchHandlers.onTouchEnd}
         >
             <main className="watch-film-container">
                 {loading && (
