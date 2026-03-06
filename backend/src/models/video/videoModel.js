@@ -419,53 +419,91 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 }
 
 
-// search videos — recherche textuelle dans video, tag, award, contributor, admin_status, acquisition_source
-// Paramètres : { q, search, role, userId } — q ou search = terme de recherche
+// search videos — recherche textuelle + filtres (adminStatus, selectionStatus, rated)
+// Paramètres : { q, search, adminStatus, selectionStatus, rated }
 async function getSearchVideosModel(params = {}) {
     try {
-        const { q, search: searchVal, role, userId } = params;
+        const {
+            q, search: searchVal,
+            adminStatus, selectionStatus, rated,
+        } = params;
         const searchTerm = (q ?? searchVal ?? '').toString().trim();
 
-        // Pas de terme → retourner toutes les vidéos
-        if (!searchTerm) {
+        const hasText    = !!searchTerm;
+        const hasAdmin   = !!adminStatus;
+        const hasSel     = !!selectionStatus;
+        const hasRated   = rated === 'true' || rated === 'false';
+
+        // Aucun critère → toutes les vidéos
+        if (!hasText && !hasAdmin && !hasSel && !hasRated) {
             const [rows] = await pool.execute('SELECT * FROM video');
             return rows;
         }
 
-        // Terme fourni → recherche avec JOINs (video_tag, tag, video_award, award, contributor, admin_video, admin_status, acquisition_source)
-        const term = `%${searchTerm}%`;
+        const conditions = [];
+        const values = [];
+
+        // --- JOINs nécessaires selon les filtres ---
+        const needsTag    = hasText;
+        const needsAward  = hasText;
+        const needsContrib = hasText;
+        const needsSel    = hasText || hasSel || hasRated;
+        const needsAdmin  = hasText || hasAdmin;
+        const needsAcq    = hasText;
+
+        let joins = '';
+        if (needsTag)    joins += '\n            LEFT JOIN video_tag vt ON v.id = vt.video_id LEFT JOIN tag t ON vt.tag_id = t.id';
+        if (needsAward)  joins += '\n            LEFT JOIN video_award va ON v.id = va.video_id LEFT JOIN award a ON va.award_id = a.id';
+        if (needsContrib)joins += '\n            LEFT JOIN contributor c ON v.id = c.video_id';
+        if (needsSel)    joins += '\n            LEFT JOIN selector_memo sm ON v.id = sm.video_id LEFT JOIN selection_status ss ON sm.selection_status_id = ss.id';
+        if (needsAdmin)  joins += '\n            LEFT JOIN admin_video av ON v.id = av.video_id LEFT JOIN admin_status ast ON av.admin_status_id = ast.id';
+        if (needsAcq)    joins += '\n            LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id';
+
+        // --- filtre texte : OR sur tous les champs ---
+        if (hasText) {
+            const term = `%${searchTerm}%`;
+            const textCols = [
+                'v.title', 'v.title_en', 'v.synopsis',
+                'v.realisator_firstname', 'v.realisator_lastname',
+                'v.language', 'v.country', 'v.tech_resume',
+                'v.creative_resume', 'v.classification',
+                't.name', 'a.title', 'c.firstname', 'c.last_name',
+                'ss.name', 'ast.name', 'ac.name',
+            ];
+            conditions.push(`(${textCols.map(col => `${col} LIKE ?`).join(' OR ')})`);
+            textCols.forEach(() => values.push(term));
+        }
+
+        // --- filtre admin_status ---
+        if (hasAdmin) {
+            conditions.push('ast.name = ?');
+            values.push(adminStatus);
+        }
+
+        // --- filtre selection_status ---
+        if (hasSel) {
+            conditions.push('ss.name = ?');
+            values.push(selectionStatus);
+        }
+
+        // --- filtre rated (vidéo notée ou non par le selector) ---
+        if (hasRated) {
+            if (rated === 'true') {
+                conditions.push('EXISTS (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)');
+            } else {
+                conditions.push('NOT EXISTS (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)');
+            }
+        }
+
+        const whereClause = conditions.length ? `WHERE ${conditions.join('\n               AND ')}` : '';
+
         const query = `
             SELECT DISTINCT v.*
-            FROM video v
-            LEFT JOIN video_tag vt ON v.id = vt.video_id
-            LEFT JOIN tag t ON vt.tag_id = t.id
-            LEFT JOIN video_award va ON v.id = va.video_id
-            LEFT JOIN award a ON va.award_id = a.id
-            LEFT JOIN contributor c ON v.id = c.video_id
-            LEFT JOIN selection_status ss ON v.id = ss.video_id
-            LEFT JOIN admin_video av ON v.id = av.video_id
-            LEFT JOIN admin_status ast ON av.admin_status_id = ast.id
-            LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id
-            WHERE v.title LIKE ?
-               OR v.title_en LIKE ?
-               OR v.synopsis LIKE ?
-               OR v.realisator_firstname LIKE ?
-               OR v.realisator_lastname LIKE ?
-               OR v.language LIKE ?
-               OR v.country LIKE ?
-               OR v.tech_resume LIKE ?
-               OR v.creative_resume LIKE ?
-               OR v.classification LIKE ?
-               OR t.name LIKE ?
-               OR a.title LIKE ?
-               OR c.firstname LIKE ?
-               OR c.last_name LIKE ?
-               OR ss.name LIKE ?
-               OR ast.name LIKE ?
-               OR ac.name LIKE ?
+            FROM video v${joins}
+            ${whereClause}
         `;
-        const placeholders = [term, term, term, term, term, term, term, term, term, term, term, term, term, term, term, term];
-        const [rows] = await pool.execute(query, placeholders);
+
+        const [rows] = await pool.execute(query, values);
         return rows;
     } catch (error) {
         console.error('erreur lors de la recherche des videos(cote model): ', error);

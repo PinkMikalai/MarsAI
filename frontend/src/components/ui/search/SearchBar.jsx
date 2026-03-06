@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext.jsx';
-
-
+import api from '../../../service/api';
 
 
 //=====================================================
@@ -26,6 +25,26 @@ const SearchBar = ({
     const [selectionStatus, setSelectionStatus] = useState('');
     const [rated, setRated] = useState('');
     const timerRef = useRef(null);
+
+    // fetch des options depuis la BDD
+    const [selectionStatusOptions, setSelectionStatusOptions] = useState([]);
+    const [adminStatusOptions, setAdminStatusOptions] = useState([]);
+
+    useEffect(() => {
+        if (isSelector) {
+            api('/selection-status')
+                .then((data) => setSelectionStatusOptions(data.statuses ?? []))
+                .catch(() => setSelectionStatusOptions([]));
+        }
+    }, [isSelector]);
+
+    useEffect(() => {
+        if (isAdmin || isSuperAdmin) {
+            api('/admin-status')
+                .then((data) => setAdminStatusOptions(data.statuses ?? []))
+                .catch(() => setAdminStatusOptions([]));
+        }
+    }, [isAdmin, isSuperAdmin]);
 
     // debounce — on attend que l'utilisateur arrete de taper
     useEffect(() => {
@@ -108,36 +127,50 @@ const SearchBar = ({
             </div>
 
             {/* --- filtres selector (role 2) --- */}
-         
+            {isSelector && (
                 <div className="gsearch-filters-wrap">
 
-                    {/* filtre : videos notees ou non notees par le selector */}
+                    {/* filtre : videos notees ou non notees (statique) */}
                     <select
-                         
+                        value={rated}
+                        onChange={handleRatedChange}
+                        className="gsearch-select"
                     >
-                     
+                        <option value="">Toutes</option>
+                        <option value="true">Notées par moi</option>
+                        <option value="false">Non notées</option>
                     </select>
 
-                    {/* filtre : selection_status */}
+                    {/* filtre : selection_status (depuis BDD) */}
                     <select
-                       
+                        value={selectionStatus}
+                        onChange={handleSelectionStatusChange}
+                        className="gsearch-select"
                     >
-                        
+                        <option value="">Tous statuts</option>
+                        {selectionStatusOptions.map((s) => (
+                            <option key={s.id} value={s.name}>{s.name}</option>
+                        ))}
                     </select>
 
                 </div>
-            
+            )}
 
-            {/* --- filtre admin_status (role 1 et 3) --- */}
-          
+            {/* --- filtre admin_status (role 1 et 3, depuis BDD) --- */}
+            {(isAdmin || isSuperAdmin) && (
                 <div className="gsearch-filters-wrap">
                     <select
-                        
+                        value={adminStatus}
+                        onChange={handleAdminStatusChange}
+                        className="gsearch-select"
                     >
-                       
+                        <option value="">Tous statuts admin</option>
+                        {adminStatusOptions.map((s) => (
+                            <option key={s.id} value={s.name}>{s.name}</option>
+                        ))}
                     </select>
                 </div>
-         
+            )}
 
             {/* --- compteur de resultats --- */}
             <div className="gsearch-results-info-wrap">

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAllSelectionStatus } from "../controllers/selectionStatusController.js";
+import { getAllSelectionStatus } from "../controllers/video/selectionStatusController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import checkRole from "../middlewares/checkRoleMiddleware.js";
 

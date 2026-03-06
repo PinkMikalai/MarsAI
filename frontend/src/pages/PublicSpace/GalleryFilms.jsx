@@ -91,7 +91,11 @@ const GalleryFilms = () => {
     // declenchement recherche ou filtre
     useEffect(() => {
         const hasFilter = filters.adminStatus || filters.selectionStatus || filters.rated;
-        if (!search.trim() && !hasFilter) { setVideos(_cachedVideos || []); return; }
+        if (!search.trim() && !hasFilter) {
+            setError(null);
+            setVideos(_cachedVideos || []);
+            return;
+        }
         fetchSearchVideos(search, filters);
     }, [search, filters]);
 
@@ -153,8 +157,6 @@ const GalleryFilms = () => {
                     />
                 )}
 
-                {error && <p className="galerie-error" role="alert">{error}</p>}
-
                 <SearchBar
                     onSearch={handleSearch}
                     onFilterChange={handleFilterChange}
@@ -162,7 +164,9 @@ const GalleryFilms = () => {
                     resultsCount={videos.length}
                 />
 
-                {!loading && !error && (
+                {error && <p className="galerie-error" role="alert">{error}</p>}
+
+                {!loading && (
                     <>
                         {videos.length === 0 ? (
                             <p className="galerie-empty">{t('gallery.noFilms')}</p>

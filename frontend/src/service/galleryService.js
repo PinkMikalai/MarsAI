@@ -17,8 +17,13 @@ export const videoApi = {
     return data;
   },
 
-  searchVideos: async (searchQuery) => {
-    const data = await api(`/videos?q=${encodeURIComponent(searchQuery.trim())}`, { method: 'GET' });
+  searchVideos: async (searchQuery = '', filters = {}) => {
+    const params = new URLSearchParams();
+    if (searchQuery.trim()) params.set('q', searchQuery.trim());
+    if (filters.adminStatus)     params.set('adminStatus', filters.adminStatus);
+    if (filters.selectionStatus) params.set('selectionStatus', filters.selectionStatus);
+    if (filters.rated !== undefined && filters.rated !== '') params.set('rated', filters.rated);
+    const data = await api(`/videos?${params.toString()}`, { method: 'GET' });
     return data;
   },
 
