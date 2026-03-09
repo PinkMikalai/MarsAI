@@ -163,6 +163,60 @@
   transform: translateY(0) scale(0.98);
 }
 
+/* ── Navbar : section utilisateur connecté ───────────────── */
+.deposit-navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deposit-navbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Arimo', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.deposit-navbar-avatar:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+.deposit-navbar-logout {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: 'Arimo', sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 15px;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  height: 32px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+
+.deposit-navbar-logout:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
 /* ---------- FOOTER ---------- */
 .deposit-footer {
   width: 100%;

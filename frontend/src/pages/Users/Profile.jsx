@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../constants/routes';
 import { authService } from '../../service/authService';
 import { useAuth } from '../../context/AuthContext';
-import AdminLayout from '../../components/admin/AdminLayout';
 import { useNavigate } from 'react-router-dom';
 
 const getRoleLabel = (role, t) => {
@@ -228,11 +227,7 @@ const Profile = () => {
   }
 
   if (isAdminProfile) {
-    return (
-      <AdminLayout>
-        <AdminProfileContent profile={profile} loading={loading} />
-      </AdminLayout>
-    );
+    return <AdminProfileContent profile={profile} loading={loading} />;
   }
 
   return (
