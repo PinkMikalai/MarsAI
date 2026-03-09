@@ -11,11 +11,14 @@ import Profile from './pages/Users/Profile';
 import ForgotPassword from './pages/Users/ForgotPassword';
 import ResetPassword from './pages/Users/ResetPassword';
 import WatchFilm from './pages/PublicSpace/WatchFilm';
+import JuryPage from './pages/PublicSpace/JuryPage';
+import EventsPage from './pages/PublicSpace/EventsPage';
 import AdminEvents from './pages/Admin/AdminEvents';
 import AdminSponsors from './pages/Admin/AdminSponsors';
 import AdminJury from './pages/Admin/AdminJury';
 import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
+import PublicLayout from './components/layout/PublicLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
 import { useAuth } from './context/AuthContext';
 import UpdatePassword from './pages/Users/updatePassword';
@@ -80,15 +83,17 @@ function App() {
     <Router>
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
-        <Route path={ROUTES.GALLERY_FILMS} element={<GalleryFilms />} />
+        <Route path={ROUTES.GALLERY_FILMS} element={<PublicLayout><GalleryFilms /></PublicLayout>} />
         <Route path={ROUTES.PARTICIPATE} element={<DepositFilm />} />
         <Route path={ROUTES.REGISTER_USER} element={<RegisterForm/>}/>
         <Route path={ROUTES.LOGIN} element={<LoginForm />} />
         <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
         <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={ROUTES.UPDATE_PASSWORD} element={<PrivateRoute><UpdatePassword /></PrivateRoute>} />
-        <Route path={ROUTES.PROFILE} element={<PrivateRoute><Profile /> </PrivateRoute>} />
+        <Route path={ROUTES.PROFILE} element={<PrivateRoute><PublicLayout><Profile /></PublicLayout></PrivateRoute>} />
         <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
+        <Route path={ROUTES.JURY} element={<PublicLayout><JuryPage /></PublicLayout>} />
+        <Route path={ROUTES.EVENTS} element={<PublicLayout><EventsPage /></PublicLayout>} />
         <Route path={ROUTES.ADMIN_EVENTS} element={<AdminEventsProtected />} />
         <Route path={ROUTES.ADMIN_SPONSORS} element={<AdminSponsorsProtected />} />
         <Route path={ROUTES.ADMIN_ASSIGNMENT} element={<AdminAssignment/>} />

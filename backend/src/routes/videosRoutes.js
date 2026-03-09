@@ -31,7 +31,7 @@ router.delete("/:id", deleteVideo);
 
 // Routes memos de sélection (notation par les selectors)
 router.post("/:id/memo", authMiddleware, checkRole(["Selector"]), validate(createSelectorMemoSchema), createSelectorMemo);
-router.get("/memos", authMiddleware, checkRole(["Super-admin", "Admin"]), getAllSelectorMemos);
+router.get("/memos", authMiddleware, checkRole(["Super_admin", "Admin"]), getAllSelectorMemos);
 router.get("/memo/:id", authMiddleware, getSelectorMemoById);
 router.put("/memo/:id", authMiddleware, checkRole(["Selector"]), validate(updateSelectorMemoSchema), updateSelectorMemo);
 router.delete("/memo/:id", authMiddleware, checkRole(["Selector"]), deleteSelectorMemo);

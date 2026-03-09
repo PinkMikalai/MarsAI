@@ -16,10 +16,10 @@ import { validate } from "../middlewares/validate.js";
 import { eventSchema } from "../validators/eventSchema.js";
 import checkRole from "../middlewares/checkRoleMiddleware.js";
 
-router.post("/", authMiddleware, checkRole(['Super-admin', 'Admin']), uploadFields, processS3Uploads, validate(eventSchema), createEvent);
+router.post("/", authMiddleware, checkRole(['Super_admin', 'Admin']), uploadFields, processS3Uploads, validate(eventSchema), createEvent);
 router.get("/", getAllEvents);
 router.get("/:id", getEventById);
-router.put("/:id", authMiddleware, checkRole(['Super-admin', 'Admin']), uploadFields, processS3Uploads, validate(eventSchema), updateEvent);
-router.delete("/:id", authMiddleware, checkRole(['Super-admin', 'Admin']), deleteEvent);
+router.put("/:id", authMiddleware, checkRole(['Super_admin', 'Admin']), uploadFields, processS3Uploads, validate(eventSchema), updateEvent);
+router.delete("/:id", authMiddleware, checkRole(['Super_admin', 'Admin']), deleteEvent);
 
 export default router;

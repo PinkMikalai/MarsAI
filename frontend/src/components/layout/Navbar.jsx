@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Icons from '../ui/common/Icons';
+import { ROUTES } from '../../constants/routes';
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const currentLang = i18n.resolvedLanguage || i18n.language || 'fr';
@@ -18,9 +19,9 @@ const Navbar = () => {
       </Link>
 
       <div className="deposit-navbar-links">
-        <Link to="/" className="deposit-navbar-link">{t('navbar.selections')}</Link>
-        <Link to="/" className="deposit-navbar-link">{t('navbar.programme')}</Link>
-        <Link to="/" className="deposit-navbar-link">{t('navbar.jury')}</Link>
+        <Link to={ROUTES.GALLERY_FILMS} className="deposit-navbar-link">{t('navbar.selections')}</Link>
+        <Link to={ROUTES.JURY} className="deposit-navbar-link">{t('navbar.jury')}</Link>
+        <Link to={ROUTES.EVENTS} className="deposit-navbar-link">{t('navbar.events')}</Link>
       </div>
 
       <div className="deposit-navbar-actions">

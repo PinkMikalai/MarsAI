@@ -426,7 +426,7 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 }
 
 
-// search videos — conditions selon le rôle (Public, Selector, Admin/Super-admin)
+// search videos — conditions selon le rôle (Public, Selector, Admin/Super_admin)
 async function getSearchVideosModel(search = {}) {
 
     try {

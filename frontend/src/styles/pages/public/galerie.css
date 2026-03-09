@@ -7,6 +7,7 @@
               var(--color-mars-bg, #050505); /* proche du visuel home */
   position: relative;
   overflow-x: hidden;
+  padding-top: 112px;
 }
 /* effet paralaxe */
 .galerie-parallax-bg {

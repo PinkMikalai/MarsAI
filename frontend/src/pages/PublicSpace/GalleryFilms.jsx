@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
+import { motion } from 'framer-motion';
 import { videoApi, getCoverUrl } from '../../service/galleryService';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import Icons from '../../components/ui/common/Icons';
+import Reveal from '../../components/ui/common/Reveal';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AdminAssignment from '../Admin/AdminAssignments.jsx';
+import { fadeUp, staggerContainer } from '../../utils/animations';
 
 let _cachedVideos = null;
 
 const GalerieFilms = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
-  const isAdmin = user?.role === 'Admin' || 'Super_admin';
+  const isAdmin = user?.role === 'Admin' || user?.role === 'Super_admin';
   const [scrollY, setScrollY] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [videos, setVideos] = useState(_cachedVideos || []);
@@ -92,14 +93,10 @@ const GalerieFilms = () => {
         <div className="galerie-parallax-shape galerie-parallax-shape--3" />
       </div>
 
-      <header className="galerie-header">
-        <Navbar />
-      </header>
-
       <main className="galerie-main">
-        <h1 className="galerie-title">
+        <Reveal as="h1" className="galerie-title">
           {t('gallery.title')} <span className="galerie-title-accent">{t('gallery.titleAccent')}</span>
-        </h1>
+        </Reveal>
 
         {loading && (
           <ProgressBar
@@ -113,7 +110,7 @@ const GalerieFilms = () => {
 
         {!loading && !error && (
           <>
-            <div className="galerie-grid">
+            <Reveal stagger as="div" className="galerie-grid">
               {filmsOnPage.map((film) => {
                 const title = film.title || film.title_en || t('gallery.noImage');
                 const director = [film.realisator_firstname, film.realisator_lastname].filter(Boolean).join(' ') || '–';
@@ -121,7 +118,7 @@ const GalerieFilms = () => {
                 const hasImageError = imageErrors.has(film.id);
 
                 return (
-                  <article key={film.id} className="galerie-card">
+                  <motion.article key={film.id} className="galerie-card" variants={fadeUp}>
                     <Link to={`/watch/${film.id}`} className="galerie-card-link">
                       <div className="galerie-card-image-wrap">
                         {coverUrl && !hasImageError ? (
@@ -156,10 +153,10 @@ const GalerieFilms = () => {
                         )}
                       </div>
                     </Link>
-                  </article>
+                  </motion.article>
                 );
               })}
-            </div>
+            </Reveal>
 
             {videos.length === 0 && <p className="galerie-empty">{t('gallery.noFilms')}</p>}
 
@@ -205,8 +202,6 @@ const GalerieFilms = () => {
           </>
         )}
       </main>
-
-      <Footer />
     </div>
   );
 };
