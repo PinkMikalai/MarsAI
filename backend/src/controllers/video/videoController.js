@@ -56,7 +56,9 @@ async function getVideoById(req, res) {
                 status: false
             });
         }
+
         else if (role_id === 1 || role_id === 3) {
+
             const adminVideoData = await getAdminVideoDataByIdModel(req.params.id);
             console.log("admin video data", adminVideoData);
             return res.status(200).json({

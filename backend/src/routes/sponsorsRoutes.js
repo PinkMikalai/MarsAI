@@ -20,4 +20,5 @@ router.get("/:id", getSponsorById);
 router.put("/:id", authMiddleware, checkRole([3, 1]), uploadFields, processS3Uploads, validate(sponsorSchema), updateSponsor);
 router.delete("/:id", authMiddleware, checkRole([3, 1]), deleteSponsor);
 
+
 export default router;

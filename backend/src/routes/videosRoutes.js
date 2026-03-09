@@ -28,8 +28,10 @@ router.put("/:id", updateVideo);
 router.delete("/:id", deleteVideo);
 
 // Routes memos de sélection (notation par les selectors)
+
 router.post("/:id/memo", authMiddleware, checkRole([2]), validate(createSelectorMemoSchema), createSelectorMemo);
 router.get("/memos", authMiddleware, checkRole([3, 1]), getAllSelectorMemos);
+
 router.get("/memo/:id", authMiddleware, getSelectorMemoById);
 router.put("/memo/:id", authMiddleware, checkRole([2]), validate(updateSelectorMemoSchema), updateSelectorMemo);
 router.delete("/memo/:id", authMiddleware, checkRole([2]), deleteSelectorMemo);

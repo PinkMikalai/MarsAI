@@ -8,7 +8,10 @@
 @import "./deposit.css";
 @import "./components.css";
 @import "./components/success-modal.css";
+@import "./components/onboarding-modal.css";
 @import "./pages/public/home/index.css";
+@import "./pages/public/jury-page.css";
+@import "./pages/public/events-page.css";
 @import "./pages/public/galerie.css";
 @import "./pages/public/watch-film.css";
 @import "./pages/users/login-register.css";

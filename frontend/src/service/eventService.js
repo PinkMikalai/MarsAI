@@ -1,5 +1,17 @@
 import api from './api';
 
+const getApi = () => (import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai').replace(/\/marsai\/?$/, '');
+
+const buildEventImageUrl = (filename) => {
+  if (!filename) return null;
+  if (/^https?:\/\//.test(filename)) return filename;
+  const origin = getApi();
+  const path = filename.includes('assets/uploads')
+    ? filename.replace(/^\//, '')
+    : `assets/uploads/images/${filename.replace(/^\//, '')}`;
+  return `${origin}/${path}`;
+};
+
 export const eventService = {
   getAll: () => api('/events', { method: 'GET' }),
 
@@ -21,4 +33,6 @@ export const eventService = {
     api(`/events/${id}`, {
       method: 'DELETE',
     }),
+
+  getEventImageUrl: buildEventImageUrl,
 };

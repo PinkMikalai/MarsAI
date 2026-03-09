@@ -20,4 +20,5 @@ router.get("/:id", getJuryById);
 router.put("/:id", authMiddleware, checkRole([3, 1]), uploadFields, processS3Uploads, validate(jurySchema), updateJury);
 router.delete("/:id", authMiddleware, checkRole([3, 1]), deleteJury);
 
+
 export default router;

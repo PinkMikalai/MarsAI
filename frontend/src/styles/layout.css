@@ -20,7 +20,43 @@
   padding: 0 1rem 3rem;
 }
 
+
+/* ── PUBLIC LAYOUT WRAPPER ───────────────────────────────── */
+.public-layout {
+  min-height: 100vh;
+  background: #050505;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.public-layout__navbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  padding: 24px 32px;
+  box-sizing: border-box;
+}
+
+.public-layout__main {
+  flex: 1;
+}
+
+.public-layout__footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 32px;
+  background: #050505;
+}
+
+
 /* ─── NAVBAR ──────────────────────────────────────────────────── */
+
 .deposit-navbar {
   box-sizing: border-box;
   display: flex;
@@ -131,18 +167,20 @@
 .deposit-footer {
   width: 100%;
   max-width: 1174px;
+
   margin: 0 auto;
   padding-top: 81px;
+
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  gap: 80px;
+  gap: 28px;
 }
 
 .deposit-footer-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  gap: 48px;
+  gap: 28px;
 }
 
 .deposit-footer-brand-logo {
@@ -155,7 +193,7 @@
   line-height: 24px;
   letter-spacing: -0.4px;
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
 }
 
 .deposit-footer-brand-mars {
@@ -189,7 +227,7 @@
   letter-spacing: 0.8px;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.2);
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 
 .deposit-footer-list {
@@ -198,7 +236,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .deposit-footer-link {
@@ -220,7 +258,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 24px;
+  padding-top: 16px;
+  padding-bottom: 24px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   opacity: 0.7;
 }

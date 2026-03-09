@@ -16,10 +16,12 @@ import { validate } from "../middlewares/validate.js";
 import { eventSchema } from "../validators/eventSchema.js";
 import checkRole from "../middlewares/checkRoleMiddleware.js";
 
+
 router.post("/", authMiddleware, checkRole([3, 1]), uploadFields, processS3Uploads, validate(eventSchema), createEvent);
 router.get("/", getAllEvents);
 router.get("/:id", getEventById);
 router.put("/:id", authMiddleware, checkRole([3, 1]), uploadFields, processS3Uploads, validate(eventSchema), updateEvent);
 router.delete("/:id", authMiddleware, checkRole([3, 1]), deleteEvent);
+
 
 export default router;

@@ -1,0 +1,650 @@
+/* ============================================================
+   jury-page.css  —  Page publique Membres du Jury
+   Layout: Hero splitté (photo + détails) + carousel + critères
+   ============================================================ */
+
+.jury-page {
+  background: #000;
+  min-height: 100vh;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.jury-page__navbar {
+  display: flex;
+  justify-content: center;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+}
+
+.jury-page__navbar .deposit-navbar {
+  width: 100%;
+  max-width: 1128px;
+}
+
+/* ── SCROLL 1 : SECTION HÉRO ──────────────────────────────── */
+.jury-hero-section {
+  position: relative;
+  overflow: hidden;
+  padding: 116px 28px 40px;
+  background: linear-gradient(180deg, #050505 0%, #0a0520 70%, #080614 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.jury-hero-section__blur {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(130px);
+  pointer-events: none;
+  z-index: 0;
+}
+.jury-hero-section__blur--l {
+  width: 600px; height: 600px;
+  left: -200px; top: -100px;
+  background: rgba(173, 70, 255, 0.18);
+}
+.jury-hero-section__blur--r {
+  width: 450px; height: 450px;
+  right: -100px; top: 100px;
+  background: rgba(81, 162, 255, 0.12);
+}
+
+/* Split layout : photo | détails */
+.jury-hero-section__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1140px;
+  margin: 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+/* ── FEATURED CARD (grande photo) ────────────────────────── */
+.jury-featured {
+  width: 100%;
+}
+
+.jury-featured__skeleton {
+  width: 100%;
+  height: 340px;
+  border-radius: 28px;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0.04) 0%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 100%);
+  background-size: 200% 100%;
+  animation: jury-skeleton 1.4s ease infinite;
+}
+
+.jury-featured__card {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0 60px rgba(173,70,255,0.2), 0 20px 40px rgba(0,0,0,0.6);
+  transition: box-shadow 0.3s ease;
+}
+
+.jury-featured__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.jury-featured__placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+}
+
+.jury-featured__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+}
+
+.jury-featured__info {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.jury-featured__role {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00D492;
+}
+
+.jury-featured__name {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* ── DÉTAILS DROITE ──────────────────────────────────────── */
+.jury-hero-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.jury-hero-details__kicker {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #51A2FF;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jury-hero-details__kicker::before {
+  content: '';
+  display: inline-block;
+  width: 20px; height: 2px;
+  background: #51A2FF;
+  border-radius: 2px;
+}
+
+.jury-hero-details__title {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+
+.jury-hero-details__accent {
+  background: linear-gradient(135deg, #51A2FF 0%, #AD46FF 50%, #FF2B7F 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.jury-hero-details__quote {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 3px solid rgba(173,70,255,0.6);
+  border-radius: 0 16px 16px 0;
+  padding: 16px 20px;
+}
+
+.jury-hero-details__bio {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.7);
+  margin: 0;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.jury-hero-details__desc {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 500;
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+}
+
+/* ── CAROUSEL DES AUTRES MEMBRES ─────────────────────────── */
+.jury-carousel {
+  position: relative;
+  z-index: 1;
+  max-width: 1140px;
+  margin: 32px auto 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+
+.jury-carousel__track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px 40px 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+}
+.jury-carousel__track::-webkit-scrollbar { display: none; }
+
+.jury-carousel__card {
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  scroll-snap-align: start;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.02);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
+}
+
+.jury-carousel__card:hover,
+.jury-carousel__card--active {
+  transform: translateY(-4px);
+  border-color: rgba(173,70,255,0.5);
+  box-shadow: 0 8px 24px rgba(173,70,255,0.25);
+}
+
+.jury-carousel__card--active {
+  border-color: rgba(81,162,255,0.6);
+  box-shadow: 0 0 0 2px rgba(81,162,255,0.3), 0 8px 24px rgba(81,162,255,0.2);
+}
+
+.jury-carousel__img-wrap {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.jury-carousel__img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+.jury-carousel__card:hover .jury-carousel__img {
+  transform: scale(1.05);
+}
+
+.jury-carousel__placeholder {
+  width: 100%; height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+}
+
+.jury-carousel__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 60%);
+}
+
+.jury-carousel__info {
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jury-carousel__role {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #00D492;
+}
+
+.jury-carousel__name {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: 0.82rem;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.jury-empty {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: rgba(255,255,255,0.4);
+  font-family: 'Arimo', sans-serif;
+  padding: 24px 0;
+}
+
+/* ── SCROLL 2 : CRITÈRES ──────────────────────────────────── */
+.jury-criteria {
+  position: relative;
+  overflow: hidden;
+  padding: 40px 28px 60px;
+  background: linear-gradient(180deg, #080614 0%, #0e0828 50%, #080614 100%);
+}
+
+.jury-criteria__bg-blur {
+  position: absolute;
+  width: 700px; height: 700px;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #472F85 0%, #9810FA 100%);
+  opacity: 0.1;
+  filter: blur(90px);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.jury-criteria__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1140px;
+  margin: 0 auto;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 28px;
+  padding: 36px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: rgba(255,255,255,0.02);
+}
+
+.jury-criteria__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 32px;
+}
+
+.jury-criteria__kicker {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin: 0 0 6px;
+}
+
+.jury-criteria__title {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+
+.jury-criteria__desc {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: #64748B;
+  max-width: 480px;
+  margin: 0;
+  text-align: right;
+}
+
+.jury-criteria__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.jury-criterion {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 18px 22px;
+  background: rgba(255,255,255,0.02);
+  transition: border-color 0.2s;
+}
+.jury-criterion:hover {
+  border-color: rgba(81,162,255,0.3);
+}
+
+.jury-criterion__badge {
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jury-criterion__badge span {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #fff;
+}
+
+.jury-criterion__content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.jury-criterion__label {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  margin: 0;
+}
+
+.jury-criterion__text {
+  font-family: 'Plus Jakarta Sans', 'Arimo', sans-serif;
+  font-weight: 500;
+  font-size: 0.76rem;
+  line-height: 1.45;
+  color: #D5DAE1;
+  margin: 0;
+}
+
+/* ── SKELETON ANIMATION ───────────────────────────────────── */
+@keyframes jury-skeleton {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+
+/* Tablette large (≤ 1024px) */
+@media (max-width: 1024px) {
+  .jury-hero-section__inner {
+    grid-template-columns: 320px 1fr;
+    gap: 36px;
+  }
+}
+
+/* Tablette (≤ 900px) : empilé vertical */
+@media (max-width: 900px) {
+  .jury-hero-section {
+    padding: 100px 20px 32px;
+    min-height: auto;
+    justify-content: flex-start;
+  }
+
+  .jury-hero-section__inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .jury-featured__card,
+  .jury-featured__skeleton {
+    height: 280px;
+  }
+
+  .jury-hero-details__title {
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+  }
+
+  .jury-carousel {
+    margin: 24px auto 0;
+  }
+
+  .jury-criteria { padding: 32px 20px 48px; }
+  .jury-criteria__inner { padding: 28px 24px 36px; }
+  .jury-criteria__head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .jury-criteria__desc { text-align: left; max-width: 100%; }
+  .jury-criteria__grid { grid-template-columns: 1fr; }
+}
+
+/* Mobile (≤ 600px) */
+@media (max-width: 600px) {
+  .jury-page__navbar {
+    padding: 16px 16px;
+  }
+
+  .jury-hero-section {
+    padding: 80px 16px 24px;
+  }
+
+  .jury-hero-section__blur--l {
+    width: 300px; height: 300px;
+    left: -100px; top: -60px;
+  }
+  .jury-hero-section__blur--r {
+    width: 220px; height: 220px;
+    right: -60px; top: 60px;
+  }
+
+  .jury-featured__card,
+  .jury-featured__skeleton {
+    height: 240px;
+    border-radius: 20px;
+  }
+
+  .jury-featured__name {
+    font-size: 1.15rem;
+  }
+
+  .jury-hero-details {
+    gap: 14px;
+  }
+
+  .jury-hero-details__title {
+    font-size: clamp(1.5rem, 7vw, 2rem);
+  }
+
+  .jury-hero-details__bio {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 4;
+  }
+
+  .jury-hero-details__quote {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .jury-carousel {
+    margin: 20px 0 0;
+    max-width: 100%;
+  }
+
+  .jury-carousel__track {
+    padding: 6px 16px 12px;
+    gap: 12px;
+  }
+
+  .jury-carousel__card {
+    flex: 0 0 130px;
+    border-radius: 16px;
+  }
+
+  .jury-carousel__img-wrap {
+    height: 150px;
+  }
+
+  .jury-carousel__name {
+    font-size: 0.75rem;
+  }
+
+  .jury-criteria {
+    padding: 24px 12px 40px;
+  }
+
+  .jury-criteria__inner {
+    padding: 20px 16px 24px;
+    border-radius: 20px;
+    gap: 18px;
+  }
+
+  .jury-criteria__title {
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+  }
+
+  .jury-criteria__grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .jury-criterion {
+    padding: 14px 16px;
+    border-radius: 16px;
+    gap: 14px;
+  }
+
+  .jury-criterion__badge {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+
+  .jury-criterion__badge span {
+    font-size: 1.15rem;
+  }
+
+  .jury-criterion__label {
+    font-size: 0.8rem;
+  }
+
+  .jury-criterion__text {
+    font-size: 0.72rem;
+  }
+}
+
+/* Très petit mobile (≤ 380px) */
+@media (max-width: 380px) {
+  .jury-featured__card,
+  .jury-featured__skeleton {
+    height: 200px;
+  }
+
+  .jury-carousel__card {
+    flex: 0 0 110px;
+  }
+
+  .jury-carousel__img-wrap {
+    height: 130px;
+  }
+
+  .jury-hero-details__title {
+    font-size: 1.4rem;
+  }
+}
