@@ -1,4 +1,4 @@
-import { pool } from "../db/index.js";
+import { pool } from "../../db/index.js";
 
 // Récupérer tous les statuts de sélection
 async function getAllSelectionStatusModel() {

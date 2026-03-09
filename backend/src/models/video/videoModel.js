@@ -56,15 +56,7 @@ async function createVideoModel(videoData) {
     }
 }
 
-// get all videos
-async function getAllVideosModel() {
-   
-    const [rows] = await pool.execute(  
-        'SELECT * FROM video'
-    );
-    return rows;
-    
-}
+
 
 // get video by id, infos pour tout les mondes
 async function getVideoByIdModel(id) {
@@ -136,6 +128,7 @@ async function getVideoByIdModel(id) {
         throw error;
     }
 }
+
 // get video by id, infos pour l'admin
 async function getAdminVideoDataByIdModel(id) {
     try {
@@ -426,49 +419,101 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 }
 
 
-// search videos — conditions selon le rôle (Public, Selector, Admin/Super-admin)
-async function getSearchVideosModel(search = {}) {
-
+// search videos — recherche textuelle + filtres (adminStatus, selectionStatus, rated)
+// Paramètres : { q, search, adminStatus, selectionStatus, rated }
+async function getSearchVideosModel(params = {}) {
     try {
-        const { search, role, userId } = search;
-        const query = `SELECT * 
-        FROM video 
-        WHERE title LIKE '%${search}%' 
-        OR title_en LIKE '%${search}%' 
-        OR synopsis LIKE '%${search}%' 
-        OR realisator_firstname LIKE '%${search}%' 
-        OR realisator_lastname LIKE '%${search}%' 
-        OR language LIKE '%${search}%' 
-        OR country LIKE '%${search}%' 
-        OR tech_resume LIKE '%${search}%'
-        OR creative_resume LIKE '%${search}%'
-        OR classification LIKE '%${search}%'
-        OR tag.name LIKE '%${search}%'
-        OR award.title LIKE '%${search}%'
-        WHERE video.id = tag.video_id
-        AND video.id = award.video_id
-        AND video.id = contributor.video_id
-        AND video.id = selector_memo.video_id
-        AND video.id = admin_video.video_id
-        AND video.id = admin_status.video_id
-        AND video.id = acquisition_source.video_id
-        AND video.id = contributor.video_id
-        AND video.id = selector_memo.video_id
-        AND video.id = admin_video.video_id
-        AND video.id = admin_status.video_id
-        AND video.id = acquisition_source.video_id`;
-        const [rows] = await pool.execute(query);
+        const {
+            q, search: searchVal,
+            adminStatus, selectionStatus, rated,
+        } = params;
+        const searchTerm = (q ?? searchVal ?? '').toString().trim();
+
+        const hasText    = !!searchTerm;
+        const hasAdmin   = !!adminStatus;
+        const hasSel     = !!selectionStatus;
+        const hasRated   = rated === 'true' || rated === 'false';
+
+        // Aucun critère → toutes les vidéos
+        if (!hasText && !hasAdmin && !hasSel && !hasRated) {
+            const [rows] = await pool.execute('SELECT * FROM video');
+            return rows;
+        }
+
+        const conditions = [];
+        const values = [];
+
+        // --- JOINs nécessaires selon les filtres ---
+        const needsTag    = hasText;
+        const needsAward  = hasText;
+        const needsContrib = hasText;
+        const needsSel    = hasText || hasSel || hasRated;
+        const needsAdmin  = hasText || hasAdmin;
+        const needsAcq    = hasText;
+
+        let joins = '';
+        if (needsTag)    joins += '\n            LEFT JOIN video_tag vt ON v.id = vt.video_id LEFT JOIN tag t ON vt.tag_id = t.id';
+        if (needsAward)  joins += '\n            LEFT JOIN video_award va ON v.id = va.video_id LEFT JOIN award a ON va.award_id = a.id';
+        if (needsContrib)joins += '\n            LEFT JOIN contributor c ON v.id = c.video_id';
+        if (needsSel)    joins += '\n            LEFT JOIN selector_memo sm ON v.id = sm.video_id LEFT JOIN selection_status ss ON sm.selection_status_id = ss.id';
+        if (needsAdmin)  joins += '\n            LEFT JOIN admin_video av ON v.id = av.video_id LEFT JOIN admin_status ast ON av.admin_status_id = ast.id';
+        if (needsAcq)    joins += '\n            LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id';
+
+        // --- filtre texte : OR sur tous les champs ---
+        if (hasText) {
+            const term = `%${searchTerm}%`;
+            const textCols = [
+                'v.title', 'v.title_en', 'v.synopsis',
+                'v.realisator_firstname', 'v.realisator_lastname',
+                'v.language', 'v.country', 'v.tech_resume',
+                'v.creative_resume', 'v.classification',
+                't.name', 'a.title', 'c.firstname', 'c.last_name',
+                'ss.name', 'ast.name', 'ac.name',
+            ];
+            conditions.push(`(${textCols.map(col => `${col} LIKE ?`).join(' OR ')})`);
+            textCols.forEach(() => values.push(term));
+        }
+
+        // --- filtre admin_status ---
+        if (hasAdmin) {
+            conditions.push('ast.name = ?');
+            values.push(adminStatus);
+        }
+
+        // --- filtre selection_status ---
+        if (hasSel) {
+            conditions.push('ss.name = ?');
+            values.push(selectionStatus);
+        }
+
+        // --- filtre rated (vidéo notée ou non par le selector) ---
+        if (hasRated) {
+            if (rated === 'true') {
+                conditions.push('EXISTS (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)');
+            } else {
+                conditions.push('NOT EXISTS (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)');
+            }
+        }
+
+        const whereClause = conditions.length ? `WHERE ${conditions.join('\n               AND ')}` : '';
+
+        const query = `
+            SELECT DISTINCT v.*
+            FROM video v${joins}
+            ${whereClause}
+        `;
+
+        const [rows] = await pool.execute(query, values);
         return rows;
-        console.log('query search', rows);
-    }catch (error) {
+    } catch (error) {
         console.error('erreur lors de la recherche des videos(cote model): ', error);
+        throw error;
     }
 }
 
 
 export {
     createVideoModel,
-    getAllVideosModel,
     getVideoByIdModel,
     getAdminVideoDataByIdModel,
     getSelectorVideoDataByIdModel,

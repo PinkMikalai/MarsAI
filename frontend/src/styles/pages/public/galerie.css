@@ -199,6 +199,25 @@
   color: rgba(255, 255, 255, 0.35);
 }
 
+/* ---------- MESSAGES ---------- */
+.galerie-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.95rem;
+  padding: 3rem 0;
+}
+
+.galerie-error {
+  text-align: center;
+  color: #ff6b6b;
+  background: rgba(255, 60, 60, 0.1);
+  border: 1px solid rgba(255, 60, 60, 0.2);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
 /* ---------- PAGINATION ---------- */
 .galerie-pagination {
   display: flex;
@@ -471,6 +490,43 @@
 .gsearch-clear svg {
   width: 13px;
   height: 13px;
+}
+
+/* filtres de recherche */
+.gsearch-filters-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.625rem;
+}
+
+.gsearch-select {
+  height: 36px;
+  padding: 0 2rem 0 0.75rem;
+  background: rgba(255, 255, 255, 0.05)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")
+    no-repeat right 0.6rem center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  min-width: 160px;
+}
+
+.gsearch-select:focus {
+  border-color: rgba(43, 127, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.gsearch-select option {
+  background: #0d0d1a;
+  color: #ffffff;
 }
 
 /* badge résultats de recherche */

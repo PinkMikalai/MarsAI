@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
 import { DepositFormProvider, useDepositForm } from '../../context/DepositFormContext';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
 import Header from '../../components/layout/Header';
 import ConsentStep from '../../components/forms/ConsentStep';
 import InscriptionStep from '../../components/forms/InscriptionStep';
@@ -123,8 +121,6 @@ const DepositFilmInner = () => {
   return (
     <div className="deposit-page">
       <div className="deposit-container">
-        <Navbar />
-
         <Header badge={t('deposit.badge')} title={t('deposit.title')} />
 
 
@@ -182,7 +178,6 @@ const DepositFilmInner = () => {
           </div>
         </div>
 
-        <Footer />
       </div>
 
       {showSuccessModal && successData?.videoId && (

@@ -1,7 +1,26 @@
+/* ─── LAYOUT PUBLIC (Navbar + Footer partagés via App.jsx) ──── */
 
+/* Header : fond sombre uniforme, navbar pill centrée */
+.public-header {
+  position: relative;
+  z-index: 10;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  background: var(--color-mars-bg, #050505);
+}
 
+/* Footer : fond sombre uniforme, contenu centré */
+.public-footer-wrap {
+  position: relative;
+  z-index: 2;
+  background: var(--color-mars-bg, #050505);
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem 3rem;
+}
 
-/* navbar */
+/* ─── NAVBAR ──────────────────────────────────────────────────── */
 .deposit-navbar {
   box-sizing: border-box;
   display: flex;
@@ -112,6 +131,7 @@
 .deposit-footer {
   width: 100%;
   max-width: 1174px;
+  margin: 0 auto;
   padding-top: 81px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
