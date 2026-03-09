@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ROUTES } from './constants/routes';
 import { AuthProvider } from './context/AuthContext';
+import { useAuth } from './context/AuthContext';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import Home from './pages/PublicSpace/Home';
 import GalleryFilms from './pages/PublicSpace/GalleryFilms';
 import DepositFilm from './pages/Users/DepositFilm';
@@ -17,8 +20,20 @@ import AdminJury from './pages/Admin/AdminJury';
 import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
-import { useAuth } from './context/AuthContext';
 import UpdatePassword from './pages/Users/updatePassword';
+
+// Layout public : Navbar en haut, Footer en bas, contenu au milieu
+const PublicLayout = ({ children }) => (
+    <>
+        <header className="public-header">
+            <Navbar />
+        </header>
+        {children}
+        <div className="public-footer-wrap">
+            <Footer />
+        </div>
+    </>
+);
 
 
 
@@ -80,14 +95,14 @@ function App() {
     <Router>
       <Routes>
         <Route path={ROUTES.HOME} element={<Home />} />
-        <Route path={ROUTES.GALLERY_FILMS} element={<GalleryFilms />} />
-        <Route path={ROUTES.PARTICIPATE} element={<DepositFilm />} />
+        <Route path={ROUTES.GALLERY_FILMS} element={<PublicLayout><GalleryFilms /></PublicLayout>} />
+        <Route path={ROUTES.PARTICIPATE} element={<PublicLayout><DepositFilm /></PublicLayout>} />
         <Route path={ROUTES.REGISTER_USER} element={<RegisterForm/>}/>
         <Route path={ROUTES.LOGIN} element={<LoginForm />} />
         <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
         <Route path={ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
         <Route path={ROUTES.UPDATE_PASSWORD} element={<PrivateRoute><UpdatePassword /></PrivateRoute>} />
-        <Route path={ROUTES.PROFILE} element={<PrivateRoute><Profile /> </PrivateRoute>} />
+        <Route path={ROUTES.PROFILE} element={<PrivateRoute><PublicLayout><Profile /></PublicLayout></PrivateRoute>} />
         <Route path={ROUTES.WATCH_FILM} element={<WatchFilm />} />
         <Route path={ROUTES.ADMIN_EVENTS} element={<AdminEventsProtected />} />
         <Route path={ROUTES.ADMIN_SPONSORS} element={<AdminSponsorsProtected />} />

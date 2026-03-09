@@ -67,10 +67,9 @@ export const AuthProvider = ({ children }) => {
     const userValue = {
         user, login, logout,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'Admin',
-        isSuperAdmin: user?.role === 'Super_admin' || user?.role === 'Super-admin',
-        isSelector: user?.role === 'Selector'
-
+        isAdmin: user?.role_id === 1,
+        isSuperAdmin: user?.role_id === 3,
+        isSelector: user?.role_id === 2,
     }
     // Gestion du loading du chargement des données
     if (loading) {

@@ -11,19 +11,20 @@ import { validate } from '../middlewares/validate.js';
 import { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserSchema } from '../validators/authSchema.js';
 import loginSchema from '../validators/loginShema.js';
 
+router.post('/admin/invite', authMiddleware, checkRole([3]), validate(inviteSchema), inviteUserController);
 
-router.post('/admin/invite', authMiddleware, checkRole(['Super_admin']), validate(inviteSchema), inviteUserController);
 router.get('/invitation', getInviteController);
 router.post('/register', validate(passwordSchema), registerController);
 router.post('/login', validate(loginSchema), loginController);
 
 router.get('/profile', authMiddleware, profileUserController);
 
-router.put('/update_profile', authMiddleware, validate(updateUserSchema), updateUserController);
-router.put('/admin/user_update/:id', authMiddleware, checkRole(['Super_admin']), updateUserBySuperAdminController);
-router.delete('/admin/user_delete/:id', authMiddleware, checkRole(['Super_admin']), deleteUserController);
+router.put('/update_profile', authMiddleware, validate(updateUserShema), updateUserController);
+router.put('/admin/user_update/:id', authMiddleware, checkRole([3]), updateUserBySuperAdminController);
+router.delete('/admin/user_delete/:id', authMiddleware, checkRole([3]), deleteUserController);
+
 router.post('/forgot_password', forgotPasswordController);
 router.post('/reset_password', validate(resetPasswordSchema), resetPasswordController);
 router.put('/update_password', authMiddleware, validate(updatePasswordSchema), updatePasswordController);
-router.get('/admin/get_selectors', authMiddleware, checkRole(['Admin', 'Super_admin']),getAllSelectorsController);
+router.get('/admin/get_selectors', authMiddleware, checkRole([1, 3]),getAllSelectorsController);
 export default router;

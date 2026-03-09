@@ -1,6 +1,5 @@
 import api from './api';
 
 export const searchService = {
-  getSearchVideos: (search) => api.get('/videos/search', { params: search }),
+    getSearchVideos: (q) => api(`/videos?q=${encodeURIComponent(q ?? '')}`, { method: 'GET' }),
 };
-
