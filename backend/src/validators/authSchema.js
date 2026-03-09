@@ -3,7 +3,7 @@ import { email, passwordBase, firstname, lastname } from './commonSchema.js';
 
 const inviteSchema = z.object({
     email,
-    role: z.enum(['Admin', 'Selector', 'Super-admin'], {
+    role: z.enum(['Admin', 'Selector', 'Super_admin'], {
         errorMap: () => ({ message: 'invalid role' })
     })
 });

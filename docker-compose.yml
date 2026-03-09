@@ -1,0 +1,83 @@
+services:
+  db:
+    image: mysql:8.4.3
+    container_name: marsai-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: MarsAI
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    # On définit un test de santé pour la DB
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: marsai-pma
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  maildev:
+    image: maildev/maildev
+    container_name: marsai-maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+  backend:
+    build: ./backend
+    container_name: marsai-back
+    env_file:
+      - ./backend/.env
+    # Pas besoin de ports ici, Nginx s'en occupe
+    volumes:
+      - ./backend:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: MarsAI
+      EMAIL_HOST: maildev
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    container_name: marsai-front
+    volumes:
+      - ./frontend:/app
+      - ./shared:/app/shared
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true # Pour le Hot Reload dans Docker
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: marsai-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  db_data:

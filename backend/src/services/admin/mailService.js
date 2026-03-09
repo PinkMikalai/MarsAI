@@ -6,7 +6,7 @@ console.log("CONFIG TEST:", { host: process.env.EMAIL_HOST, port: process.env.EM
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST || '127.0.0.1',
 
-    port: Number(process.env.EMAIL_PORT) || 2025,
+    port: Number(process.env.EMAIL_PORT) || 1025,
     secure: false,
     ignoreTLS: true,
     auth: null

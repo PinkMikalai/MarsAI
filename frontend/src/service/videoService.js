@@ -119,7 +119,7 @@ export async function submitVideo(formData, token) {
 
 // version avec suivi de progression (XHR requis — fetch ne supporte pas upload progress)
 export function submitVideoWithProgress(formData, token, onProgress) {
-  const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai';
+  const BASE_URL = import.meta.env.VITE_API_URL || '/api/marsai';
 
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();

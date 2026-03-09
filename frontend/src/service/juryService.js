@@ -1,6 +1,6 @@
 import api from './api';
 
-const getApi = () => (import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai').replace(/\/marsai\/?$/, '');
+const getApi = () => (import.meta.env.VITE_API_URL || '/api/marsai').replace(/\/marsai\/?$/, '');
 
 const buildJuryImageUrl = (filename) => {
   if (!filename) return null;

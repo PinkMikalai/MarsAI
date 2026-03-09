@@ -18,7 +18,7 @@ import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
 import { useAuth } from './context/AuthContext';
-import UpdatePassword from './pages/Users/updatePassword';
+import UpdatePassword from './pages/Users/UpdatePassword';
 
 
 

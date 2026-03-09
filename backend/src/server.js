@@ -1,6 +1,9 @@
 import { testConnection } from "./db/index.js";
+import cors from 'cors';
 import 'dotenv/config';
 import app from "./app.js";
+
+app.use(cors());
 
 const PORT = process.env.PORT;
 
@@ -13,3 +16,4 @@ app.listen(PORT, async () => {
     await testConnection();
     console.log(`serveur lance sur le port ${PORT}, Allez ASMA, nous sommes les champions`);
 });
+

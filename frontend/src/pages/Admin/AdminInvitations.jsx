@@ -8,7 +8,7 @@ const AdminInvitations = () => {
   const ROLES = [
     { value: 'Admin', label: 'Admin' },
     { value: 'Selector', label: t('profile.roleSelector') },
-    { value: 'Super-admin', label: 'Super Admin' },
+    { value: 'Super_admin', label: 'Super Admin' },
   ];
 
   const [email, setEmail] = useState('');
