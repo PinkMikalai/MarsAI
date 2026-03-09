@@ -8,9 +8,9 @@ import { COUNTRIES_ISO3166, PHONE_PREFIX_OPTIONS } from '@shared/constants/count
 export { COUNTRIES_ISO3166, PHONE_PREFIX_OPTIONS } from '@shared/constants/countries.js';
 
 export const CIVILITY_OPTIONS = [
-  { value: 'Mrs', label: 'Mrs' },
-  { value: 'Mr', label: 'Mr' },
-  { value: 'Other', label: 'Other' },
+  { value: 'Mr', labelKey: 'deposit.civility_options.mr' },
+  { value: 'Mrs', labelKey: 'deposit.civility_options.mrs' },
+  { value: 'Other', labelKey: 'deposit.civility_options.other' }
 ];
 
 /** Emoji drapeau à partir du code ISO 3166-1 alpha-2 (2 lettres). */

@@ -1,9 +1,12 @@
 import { z } from 'zod';  
+import { COUNTRIES_ISO3166 } from '../constants/countries.js';
 
 import { commonSchema } from './commonSchema.js';
 
 // Extraction des élèments dont on a besoin 
 const { email, firstname, lastname, id } = commonSchema;
+
+const validCountryCodes = COUNTRIES_ISO3166.map(c => c.value);
 
 // constantes pour la validation des numéros de téléphone
 const phoneRegex = /^\+[1-9]\d{1,14}$/;
@@ -63,7 +66,7 @@ const participationSchema = z.object({
     title: z
         .string()
         .trim()
-        .max(100, "Title is too long (maximum 100 characters)")
+        .max(100, "err_title_too_long")
         .optional()
         .or(z.literal("")), //optional autorise le champs à être absent du json, literal autorise le champ à être une chaîne vide
 
@@ -117,10 +120,11 @@ const participationSchema = z.object({
 
     // PAYS (Standard ISO 3166-1 alpha-2)
     country: z
-        .string({ required_error: "Country is required" })
-        .trim()
-        .length(2, "Please use a 2-letter country code (e.g., 'FR', 'US')")
-        .transform(val => val.toUpperCase()),
+        .string()
+        .min(1, { message: "err_country_required" })
+        .refine((val) => validCountryCodes.includes(val), {
+            message: "err_country_invalid_format",
+        }),
 
     classification: z
         .enum(["100% AI", "Hybrid"], {errorMap: () => ({ message: "Please select a valid classification: '100% AI' or 'Hybrid'" })
@@ -130,8 +134,18 @@ const participationSchema = z.object({
     realisator_firstname: firstname,
     realisator_lastname: lastname,
     realisator_civility: z
-        .enum(["Mr", "Mrs", "Other"], {errorMap: () => ({ message: "Civility must be Mr, Mrs, or Other" })
+       .string() // On commence par un string pour accepter le "" du select
+        .min(1, { message: "err_civility_invalid" }) // Gère le cas "Select..."
+        .superRefine((val, ctx) => {
+    if (!["Mr", "Mrs", "Other"].includes(val)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "err_civility_invalid", // TA CLÉ ICI
+        fatal: true
+      });
+    }
     }),
+    
 
 
     // CONTACT
@@ -141,24 +155,48 @@ const participationSchema = z.object({
         .string({ required_error: "Country is required" })
         .min(1, "Please select your country"), // Bloque si la valeur est ""
 
-    birthdate: z
-        .string({ required_error: "Birthdate is required" })
-        .min(1, "Birthdate is required")
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
-        .refine((val) => {
-            const birthDate = new Date(val);
-            if (isNaN(birthDate.getTime())) return false;
+    // birthdate: z
+    //     .string({ required_error: "Birthdate is required" })
+    //     .min(1, "Birthdate is required")
+    //     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
+    //     .refine((val) => {
+    //         const birthDate = new Date(val);
+    //         if (isNaN(birthDate.getTime())) return false;
             
-            const today = new Date();
-            const eighteenYearsAgo = new Date();
-            eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+    //         const today = new Date();
+    //         const eighteenYearsAgo = new Date();
+    //         eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
 
-            // La date doit être AVANT ou EGALE à il y a 18 ans
-            return birthDate <= eighteenYearsAgo;
-        }, { 
-            // Message d'erreur
-            message: "You must be at least 18 years old to participate" 
-        }),
+    //         // La date doit être AVANT ou EGALE à il y a 18 ans
+    //         return birthDate <= eighteenYearsAgo;
+    //     }, { 
+    //         // Message d'erreur
+    //         message: "You must be at least 18 years old to participate" 
+    //     }),
+
+    birthdate: z
+    .string({ required_error: "Birthdate is required" })
+    .min(1, "Birthdate is required")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
+    .refine((val) => {
+        const birthDate = new Date(val);
+        if (isNaN(birthDate.getTime())) return false;
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const eighteenYearsAgo = new Date();
+        eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+        eighteenYearsAgo.setHours(0, 0, 0, 0);
+
+        const minYearAllowed = new Date("1925-01-01");
+
+        // Condition 1 : Doit avoir au moins 18 ans
+        // Condition 2 : Ne doit pas être né avant 1900
+        return birthDate <= eighteenYearsAgo && birthDate >= minYearAllowed;
+    }, { 
+        message: "You must be between 18 and 100 years old" 
+    }),
 
     // TÉLÉPHONE MOBILE : Format E.164 (ex: +33612345678), champs obligatoire 
     mobile_number: z

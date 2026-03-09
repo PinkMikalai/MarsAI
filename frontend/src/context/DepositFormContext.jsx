@@ -7,16 +7,16 @@ const initialState = {
     accept_age_18: false,
   },
   participant: {
-    civility: 'M.',
-    firstname: '',
-    lastname: '',
+    realisator_civility: '',
+    realisator_firstname: '',
+    realisator_lastname: '',
     email: '',
     birthdate: '',
     country: 'FR',
-    phone: '',
-    phone_country: '', // indicatif mobile (vide = pays du formulaire)
-    phone_landline: '',
-    phone_landline_country: '', // indicatif fixe (vide = pays du formulaire)
+    mobile_number: '',
+    mobile_country: 'FR', // indicatif mobile (vide = pays du formulaire)
+    phone_number: '',
+    phone_country: 'FR', // indicatif fixe (vide = pays du formulaire)
     address: '',
     social_links: [], // { platform: string, url: string }[], max 10
   },
