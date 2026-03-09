@@ -14,10 +14,11 @@ import { sponsorSchema } from "../validators/sponsorSchema.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 import checkRole from "../middlewares/checkRoleMiddleware.js";
 
-router.post("/", authMiddleware, checkRole(['Super_admin', 'Admin']), uploadFields, processS3Uploads, validate(sponsorSchema), createSponsor); 
+router.post("/", authMiddleware, checkRole([3, 1]), uploadFields, processS3Uploads, validate(sponsorSchema), createSponsor);
 router.get("/", getAllSponsors);
 router.get("/:id", getSponsorById);
-router.put("/:id", authMiddleware, checkRole(['Super_admin', 'Admin']), uploadFields, processS3Uploads, validate(sponsorSchema), updateSponsor); 
-router.delete("/:id", authMiddleware, checkRole(['Super_admin', 'Admin']), deleteSponsor);
+router.put("/:id", authMiddleware, checkRole([3, 1]), uploadFields, processS3Uploads, validate(sponsorSchema), updateSponsor);
+router.delete("/:id", authMiddleware, checkRole([3, 1]), deleteSponsor);
+
 
 export default router;

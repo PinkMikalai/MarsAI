@@ -37,10 +37,10 @@ const updatePasswordSchema = z.object({
     path: ["confirmNewPassword"]
 });
 
-const updateUserShema = z.object({
+const updateUserSchema = z.object({
      firstname: firstname.optional(), 
     lastname: lastname.optional(),
 }).strict();
 
 
-export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserShema };
+export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserSchema };

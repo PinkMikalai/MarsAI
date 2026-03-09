@@ -216,7 +216,6 @@ const Profile = () => {
   if (!user) {
     return (
       <div className="profile-page">
-        <Navbar />
         <main className="profile-container">
           <h1 className="profile-title">{t('profile.title')}</h1>
           <div className="profile-error">
@@ -224,7 +223,6 @@ const Profile = () => {
             <Link to={ROUTES.LOGIN} className="profile-link">{t('profile.goToLogin')}</Link>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
