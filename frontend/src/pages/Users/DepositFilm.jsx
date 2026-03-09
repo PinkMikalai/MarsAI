@@ -11,7 +11,7 @@ import UploadFilmStep from '../../components/forms/UploadFilmStep';
 import FinalisationStep from '../../components/forms/FinalisationStep';
 import Stepper from '../../components/ui/navigation/Stepper';
 import SuccessModal from '../../components/ui/feedback/SuccessModal';
-import { participationSchema } from '@shared/schemas/participationSchema.js';
+import { participantSchema, filmStepSchema } from '@shared/schemas/participationSchema.js';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
@@ -43,19 +43,14 @@ const DepositFilmInner = () => {
     form.consent.accept_rules &&
     form.consent.accept_ownership;
 
-  const inscriptionComplete = participationSchema.safeParse(p).success;
+  const inscriptionComplete = participantSchema.safeParse(p).success;
 
-  const uploadComplete =
-    !!files.video &&
-    !!files.cover &&
-    !!film.title_en?.trim() &&
-    !!film.synopsis_en?.trim() &&
-    !!film.tech_resume?.trim() &&
-    !!film.creative_resume?.trim();
+  const filmDataValid = filmStepSchema.safeParse(film).success;
+  const uploadComplete = !!files.video && !!files.cover && filmDataValid;
 
   const canGoNext =
       (currentStepIndex === 0 && consentComplete) ||
-      (currentStepIndex === 1) || // <--- FORCE l'étape 1 à TRUE pour pouvoir cliquer
+      (currentStepIndex === 1 && inscriptionComplete) ||
       (currentStepIndex === 2 && uploadComplete);
 
   // animation "bouton vient de s'activer" (etape 0 seulement)
@@ -112,19 +107,7 @@ const DepositFilmInner = () => {
     : <CurrentStepComponent key={currentStepIndex} />;
 
   const handleStepNavigation = () => {
-    if (currentStepIndex === 1) {
-      // On re-vérifie une dernière fois
-      const result = participationSchema.safeParse(p);
-      if (result.success) {
-            next();
-          } else {
-            // ÇA VA T'AFFICHER LE COUPABLE PRÉCIS DANS LA CONSOLE :
-            console.error("Zod refuse car :", result.error.flatten().fieldErrors);
-            alert("Erreur de validation. Ouvre la console (F12) pour voir quel champ bloque.");
-          }
-        } else {
-          next();
-        }
+    next();
   };
   
 
@@ -184,7 +167,7 @@ const DepositFilmInner = () => {
                   {/* {t('deposit.consentHint', STEP_HINTS[currentStepIndex])} */}
                   {currentStepIndex === 0 && t('deposit.consentHint', STEP_HINTS[0])}
                   {currentStepIndex === 1 && "Veuillez remplir correctement tous les champs marqués d'une astérisque (*)."}
-                  {currentStepIndex === 2 && STEP_HINTS[2]}
+                  {currentStepIndex === 2 && t('deposit.uploadHint', STEP_HINTS[2])}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -198,6 +181,7 @@ const DepositFilmInner = () => {
           isOpen={showSuccessModal}
           onClose={handleCloseSuccessModal}
           videoId={successData.videoId}
+          videoTitle={successData.title_en}
           message={successData.message}
         />
       )}

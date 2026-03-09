@@ -2,31 +2,21 @@ import { useState } from "react";
 
 export const useFormValidation = (schema) => {
     const [errors, setErrors] = useState({});
-    
-    // Quand l'utilisateur quitte un champ → valider
+
     const validateField = (fieldName, value) => {
         try {
-            console.log("Validating", fieldName, "with value:", value);
-            schema.shape[fieldName].parse(value); // on demande à zod de vérifier uniquement la règle associée à ce champs 
+            schema.shape[fieldName].parse(value);
             setErrors((prev) => ({ ...prev, [fieldName]: null }));
         } catch (error) {
-            // Chercher le message dans toutes les erreurs Zod
-            const message = error.issues?.[0]?.message || 'Valeur invalide';
-            
-            console.log('message extrait:', message);
-
-            setErrors(prev => ({
-                ...prev,
-                [fieldName]: message
-            }));
+            const message = error.issues?.[0]?.message || 'err_invalid';
+            setErrors(prev => ({ ...prev, [fieldName]: message }));
         }
     };
-    
-    // Quand l'utilisateur retape → effacer l'erreur
+
     const clearError = (fieldName) => {
         setErrors((prev) => ({ ...prev, [fieldName]: null }));
     };
-    // Quand l'utilisateur clique sur "Suivant" → tout valider
+
     const validateAll = (data) => {
         try {
             schema.parse(data);
@@ -35,12 +25,13 @@ export const useFormValidation = (schema) => {
         } catch (error) {
             const newErrors = {};
             error.issues?.forEach((err) => {
-                const field = issue.path[0];
-                newErrors[field] = issue.message;
+                const field = err.path[0];
+                newErrors[field] = err.message;
             });
             setErrors(newErrors);
             return false;
         }
     };
+
     return { errors, validateField, clearError, validateAll };
 };

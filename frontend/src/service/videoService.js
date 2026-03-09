@@ -6,15 +6,15 @@ const SUBMIT_URL = '/participation';
 export function buildSubmitFormData(form) {
   const fd = new FormData();
 
-  fd.append('realisator_civility', form.participant.civility === 'M.' ? 'Mr' : (form.participant.civility === 'Mme' ? 'Mrs' : 'Other'));
-  fd.append('realisator_firstname', form.participant.firstname || '');
-  fd.append('realisator_lastname', form.participant.lastname || '');
+  fd.append('realisator_civility', form.participant.realisator_civility || 'Other');
+  fd.append('realisator_firstname', form.participant.realisator_firstname || '');
+  fd.append('realisator_lastname', form.participant.realisator_lastname || '');
   fd.append('email', form.participant.email || '');
   fd.append('birthdate', form.participant.birthdate || '');
   fd.append('country', form.participant.country || 'FR');
-  fd.append('mobile_number', formatPhoneE164(form.participant.phone || ''));
-  fd.append('phone_number', formatPhoneE164(form.participant.phone_landline || ''));
-  fd.append('address', form.participant.address || 'Non renseigné');
+  fd.append('mobile_number', form.participant.mobile_number || '');
+  fd.append('phone_number', form.participant.phone_number || '');
+  fd.append('address', form.participant.address || '');
 
   // Réseaux sociaux : form.participant.social_links = [{ platform, url }, ...]
   const socialLinksArray = form.participant.social_links || [];
@@ -48,7 +48,7 @@ export function buildSubmitFormData(form) {
   const classification = form.film.classification === '100% AI' ? '100% AI' : 'Hybrid';
   fd.append('classification', classification);
 
-  fd.append('acquisition_source_id', '1');
+  fd.append('acquisition_source_id', String(form.film.acquisition_source_id || '1'));
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
     console.log("Check form.tags", form.tags);
@@ -91,11 +91,11 @@ export function buildSubmitFormData(form) {
     fd.append('contributor', JSON.stringify(contributors));
   } else {
     fd.append('contributor', JSON.stringify([{
-      firstname: form.participant.firstname || '',
-      last_name: form.participant.lastname || '',
+      firstname: form.participant.realisator_firstname || '',
+      last_name: form.participant.realisator_lastname || '',
       email: form.participant.email || '',
       production_role: 'Réalisateur',
-      gender: 'Other',
+      gender: form.participant.realisator_civility === 'Mrs' ? 'Mrs' : (form.participant.realisator_civility === 'Mr' ? 'Mr' : 'Other'),
     }]));
   }
 

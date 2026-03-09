@@ -31,6 +31,7 @@ const initialState = {
     language: 'FR',
     duration: '',
     classification: 'Hybrid',
+    acquisition_source_id: '',
   },
   tags: [], // string[] - Tags normalisés (trim, lowercase) pour le film
   files: {

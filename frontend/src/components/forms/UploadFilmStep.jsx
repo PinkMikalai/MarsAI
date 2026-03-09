@@ -8,7 +8,7 @@ import { LANGUAGES_ISO6391, STILLS_MAX_COUNT } from '../../constants/submitForm'
 import { tagsService } from '../../service/tags';
 
 import { useFormValidation } from '../../hooks/useFormValidation';
-import { participationSchema } from '@shared/schemas/participationSchema';
+import { filmStepSchema } from '@shared/schemas/participationSchema';
 
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 
@@ -16,7 +16,7 @@ const UploadFilmStep = () => {
   const { t } = useTranslation();
   const { form, setFilm, setFile, setTags } = useDepositForm();
   // Utilisation du hook de validation
-  const { errors, validateField, clearError } = useFormValidation(participationSchema);
+  const { errors, validateField, clearError } = useFormValidation(filmStepSchema);
   const { film, files } = form; 
 
   const videoRef = useRef(null);
@@ -150,7 +150,7 @@ const UploadFilmStep = () => {
               value={film.title}
               onChange={(e) => {
                 setFilm('title', e.target.value);
-                if (errors.title) clearError('title'); // On nettoie l'erreur pendant la saisie
+                if (errors.title) clearError('title');
               }}
               onBlur={(e) => validateField('title', e.target.value)}
             />
@@ -175,15 +175,20 @@ const UploadFilmStep = () => {
 
       <div className="deposit-grid-2">
         <div className="deposit-field-group">
-          <label className="deposit-field-label">{t('deposit.filmTitleEn')}</label>
+          <label className="deposit-field-label">{t('deposit.filmTitleEn')} *</label>
           <div className="deposit-field-wrap">
             <input
               type="text"
-              className="deposit-input"
+              className={`deposit-input ${errors.title_en ? 'is-invalid' : ''}`}
               placeholder="Neural Odyssey"
               value={film.title_en ?? ''}
-              onChange={(e) => setFilm('title_en', e.target.value)}
+              onChange={(e) => {
+                setFilm('title_en', e.target.value);
+                if (errors.title_en) clearError('title_en');
+              }}
+              onBlur={(e) => validateField('title_en', e.target.value)}
             />
+            <ErrorMessage error={errors.title_en} />
           </div>
         </div>
         <div className="deposit-field-group">
@@ -205,56 +210,80 @@ const UploadFilmStep = () => {
         <label className="deposit-field-label">{t('deposit.synopsis')}</label>
         <div className="deposit-field-wrap">
           <textarea
-            className="deposit-textarea deposit-textarea--short"
+            className={`deposit-textarea deposit-textarea--short ${errors.description ? 'is-invalid' : ''}`}
             placeholder="Une exploration..."
-            maxLength={500}
             value={film.description}
-            onChange={(e) => setFilm('description', e.target.value)}
+            onChange={(e) => {
+              setFilm('description', e.target.value);
+              if (errors.description) clearError('description');
+            }}
+            onBlur={(e) => validateField('description', e.target.value)}
           />
+          <ErrorMessage error={errors.description} />
         </div>
-        <div className="deposit-char-count">{film.description.length} / 500</div>
+        <div className={`deposit-char-count${film.description.length > 300 ? ' deposit-char-count--over' : ''}`}>
+          {film.description.length} / 300
+        </div>
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">{t('deposit.synopsisEn')}</label>
+        <label className="deposit-field-label">{t('deposit.synopsisEn')} *</label>
         <div className="deposit-field-wrap">
           <textarea
-            className="deposit-textarea deposit-textarea--short"
+            className={`deposit-textarea deposit-textarea--short ${errors.synopsis_en ? 'is-invalid' : ''}`}
             placeholder="An exploration..."
-            maxLength={300}
             value={film.synopsis_en ?? ''}
-            onChange={(e) => setFilm('synopsis_en', e.target.value)}
+            onChange={(e) => {
+              setFilm('synopsis_en', e.target.value);
+              if (errors.synopsis_en) clearError('synopsis_en');
+            }}
+            onBlur={(e) => validateField('synopsis_en', e.target.value)}
           />
+          <ErrorMessage error={errors.synopsis_en} />
         </div>
-        <div className="deposit-char-count">{(film.synopsis_en ?? '').length} / 300</div>
+        <div className={`deposit-char-count${(film.synopsis_en ?? '').length > 300 ? ' deposit-char-count--over' : ''}`}>
+          {(film.synopsis_en ?? '').length} / 300
+        </div>
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">{t('deposit.techResume')}</label>
+        <label className="deposit-field-label">{t('deposit.techResume')} *</label>
         <div className="deposit-field-wrap">
           <textarea
-            className="deposit-textarea deposit-textarea--short"
+            className={`deposit-textarea deposit-textarea--short ${errors.tech_resume ? 'is-invalid' : ''}`}
             placeholder={t('deposit.techResumePlaceholder')}
-            maxLength={500}
             value={film.tech_resume ?? ''}
-            onChange={(e) => setFilm('tech_resume', e.target.value)}
+            onChange={(e) => {
+              setFilm('tech_resume', e.target.value);
+              if (errors.tech_resume) clearError('tech_resume');
+            }}
+            onBlur={(e) => validateField('tech_resume', e.target.value)}
           />
+          <ErrorMessage error={errors.tech_resume} />
         </div>
-        <div className="deposit-char-count">{(film.tech_resume ?? '').length} / 500</div>
+        <div className={`deposit-char-count${(film.tech_resume ?? '').length > 500 ? ' deposit-char-count--over' : ''}`}>
+          {(film.tech_resume ?? '').length} / 500
+        </div>
       </div>
 
       <div className="deposit-field-group">
-        <label className="deposit-field-label">{t('deposit.creativeResume')}</label>
+        <label className="deposit-field-label">{t('deposit.creativeResume')} *</label>
         <div className="deposit-field-wrap">
           <textarea
-            className="deposit-textarea deposit-textarea--short"
+            className={`deposit-textarea deposit-textarea--short ${errors.creative_resume ? 'is-invalid' : ''}`}
             placeholder={t('deposit.creativeResumePlaceholder')}
-            maxLength={500}
             value={film.creative_resume ?? ''}
-            onChange={(e) => setFilm('creative_resume', e.target.value)}
+            onChange={(e) => {
+              setFilm('creative_resume', e.target.value);
+              if (errors.creative_resume) clearError('creative_resume');
+            }}
+            onBlur={(e) => validateField('creative_resume', e.target.value)}
           />
+          <ErrorMessage error={errors.creative_resume} />
         </div>
-        <div className="deposit-char-count">{(film.creative_resume ?? '').length} / 500</div>
+        <div className={`deposit-char-count${(film.creative_resume ?? '').length > 500 ? ' deposit-char-count--over' : ''}`}>
+          {(film.creative_resume ?? '').length} / 500
+        </div>
       </div>
 
       <div className="deposit-field-group">

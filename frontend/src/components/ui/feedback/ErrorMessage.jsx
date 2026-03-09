@@ -3,9 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 const ErrorMessage = ({ error }) => {
   const { t } = useTranslation();
-  console.log("Clé reçue par ErrorMessage :", error);
 
-  // Si pas d'erreur, on ne rend rien du tout
   if (!error) return null;
 
   return (
