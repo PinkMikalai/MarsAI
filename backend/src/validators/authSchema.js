@@ -3,7 +3,7 @@ import { email, passwordBase, firstname, lastname } from './commonSchema.js';
 
 const inviteSchema = z.object({
     email,
-    role: z.enum(['Admin', 'Selector', 'Super-admin'], {
+    role: z.enum(['Admin', 'Selector', 'Super_admin'], {
         errorMap: () => ({ message: 'invalid role' })
     })
 });
@@ -36,11 +36,8 @@ const updatePasswordSchema = z.object({
     message: "Passwords do not match",
     path: ["confirmNewPassword"]
 });
-
-const updateUserShema = z.object({
+const updateUserSchema = z.object({
      firstname: firstname.optional(), 
     lastname: lastname.optional(),
 }).strict();
-
-
-export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserShema };
+export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserSchema };

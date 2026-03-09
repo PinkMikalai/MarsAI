@@ -1,19 +1,25 @@
 // Hero , section hero de la page d'accueil MarsAI avec vidéo ou FX en boucle ------------//
 
-import React, { useRef, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import { ROUTES } from '../../constants/routes';
 import Navbar from '../layout/Navbar';
+import OnboardingModal from '../ui/modal/OnboardingModal';
 import heroVideo from '../../assets/videos/videoloop3.mp4';
+import { fadeUp, staggerContainer } from '../../utils/animations';
 
-const USE_VIDEO_BACKGROUND = true; /* true = vidéo MP4, false = animation FX bleu/magenta seamless */
-const PARALLAX_FACTOR = 0.25; /* 0.25 = vidéo bouge à 25% de la vitesse du scroll */
+const USE_VIDEO_BACKGROUND = true;
+const PARALLAX_FACTOR = 0.25;
 
 const Hero = () => {
   const { t } = useTranslation();
   const videoHome = useRef(null);
-  const [scrollY, setScrollY] = useState(0);
+  const [scrollY,   setScrollY]   = useState(0);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const openModal  = useCallback(() => setModalOpen(true),  []);
+  const closeModal = useCallback(() => setModalOpen(false), []);
 
   useEffect(() => {
     if (!USE_VIDEO_BACKGROUND) return;
@@ -48,10 +54,7 @@ const Hero = () => {
             ref={videoHome}
             className="hero-video"
             src={heroVideo}
-            autoPlay
-            muted
-            loop
-            playsInline
+            autoPlay muted loop playsInline
             aria-hidden
           />
           <div className="hero-video-overlay" aria-hidden />
@@ -70,24 +73,34 @@ const Hero = () => {
         <Navbar />
       </div>
 
-      <div className="hero-content">
-        <h1 className="hero-title">
+      {/* Contenu animé au montage (pas whileInView — toujours visible) */}
+      <motion.div
+        className="hero-content"
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.h1 className="hero-title" variants={fadeUp}>
           <span className="hero-title-mars">MARS.</span>
           <span className="hero-title-ai">A.I</span>
-        </h1>
-        <p className="hero-tagline">{t('hero.tagline')}</p>
-        <p className="hero-description">
+        </motion.h1>
+        <motion.p className="hero-tagline" variants={fadeUp}>
+          {t('hero.tagline')}
+        </motion.p>
+        <motion.p className="hero-description" variants={fadeUp}>
           {t('hero.description')}
-        </p>
-        <div className="hero-cta">
-          <Link to={ROUTES.PARTICIPATE} className="hero-btn hero-btn-primary">
+        </motion.p>
+        <motion.div className="hero-cta" variants={fadeUp}>
+          <button type="button" className="hero-btn hero-btn-primary" onClick={openModal}>
             {t('hero.ctaParticipate')}
-          </Link>
-          <a href="#en-savoir-plus" className="hero-btn hero-btn-secondary">
+          </button>
+          <button type="button" className="hero-btn hero-btn-secondary" onClick={openModal}>
             {t('hero.ctaLearnMore')}
-          </a>
-        </div>
-      </div>
+          </button>
+        </motion.div>
+      </motion.div>
+
+      {modalOpen && <OnboardingModal onClose={closeModal} />}
     </section>
   );
 };

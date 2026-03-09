@@ -1,283 +1,289 @@
 import { z } from 'zod';  
-
+import { COUNTRIES_ISO3166 } from '../constants/countries.js';
 import { commonSchema } from './commonSchema.js';
 
-// Extraction des élèments dont on a besoin 
-const { email, firstname, lastname, id } = commonSchema;
+const { email, firstname, lastname } = commonSchema;
 
-// constantes pour la validation des numéros de téléphone
+const validCountryCodes = COUNTRIES_ISO3166.map(c => c.value);
 const phoneRegex = /^\+[1-9]\d{1,14}$/;
-const phoneMessage = "Please enter a valid phone number (e.g., +33612345678)";
 
-
-// validation des entrées du tableau des contributeurs 
 const contributorSchema = z.object({
     firstname: firstname,
     last_name: lastname,
     email: email,
-    gender: z.enum(["Mr", "Mrs", "Other"], {errorMap: () => ({ message: "Gender must be Mr, Mrs, or Other" })
-  }), 
+    gender: z.enum(["Mr", "Mrs", "Other"], { errorMap: () => ({ message: "err_gender_invalid" }) }),
     production_role: z
-        .string({
-            required_error: "Production role is required",
-            invalid_type_error: "Production role must be a string"
-        })
+        .string({ required_error: "err_role_required" })
         .trim()
-        .min(1, "Production role cannot be empty")
-}); 
-
-// validation des entrées du tableau des tags
-const tagSchema = z.object({
-    name: z
-        .string({required_error: "Tag name is required"})
-        .trim()
-        .min(1, "Tag name cannot be empty")
-}); 
-
-// validation d'un lien social unique
-const socialLinkSchema = z.object({
-  platform: z
-    .string()
-    .min(1, "Please select a platform"),
-  url: z
-    .string()
-    .trim()
-    .url("Invalid format (must start with https://)")
-    .min(1, "URL cannot be empty if a platform is selected")
+        .min(1, "err_role_empty")
 });
 
-// validation des entrées du tableau des stills
+const tagSchema = z.object({
+    name: z
+        .string({ required_error: "err_tag_name_required" })
+        .trim()
+        .min(1, "err_tag_name_empty")
+});
+
+const socialLinkSchema = z.object({
+    platform: z.string().min(1, "err_social_platform_required"),
+    url: z
+        .string()
+        .trim()
+        .url("err_social_url_invalid")
+        .min(1, "err_social_url_empty")
+});
+
 const stillSchema = z.object({
     file_name: z
         .string()
         .trim()
-        .min(1, "File name cannot be empty")
-        .max(512, "Filename too long")
+        .min(1, "err_filename_too_short")
+        .max(512, "err_filename_too_long")
 });
 
-// validation de toutes les entrées du formulaire 
 const participationSchema = z.object({
-    // identité de la vidéo 
 
-    // TITLE original et anglais 
     title: z
         .string()
         .trim()
-        .max(100, "Title is too long (maximum 100 characters)")
-        .optional()
-        .or(z.literal("")), //optional autorise le champs à être absent du json, literal autorise le champ à être une chaîne vide
-
-    title_en: z
-        .string({ required_error: "Title is required" })
-        .trim()
-        .min(1, "Title cannot be empty")
-        .max(100, "English title is too long (max 100 chars)"),
-
-    // SYNOPSIS original et anglais : Limite 500 caractères 
-    synopsis: z
-        .string()
-        .trim()
-        .max(300, "Synopsis is too long (max 300 chars)")
+        .max(100, "err_title_too_long")
         .optional()
         .or(z.literal("")),
 
-    synopsis_en: z.string({ required_error: "English synopsis is required" })
+    title_en: z
+        .string({ required_error: "err_title_en_required" })
         .trim()
-        .min(1, "English synopsis cannot be empty")
-        .max(300, "English synopsis is too long (max 300 chars)"),
+        .min(1, "err_title_en_empty")
+        .max(100, "err_title_en_too_long"),
 
-    // RESUMES (SUMMARY) - Limite 500 caractères
-    tech_resume: z
-        .string({ required_error: "Technical summary is required" })
+    synopsis: z
+        .string()
         .trim()
-        .min(1, "Technical summary cannot be empty")
-        .max(500, "Technical summary is too long (max 500 chars)"),
+        .max(300, "err_synopsis_too_long")
+        .optional()
+        .or(z.literal("")),
+
+    synopsis_en: z
+        .string({ required_error: "err_synopsis_en_required" })
+        .trim()
+        .min(1, "err_synopsis_en_empty")
+        .max(300, "err_synopsis_en_too_long"),
+
+    tech_resume: z
+        .string({ required_error: "err_tech_resume_required" })
+        .trim()
+        .min(1, "err_tech_resume_empty")
+        .max(500, "err_tech_resume_too_long"),
 
     creative_resume: z
-        .string({ required_error: "Creative summary is required" })
+        .string({ required_error: "err_creative_resume_required" })
         .trim()
-        .min(1, "Creative summary cannot be empty")
-        .max(500, "Creative summary is too long (max 500 chars)"),
-    
-    // DETAILS TECHNIQUES 
+        .min(1, "err_creative_resume_empty")
+        .max(500, "err_creative_resume_too_long"),
 
     duration: z.coerce
         .number()
         .int()
         .positive()
-        .max(120, "Duration cannot exceed 120 seconds")
+        .max(120, "err_duration_too_long")
         .optional(),
-    
-    // LANGUE : ISO 639-1 (Exactement 2 caractères, ex: "fr")
+
     language: z
-        .string({ required_error: "Language is required" })
+        .string({ required_error: "err_language_required" })
         .trim()
-        .length(2, "Please use a 2-letter language code (e.g., 'en', 'fr')")
+        .length(2, "err_language_format")
         .transform(val => val.toUpperCase()),
 
-    // PAYS (Standard ISO 3166-1 alpha-2)
     country: z
-        .string({ required_error: "Country is required" })
-        .trim()
-        .length(2, "Please use a 2-letter country code (e.g., 'FR', 'US')")
-        .transform(val => val.toUpperCase()),
-
-    classification: z
-        .enum(["100% AI", "Hybrid"], {errorMap: () => ({ message: "Please select a valid classification: '100% AI' or 'Hybrid'" })
+        .string({ required_error: "err_country_required" })
+        .min(1, "err_country_required")
+        .refine((val) => validCountryCodes.includes(val), {
+            message: "err_country_invalid_format",
         }),
 
-    // REALISATEUR
+    classification: z
+        .enum(["100% AI", "Hybrid"], { errorMap: () => ({ message: "err_classification_invalid" }) }),
+
     realisator_firstname: firstname,
     realisator_lastname: lastname,
     realisator_civility: z
-        .enum(["Mr", "Mrs", "Other"], {errorMap: () => ({ message: "Civility must be Mr, Mrs, or Other" })
-    }),
+        .string()
+        .min(1, { message: "err_civility_invalid" })
+        .superRefine((val, ctx) => {
+            if (!["Mr", "Mrs", "Other"].includes(val)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "err_civility_invalid",
+                    fatal: true
+                });
+            }
+        }),
 
-
-    // CONTACT
-    email: email, 
-
-    country: z
-        .string({ required_error: "Country is required" })
-        .min(1, "Please select your country"), // Bloque si la valeur est ""
+    email: email,
 
     birthdate: z
-        .string({ required_error: "Birthdate is required" })
-        .min(1, "Birthdate is required")
-        .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
+        .string({ required_error: "err_birthdate_required" })
+        .min(1, "err_birthdate_required")
+        .regex(/^\d{4}-\d{2}-\d{2}$/, "err_birthdate_format")
         .refine((val) => {
             const birthDate = new Date(val);
             if (isNaN(birthDate.getTime())) return false;
-            
             const today = new Date();
+            today.setHours(0, 0, 0, 0);
             const eighteenYearsAgo = new Date();
             eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
+            eighteenYearsAgo.setHours(0, 0, 0, 0);
+            const minYearAllowed = new Date("1925-01-01");
+            return birthDate <= eighteenYearsAgo && birthDate >= minYearAllowed;
+        }, { message: "err_birthdate_age" }),
 
-            // La date doit être AVANT ou EGALE à il y a 18 ans
-            return birthDate <= eighteenYearsAgo;
-        }, { 
-            // Message d'erreur
-            message: "You must be at least 18 years old to participate" 
-        }),
-
-    // TÉLÉPHONE MOBILE : Format E.164 (ex: +33612345678), champs obligatoire 
     mobile_number: z
-        .string({ required_error: "Mobile number is required" })
+        .string({ required_error: "err_mobile_required" })
         .trim()
-        .min(10, "Mobile number is too short")
-        .max(17, "Mobile number is too long")
-        .regex(phoneRegex, phoneMessage),
+        .min(10, "err_mobile_too_short")
+        .max(17, "err_mobile_too_long")
+        .regex(phoneRegex, "err_phone_format"),
 
-    // TÉLÉPHONE FIXE (optionnel)
     phone_number: z
         .union([
             z.literal(""),
             z.string()
                 .trim()
-                .min(10, "Phone number is too short")
-                .max(17, "Phone number is too long")
-                .regex(phoneRegex, phoneMessage),
+                .min(10, "err_phone_too_short")
+                .max(17, "err_phone_too_long")
+                .regex(phoneRegex, "err_phone_format"),
         ]).optional(),
 
-    // ADDRESSE 
     address: z
-        .string({ required_error: "Address is required" })
+        .string({ required_error: "err_address_required" })
         .trim()
-        .min(5, "Please enter a complete address")
-        .max(255, "Address too long (max 255)")
+        .min(5, "err_address_too_short")
+        .max(255, "err_address_too_long")
         .refine((val) => !/[<>]/.test(val), {
-            message: "Characters < and > are not allowed for security reasons"
+            message: "err_address_invalid_chars"
         }),
-    
-    // LIEN DES RESEAUX SOCIAUX
-    // social_media_links_json: z
-    //     .string({ required_error: "Social media links are required" })
-    //     .min(1, "Social media links cannot be empty")
-    //     .max(1000, "JSON data too large (max 1000 chars)")
-    //     // refine permet de créer une règle de validation sur mesure 
-    //     .refine((val) => {
-    //         try {
-    //             // on tente de transformer la chaîne de caractères en objet JS réel
-    //             const parsed = JSON.parse(val);
-    //             // On vérifie que c'est bien un objet et pas juste un chiffre ou un booléen
-    //             return typeof parsed === 'object' && parsed !== null;
-    //         } catch (e) {
-    //             return false;
-    //         }
-    //     }, "Social media links must be a valid JSON object"),
 
-
-    // Dans ton participationSchema principal :
     social_links: z
         .array(socialLinkSchema)
-        .max(10, "Maximum 10 social links allowed")
-        .optional() 
-        .default([]), // Permet de ne rien envoyer du tout (tableau vide)
-
-    
-    // COVER
-    cover: z
-        .string({ required_error: "Cover image is required" })
-        .trim()
-        .min(5, "Filename too short")
-        .max(512, "Filename is too long")
-        .regex(/\.(jpg|jpeg|png|webp)$/i, "Cover must be an image (jpg, png, webp)"),
-
-    // VIDEO
-    video_file_name: z
-        .string({ required_error: "Video file is required" })
-        .trim()
-        .min(5, "Filename too short")
-        .max(512, "Filename too long")
-        .regex(/\.(mp4|mov|avi|mkv)$/i, "Invalid video format"),
-    
-    // FICHIER SOUS-TITRES 
-    srt_file_name: z
-        .string()
-        .max(512, "Filename too long")
-        .trim()
-        .regex(/\.(srt|vtt)$/i, "Invalid subtitle format (.srt or .vtt)")
-        .optional()
-        .or(z.literal("")),
-
-    // URL YOUTUBE
-    youtube_url: z
-        .url("Invalid URL format")
-        .max(255, "URL is too long")
-        .regex(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/, "Must be a valid YouTube URL")
-        .optional(), // optional pour éviter tout blocage, on ne l'a peut-être pas encore lors de la soumission 
-
-    // RELATION 
-    contributor: z
-        .array(contributorSchema)
-        .min(1, "At least one contributor required")
-        .max(50, "Too many contributors"),
-
-    tag: z
-        .array(tagSchema)
-        .min(1, "At least one tag required")
-        .max(20, "Too many tags"),
-
-    still: z
-        .array(stillSchema)
-        .max(3, "Too many stills")
+        .max(10, "err_social_links_max")
         .optional()
         .default([]),
 
-    acquisition_source_id: id,
+    cover: z
+        .string({ required_error: "err_cover_required" })
+        .trim()
+        .min(5, "err_cover_filename_too_short")
+        .max(512, "err_cover_filename_too_long")
+        .regex(/\.(jpg|jpeg|png|webp)$/i, "err_cover_format"),
+
+    video_file_name: z
+        .string({ required_error: "err_video_required" })
+        .trim()
+        .min(5, "err_video_filename_too_short")
+        .max(512, "err_video_filename_too_long")
+        .regex(/\.(mp4|mov|avi|mkv)$/i, "err_video_format"),
+
+    srt_file_name: z
+        .string()
+        .max(512, "err_filename_too_long")
+        .trim()
+        .regex(/\.(srt|vtt)$/i, "err_srt_format")
+        .optional()
+        .or(z.literal("")),
+
+    youtube_url: z
+        .url("err_youtube_url_invalid")
+        .max(255, "err_youtube_url_too_long")
+        .regex(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/, "err_youtube_url_format")
+        .optional(),
+
+    contributor: z
+        .array(contributorSchema)
+        .min(1, "err_contributor_min")
+        .max(50, "err_contributor_max"),
+
+    tag: z
+        .array(tagSchema)
+        .min(1, "err_tag_min")
+        .max(20, "err_tag_max"),
+
+    still: z
+        .array(stillSchema)
+        .max(3, "err_stills_max")
+        .optional()
+        .default([]),
+
+    acquisition_source_id: z
+        .string({ required_error: "err_acquisition_source_required" })
+        .min(1, "err_acquisition_source_required")
+        .regex(/^\d+$/, "err_acquisition_source_required")
+        .transform(Number),
 
 }).strict();
 
 
+// Schéma étape 2 — données film (clés du contexte: "description" pour synopsis FR)
+const filmStepSchema = z.object({
+    title: z
+        .string()
+        .trim()
+        .max(100, "err_title_too_long")
+        .optional()
+        .or(z.literal("")),
+    title_en: z
+        .string({ required_error: "err_title_en_required" })
+        .trim()
+        .min(1, "err_title_en_empty")
+        .max(100, "err_title_en_too_long"),
+    description: z
+        .string()
+        .trim()
+        .max(300, "err_synopsis_too_long")
+        .optional()
+        .or(z.literal("")),
+    synopsis_en: z
+        .string({ required_error: "err_synopsis_en_required" })
+        .trim()
+        .min(1, "err_synopsis_en_empty")
+        .max(300, "err_synopsis_en_too_long"),
+    tech_resume: z
+        .string({ required_error: "err_tech_resume_required" })
+        .trim()
+        .min(1, "err_tech_resume_empty")
+        .max(500, "err_tech_resume_too_long"),
+    creative_resume: z
+        .string({ required_error: "err_creative_resume_required" })
+        .trim()
+        .min(1, "err_creative_resume_empty")
+        .max(500, "err_creative_resume_too_long"),
+    language: z
+        .string({ required_error: "err_language_required" })
+        .trim()
+        .length(2, "err_language_format"),
+    classification: z
+        .enum(["100% AI", "Hybrid"], { errorMap: () => ({ message: "err_classification_invalid" }) }),
+}).passthrough();
 
-export { 
+// Schéma étape 1 — données participant (.passthrough pour ignorer mobile_country, phone_country)
+const participantSchema = participationSchema.pick({
+    realisator_civility: true,
+    realisator_firstname: true,
+    realisator_lastname: true,
+    email: true,
+    birthdate: true,
+    country: true,
+    mobile_number: true,
+    phone_number: true,
+    address: true,
+    social_links: true,
+}).passthrough();
+
+export {
     participationSchema,
+    participantSchema,
+    filmStepSchema,
     contributorSchema,
     tagSchema,
     stillSchema
 };
-
-    
-
-
-

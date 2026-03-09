@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
 import { DepositFormProvider, useDepositForm } from '../../context/DepositFormContext';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
 import Header from '../../components/layout/Header';
 import ConsentStep from '../../components/forms/ConsentStep';
 import InscriptionStep from '../../components/forms/InscriptionStep';
@@ -13,6 +11,7 @@ import UploadFilmStep from '../../components/forms/UploadFilmStep';
 import FinalisationStep from '../../components/forms/FinalisationStep';
 import Stepper from '../../components/ui/navigation/Stepper';
 import SuccessModal from '../../components/ui/feedback/SuccessModal';
+import { participantSchema, filmStepSchema } from '@shared/schemas/participationSchema.js';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
@@ -44,28 +43,15 @@ const DepositFilmInner = () => {
     form.consent.accept_rules &&
     form.consent.accept_ownership;
 
-  const inscriptionComplete =
-    !!p.civility?.trim() &&
-    !!p.firstname?.trim() &&
-    !!p.lastname?.trim() &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email || '') &&
-    !!p.birthdate &&
-    !!p.country &&
-    !!p.phone?.trim() &&
-    !!p.address?.trim();
+  const inscriptionComplete = participantSchema.safeParse(p).success;
 
-  const uploadComplete =
-    !!files.video &&
-    !!files.cover &&
-    !!film.title_en?.trim() &&
-    !!film.synopsis_en?.trim() &&
-    !!film.tech_resume?.trim() &&
-    !!film.creative_resume?.trim();
+  const filmDataValid = filmStepSchema.safeParse(film).success;
+  const uploadComplete = !!files.video && !!files.cover && filmDataValid;
 
   const canGoNext =
-    (currentStepIndex === 0 && consentComplete) ||
-    (currentStepIndex === 1 && inscriptionComplete) ||
-    (currentStepIndex === 2 && uploadComplete);
+      (currentStepIndex === 0 && consentComplete) ||
+      (currentStepIndex === 1 && inscriptionComplete) ||
+      (currentStepIndex === 2 && uploadComplete);
 
   // animation "bouton vient de s'activer" (etape 0 seulement)
   const [justEnabled, setJustEnabled] = useState(false);
@@ -120,11 +106,14 @@ const DepositFilmInner = () => {
     ? <FinalisationStep onSuccess={handleSuccess} onError={handleError} />
     : <CurrentStepComponent key={currentStepIndex} />;
 
+  const handleStepNavigation = () => {
+    next();
+  };
+  
+
   return (
     <div className="deposit-page">
       <div className="deposit-container">
-        <Navbar />
-
         <Header badge={t('deposit.badge')} title={t('deposit.title')} />
 
 
@@ -156,7 +145,7 @@ const DepositFilmInner = () => {
             {!isLastStep && (
               <button
                 type="button"
-                onClick={next}
+                onClick={handleStepNavigation}
                 className={`deposit-btn-submit ${justEnabled ? 'deposit-btn-submit--just-enabled' : ''}`}
                 disabled={!canGoNext}
               >
@@ -173,16 +162,18 @@ const DepositFilmInner = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                  // transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  {t('deposit.consentHint', STEP_HINTS[currentStepIndex])}
+                  {/* {t('deposit.consentHint', STEP_HINTS[currentStepIndex])} */}
+                  {currentStepIndex === 0 && t('deposit.consentHint', STEP_HINTS[0])}
+                  {currentStepIndex === 1 && "Veuillez remplir correctement tous les champs marqués d'une astérisque (*)."}
+                  {currentStepIndex === 2 && t('deposit.uploadHint', STEP_HINTS[2])}
                 </motion.p>
               )}
             </AnimatePresence>
           </div>
         </div>
 
-        <Footer />
       </div>
 
       {showSuccessModal && successData?.videoId && (
@@ -190,6 +181,7 @@ const DepositFilmInner = () => {
           isOpen={showSuccessModal}
           onClose={handleCloseSuccessModal}
           videoId={successData.videoId}
+          videoTitle={successData.title_en}
           message={successData.message}
         />
       )}

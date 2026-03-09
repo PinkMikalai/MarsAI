@@ -3,6 +3,8 @@
 export const ROUTES = {
   HOME: '/',
   GALLERY_FILMS: '/gallery-films',
+  JURY: '/jury',
+  EVENTS: '/evenements',
   PARTICIPATE: '/participate',
   PROFILE: '/profile',
   WATCH_FILM: '/watch/:videoId',

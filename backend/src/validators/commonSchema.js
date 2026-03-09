@@ -52,7 +52,7 @@ const imageSchema = z
     .string({ required_error: "Image is required" })
     .trim()
     .min(5, "Filename too short")
-    .max(100, "Filename is too long (max 100 characters)")
+    .max(500, "Image path is too long (max 500 characters)")
     .regex(/\.(jpg|jpeg|png|webp)$/i, "Image must be an image (jpg, png, webp)");
 
 const bioSchema = z
@@ -60,7 +60,7 @@ const bioSchema = z
     .trim()
     .min(1, { message: "Bio is mandatory" })
     .max(1000, { message: "Bio is too long (max 1000 characters)" })
-    .regex(/^[a-zA-Z0-9À-ÿ\s\-',.!?()\n]+$/, { message: "Bio contains invalid characters" });
+    .regex(/^[a-zA-Z0-9À-ÿ\s\-''\u2018\u2019,.!?()\n:"]+$/, { message: "Bio contains invalid characters" });
 
 const nameSchema = z
     .string()

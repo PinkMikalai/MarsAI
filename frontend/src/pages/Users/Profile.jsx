@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
 import { ROUTES } from '../../constants/routes';
 import { authService } from '../../service/authService';
 import { useAuth } from '../../context/AuthContext';
-import AdminLayout from '../../components/admin/AdminLayout';
 import { useNavigate } from 'react-router-dom';
 
 const getRoleLabel = (role, t) => {
@@ -218,7 +215,6 @@ const Profile = () => {
   if (!user) {
     return (
       <div className="profile-page">
-        <Navbar />
         <main className="profile-container">
           <h1 className="profile-title">{t('profile.title')}</h1>
           <div className="profile-error">
@@ -226,22 +222,16 @@ const Profile = () => {
             <Link to={ROUTES.LOGIN} className="profile-link">{t('profile.goToLogin')}</Link>
           </div>
         </main>
-        <Footer />
       </div>
     );
   }
 
   if (isAdminProfile) {
-    return (
-      <AdminLayout>
-        <AdminProfileContent profile={profile} loading={loading} />
-      </AdminLayout>
-    );
+    return <AdminProfileContent profile={profile} loading={loading} />;
   }
 
   return (
     <div className="profile-page">
-      <Navbar />
       <main className="profile-container">
         <h1 className="profile-title">{t('profile.title')}</h1>
 
@@ -262,7 +252,6 @@ const Profile = () => {
           </div>
         )}
       </main>
-      <Footer />
     </div>
   );
 };

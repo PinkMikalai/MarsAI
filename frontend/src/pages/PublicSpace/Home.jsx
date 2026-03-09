@@ -8,6 +8,7 @@ import ConferencesGratuites from '../../components/home/ConferencesGratuites';
 import LaPlateforme from '../../components/home/LaPlateforme';
 import ChiffresProjetes from '../../components/home/ChiffresProjetes';
 import Sponsors from '../../components/home/Sponsors';
+import JuryPreview from '../../components/home/JuryPreview';
 import Footer from '../../components/layout/Footer';
 import Header from '../../components/layout/Header';
 
@@ -23,6 +24,7 @@ const Home = () => {
       <ConferencesGratuites />
       <LaPlateforme />
       <ChiffresProjetes />
+      <JuryPreview />
       <Sponsors />
       <Footer />
     </div>

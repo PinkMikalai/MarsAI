@@ -1,4 +1,4 @@
-import { getAllSelectionStatusModel } from "../models/selectionStatusModel.js";
+import { getAllSelectionStatusModel } from "../../models/video/selectionStatusModel.js";
 
 async function getAllSelectionStatus(req, res) {
     try {

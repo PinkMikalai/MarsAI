@@ -888,6 +888,11 @@
   margin-top: 2px;
 }
 
+.deposit-char-count--over {
+  color: #ef4444;
+  font-weight: 600;
+}
+
 /* Searchbar équipe */
 .deposit-searchbar {
   display: flex;
@@ -1372,6 +1377,15 @@
   padding-left: 16px;
   padding-right: 16px;
   height: 46px;
+}
+
+.deposit-btn-collab--remove {
+  width: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-top: 12px;
+  display: block;
+  margin-left: auto;
 }
 
 .deposit-btn-collab--nav {

@@ -37,7 +37,6 @@ const Footer = () => {
           <div>
             <h3 className="deposit-footer-col-title">{t('footer.festivalTitle')}</h3>
             <ul className="deposit-footer-list">
-              <li><Link to="/" className="deposit-footer-link">{t('footer.programme')}</Link></li>
               <li><Link to="/" className="deposit-footer-link">{t('footer.venue')}</Link></li>
               <li><Link to="/" className="deposit-footer-link">{t('footer.ticketing')}</Link></li>
             </ul>
@@ -115,10 +114,10 @@ const Footer = () => {
         <div>
           <h3 className="deposit-footer-col-title">{t('footer.navigationTitle')}</h3>
           <ul className="deposit-footer-list">
-            <li><Link to="/" className="deposit-footer-link">{t('footer.programme')}</Link></li>
             <li><Link to={ROUTES.GALLERY_FILMS} className="deposit-footer-link">{t('footer.films')}</Link></li>
-            <li><Link to="/" className="deposit-footer-link">{t('footer.jury')}</Link></li>
-            <li><Link to="/" className="deposit-footer-link">{t('footer.ticketing')}</Link></li>
+              <li><Link to={ROUTES.JURY} className="deposit-footer-link">{t('footer.jury')}</Link></li>
+              <li><Link to={ROUTES.EVENTS} className="deposit-footer-link">{t('footer.events')}</Link></li>
+              <li><Link to="/" className="deposit-footer-link">{t('footer.ticketing')}</Link></li>
           </ul>
         </div>
 
