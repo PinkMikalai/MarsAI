@@ -20,7 +20,7 @@ router.post('/login', validate(loginSchema), loginController);
 
 router.get('/profile', authMiddleware, profileUserController);
 
-router.put('/update_profile', authMiddleware, validate(updateUserShema), updateUserController);
+router.put('/update_profile', authMiddleware, validate(updateUserSchema), updateUserController);
 
 router.put('/admin/user_update/:id', authMiddleware, checkRole([3]), updateUserBySuperAdminController);
 router.delete('/admin/user_delete/:id', authMiddleware, checkRole([3]), deleteUserController);

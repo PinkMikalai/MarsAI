@@ -419,13 +419,9 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 }
 
 
-
-
-
 // search videos — recherche textuelle + filtres (adminStatus, selectionStatus, rated)
 // Paramètres : { q, search, adminStatus, selectionStatus, rated }
 async function getSearchVideosModel(params = {}) {
-
     try {
         const {
             q, search: searchVal,
