@@ -145,11 +145,16 @@ const UploadFilmStep = () => {
           <div className="deposit-field-wrap">
             <input
               type="text"
-              className="deposit-input"
+              className={`deposit-input ${errors.title ? 'is-invalid' : ''}`}
               placeholder="Neural Odyssey"
               value={film.title}
-              onChange={(e) => setFilm('title', e.target.value)}
+              onChange={(e) => {
+                setFilm('title', e.target.value);
+                if (errors.title) clearError('title'); // On nettoie l'erreur pendant la saisie
+              }}
+              onBlur={(e) => validateField('title', e.target.value)}
             />
+            <ErrorMessage error={errors.title} />
           </div>
         </div>
         <div className="deposit-field-group">

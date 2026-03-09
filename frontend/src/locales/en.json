@@ -253,7 +253,27 @@
     "uploadStep4": "Saving to database",
     "uploadElapsed": "{{time}} elapsed",
     "uploadWarning": "Do not close this page — YouTube processing in progress, this may take a few minutes.",
-    "validationErrors": "Validation errors"
+    "validationErrors": "Validation errors",
+    "civility_options": {
+      "mr": "Mr",
+      "mrs": "Mrs",
+      "other": "Other"
+    },
+    "errors": {
+      "err_civility_invalid": "Civility must be Mr, Mrs, or Other",
+      "err_firstname_required": "First name is required",
+      "err_firstname_empty": "First name cannot be empty",
+      "err_firstname_too_long": "First name is too long (max 50 characters)",
+      "err_firstname_invalid": "First name must contain only letters, spaces, hyphens and apostrophes",
+      "err_lastname_required": "Last name is required",
+      "err_lastname_empty": "Last name is mandatory",
+      "err_lastname_too_long": "Last name is too long (max 50 characters)",
+      "err_lastname_invalid": "Last name must contain only letters, spaces, hyphens and apostrophes",
+      "err_email_required": "Email address is required",
+      "err_email_invalid": "Invalid email format",
+      "err_country_required": "Country is required",
+      "err_country_invalid_format": "Please use a valid country code"
+    }
   },
   "profile": {
     "title": "My profile",

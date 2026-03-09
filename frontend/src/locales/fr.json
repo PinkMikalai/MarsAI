@@ -253,7 +253,27 @@
     "uploadStep4": "Enregistrement en base",
     "uploadElapsed": "{{time}} écoulées",
     "uploadWarning": "Ne fermez pas cette page — traitement YouTube en cours, cela peut prendre quelques minutes.",
-    "validationErrors": "Erreurs de validation"
+    "validationErrors": "Erreurs de validation",
+    "civility_options": {
+      "mr": "M.",
+      "mrs": "Mme",
+      "other": "Autre"
+    },
+    "errors": {
+      "err_civility_invalid": "La civilité doit être Mr, Mrs ou Autre",
+      "err_firstname_required": "Le prénom est requis",
+      "err_firstname_empty": "Le prénom ne peut pas être vide",
+      "err_firstname_too_long": "Le prénom est trop long (max 50 caractères)",
+      "err_firstname_invalid": "Le prénom ne doit contenir que des lettres, espaces, tirets et apostrophes",
+      "err_lastname_required": "Le nom est requis",
+      "err_lastname_empty": "Le nom de famille est obligatoire",
+      "err_lastname_too_long": "Le nom est trop long (max 50 caractères)",
+      "err_lastname_invalid": "Le nom ne doit contenir que des lettres, espaces, traits d'union et apostrophes",
+      "err_email_required": "L'adresse e-mail est requise",
+      "err_email_invalid": "Format d'e-mail invalide",
+      "err_country_required": "Le pays est requis",
+      "err_country_invalid_format": "Veuillez utiliser un code pays valide"
+    }
   },
   "profile": {
     "title": "Mon profil",

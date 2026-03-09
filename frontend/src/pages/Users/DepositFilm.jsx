@@ -11,6 +11,7 @@ import UploadFilmStep from '../../components/forms/UploadFilmStep';
 import FinalisationStep from '../../components/forms/FinalisationStep';
 import Stepper from '../../components/ui/navigation/Stepper';
 import SuccessModal from '../../components/ui/feedback/SuccessModal';
+import { participationSchema } from '@shared/schemas/participationSchema.js';
 
 const STEP_COMPONENTS = [ConsentStep, InscriptionStep, UploadFilmStep, FinalisationStep];
 
@@ -42,15 +43,7 @@ const DepositFilmInner = () => {
     form.consent.accept_rules &&
     form.consent.accept_ownership;
 
-  const inscriptionComplete =
-    !!p.civility?.trim() &&
-    !!p.firstname?.trim() &&
-    !!p.lastname?.trim() &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(p.email || '') &&
-    !!p.birthdate &&
-    !!p.country &&
-    !!p.phone?.trim() &&
-    !!p.address?.trim();
+  const inscriptionComplete = participationSchema.safeParse(p).success;
 
   const uploadComplete =
     !!files.video &&
@@ -61,9 +54,9 @@ const DepositFilmInner = () => {
     !!film.creative_resume?.trim();
 
   const canGoNext =
-    (currentStepIndex === 0 && consentComplete) ||
-    (currentStepIndex === 1 && inscriptionComplete) ||
-    (currentStepIndex === 2 && uploadComplete);
+      (currentStepIndex === 0 && consentComplete) ||
+      (currentStepIndex === 1) || // <--- FORCE l'étape 1 à TRUE pour pouvoir cliquer
+      (currentStepIndex === 2 && uploadComplete);
 
   // animation "bouton vient de s'activer" (etape 0 seulement)
   const [justEnabled, setJustEnabled] = useState(false);
@@ -118,6 +111,23 @@ const DepositFilmInner = () => {
     ? <FinalisationStep onSuccess={handleSuccess} onError={handleError} />
     : <CurrentStepComponent key={currentStepIndex} />;
 
+  const handleStepNavigation = () => {
+    if (currentStepIndex === 1) {
+      // On re-vérifie une dernière fois
+      const result = participationSchema.safeParse(p);
+      if (result.success) {
+            next();
+          } else {
+            // ÇA VA T'AFFICHER LE COUPABLE PRÉCIS DANS LA CONSOLE :
+            console.error("Zod refuse car :", result.error.flatten().fieldErrors);
+            alert("Erreur de validation. Ouvre la console (F12) pour voir quel champ bloque.");
+          }
+        } else {
+          next();
+        }
+  };
+  
+
   return (
     <div className="deposit-page">
       <div className="deposit-container">
@@ -152,7 +162,7 @@ const DepositFilmInner = () => {
             {!isLastStep && (
               <button
                 type="button"
-                onClick={next}
+                onClick={handleStepNavigation}
                 className={`deposit-btn-submit ${justEnabled ? 'deposit-btn-submit--just-enabled' : ''}`}
                 disabled={!canGoNext}
               >
@@ -169,9 +179,12 @@ const DepositFilmInner = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+                  // transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
                 >
-                  {t('deposit.consentHint', STEP_HINTS[currentStepIndex])}
+                  {/* {t('deposit.consentHint', STEP_HINTS[currentStepIndex])} */}
+                  {currentStepIndex === 0 && t('deposit.consentHint', STEP_HINTS[0])}
+                  {currentStepIndex === 1 && "Veuillez remplir correctement tous les champs marqués d'une astérisque (*)."}
+                  {currentStepIndex === 2 && STEP_HINTS[2]}
                 </motion.p>
               )}
             </AnimatePresence>
