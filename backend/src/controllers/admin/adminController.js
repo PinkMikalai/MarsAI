@@ -1,7 +1,9 @@
 import { createInvitationToken } from '../../services/user/authService.js';
 import { sendInvitationEmail } from '../../services/admin/mailService.js';
 import { assignVideoToUser, multipleAssignments, getAssignmentByVideo, getAssignmentByUser, updateAssignment, deleteAssignment, getSelectorVideoLoad } from '../../services/admin/assignmentService.js';
-
+import { getUsersByRoleId } from '../../models/user/userModel.js';
+import { getAssignmentByVideoModel, getSelectorLoadModel } from '../../models/admin/assignementModel.js';
+import { success } from 'zod';
 
 
 const inviteUserController = async (req, res, next) => {
@@ -120,7 +122,41 @@ const getSelectorVideoLoadController = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+}
 
+const getAssignmentDataController = async (req, res, next) => {
+    try{
+        const { video_id} = req.params;
+        const [ allSelectors, AlreadyAssigned] = await Promise.all([
+            getSelectorLoadModel,
+            getAssignmentByVideoModel(video_id)
+        ]);
+        res.status(200).json({
+            success: true,
+            data: {
+                selectors : allSelectors,
+                assigned : AlreadyAssigned
+            }
+        })
+    } catch(error){
+        next(error);
+    }
+
+}
+
+const getAllSelectorsController = async ( req, res) => {
+    try {
+        const allSelectors = await getUsersByRoleId(2);
+        res.status(200).json({
+            success:true,
+            data: allSelectors
+        })
+    }catch(error){
+        res.status(500).json({
+            error: 'An error occured during all selectors fetching'
+        })
+
+    }
 
 }
 
@@ -131,7 +167,9 @@ export {
     getAssignmentByUserController,
     updateAssignmentController,
     deleteAssignmentController,
-    getSelectorVideoLoadController
+    getSelectorVideoLoadController,
+    getAssignmentDataController,
+    getAllSelectorsController
 
 };
 

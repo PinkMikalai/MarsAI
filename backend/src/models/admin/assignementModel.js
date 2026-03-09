@@ -39,10 +39,12 @@ async function createMultipleAssignmentModel(assignments) {
 async function getAssignmentByVideoModel(video_id) {
 
     try {
-        const query = `SELECT a.id, a.assignate_at , u.firstname AS selector_firstname , admin.firstname AS admin_firstname
+        const query = `SELECT a.id AS assignment_id, a.assignate_at , 
+                       u.id AS user_id, u.firstname, u.lastname , 
+                       admin.firstname AS admin_firstname
             FROM  assignation a
             JOIN user u ON a.user_id = u.id
-            JOIN user admin ON a.assigned_by = admin.id
+            LEFT JOIN user admin ON a.assigned_by = admin.id
             WHERE a.video_id = ? `
 
         const [rows] = await pool.execute(query, [video_id]);
@@ -59,10 +61,12 @@ async function getAssignmentByVideoModel(video_id) {
 async function getAssignmentByUserModel(user_id) {
 
     try {
-        const query = `SELECT a.id, a.assignate_at , v.title AS video_title , admin.lastname AS admin_name
+        const query = `SELECT a.id , a.assignate_at , 
+                        v.title AS video_title , 
+                        admin.firstname AS admin_firstname
             FROM  assignation a
             JOIN video v ON a.video_id = v.id
-            JOIN user admin ON a.assigned_by = admin.id
+            LEFT JOIN user admin ON a.assigned_by = admin.id
             WHERE a.user_id = ? `
 
         const [rows] = await pool.execute(query, [user_id]);
@@ -130,12 +134,12 @@ async function deleteAssignmentModel(id) {
 async function getSelectorLoadModel() {
 
     try { 
-        const query = `SELECT user.id, user.firstname , user.lastname,
+        const query = `SELECT user.id, user.firstname , user.lastname, user.email,
             COUNT(assignation.id) as current_load
             FROM  user
             LEFT JOIN assignation ON user.id = assignation.user_id 
             WHERE user.role_id = 2
-            GROUP by user.id
+            GROUP by user.id, user.firstname, user.lastname, user.email
             ORDER by current_load ASC `
 
         const [rows] = await pool.execute(query);

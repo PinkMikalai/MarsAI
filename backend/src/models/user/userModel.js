@@ -212,6 +212,38 @@ async function createRoleModel(name) {
     }
 }
 
+async function getUsersByRoleId(role_id) {
+    try{
+        const query = `SELECT user.id , user.firstname , user.lastname, user.email
+                       FROM user 
+                       WHERE role_id = ?`;
+        const [rows] = await pool.execute(query, [role_id]);
+        return rows;
+                       
+
+    }catch(error){
+         console.error('Error occurred while fetching users by role,ID: ', error);
+        throw error;
+    }
+
+}
+async function getUsersByRoleName(roleName) {
+    try{
+        const query = `SELECT user.id , user.firstname , user.lastname, user.email
+                       FROM user 
+                       JOIN role ON role_id = role.id
+                       WHERE roleName = ?`;
+        const [rows] = await pool.execute(query, [roleName]);
+        return rows;
+                       
+
+    }catch(error){
+         console.error('Error occurred while fetching users by role name: ', error);
+        throw error;
+    }
+
+}
+
 export {
     createUserModel,
     getAllUsersModel,
@@ -223,5 +255,7 @@ export {
     getAllRolesModel,
     getRoleByIdModel,
     getRoleByNameModel,
-    createRoleModel
+    createRoleModel,
+    getUsersByRoleId,
+    getUsersByRoleName
 };

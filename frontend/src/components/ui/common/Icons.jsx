@@ -10,6 +10,7 @@ import {
   FiAward,
   FiGlobe,
   FiLink,
+  FiUserPlus,
 } from 'react-icons/fi';
 
 const iconSize = 20;
@@ -36,6 +37,7 @@ export const Icons = {
   Trophy: () => <FiAward {...iconProps} />,
   Globe: () => <FiGlobe {...iconProps} />,
   Link: () => <FiLink {...iconProps} />,
+  UserPlus: () => <FiUserPlus {...iconProps} />,
   Upload: UploadSvg,
 };
 
