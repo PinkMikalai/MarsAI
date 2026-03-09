@@ -99,7 +99,6 @@ const InscriptionStep = () => {
     return () => document.removeEventListener('click', close);
   }, [platformOpenIndex]);
 
-  console.log("État global des erreurs :", errors);
 
   return (
     <FormCard number="02" title={t('deposit.inscriptionTitle')}>

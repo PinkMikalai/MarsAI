@@ -10,6 +10,7 @@ import selectionStatusRoutes from "./selectionStatusRoutes.js";
 import eventsRoutes from "./eventsRoutes.js";
 import assignmentRoutes from "./assignmentRoutes.js"
 import adminStatusRoutes from "./adminStatusRoutes.js";
+import acquisitionSourceRoutes from "./acquisitionSourceRoutes.js";
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.use('/jury', juryRoutes);
 router.use('/profile', profileRoutes);
 router.use('/selection-status', selectionStatusRoutes);
 router.use('/admin-status', adminStatusRoutes);
+router.use('/acquisition-sources', acquisitionSourceRoutes);
 router.use('/events', eventsRoutes);
 router.use('/admin', assignmentRoutes);
 

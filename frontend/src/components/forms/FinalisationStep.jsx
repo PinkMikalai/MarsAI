@@ -5,6 +5,8 @@ import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
 import Icons from '../ui/common/Icons';
 import { buildSubmitFormData, submitVideoWithProgress } from '../../service/videoService';
+import api from '../../service/api';
+import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 
 function getUploadLabel(percent) {
   if (percent < 20)  return 'Envoi de la vidéo…';
@@ -157,9 +159,25 @@ const UploadOverlay = ({ phase, percent }) => {
 
 const FinalisationStep = ({ onSuccess, onError }) => {
   const { t } = useTranslation();
-  const { form, addCollaborator, updateCollaborator, removeCollaborator } = useDepositForm();
+  const { form, addCollaborator, updateCollaborator, removeCollaborator, setFilm } = useDepositForm();
   const [submitting, setSubmitting] = useState(false);
   const [uploadState, setUploadState] = useState({ phase: 'idle', percent: 0 });
+  const [acquisitionSources, setAcquisitionSources] = useState([]);
+  const [acquisitionError, setAcquisitionError] = useState(null);
+
+  useEffect(() => {
+    const loadSources = async () => {
+      try {
+        const data = await api('/acquisition-sources');
+        const list = data?.sources || data || [];
+        setAcquisitionSources(Array.isArray(list) ? list : []);
+      } catch (err) {
+        console.error('Erreur chargement acquisition sources:', err);
+        setAcquisitionSources([]);
+      }
+    };
+    loadSources();
+  }, []);
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -217,7 +235,7 @@ const FinalisationStep = ({ onSuccess, onError }) => {
       </div>
 
       {form.collaborators.map((col, index) => (
-        <div key={index} className="deposit-field-group deposit-collab-row">
+        <div key={index} className="deposit-collab-row">
           <div className="deposit-grid-2 deposit-collab-grid">
             <div className="deposit-field-group deposit-field-group--no-margin">
               <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabFirstname')}</label>
@@ -255,34 +273,57 @@ const FinalisationStep = ({ onSuccess, onError }) => {
                 />
               </div>
             </div>
-            <div className="deposit-field-group deposit-field-group--no-margin deposit-field-group--inline">
-              <div className="deposit-field-group--flex-1">
-                <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabRole')}</label>
-                <div className="deposit-field-wrap">
-                  <input
-                    type="text"
-                    className="deposit-input"
-                    placeholder="Sound Designer"
-                    value={col.profession ?? ''}
-                    onChange={(e) => updateCollaborator(index, 'profession', e.target.value)}
-                  />
-                </div>
+            <div className="deposit-field-group deposit-field-group--no-margin">
+              <label className="deposit-field-label deposit-field-label--jakarta">{t('deposit.collabRole')}</label>
+              <div className="deposit-field-wrap">
+                <input
+                  type="text"
+                  className="deposit-input"
+                  placeholder="Sound Designer"
+                  value={col.profession ?? ''}
+                  onChange={(e) => updateCollaborator(index, 'profession', e.target.value)}
+                />
               </div>
-              <button
-                type="button"
-                className="deposit-btn-collab deposit-btn-collab--compact"
-                onClick={() => removeCollaborator(index)}
-              >
-                {t('deposit.collabRemove')}
-              </button>
             </div>
           </div>
+          <button
+            type="button"
+            className="deposit-btn-collab deposit-btn-collab--remove"
+            onClick={() => removeCollaborator(index)}
+          >
+            {t('deposit.collabRemove')}
+          </button>
         </div>
       ))}
 
       <button type="button" className="deposit-btn-collab" onClick={addCollaborator}>
         {t('deposit.addCollaborator')}
       </button>
+
+      <div className="deposit-field-group" style={{ marginTop: '2rem' }}>
+        <label className="deposit-field-label">
+          {t('deposit.acquisitionSource', { defaultValue: 'Comment avez-vous connu le festival ?' })} *
+        </label>
+        <div className="deposit-field-wrap">
+          <select
+            className={`deposit-input ${acquisitionError ? 'is-invalid' : ''}`}
+            value={form.film.acquisition_source_id ?? ''}
+            onChange={(e) => {
+              setFilm('acquisition_source_id', e.target.value);
+              if (e.target.value) setAcquisitionError(null);
+            }}
+            onBlur={(e) => {
+              if (!e.target.value) setAcquisitionError('err_acquisition_source_required');
+            }}
+          >
+            <option value="">{t('deposit.selectPlaceholder', { defaultValue: 'Sélectionner…' })}</option>
+            {acquisitionSources.map((src) => (
+              <option key={src.id} value={String(src.id)}>{src.name}</option>
+            ))}
+          </select>
+          <ErrorMessage error={acquisitionError} />
+        </div>
+      </div>
 
       <div className="deposit-certificate deposit-certificate--spaced">
         <div className="deposit-certificate-icon" aria-hidden><Icons.Lock /></div>
