@@ -1,14 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useScrollNav } from '../../hooks/useScrollNav';
 import { useLightbox } from '../../hooks/useLightbox';
 import Lightbox from '../../components/ui/display/Lightbox';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../context/AuthContext';
 import { CreateSelectorMemoForm, UpdateSelectorMemoForm } from '../../components/forms/SelectorMemo';
 import { COUNTRIES_ISO3166 } from '../../constants/submitForm';
+import { FiSearch } from 'react-icons/fi';
+import SearchOverlay from '../../components/ui/search/SearchOverlay';
 import 'flag-icons/css/flag-icons.min.css';
 
 const STILL_INTERVAL_MS = 5000;
@@ -399,6 +401,7 @@ const ActionBtn = ({ icon, label, onClick, className = '' }) => (
 // =====================================================
 const WatchFilm = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { videoId }                           = useParams();
     const { isSelector, isAdmin, isSuperAdmin } = useAuth();
     const isAdminUser = isAdmin || isSuperAdmin;
@@ -426,6 +429,12 @@ const WatchFilm = () => {
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [existingMemo, setExistingMemo]     = useState(null);
     const [memoStatus, setMemoStatus]         = useState(null);
+    const [showSearch, setShowSearch]         = useState(false);
+
+    const handleSelectFilm = useCallback((filmId) => {
+        setShowSearch(false);
+        navigate(`/watch/${filmId}`);
+    }, [navigate]);
 
     // =====================================================
     // CHARGEMENT LISTE VIDÉOS
@@ -538,7 +547,7 @@ const WatchFilm = () => {
     const { scrollDirection, touchHandlers } = useScrollNav({
         onNext: () => setCurrentIndex((prev) => Math.min(prev + 1, videos.length - 1)),
         onPrev: () => setCurrentIndex((prev) => Math.max(prev - 1, 0)),
-        panelSelector: '.wf-admin-panel, .watch-film-memo-modal, .lightbox-overlay',
+        panelSelector: '.wf-admin-panel, .wf-search-panel, .watch-film-memo-modal, .lightbox-overlay',
         lockMs: SCROLL_LOCK_MS,
         enabled: videos.length > 0,
     });
@@ -606,6 +615,13 @@ const WatchFilm = () => {
                                         <Link to={ROUTES.GALLERY_FILMS} className="watch-film-back">
                                             ← Galerie
                                         </Link>
+                                        <button
+                                            className="wf-search-trigger"
+                                            onClick={() => setShowSearch(true)}
+                                            aria-label="Rechercher"
+                                        >
+                                            <FiSearch size={17} strokeWidth={2} />
+                                        </button>
                                         <Link to={ROUTES.HOME} className="watch-film-home">
                                             Accueil
                                         </Link>
@@ -715,6 +731,13 @@ const WatchFilm = () => {
                                     )}
                                 </div>
                             )}
+
+                            {/* PANNEAU RECHERCHE — slide depuis la droite comme InfoPanel */}
+                            <SearchOverlay
+                                isOpen={showSearch}
+                                onClose={() => setShowSearch(false)}
+                                onSelectFilm={handleSelectFilm}
+                            />
 
                             {/* MODALE NOTATION — à l'intérieur du wrap pour fullscreen */}
                             {showMemoModal && isSelector && (
