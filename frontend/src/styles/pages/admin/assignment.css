@@ -9,21 +9,25 @@
     backdrop-filter: blur(4px);
     opacity: 0;
     visibility: hidden;
+    /* Empêche de bloquer les clics sur la galerie quand invisible */
+    pointer-events: none; 
     transition: all 0.3s ease;
     z-index: 998;
 }
 
+/* État actif de l'overlay */
 .wf-admin-overlay.active {
     opacity: 1;
     visibility: visible;
+    /* Réactive les clics pour pouvoir fermer en cliquant sur le fond */
+    pointer-events: auto; 
 }
 
-/* Le Panel */
+/* Le Panel Latéral */
 .wf-admin-panel {
     position: fixed;
     top: 0;
-    right: -450px;
-    /* Caché à droite par défaut */
+    right: -450px; /* Caché à droite par défaut */
     width: 400px;
     height: 100%;
     background: #1a1a1a;
@@ -33,13 +37,16 @@
     flex-direction: column;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 999;
+    pointer-events: none; /* Sécurité : ne bloque rien si fermé */
 }
 
+/* État ouvert du Panel */
 .wf-admin-panel--open {
     right: 0;
-   
+    pointer-events: auto;
 }
 
+/* Header du Panel */
 .wf-admin-panel-header {
     padding: 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -48,12 +55,26 @@
     align-items: center;
 }
 
-.admin-film-target {
-    color: #3498db;
-    font-size: 0.9rem;
-    font-weight: bold;
+.wf-admin-panel-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #ffffff;
 }
 
+.close-panel-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-panel-btn:hover {
+    color: #ffffff;
+}
+
+/* Corps du Panel */
 .wf-admin-panel-body {
     flex: 1;
     overflow-y: auto;
@@ -64,7 +85,8 @@
     margin-bottom: 25px;
 }
 
-.wf-admin-section-title {
+.wf-admin-section label {
+    display: block;
     font-size: 0.8rem;
     text-transform: uppercase;
     color: #888;
@@ -72,38 +94,84 @@
     letter-spacing: 1px;
 }
 
-/* Badges des sélectionneurs assignés */
+/* Liste des sélectionneurs assignés */
+.admin-assigned-scroll {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
 .admin-card-pill {
     background: rgba(52, 152, 219, 0.15);
     border: 1px solid #3498db;
-    padding: 8px 12px;
+    padding: 6px 12px;
     border-radius: 20px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin: 4px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+    animation: fadeInPill 0.3s ease;
+}
+
+@keyframes fadeInPill {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .remove-pill {
     cursor: pointer;
     color: #e74c3c;
     font-weight: bold;
+    font-size: 1rem;
+    line-height: 1;
 }
 
 .remove-pill:hover {
     color: #ff7675;
 }
 
+/* Footer du Panel */
+.wf-admin-panel-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: #1a1a1a;
+}
+
+/* Boutons d'actions rapides (Quick Assign) dans la Galerie */
+.quick-assign-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 5;
+    background: rgba(41, 128, 185, 0.95);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.quick-assign-btn:hover {
+    background: #3498db;
+    transform: translateY(-2px);
+}
+
+/* Responsive Mobile */
 @media (max-width: 768px) {
     .wf-admin-panel {
         right: 0;
-        bottom: -100%;
-        /* Part du bas */
+        bottom: -100%; /* Sort par le bas sur mobile */
         top: auto;
         width: 100%;
-        height: 85vh;
-        /* Ne couvre pas tout pour garder le contexte */
+        height: 80vh;
         border-radius: 20px 20px 0 0;
         transition: bottom 0.4s ease;
     }
@@ -112,55 +180,13 @@
         bottom: 0;
     }
 
-    /* Barre de préhension (Handle) */
-    .mobile-drawer-handle {
-        display: flex;
-        justify-content: center;
-        padding: 12px 0;
-    }
-
-    .mobile-drawer-handle span {
-        width: 40px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
-    }
-
-    /* Optimisation des boutons pour le pouce */
-    .admin-profile-btn {
-        min-height: 50px;
-        font-size: 1rem;
-    }
-}
-
- /* Bouton d'assignement */
-.quick-assign-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(41, 128, 185, 0.9);
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: transform 0.2s ease;
-}
-
-.quick-assign-btn:hover {
-    transform: scale(1.05);
-    background: #3498db;
-}
-
-/* Btn d'assignement pour vue mobile */
-@media (max-width: 768px) {
     .quick-assign-btn {
         position: relative;
         top: 0;
         right: 0;
         width: 100%;
         margin-top: 10px;
+        justify-content: center;
         padding: 12px;
     }
 }
