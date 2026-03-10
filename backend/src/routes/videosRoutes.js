@@ -1,12 +1,11 @@
 import { Router } from "express";
 import { 
     createVideo, 
-    getAllVideos, 
+    getSearchVideos, 
     getVideoById, 
     updateVideo, 
     deleteVideo 
 } from "../controllers/video/videoController.js";
-import { searchVideos } from "../controllers/searchController.js";
 import { 
     createSelectorMemo, 
     getAllSelectorMemos, 
@@ -23,17 +22,18 @@ const router = Router();
 
 // Routes vidéos
 router.post("/", createVideo);
-router.get("/", optionalAuthMiddleware, getAllVideos);
-router.get("/search", optionalAuthMiddleware, searchVideos);
+router.get("/", optionalAuthMiddleware, getSearchVideos);
 router.get("/:id", optionalAuthMiddleware, getVideoById);
 router.put("/:id", updateVideo);
 router.delete("/:id", deleteVideo);
 
 // Routes memos de sélection (notation par les selectors)
-router.post("/:id/memo", authMiddleware, checkRole(["Selector"]), validate(createSelectorMemoSchema), createSelectorMemo);
-router.get("/memos", authMiddleware, checkRole(["Super-admin", "Admin"]), getAllSelectorMemos);
+
+router.post("/:id/memo", authMiddleware, checkRole([2]), validate(createSelectorMemoSchema), createSelectorMemo);
+router.get("/memos", authMiddleware, checkRole([3, 1]), getAllSelectorMemos);
+
 router.get("/memo/:id", authMiddleware, getSelectorMemoById);
-router.put("/memo/:id", authMiddleware, checkRole(["Selector"]), validate(updateSelectorMemoSchema), updateSelectorMemo);
-router.delete("/memo/:id", authMiddleware, checkRole(["Selector"]), deleteSelectorMemo);
+router.put("/memo/:id", authMiddleware, checkRole([2]), validate(updateSelectorMemoSchema), updateSelectorMemo);
+router.delete("/memo/:id", authMiddleware, checkRole([2]), deleteSelectorMemo);
 
 export default router;

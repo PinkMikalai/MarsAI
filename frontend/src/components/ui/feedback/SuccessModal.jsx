@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Icons from '../common/Icons';
 import '../../../styles/components/success-modal.css';
 
-const SuccessModal = ({ isOpen, onClose, videoId, message }) => {
+const SuccessModal = ({ isOpen, onClose, videoId, videoTitle, message }) => {
   const { t } = useTranslation();
   if (!isOpen) return null;
 
@@ -45,9 +45,9 @@ const SuccessModal = ({ isOpen, onClose, videoId, message }) => {
                 {message || t('deposit.successDefaultMsg')}
               </p>
 
-              {videoId && (
+              {(videoTitle || videoId) && (
                 <p className="success-modal-video-id">
-                  <strong>{t('deposit.successModalVideoRef')}</strong> #{videoId}
+                  <strong>{t('deposit.successModalVideoRef')}</strong> {videoTitle || `#${videoId}`}
                 </p>
               )}
 

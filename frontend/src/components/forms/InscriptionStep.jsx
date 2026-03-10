@@ -35,6 +35,7 @@ const InscriptionStep = () => {
   const { form, setParticipant } = useDepositForm();
   const { errors, validateField, clearError } = useFormValidation(participationSchema);
   const p = form.participant;
+
   
   const [countryOpen, setCountryOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
@@ -98,6 +99,7 @@ const InscriptionStep = () => {
     return () => document.removeEventListener('click', close);
   }, [platformOpenIndex]);
 
+
   return (
     <FormCard number="02" title={t('deposit.inscriptionTitle')}>
       <div className="deposit-info-box">
@@ -113,17 +115,17 @@ const InscriptionStep = () => {
           <label className="deposit-field-label">{t('deposit.civility')}</label>
           <div className="deposit-field-wrap">
             <select
-              className="deposit-input"
-              value={p.civility || ''}
+              className={`deposit-input ${errors.realisator_civility ? 'is-invalid' : ''}`}
+              value={p.realisator_civility || ''}
               onChange={(e) => {
-                setParticipant('civility', e.target.value);
+                setParticipant('realisator_civility', e.target.value);
                 clearError('realisator_civility'); 
               }}
               onBlur={(e) => validateField('realisator_civility', e.target.value)}
             >
               <option value="">{t('deposit.selectPlaceholder')}</option>
               {CIVILITY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                <option key={opt.value} value={opt.value}>{t(opt.labelKey)}</option>
               ))}
             </select>
             <ErrorMessage error={errors.realisator_civility} />
@@ -137,10 +139,10 @@ const InscriptionStep = () => {
           <div className="deposit-field-wrap">
             <input
               type="text"
-              className="deposit-input"
-              value={p.firstname || ''}
+              className={`deposit-input ${errors.realisator_firstname ? 'is-invalid' : ''}`}
+              value={p.realisator_firstname || ''}
               onChange={(e) => {
-                setParticipant('firstname', e.target.value);
+                setParticipant('realisator_firstname', e.target.value);
                 clearError('realisator_firstname');
               }}
               onBlur={(e) => validateField('realisator_firstname', e.target.value)}
@@ -158,10 +160,10 @@ const InscriptionStep = () => {
           <div className="deposit-field-wrap">
             <input
               type="text"
-              className="deposit-input"
-              value={p.lastname || ''}
+              className={`deposit-input ${errors.realisator_lastname ? 'is-invalid' : ''}`}
+              value={p.realisator_lastname || ''}
               onChange={(e) => {
-                setParticipant('lastname', e.target.value);
+                setParticipant('realisator_lastname', e.target.value);
                 clearError('realisator_lastname');
               }}
               onBlur={(e) => validateField('realisator_lastname', e.target.value)}
@@ -176,7 +178,7 @@ const InscriptionStep = () => {
           <div className="deposit-field-wrap">
             <input
               type="email"
-              className="deposit-input"
+              className={`deposit-input ${errors.email ? 'is-invalid' : ''}`}
               value={p.email || ''}
               onChange={(e) => {
                 setParticipant('email', e.target.value);
@@ -208,6 +210,7 @@ const InscriptionStep = () => {
             <ErrorMessage error={errors.birthdate} />
           </div>
         </div>
+        
 
 
 
@@ -273,17 +276,17 @@ const InscriptionStep = () => {
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.mobilePhone')}</label>
           <PhoneInput
-            value={p.phone}
-            countryCode={p.phone_country || p.country}
+            value={p.mobile_number}
+            countryCode={p.mobile_country || p.country}
             onPhoneChange={(val) => {
-              setParticipant('phone', val);
+              setParticipant('mobile_number', val);
               clearError('mobile_number');
             }}
             onCountryChange={(val) => {
-              setParticipant('phone_country', val);
-              validateField('mobile_number', p.phone);
+              setParticipant('mobile_country', val);
+              validateField('mobile_number', p.mobile_number);
             }}
-            onBlur={() => validateField('mobile_number', p.phone)}
+            onBlur={() => validateField('mobile_number', p.mobile_number)}
             placeholder="612345678"
           />
           <ErrorMessage error={errors.mobile_number} />
@@ -294,17 +297,17 @@ const InscriptionStep = () => {
         <div className="deposit-field-group">
           <label className="deposit-field-label">{t('deposit.landlinePhone')}</label>
           <PhoneInput
-            value={p.phone_landline}
-            countryCode={p.phone_landline_country || p.country}
+            value={p.phone_number}
+            countryCode={p.phone_country || p.country}
             onPhoneChange={(val) => {
-              setParticipant('phone_landline', val);
+              setParticipant('phone_number', val);
               clearError('phone_number');
             }}
             onCountryChange={(val) => {
-              setParticipant('phone_landline_country', val);
-              validateField('phone_number', p.phone_landline);
+              setParticipant('phone_country', val);
+              validateField('phone_number', p.phone_number);
             }}
-            onBlur={() => validateField('phone_number', p.phone_landline)}
+            onBlur={() => validateField('phone_number', p.phone_number)}
             placeholder="123456789"
           />
           <ErrorMessage error={errors.phone_number} />

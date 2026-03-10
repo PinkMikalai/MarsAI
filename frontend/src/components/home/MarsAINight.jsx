@@ -2,29 +2,32 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ClockIcon } from '@heroicons/react/24/outline';
 import { ROUTES } from '../../constants/routes';
-import { FiClock } from 'react-icons/fi';
+import Reveal from '../ui/common/Reveal';
+import { fadeUp, staggerContainer } from '../../utils/animations';
 
 const MarsAINight = () => {
   const { t } = useTranslation();
   return (
-    <section className="night-section" aria-label="Mars A.I. Night">
+    <Reveal as="section" variant={staggerContainer} className="night-section" aria-label="Mars A.I. Night">
       <div className="container">
-        <div className="night-text">
+        <motion.div className="night-text" variants={fadeUp}>
           <h2 className="section-title">
             MARS.A.I <span className="title-pink">NIGHT</span>
           </h2>
           <p className="section-desc">{t('home.night.desc')}</p>
-        </div>
-        <div className="night-card">
+        </motion.div>
+        <motion.div className="night-card" variants={fadeUp}>
           <div className="night-date">
-            <FiClock size={24} strokeWidth={2} aria-hidden />
+            <ClockIcon width={24} height={24} aria-hidden />
             <span>{t('home.night.date')}</span>
           </div>
           <Link to={ROUTES.PARTICIPATE} className="btn-reserve">{t('home.night.cta')}</Link>
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </Reveal>
   );
 };
 

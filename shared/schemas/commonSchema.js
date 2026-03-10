@@ -3,9 +3,9 @@ import { z } from 'zod';
 const commonSchema = {
   // schéma de validation des email
   email: z
-    .string({ required_error: "Email address is required" })
+    .string({ required_error: "err_email_required" })
     .trim()
-    .email({ message: "Invalid email format" })
+    .email({ message: "err_email_invalid" })
     .lowercase(),
 
   // shéma de validation des mot de passe en général (sans génération de token)
@@ -44,19 +44,19 @@ const commonSchema = {
   
   // schéma de validation des prénoms
   firstname: z
-    .string()
+    .string({ required_error: "err_firstname_required" })
     .trim()
-    .min(1, { message: "Firstname is mandatory" })
-    .max(50, { message: "Firstname is too long (max 50 characters)" })
-    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, { message: "Firstname must contain only letters, spaces, hyphens and apostrophes" }),
+    .min(1, { message: "err_firstname_empty" })
+    .max(50, { message: "err_firstname_too_long" })
+    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, { message: "err_firstname_invalid" }),
 
   // schéma de validation des noms
   lastname: z
-    .string()
+    .string({ required_error: "err_lastname_required" })
     .trim()
-    .min(1, { message: "Lastname is mandatory" })
-    .max(50, { message: "Lastname is too long (max 50 characters)" })
-    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, { message: "Lastname must contain only letters, spaces, hyphens and apostrophes" }),
+    .min(1, { message: "err_lastname_empty" })
+    .max(50, { message: "err_lastname_too_long" })
+    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, { message: "err_lastname_invalid" }),
     ////////////////////
     //shemas de validation des noms et bio
     ////////////////////

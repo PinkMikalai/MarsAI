@@ -176,6 +176,7 @@ async function addParticipation(req, res) {
         res.status(201).json({
             message: "Participation enregistrée et vidéo uploadée avec succès",
             videoId: newVideoId,
+            title_en: validatedData.title_en || validatedData.title,
             youtubeUrl: youtubeUrl,
             detectedDuration: meta.duration,
             resolution: `${meta.width}x${meta.height}`

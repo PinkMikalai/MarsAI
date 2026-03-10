@@ -36,11 +36,8 @@ const updatePasswordSchema = z.object({
     message: "Passwords do not match",
     path: ["confirmNewPassword"]
 });
-
-const updateUserShema = z.object({
+const updateUserSchema = z.object({
      firstname: firstname.optional(), 
     lastname: lastname.optional(),
 }).strict();
-
-
-export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserShema };
+export { inviteSchema, passwordSchema, resetPasswordSchema, updatePasswordSchema, updateUserSchema };
