@@ -425,7 +425,7 @@ async function getSearchVideosModel(params = {}) {
     try {
         const {
             q, search: searchVal,
-            adminStatus, selectionStatus, rated,
+            adminStatus, selectionStatus, rated, toAssign
         } = params;
         const searchTerm = (q ?? searchVal ?? '').toString().trim();
 
@@ -433,10 +433,18 @@ async function getSearchVideosModel(params = {}) {
         const hasAdmin   = !!adminStatus;
         const hasSel     = !!selectionStatus;
         const hasRated   = rated === 'true' || rated === 'false';
+        const hasToAssign = toAssign === 'true'
 
         // Aucun critère → toutes les vidéos
-        if (!hasText && !hasAdmin && !hasSel && !hasRated) {
-            const [rows] = await pool.execute('SELECT * FROM video');
+        if (!hasText && !hasAdmin && !hasSel && !hasRated && !hasToAssign) {
+            const query = `
+                SELECT v.*, COUNT(DISTINCT asg.id) as assignment_count
+                FROM video v
+                LEFT JOIN assignation asg ON v.id = asg.video_id
+                GROUP BY v.id
+                ORDER BY v.created_at DESC
+            `;
+            const [rows] = await pool.execute(query);
             return rows;
         }
 
@@ -444,6 +452,7 @@ async function getSearchVideosModel(params = {}) {
         const values = [];
 
         // --- JOINs nécessaires selon les filtres ---
+        
         const needsTag    = hasText;
         const needsAward  = hasText;
         const needsContrib = hasText;
@@ -451,7 +460,7 @@ async function getSearchVideosModel(params = {}) {
         const needsAdmin  = hasText || hasAdmin;
         const needsAcq    = hasText;
 
-        let joins = '';
+        let joins = '\n LEFT JOIN assignation asg ON v.id = asg.video_id';
         if (needsTag)    joins += '\n            LEFT JOIN video_tag vt ON v.id = vt.video_id LEFT JOIN tag t ON vt.tag_id = t.id';
         if (needsAward)  joins += '\n            LEFT JOIN video_award va ON v.id = va.video_id LEFT JOIN award a ON va.award_id = a.id';
         if (needsContrib)joins += '\n            LEFT JOIN contributor c ON v.id = c.video_id';
@@ -496,11 +505,16 @@ async function getSearchVideosModel(params = {}) {
         }
 
         const whereClause = conditions.length ? `WHERE ${conditions.join('\n               AND ')}` : '';
-
+       
+        // permet d'activer le filtre pour afficher les vidéos assignés < 3 fois
+        const havingClause = hasToAssign ? `HAVING assignment_count < 3` : ``;
         const query = `
-            SELECT DISTINCT v.*
+            SELECT v.*, COUNT(DISTINCT asg.id) as assignment_count
             FROM video v${joins}
             ${whereClause}
+            GROUP BY v.id
+            ${havingClause}
+            ORDER BY v.created_at DESC
         `;
 
         const [rows] = await pool.execute(query, values);

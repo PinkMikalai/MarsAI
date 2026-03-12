@@ -7,6 +7,7 @@ import SearchBar from '../../components/ui/search/SearchBar';
 import Icons from '../../components/ui/common/Icons';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import { useAuth } from '../../context/AuthContext.jsx';
+import AdminAssignment from '../Admin/AdminAssignments.jsx';
 
 let _cachedVideos = null;
 
@@ -17,6 +18,10 @@ let _cachedVideos = null;
 const GalleryFilms = () => {
     const { t } = useTranslation();
     const { user } = useAuth();
+    const [isAssignmentOpen, setIsAssignmentOpen] = useState(false);
+    const [selectedVideos, setSelectedVideos] = useState([]);
+    const [selectedVideoIds, setSelectedVideoIds] = useState(new Set());
+    const canAssign = user && (user.role_id === 1 || user.role_id === 3);
 
     const [videos, setVideos] = useState(_cachedVideos || []);
     const [loading, setLoading] = useState(!_cachedVideos);
@@ -58,6 +63,7 @@ const GalleryFilms = () => {
         }
     }
 
+
     // recherche via api — tags, admin_status et selection_status geres cote backend
     async function fetchSearchVideos(query, activeFilters) {
         console.log("fetchSearchVideos — query:", query, "| filters:", activeFilters);
@@ -81,7 +87,11 @@ const GalleryFilms = () => {
             setSearchLoading(false);
         }
     }
-
+    // interface permettant aux admins connectés d'assigner des films à des selectionneurs
+    const openAssignmentPanel = (film) => {
+        setSelectedVideos([film]);
+        setIsAssignmentOpen(true);
+    };
     // chargement initial
     useEffect(() => {
         if (_cachedVideos) { setVideos(_cachedVideos); return; }
@@ -127,6 +137,24 @@ const GalleryFilms = () => {
     function handleImageError(filmId) {
         setImageErrors(prev => new Set([...prev, filmId]));
     }
+    // mise en place l'interface d'assignation disponible que pour les admins
+    // selectionner et desélecvtionner une videos
+
+    const toggleVideoSelection = (videoId) => {
+        setSelectedVideoIds(prev => {
+            const next = new Set(prev);
+            if (next.has(videoId)) next.delete(videoId);
+            else next.add(videoId);
+            return next;
+        });
+    };
+    // selectionner des videos pour ouvrir l'interface 
+    const openMassAssignment = () => {
+        const videosToAssign = videos.filter(v => selectedVideoIds.has(v.id));
+        setSelectedVideos(videosToAssign);
+        setIsAssignmentOpen(true);
+    };
+
 
     const totalPages = Math.max(1, Math.ceil(videos.length / FILMS_PER_PAGE));
     const filmsOnPage = videos.slice((currentPage - 1) * FILMS_PER_PAGE, currentPage * FILMS_PER_PAGE);
@@ -174,6 +202,7 @@ const GalleryFilms = () => {
                             <>
                                 <div className="galerie-grid">
                                     {filmsOnPage.map((film) => {
+                                        console.log("Données du film :", film)
                                         const title = film.title || film.title_en || t('gallery.noTitle');
                                         const director = [film.realisator_firstname, film.realisator_lastname]
                                             .filter(Boolean).join(' ') || '–';
@@ -181,7 +210,17 @@ const GalleryFilms = () => {
                                         const hasImageError = imageErrors.has(film.id);
 
                                         return (
-                                            <article key={film.id} className="galerie-card">
+                                            <article key={film.id} className={`galerie-card ${selectedVideoIds.has(film.id) ? 'selected' : ''}`} style={{ position: 'relative' }}>
+
+                                                {canAssign && (
+                                                    <div className="admin-selection-check">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={selectedVideoIds.has(film.id)}
+                                                            onChange={() => toggleVideoSelection(film.id)}
+                                                        />
+                                                    </div>
+                                                )}
                                                 <Link to={`/watch/${film.id}`} className="galerie-card-link">
                                                     <div className="galerie-card-image-wrap">
                                                         {coverUrl && !hasImageError ? (
@@ -197,7 +236,7 @@ const GalleryFilms = () => {
                                                             <div className="galerie-card-image galerie-card-image--default">
                                                                 <div className="galerie-card-image-placeholder">
                                                                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
-                                                                        <path d="M4 16L8.586 11.414C9.367 10.633 10.633 10.633 11.414 11.414L16 16M14 14L15.586 12.414C16.367 11.633 17.633 11.633 18.414 12.414L20 14M14 8H14.01M6 20H18C19.105 20 20 19.105 20 18V6C20 4.895 19.105 4 18 4H6C4.895 4 4 4.895 4 6V18C4 19.105 4.895 20 6 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                                                        <path d="M4 16L8.586 11.414C9.367 10.633 10.633 10.633 11.414 11.414L16 16M14 14L15.586 12.414C16.367 11.633 17.633 11.633 18.414 12.414L20 14M14 8H14.01M6 20H18C19.105 20 20 19.105 20 18V6C20 4.895 19.105 4 18 4H6C4.895 4 4 4.895 4 6V18C4 19.105 4.895 20 6 20Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                                     </svg>
                                                                     <span className="galerie-card-image-placeholder-text">{t('gallery.noImage')}</span>
                                                                 </div>
@@ -217,6 +256,23 @@ const GalleryFilms = () => {
                                                         )}
                                                     </div>
                                                 </Link>
+                                                {canAssign && (
+                                                    <button
+                                                        className="quick-assign-btn"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            openAssignmentPanel(film);
+                                                        }}
+                                                    >
+                                                        Assign
+                                                        
+                                                        {film.assignment_count > 0 && (
+                                                            <span className="assign-badge">
+                                                                ({film.assignment_count})
+                                                            </span>
+                                                        )}
+                                                    </button>
+                                                )}
                                             </article>
                                         );
                                     })}
@@ -265,6 +321,32 @@ const GalleryFilms = () => {
                     </>
                 )}
             </main>
+            {canAssign && (
+                <AdminAssignment
+                    videos={selectedVideos}
+                    admin_id={user.id}
+                    isOpen={isAssignmentOpen}
+                    onClose={() => setIsAssignmentOpen(false)}
+                    onSuccess={(videoIds) => {
+                        // console.log(`Assignation réussie pour ${count} sélectionneurs`);
+                        setIsAssignmentOpen(false);
+                        setSelectedVideoIds(new Set());
+                        fetchAllVideos();
+                    }}
+                />
+            )}
+            {canAssign && selectedVideoIds.size > 0 && (
+                <div className="admin-selection-banner">
+                    <span>{selectedVideoIds.size} film(s) sélectionné(s)</span>
+                    <button onClick={openMassAssignment}>Assigner la sélection</button>
+                    <button
+                        style={{ background: 'transparent', border: '1px solid #555' }}
+                        onClick={() => setSelectedVideoIds(new Set())}
+                    >
+                        Annuler
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
