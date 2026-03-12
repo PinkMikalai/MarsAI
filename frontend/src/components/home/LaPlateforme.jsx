@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { MapPinIcon } from '@heroicons/react/24/outline';
 import Reveal from '../ui/common/Reveal';
 import { fadeUp } from '../../utils/animations';
+import Map from '../ui/actions/Map';
 
 const LaPlateforme = () => {
   const { t } = useTranslation();
@@ -30,10 +30,7 @@ const LaPlateforme = () => {
           </motion.article>
         </Reveal>
         <Reveal as="div" delay={0.2} className="home-map-wrap">
-          <div className="home-map-placeholder">
-            <MapPinIcon width={48} height={48} strokeWidth={1.5} aria-hidden />
-            <span>{t('home.plateforme.map')}</span>
-          </div>
+          <Map />
         </Reveal>
       </div>
     </section>
