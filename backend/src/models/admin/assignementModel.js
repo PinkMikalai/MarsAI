@@ -56,7 +56,7 @@ async function getAssignmentByVideoModel(video_id) {
 
 }
 
-// récupération des assignements par video 
+// récupération des assignements pour un selectionneur 
 
 async function getAssignmentByUserModel(user_id) {
 
@@ -152,6 +152,35 @@ async function getSelectorLoadModel() {
     }
 
 }
+//gestion de la création des assignations simutanément avec le nettoyage des données d'assignation
+async function syncVideoAssignmentModel(video_id, user_ids, admin_id) {
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // Supprimer toutes les assignations actuelles pour cette vidéo
+        await connection.execute('DELETE FROM assignation WHERE video_id = ?', [video_id]);
+
+        // Insérer la nouvelle liste (si elle n'est pas vide)
+        if (user_ids && user_ids.length > 0) {
+            const values = user_ids.map(u_id => [video_id, u_id, admin_id]);
+
+            const placeholders = values.map(() => "(?,?,?)").join(",");
+            const flatValues = values.flat();
+
+            const query = `INSERT INTO assignation (video_id, user_id, assigned_by) VALUES ${placeholders}`;
+            await connection.execute(query, flatValues);
+        }
+
+        await connection.commit();
+        return true;
+    } catch (error) {
+        await connection.rollback();
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
 
 export {
     createAssignmentModel,
@@ -160,6 +189,7 @@ export {
     getAssignmentByUserModel,
     updateAssignmentModel,
     deleteAssignmentModel,
-    getSelectorLoadModel
+    getSelectorLoadModel,
+    syncVideoAssignmentModel
 
 }

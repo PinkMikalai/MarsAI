@@ -1,4 +1,4 @@
-import { createAssignmentModel, createMultipleAssignmentModel, updateAssignmentModel, deleteAssignmentModel, getAssignmentByVideoModel, getAssignmentByUserModel, getSelectorLoadModel} from "../../models/admin/assignementModel.js";
+import { createAssignmentModel, createMultipleAssignmentModel, updateAssignmentModel, deleteAssignmentModel, getAssignmentByVideoModel, getAssignmentByUserModel, getSelectorLoadModel, syncVideoAssignmentModel } from "../../models/admin/assignementModel.js";
 import { getUserByIdModel } from "../../models/user/userModel.js";
 import { getVideoByIdModel } from "../../models/video/videoModel.js";
 
@@ -52,7 +52,7 @@ async function multipleAssignments({ video_ids, user_ids, admin_id }) {
     }
     // assignation de plusieurs vidéos à un selectionneur
     else if (Array.isArray(video_ids) && !Array.isArray(user_ids)) {
-        assignments = video_ids.map(video_id =>  [video_id, user_ids, admin_id]);
+        assignments = video_ids.map(video_id => [video_id, user_ids, admin_id]);
     }
     // assignation de plusieurs vidéos à plusieurs selectionneurs
     else if (Array.isArray(video_ids) && Array.isArray(user_ids)) {
@@ -69,7 +69,7 @@ async function multipleAssignments({ video_ids, user_ids, admin_id }) {
         assignments.push([video_ids, user_ids, admin_id]);
 
     }
-    if (assignments.length === 0){
+    if (assignments.length === 0) {
         const error = new Error("Invalid data for multiassignments");
         error.status = 400;
         throw error;
@@ -77,7 +77,7 @@ async function multipleAssignments({ video_ids, user_ids, admin_id }) {
     };
 
     const totalInserted = await createMultipleAssignmentModel(assignments);
-      return {
+    return {
         success: true,
         message: ` ${totalInserted} assignments created`,
         result: totalInserted
@@ -166,17 +166,59 @@ async function deleteAssignment(id) {
 
 async function getSelectorVideoLoad() {
     const videoLoad = await getSelectorLoadModel();
-    
-    if(!videoLoad) {
+
+    if (!videoLoad) {
         const error = new Error(`Error fetching selector films load`);
         error.status = 404;
         throw error
     }
-    return{
+    return {
         success: true,
-        result : videoLoad
+        result: videoLoad
     }
-    
+
+}
+// gestion de la creation et nettoyage des données dans le volet assignations
+async function syncVideoAssignment({ video_ids, user_ids, admin_id }) {
+    const videoIdsArray = Array.isArray(video_ids) ? video_ids : [video_ids];
+    for (const video_id of videoIdsArray) {
+        await syncVideoAssignmentModel(video_id, user_ids, admin_id)
+    }
+    return {
+        success: true,
+        message: "Assignment completed"
+
+    }
+}
+// 
+async function autoAssignVideos(videoIds, admin_id) {
+    console.log("DEBUG: videoIds reçus:", videoIds); 
+    console.log("DEBUG: admin_id:", admin_id);       
+    // Récupération des charges de travail de chaque selectionneur
+    const selectors = await getSelectorLoadModel();
+
+    // Pour une video selectionnée assigner d'abord les selectionneurs qui ont la plus petite charge de travail
+    for (const video_id of videoIds) {
+        // On trie pour toujours avoir le moins chargé en premier
+        selectors.sort((a, b) => a.current_load - b.current_load);
+
+        const targetSelector = selectors[0];
+
+        //Appliquer l'assignation
+        await createAssignmentModel({
+            video_id,
+            user_id: targetSelector.id,
+            assigned_by: admin_id
+
+        });
+
+        // Incrémenter la charge localement pour la prochaine boucle
+        targetSelector.current_load += 1;
+    }
+    return {
+        status: "Success",
+        assignedCount: videoIds.length
+    };
 }
 
 export {
@@ -186,5 +228,7 @@ export {
     getAssignmentByUser,
     updateAssignment,
     deleteAssignment,
-    getSelectorVideoLoad
+    getSelectorVideoLoad,
+    syncVideoAssignment,
+    autoAssignVideos
 }
