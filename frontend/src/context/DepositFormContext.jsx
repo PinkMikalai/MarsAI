@@ -45,8 +45,62 @@ const initialState = {
 
 const DepositFormContext = createContext(null);
 
-export function DepositFormProvider({ children }) {
-  const [form, setForm] = useState(initialState);
+function buildInitialState(initialData) {
+  if (!initialData) return initialState;
+  let socialLinks = [];
+  if (initialData.social_media_links_json) {
+    try {
+      const parsed = typeof initialData.social_media_links_json === 'string'
+        ? JSON.parse(initialData.social_media_links_json)
+        : initialData.social_media_links_json;
+      if (Array.isArray(parsed)) socialLinks = parsed;
+      else if (parsed && typeof parsed === 'object') {
+        socialLinks = Object.entries(parsed).map(([platform, url]) => ({ platform, url }));
+      }
+    } catch (_) {}
+  }
+  return {
+    ...initialState,
+    consent: { accept_rules: true, accept_ownership: true, accept_age_18: true },
+    participant: {
+      realisator_civility: initialData.realisator_civility || '',
+      realisator_firstname: initialData.realisator_firstname || '',
+      realisator_lastname: initialData.realisator_lastname || '',
+      email: initialData.email || '',
+      birthdate: initialData.birthdate ? initialData.birthdate.split('T')[0] : '',
+      country: initialData.country || 'FR',
+      mobile_number: initialData.mobile_number || '',
+      mobile_country: initialData.country || 'FR',
+      phone_number: initialData.phone_number || '',
+      phone_country: initialData.country || 'FR',
+      address: initialData.address || '',
+      social_links: socialLinks,
+    },
+    film: {
+      title: initialData.title || '',
+      title_en: initialData.title_en || '',
+      description: initialData.synopsis || '',
+      synopsis_en: initialData.synopsis_en || '',
+      tech_resume: initialData.tech_resume || '',
+      creative_resume: initialData.creative_resume || '',
+      language: (initialData.language || 'fr').toLowerCase(),
+      duration: initialData.duration || '',
+      classification: initialData.classification || 'Hybrid',
+      acquisition_source_id: String(initialData.acquisition_source_id || ''),
+    },
+    tags: (initialData.tags || []).map(t => (typeof t === 'string' ? t : t.name || '')).filter(Boolean),
+    files: { video: null, cover: null, subtitles: null, stills: [], existingCoverUrl: initialData.cover || null },
+    collaborators: (initialData.contributors || []).map(c => ({
+      firstname: c.firstname || '',
+      lastname: c.last_name || '',
+      email: c.email || '',
+      profession: c.production_role || '',
+    })),
+  };
+}
+
+export function DepositFormProvider({ children, initialData }) {
+  const [form, setForm] = useState(() => buildInitialState(initialData));
 
   const setConsent = useCallback((field, value) => {
     setForm((prev) => ({
