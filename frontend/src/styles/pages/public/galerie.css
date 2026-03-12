@@ -406,10 +406,16 @@
 
 /* ─── SEARCH BAR ─────────────────────────────────────────────── */
 .gsearch-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 1.25rem;
 }
 
 .gsearch-inner {
+  flex: 1;
+  min-width: 200px;
   position: relative;
   display: flex;
   align-items: center;
@@ -493,12 +499,12 @@
   height: 13px;
 }
 
-/* filtres de recherche */
+/* filtres de recherche (inline avec la barre de recherche) */
 .gsearch-filters-wrap {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 0.625rem;
+  align-items: center;
 }
 
 .gsearch-select {
@@ -530,15 +536,21 @@
   color: #ffffff;
 }
 
-/* badge résultats de recherche */
+/* compteur de films trouvés (inline à droite) */
+.gsearch-results-info-wrap {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 .gsearch-results-info {
   font-family: 'Arimo', sans-serif;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
-  margin: -0.75rem 0 1rem;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  white-space: nowrap;
 }
 
 .gsearch-results-info strong {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
 }

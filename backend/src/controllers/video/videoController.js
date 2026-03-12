@@ -12,9 +12,11 @@ import {
     updateTagsService, 
     getVideoTagsService 
 } from "../../services/video/tagService.js";
-import { 
-    updateStillsByVideoIdModel, 
+import {
+    updateStillsByVideoIdModel,
 } from "../../models/video/stillModel.js";
+import { deleteYouTubeVideo } from "../../services/video/youtubeService.js";
+import { getFullVideoDetailsModel } from "../../models/video/videoModel.js";
 
 
 //=====================================================
@@ -150,7 +152,29 @@ async function updateVideo(req, res) {
 }
 
 async function deleteVideo(req, res) {
-    console.log("test deleteVideo");
+    try {
+        const id = parseInt(req.params.id, 10);
+        if (!id) return res.status(400).json({ message: "ID invalide" });
+
+        const video = await getFullVideoDetailsModel(id);
+        if (!video) return res.status(404).json({ message: "Participation introuvable" });
+
+        // Suppression YouTube (non bloquant)
+        if (video.youtube_url) {
+            try {
+                await deleteYouTubeVideo(video.youtube_url);
+                console.log(`Vidéo YouTube ${video.youtube_url} supprimée`);
+            } catch (ytErr) {
+                console.warn("Suppression YouTube échouée (non bloquant):", ytErr.message);
+            }
+        }
+
+        await deleteVideoModel(id);
+        res.status(200).json({ success: true, message: "Participation supprimée avec succès" });
+    } catch (error) {
+        console.error("Erreur deleteVideo:", error.message);
+        res.status(500).json({ message: "Erreur lors de la suppression" });
+    }
 }
 
 export {

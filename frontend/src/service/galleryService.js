@@ -17,6 +17,29 @@ export const videoApi = {
     return data;
   },
 
+  getWinners: async () => {
+    const data = await api('/videos/winners', { method: 'GET' });
+    return data;
+  },
+
+  getAllAwards: async () => {
+    const data = await api('/videos/awards', { method: 'GET' });
+    return data;
+  },
+
+  getVideoAwards: async (videoId) => {
+    const data = await api(`/videos/${videoId}/awards`, { method: 'GET' });
+    return data;
+  },
+
+  setVideoAwards: async (videoId, awardIds) => {
+    const data = await api(`/videos/${videoId}/awards`, {
+      method: 'POST',
+      body: JSON.stringify({ awardIds }),
+    });
+    return data;
+  },
+
   searchVideos: async (searchQuery = '', filters = {}) => {
     const params = new URLSearchParams();
     if (searchQuery.trim()) params.set('q', searchQuery.trim());

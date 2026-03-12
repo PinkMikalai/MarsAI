@@ -512,6 +512,60 @@ async function getSearchVideosModel(params = {}) {
 }
 
 
+// Retourne toutes les données d'une vidéo avec ses relations (pour pré-remplir le formulaire d'édition)
+async function getFullVideoDetailsModel(videoId) {
+    try {
+        const [rows] = await pool.execute(
+            `SELECT
+                v.id, v.title, v.title_en, v.synopsis, v.synopsis_en,
+                v.tech_resume, v.creative_resume, v.language, v.country,
+                v.duration, v.classification, v.cover, v.srt_file_name,
+                v.youtube_url, v.video_file_name, v.email,
+                v.realisator_firstname, v.realisator_lastname, v.realisator_civility,
+                v.birthdate, v.mobile_number, v.phone_number, v.address,
+                v.social_media_links_json, v.acquisition_source_id,
+                IFNULL(
+                    (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT(
+                            'id', c.id,
+                            'firstname', c.firstname,
+                            'last_name', c.last_name,
+                            'email', c.email,
+                            'production_role', c.production_role
+                        )
+                    ) FROM contributor c WHERE c.video_id = v.id),
+                    JSON_ARRAY()
+                ) AS contributors,
+                IFNULL(
+                    (SELECT JSON_ARRAYAGG(
+                        JSON_OBJECT('id', s.id, 'file_name', s.file_name)
+                    ) FROM still s WHERE s.video_id = v.id),
+                    JSON_ARRAY()
+                ) AS stills,
+                IFNULL(
+                    (SELECT JSON_ARRAYAGG(JSON_OBJECT('name', t.name))
+                    FROM video_tag vt JOIN tag t ON t.id = vt.tag_id
+                    WHERE vt.video_id = v.id),
+                    JSON_ARRAY()
+                ) AS tags
+            FROM video v
+            WHERE v.id = ?`,
+            [videoId]
+        );
+        if (!rows[0]) return null;
+        const row = rows[0];
+        return {
+            ...row,
+            contributors: typeof row.contributors === 'string' ? JSON.parse(row.contributors) : (row.contributors || []),
+            stills: typeof row.stills === 'string' ? JSON.parse(row.stills) : (row.stills || []),
+            tags: typeof row.tags === 'string' ? JSON.parse(row.tags) : (row.tags || []),
+        };
+    } catch (error) {
+        console.error('erreur getFullVideoDetailsModel:', error);
+        throw error;
+    }
+}
+
 export {
     createVideoModel,
     getVideoByIdModel,
@@ -521,4 +575,5 @@ export {
     deleteVideoModel,
     updateYoutubeId,
     getSearchVideosModel,
+    getFullVideoDetailsModel,
 };

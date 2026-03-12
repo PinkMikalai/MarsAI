@@ -60,7 +60,7 @@ const AdminSidebar = () => {
   });
 
   const displayName = user?.firstname && user?.lastname
-    ? `${user.firstname} ${user.lastname}`
+    ? ${user.firstname} ${user.lastname}
     : user?.email?.split('@')[0] || 'Utilisateur';
   const roleLabel = user?.role === 'Super_admin' ? 'Super Admin'
     : user?.role === 'Admin'    ? 'Admin'
@@ -87,7 +87,7 @@ const AdminSidebar = () => {
           <li key={item.id}>
             <Link
               to={item.path}
-              className={`admin-sidebar-nav-item ${isActive ? 'admin-sidebar-nav-item--active' : ''}`}
+              className={admin-sidebar-nav-item ${isActive ? 'admin-sidebar-nav-item--active' : ''}}
               onClick={() => setMenuOpen(false)}
             >
               <span className="admin-sidebar-nav-bullet" aria-hidden />
