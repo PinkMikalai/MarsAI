@@ -147,7 +147,7 @@ CREATE INDEX idx_video_acquisition_source ON video(acquisition_source_id);
 CREATE TABLE IF NOT EXISTS invitation (
     id INT AUTO_INCREMENT PRIMARY KEY,
     jti VARCHAR(255) NOT NULL UNIQUE,
-    type ENUM('registration', 'password_reset') DEFAULT 'registration',
+    type ENUM('registration', 'password_reset', 'video_edit') NOT NULL DEFAULT 'registration',
     email VARCHAR(255) NOT NULL,
     user_id INT DEFAULT NULL,
     role VARCHAR(50) DEFAULT NULL,

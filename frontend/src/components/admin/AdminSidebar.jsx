@@ -23,10 +23,11 @@ const AdminSidebar = () => {
     if (menuOpen) document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [menuOpen]);
-  const canAccessEvents    = isAdmin || isSuperAdmin;
-  const canAccessSponsors  = isAdmin || isSuperAdmin;
-  const canAccessJury      = isAdmin || isSuperAdmin;
-  const canAccessInvitations = isSuperAdmin;
+  const canAccessEvents         = isAdmin || isSuperAdmin;
+  const canAccessSponsors       = isAdmin || isSuperAdmin;
+  const canAccessJury           = isAdmin || isSuperAdmin;
+  const canAccessInvitations    = isSuperAdmin;
+  const canAccessParticipations = isAdmin || isSuperAdmin;
   const SELECTOR_ALLOWED = ['overview', 'films', 'messages'];
   // Détection de la page profile : correspond à /profile exactement
   const isProfile = location.pathname === ROUTES.PROFILE || location.pathname.startsWith('/profile');
@@ -34,10 +35,13 @@ const AdminSidebar = () => {
   const isSponsors = location.pathname === ROUTES.ADMIN_SPONSORS;
   const isJury = location.pathname === ROUTES.ADMIN_JURY;
   const isInvitations = location.pathname === ROUTES.ADMIN_INVITATIONS;
+  const isParticipations = location.pathname === ROUTES.ADMIN_PARTICIPATIONS;
+
 
   const NAV_ITEMS = [
     { id: 'overview', label: t('admin.navItems.overview'), path: ROUTES.PROFILE },
     { id: 'films', label: t('admin.navItems.films'), path: ROUTES.PROFILE },
+    { id: 'participations', label: 'Participations', path: ROUTES.ADMIN_PARTICIPATIONS },
     { id: 'jury', label: t('admin.navItems.jury'), path: ROUTES.ADMIN_JURY },
     { id: 'results', label: t('admin.navItems.results'), path: ROUTES.PROFILE },
     { id: 'leaderboard', label: t('admin.navItems.leaderboard'), path: ROUTES.PROFILE },
@@ -55,12 +59,13 @@ const AdminSidebar = () => {
     if (item.id === 'sponsors'    && !canAccessSponsors)   return false;
     if (item.id === 'jury'        && !canAccessJury)       return false;
     if (item.id === 'invitations' && !canAccessInvitations) return false;
+    if (item.id === 'participations' && !canAccessParticipations) return false;
     if (isSelector && !SELECTOR_ALLOWED.includes(item.id)) return false;
     return true;
   });
 
   const displayName = user?.firstname && user?.lastname
-    ? ${user.firstname} ${user.lastname}
+    ? `${user.firstname} ${user.lastname}`
     : user?.email?.split('@')[0] || 'Utilisateur';
   const roleLabel = user?.role === 'Super_admin' ? 'Super Admin'
     : user?.role === 'Admin'    ? 'Admin'
@@ -87,7 +92,7 @@ const AdminSidebar = () => {
           <li key={item.id}>
             <Link
               to={item.path}
-              className={admin-sidebar-nav-item ${isActive ? 'admin-sidebar-nav-item--active' : ''}}
+              className={`admin-sidebar-nav-item ${isActive ? 'admin-sidebar-nav-item--active' : ''}`}
               onClick={() => setMenuOpen(false)}
             >
               <span className="admin-sidebar-nav-bullet" aria-hidden />
