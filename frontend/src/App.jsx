@@ -21,6 +21,8 @@ import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
 import PublicLayout from './components/layout/PublicLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
+import AdminParticipations from './pages/Admin/AdminParticipations';
+import EditParticipation from './pages/Users/EditParticipation';
 import UpdatePassword from './pages/Users/updatePassword';
 
 
@@ -67,6 +69,18 @@ const AdminInvitationsProtected = () => {
   return (
     <AdminLayout>
       <AdminInvitations />
+    </AdminLayout>
+  );
+};
+
+const AdminParticipationsProtected = () => {
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const canAccess = isAdmin || isSuperAdmin;
+  if (!user) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (!canAccess) return <Navigate to={ROUTES.PROFILE} replace />;
+  return (
+    <AdminLayout>
+      <AdminParticipations />
     </AdminLayout>
   );
 };
@@ -130,6 +144,8 @@ function App() {
         <Route path={ROUTES.ADMIN_ASSIGNMENT} element={<AdminAssignmentProtected />} />
         <Route path={ROUTES.ADMIN_JURY} element={<AdminJuryProtected />} />
         <Route path={ROUTES.ADMIN_INVITATIONS} element={<AdminInvitationsProtected />} />
+        <Route path={ROUTES.ADMIN_PARTICIPATIONS} element={<AdminParticipationsProtected />} />
+        <Route path={ROUTES.EDIT_PARTICIPATION} element={<EditParticipation />} />
 
       </Routes>
 

@@ -13,15 +13,18 @@ const AdminSidebar = () => {
   const canAccessSponsors = isAdmin || isSuperAdmin;
   const canAccessJury = isAdmin || isSuperAdmin;
   const canAccessInvitations = isSuperAdmin;
+  const canAccessParticipations = isAdmin || isSuperAdmin;
   const isProfile = location.pathname === ROUTES.PROFILE;
   const isEvents = location.pathname === ROUTES.ADMIN_EVENTS;
   const isSponsors = location.pathname === ROUTES.ADMIN_SPONSORS;
   const isJury = location.pathname === ROUTES.ADMIN_JURY;
   const isInvitations = location.pathname === ROUTES.ADMIN_INVITATIONS;
+  const isParticipations = location.pathname === ROUTES.ADMIN_PARTICIPATIONS;
 
   const NAV_ITEMS = [
     { id: 'overview', label: t('admin.navItems.overview'), path: ROUTES.PROFILE },
     { id: 'films', label: t('admin.navItems.films'), path: ROUTES.PROFILE },
+    { id: 'participations', label: 'Participations', path: ROUTES.ADMIN_PARTICIPATIONS },
     { id: 'jury', label: t('admin.navItems.jury'), path: ROUTES.ADMIN_JURY },
     { id: 'results', label: t('admin.navItems.results'), path: ROUTES.PROFILE },
     { id: 'leaderboard', label: t('admin.navItems.leaderboard'), path: ROUTES.PROFILE },
@@ -39,6 +42,7 @@ const AdminSidebar = () => {
     if (item.id === 'sponsors' && !canAccessSponsors) return false;
     if (item.id === 'jury' && !canAccessJury) return false;
     if (item.id === 'invitations' && !canAccessInvitations) return false;
+    if (item.id === 'participations' && !canAccessParticipations) return false;
     return true;
   });
 
@@ -71,7 +75,7 @@ const AdminSidebar = () => {
       <nav className="admin-sidebar-nav" aria-label={t('admin.navAriaLabel')}>
         <ul className="admin-sidebar-nav-list">
           {navItems.map((item) => {
-            const isActive = (item.id === 'overview' && isProfile) || (item.id === 'events' && isEvents) || (item.id === 'sponsors' && isSponsors) || (item.id === 'jury' && isJury) || (item.id === 'invitations' && isInvitations);
+            const isActive = (item.id === 'overview' && isProfile) || (item.id === 'events' && isEvents) || (item.id === 'sponsors' && isSponsors) || (item.id === 'jury' && isJury) || (item.id === 'invitations' && isInvitations) || (item.id === 'participations' && isParticipations);
             return (
               <li key={item.id}>
                 <Link

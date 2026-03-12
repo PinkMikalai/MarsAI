@@ -25,7 +25,7 @@ router.post("/", createVideo);
 router.get("/", optionalAuthMiddleware, getSearchVideos);
 router.get("/:id", optionalAuthMiddleware, getVideoById);
 router.put("/:id", updateVideo);
-router.delete("/:id", deleteVideo);
+router.delete("/:id", authMiddleware, checkRole([1, 3]), deleteVideo);
 
 // Routes memos de sélection (notation par les selectors)
 
