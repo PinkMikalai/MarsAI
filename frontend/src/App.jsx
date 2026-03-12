@@ -22,7 +22,22 @@ import AdminLayout from './components/admin/AdminLayout';
 import PublicLayout from './components/layout/PublicLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
 import UpdatePassword from './pages/Users/updatePassword';
+import AdminCms from './pages/Admin/AdminCms';
 
+
+
+
+const AdminCmsProtected = () => {
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const canAccess = isAdmin || isSuperAdmin;
+  if (!user) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (!canAccess) return <Navigate to={ROUTES.PROFILE} replace />;
+  return (
+    <AdminLayout>
+      <AdminCms />
+    </AdminLayout>
+  );
+};
 
 const AdminEventsProtected = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
@@ -111,6 +126,7 @@ function App() {
     <AuthProvider>
     <Router>
       <Routes>
+        <Route path={ROUTES.ADMIN_CMS} element={<AdminCmsProtected />} />
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.GALLERY_FILMS} element={<PublicLayout><GalleryFilms /></PublicLayout>} />
 

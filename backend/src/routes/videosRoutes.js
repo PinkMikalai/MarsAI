@@ -6,6 +6,12 @@ import {
     updateVideo, 
     deleteVideo 
 } from "../controllers/video/videoController.js";
+import {
+    getAllAwardsController,
+    getVideoAwardsController,
+    setVideoAwardsController,
+    getWinnersController,
+} from "../controllers/video/awardController.js";
 import { 
     createSelectorMemo, 
     getAllSelectorMemos, 
@@ -22,8 +28,12 @@ const router = Router();
 
 // Routes vidéos
 router.post("/", createVideo);
-router.get("/", optionalAuthMiddleware, getSearchVideos);
-router.get("/:id", optionalAuthMiddleware, getVideoById);
+router.get("/winners",              getWinnersController);
+router.get("/awards",               getAllAwardsController);
+router.get("/:id/awards",           getVideoAwardsController);
+router.post("/:id/awards",          authMiddleware, checkRole([1, 3]), setVideoAwardsController);
+router.get("/",                     optionalAuthMiddleware, getSearchVideos);
+router.get("/:id",                  optionalAuthMiddleware, getVideoById);
 router.put("/:id", updateVideo);
 router.delete("/:id", deleteVideo);
 
