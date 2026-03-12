@@ -147,7 +147,7 @@ CREATE INDEX idx_video_acquisition_source ON video(acquisition_source_id);
 CREATE TABLE IF NOT EXISTS invitation (
     id INT AUTO_INCREMENT PRIMARY KEY,
     jti VARCHAR(255) NOT NULL UNIQUE,
-    type ENUM('registration', 'password_reset') DEFAULT 'registration',
+    type ENUM('registration', 'password_reset', 'video_edit') NOT NULL DEFAULT 'registration',
     email VARCHAR(255) NOT NULL,
     user_id INT DEFAULT NULL,
     role VARCHAR(50) DEFAULT NULL,
@@ -165,6 +165,11 @@ CREATE TABLE IF NOT EXISTS cms (
     illustration VARCHAR(255),
     user_id INT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_active TINYINT(1) NOT NULL DEFAULT 0,
+    start_date DATE DEFAULT NULL,
+    end_date DATE DEFAULT NULL,
+    components JSON DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_cms_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

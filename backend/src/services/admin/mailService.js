@@ -220,4 +220,34 @@ const confirmParticipationEmail = async (email, { title_en, realisator_firstname
     }
 };
 
-export { sendInvitationEmail, welcomeEmail, passwordResetEmail, confirmParticipationEmail };
+const sendParticipationEditEmail = async (email, token, videoTitle) => {
+    const frontendUrl = process.env.FRONT_URL || 'http://localhost:5173';
+    const editLink = `${frontendUrl}/participation/edit/${token}`;
+
+    const mailOptions = {
+        from: '"MarsAI Staff" <no-reply@marsai-festival.com>',
+        to: email,
+        subject: `Finalisez votre participation : ${videoTitle} - MarsAI`,
+        html: `
+            <div style="font-family: sans-serif; padding: 20px; color: #2c3e50; max-width: 600px; margin: auto; border: 1px solid #eee; border-radius: 10px;">
+                <h2 style="color: #2980b9;">Action Requise</h2>
+                <p>Bonjour, vous êtes invité à compléter les détails du film : <strong>${videoTitle}</strong>.</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="${editLink}" style="background: #2980b9; color: white; padding: 14px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                        Modifier les informations du film
+                    </a>
+                </div>
+                <p style="font-size: 11px; color: #95a5a6;">Ce lien est valable 7 jours.</p>
+            </div>
+        `
+    };
+    return await transporter.sendMail(mailOptions);
+};
+
+export { 
+    sendInvitationEmail, 
+    welcomeEmail, 
+    passwordResetEmail, 
+    confirmParticipationEmail, 
+    sendParticipationEditEmail 
+};

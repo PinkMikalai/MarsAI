@@ -12,7 +12,7 @@ import { filmStepSchema } from '@shared/schemas/participationSchema';
 
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 
-const UploadFilmStep = () => {
+const UploadFilmStep = ({ hideVideo = false }) => {
   const { t } = useTranslation();
   const { form, setFilm, setFile, setTags } = useDepositForm();
   // Utilisation du hook de validation
@@ -45,8 +45,8 @@ const UploadFilmStep = () => {
       setCoverPreview(url);
       return () => URL.revokeObjectURL(url);
     }
-    setCoverPreview(null);
-  }, [form.files.cover]);
+    setCoverPreview(form.files.existingCoverUrl || null);
+  }, [form.files.cover, form.files.existingCoverUrl]);
 
   useEffect(() => {
     const stills = form.files.stills || [];
@@ -317,7 +317,7 @@ const UploadFilmStep = () => {
         )}
       </div>
 
-      <div className="deposit-field-group">
+      {!hideVideo && <div className="deposit-field-group">
         <label className="deposit-field-label">{t('deposit.videoField')}</label>
         <div
           className={`deposit-upload-vignette deposit-upload-vignette--video ${videoPreviewUrl ? 'deposit-upload-vignette--preview' : ''} ${videoDragOver ? 'deposit-upload-vignette--drag-over' : ''}`}
@@ -367,7 +367,7 @@ const UploadFilmStep = () => {
             </>
           )}
         </div>
-      </div>
+      </div>}
 
       <div className="deposit-grid-2">
         <div className="deposit-field-group">

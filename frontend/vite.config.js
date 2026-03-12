@@ -19,6 +19,7 @@ export default defineConfig({
   },
 
   server: {
+    allowedHosts: ['.ngrok-free.app', 'agustin-systematic-enterally.ngrok-free.dev'],
     proxy: {
       '/api': {
         target: process.env.VITE_BACKEND_URL || 'http://localhost:3000',

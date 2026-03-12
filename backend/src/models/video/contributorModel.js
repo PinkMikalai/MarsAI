@@ -84,11 +84,18 @@ async function deleteContributorModel(id) {
     return result.affectedRows > 0;
 }
 
-export { 
-    createContributorsModel, 
-    getAllContributorsModel, 
-    getContributorByIdModel, 
+// delete all contributors for a video
+async function deleteContributorsByVideoIdModel(videoId) {
+    await pool.execute('DELETE FROM contributor WHERE video_id = ?', [videoId]);
+    return true;
+}
+
+export {
+    createContributorsModel,
+    getAllContributorsModel,
+    getContributorByIdModel,
     getContributorsByVideoIdModel,
-    updateContributorModel, 
-    deleteContributorModel 
+    updateContributorModel,
+    deleteContributorModel,
+    deleteContributorsByVideoIdModel
 }

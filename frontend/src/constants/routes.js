@@ -17,6 +17,8 @@ export const ROUTES = {
   ADMIN_EVENTS: '/admin/evenements',
   ADMIN_SPONSORS: '/admin/sponsors',
   ADMIN_CMS: '/admin/cms',
+  ADMIN_PARTICIPATIONS: '/admin/participations',
+  EDIT_PARTICIPATION: '/participation/edit/:token',
   REGISTER_USER: '/register_user',
   LOGIN: '/login',
   FORGOT_PASSWORD: '/forgot-password',

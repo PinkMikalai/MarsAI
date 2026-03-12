@@ -195,6 +195,70 @@ async function uploadCaption(youtube, videoId, srtPath) {
   });
 }
 
-export { uploadToYouTube };
+/**
+ * Met à jour les métadonnées d'une vidéo YouTube existante (titre, description, thumbnail, sous-titres)
+ * @param {string} youtubeVideoId - ID de la vidéo YouTube
+ * @param {string} title - Nouveau titre
+ * @param {string} description - Nouvelle description
+ * @param {string|null} coverPath - Chemin relatif de la nouvelle miniature (optionnel)
+ * @param {string|null} srtPath - Chemin relatif du nouveau fichier SRT (optionnel)
+ */
+async function updateYouTubeVideo(youtubeVideoId, title, description, coverPath = null, srtPath = null) {
+    const oauth2Client = getOAuth2Client();
+    if (!oauth2Client.credentials.refresh_token) {
+        throw new Error('YOUTUBE_REFRESH_TOKEN manquant');
+    }
+
+    await oauth2Client.getAccessToken();
+
+    const youtube = google.youtube({ version: 'v3', auth: oauth2Client });
+
+    // Mise à jour du titre et de la description
+    await youtube.videos.update({
+        part: 'snippet',
+        requestBody: {
+            id: youtubeVideoId,
+            snippet: {
+                title,
+                description,
+                categoryId: '22',
+            },
+        },
+    });
+
+    // Mise à jour de la miniature si fournie
+    if (coverPath) {
+        try {
+            await uploadThumbnail(youtube, youtubeVideoId, coverPath);
+        } catch (err) {
+            console.warn('Erreur mise à jour miniature YouTube:', err.message);
+        }
+    }
+
+    // Mise à jour des sous-titres si fournis
+    if (srtPath) {
+        try {
+            await uploadCaption(youtube, youtubeVideoId, srtPath);
+        } catch (err) {
+            console.warn('Erreur mise à jour sous-titres YouTube:', err.message);
+        }
+    }
+}
+
+/**
+ * Supprime une vidéo YouTube
+ * @param {string} youtubeVideoId - ID de la vidéo YouTube
+ */
+async function deleteYouTubeVideo(youtubeVideoId) {
+    const oauth2Client = getOAuth2Client();
+    if (!oauth2Client.credentials.refresh_token) {
+        throw new Error('YOUTUBE_REFRESH_TOKEN manquant');
+    }
+    await oauth2Client.getAccessToken();
+    const youtube = google.youtube({ version: 'v3', auth: oauth2Client });
+    await youtube.videos.delete({ id: youtubeVideoId });
+}
+
+export { uploadToYouTube, updateYouTubeVideo, deleteYouTubeVideo };
 
 
