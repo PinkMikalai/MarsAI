@@ -1,9 +1,9 @@
 import { createInvitationToken } from '../../services/user/authService.js';
 import { sendInvitationEmail } from '../../services/admin/mailService.js';
-import { assignVideoToUser, multipleAssignments, getAssignmentByVideo, getAssignmentByUser, updateAssignment, deleteAssignment, getSelectorVideoLoad } from '../../services/admin/assignmentService.js';
+import { assignVideoToUser, multipleAssignments, getAssignmentByVideo, getAssignmentByUser, updateAssignment, deleteAssignment, getSelectorVideoLoad, syncVideoAssignment, autoAssignVideos } from '../../services/admin/assignmentService.js';
 import { getUsersByRoleId } from '../../models/user/userModel.js';
 import { getAssignmentByVideoModel, getSelectorLoadModel } from '../../models/admin/assignementModel.js';
-import { success } from 'zod';
+
 
 
 const inviteUserController = async (req, res, next) => {
@@ -26,7 +26,7 @@ const createAssignmentController = async (req, res, next) => {
         const { video_id, user_id, video_ids, user_ids } = req.body;
         const admin_id = req.user.id || req.user.sub;
 
-        const result = await multipleAssignments({
+        const result = await syncVideoAssignment({
             video_ids: video_ids || video_id,
             user_ids: user_ids || user_id,
             admin_id
@@ -128,7 +128,7 @@ const getAssignmentDataController = async (req, res, next) => {
     try{
         const { video_id} = req.params;
         const [ allSelectors, AlreadyAssigned] = await Promise.all([
-            getSelectorLoadModel,
+            getSelectorLoadModel(),
             getAssignmentByVideoModel(video_id)
         ]);
         res.status(200).json({
@@ -143,6 +143,38 @@ const getAssignmentDataController = async (req, res, next) => {
     }
 
 }
+
+const autoAssignController = async (req, res, next) => {
+    try {
+        // Extraction et normalisation
+        const { video_ids } = req.body;
+      
+        const admin_id = req.user?.id || req.user?.sub;
+
+        if (!Array.isArray(video_ids) || video_ids.length === 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid data format." 
+            });
+        }
+
+        if (!admin_id) {
+            return res.status(401).json({ success: false, message: "User don't exist" });
+        }
+
+        //Appel du service
+        const result = await autoAssignVideos(video_ids, admin_id);
+
+        res.status(200).json({
+            success: true,
+            message: "Auto-assignment success",
+            data: result
+        });
+    } catch (error) {
+        console.error("Auto-assignment error:", error);
+        next(error);
+    }
+};
 
 const getAllSelectorsController = async ( req, res) => {
     try {
@@ -160,6 +192,7 @@ const getAllSelectorsController = async ( req, res) => {
 
 }
 
+
 export {
     inviteUserController,
     createAssignmentController,
@@ -169,7 +202,8 @@ export {
     deleteAssignmentController,
     getSelectorVideoLoadController,
     getAssignmentDataController,
-    getAllSelectorsController
+    getAllSelectorsController,
+    autoAssignController
 
 };
 

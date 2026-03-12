@@ -11,6 +11,9 @@ import eventsRoutes from "./eventsRoutes.js";
 import assignmentRoutes from "./assignmentRoutes.js"
 import adminStatusRoutes from "./adminStatusRoutes.js";
 import acquisitionSourceRoutes from "./acquisitionSourceRoutes.js";
+import cmsRoutes from "./admin/cmsRoutes.js";
+
+
 
 const router = Router();
 
@@ -26,5 +29,6 @@ router.use('/admin-status', adminStatusRoutes);
 router.use('/acquisition-sources', acquisitionSourceRoutes);
 router.use('/events', eventsRoutes);
 router.use('/admin', assignmentRoutes);
+router.use('/admin/cms', cmsRoutes);
 
 export default router;

@@ -21,8 +21,25 @@ import AdminInvitations from './pages/Admin/AdminInvitations';
 import AdminLayout from './components/admin/AdminLayout';
 import PublicLayout from './components/layout/PublicLayout';
 import AdminAssignment from './pages/Admin/AdminAssignments';
+import AdminParticipations from './pages/Admin/AdminParticipations';
+import EditParticipation from './pages/Users/EditParticipation';
 import UpdatePassword from './pages/Users/updatePassword';
+import AdminCms from './pages/Admin/AdminCms';
 
+
+
+
+const AdminCmsProtected = () => {
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const canAccess = isAdmin || isSuperAdmin;
+  if (!user) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (!canAccess) return <Navigate to={ROUTES.PROFILE} replace />;
+  return (
+    <AdminLayout>
+      <AdminCms />
+    </AdminLayout>
+  );
+};
 
 const AdminEventsProtected = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
@@ -71,6 +88,18 @@ const AdminInvitationsProtected = () => {
   );
 };
 
+const AdminParticipationsProtected = () => {
+  const { user, isAdmin, isSuperAdmin } = useAuth();
+  const canAccess = isAdmin || isSuperAdmin;
+  if (!user) return <Navigate to={ROUTES.LOGIN} replace />;
+  if (!canAccess) return <Navigate to={ROUTES.PROFILE} replace />;
+  return (
+    <AdminLayout>
+      <AdminParticipations />
+    </AdminLayout>
+  );
+};
+
 const AdminAssignmentProtected = () => {
   const { user, isAdmin, isSuperAdmin } = useAuth();
   const canAccess = isAdmin || isSuperAdmin;
@@ -111,6 +140,7 @@ function App() {
     <AuthProvider>
     <Router>
       <Routes>
+        <Route path={ROUTES.ADMIN_CMS} element={<AdminCmsProtected />} />
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.GALLERY_FILMS} element={<PublicLayout><GalleryFilms /></PublicLayout>} />
 
@@ -130,6 +160,8 @@ function App() {
         <Route path={ROUTES.ADMIN_ASSIGNMENT} element={<AdminAssignmentProtected />} />
         <Route path={ROUTES.ADMIN_JURY} element={<AdminJuryProtected />} />
         <Route path={ROUTES.ADMIN_INVITATIONS} element={<AdminInvitationsProtected />} />
+        <Route path={ROUTES.ADMIN_PARTICIPATIONS} element={<AdminParticipationsProtected />} />
+        <Route path={ROUTES.EDIT_PARTICIPATION} element={<EditParticipation />} />
 
       </Routes>
 

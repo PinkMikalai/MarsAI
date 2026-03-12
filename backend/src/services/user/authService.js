@@ -6,6 +6,17 @@ import { createInvitationModel, getInvitationByJtiModel, markInvitationAsUsedMod
 import { welcomeEmail, passwordResetEmail } from '../admin/mailService.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
+// création du token d'invitation d'édition de participation (7 jours, usage unique)
+export async function createParticipationEditToken({ videoId, email }) {
+    const jti = uuidv4();
+    await createInvitationModel({ jti, email, type: 'video_edit' });
+    return jwt.sign(
+        { videoId, email, jti, purpose: 'video_edit' },
+        process.env.JWT_SECRET,
+        { expiresIn: '7d' }
+    );
+}
+
 // création du token d'invitation (à usage unique) à créer un compte user
 export async function createInvitationToken({ email, role }) {
     const jti = uuidv4();

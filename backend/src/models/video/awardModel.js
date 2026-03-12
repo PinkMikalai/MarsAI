@@ -92,6 +92,35 @@ async function getVideosByAwardIdModel(awardId) {
     return rows;
 }
 
+// Récupérer toutes les vidéos qui ont au moins un prix, avec leurs awards
+async function getWinnerVideosModel() {
+    const [rows] = await pool.execute(
+        `SELECT
+            v.id,
+            v.title,
+            v.cover,
+            v.realisator_firstname,
+            v.realisator_lastname,
+            JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'id',         a.id,
+                    'title',      a.title,
+                    'img',        a.img,
+                    'award_rank', a.award_rank
+                )
+            ) AS awards
+        FROM video v
+        INNER JOIN video_award va ON va.video_id = v.id
+        INNER JOIN award a        ON a.id = va.award_id
+        GROUP BY v.id, v.title, v.cover, v.realisator_firstname, v.realisator_lastname
+        ORDER BY MIN(a.award_rank) ASC`
+    );
+    return rows.map((row) => ({
+        ...row,
+        awards: typeof row.awards === 'string' ? JSON.parse(row.awards) : row.awards,
+    }));
+}
+
 export {
     createAwardModel,
     getAllAwardsModel,
@@ -102,4 +131,5 @@ export {
     unlinkAwardsFromVideo,
     getAwardsByVideoIdModel,
     getVideosByAwardIdModel,
+    getWinnerVideosModel,
 }   

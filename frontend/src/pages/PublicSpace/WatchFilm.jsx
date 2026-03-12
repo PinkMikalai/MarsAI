@@ -1,14 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useScrollNav } from '../../hooks/useScrollNav';
 import { useLightbox } from '../../hooks/useLightbox';
 import Lightbox from '../../components/ui/display/Lightbox';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
 import { ROUTES } from '../../constants/routes';
 import { useAuth } from '../../context/AuthContext';
 import { CreateSelectorMemoForm, UpdateSelectorMemoForm } from '../../components/forms/SelectorMemo';
 import { COUNTRIES_ISO3166 } from '../../constants/submitForm';
+import { FiSearch } from 'react-icons/fi';
+import SearchOverlay from '../../components/ui/search/SearchOverlay';
 import 'flag-icons/css/flag-icons.min.css';
 
 const STILL_INTERVAL_MS = 5000;
@@ -395,10 +397,60 @@ const ActionBtn = ({ icon, label, onClick, className = '' }) => (
 );
 
 // =====================================================
+// PANNEAU AWARDS — attribution de prix (admin seulement)
+// =====================================================
+const AwardPanel = ({ isOpen, onClose, allAwards, selectedIds, onToggle, onSave, saving, saved }) => (
+    <div
+        className={`wf-admin-panel wf-award-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}
+        onClick={(e) => e.stopPropagation()}
+    >
+        <div className="wf-admin-panel-header">
+            <h3 className="wf-admin-panel-title">🏆 Attribuer des prix</h3>
+            <button className="wf-admin-panel-close" onClick={onClose} aria-label="Fermer">✕</button>
+        </div>
+
+        <div className="wf-admin-panel-body">
+            {allAwards.length === 0 ? (
+                <p className="wf-admin-text">Aucun prix disponible.</p>
+            ) : (
+                <ul className="wf-award-list">
+                    {allAwards.map((award) => {
+                        const checked = selectedIds.includes(award.id);
+                        return (
+                            <li key={award.id} className={`wf-award-item ${checked ? 'wf-award-item--selected' : ''}`}>
+                                <label className="wf-award-label">
+                                    <input
+                                        type="checkbox"
+                                        className="wf-award-checkbox"
+                                        checked={checked}
+                                        onChange={() => onToggle(award.id)}
+                                    />
+                                    <span className="wf-award-rank">#{award.award_rank ?? '—'}</span>
+                                    <span className="wf-award-title">{award.title}</span>
+                                </label>
+                            </li>
+                        );
+                    })}
+                </ul>
+            )}
+
+            <button
+                className={`wf-award-save-btn ${saved ? 'wf-award-save-btn--saved' : ''}`}
+                onClick={onSave}
+                disabled={saving}
+            >
+                {saving ? 'Enregistrement…' : saved ? '✓ Enregistré !' : 'Enregistrer'}
+            </button>
+        </div>
+    </div>
+);
+
+// =====================================================
 // COMPOSANT PRINCIPAL
 // =====================================================
 const WatchFilm = () => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
     const { videoId }                           = useParams();
     const { isSelector, isAdmin, isSuperAdmin } = useAuth();
     const isAdminUser = isAdmin || isSuperAdmin;
@@ -426,6 +478,19 @@ const WatchFilm = () => {
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [existingMemo, setExistingMemo]     = useState(null);
     const [memoStatus, setMemoStatus]         = useState(null);
+    const [showSearch, setShowSearch]         = useState(false);
+
+    // Awards (admin)
+    const [showAwardPanel, setShowAwardPanel]   = useState(false);
+    const [allAwards, setAllAwards]             = useState([]);
+    const [selectedAwardIds, setSelectedAwardIds] = useState([]);
+    const [savingAwards, setSavingAwards]       = useState(false);
+    const [awardSaved, setAwardSaved]           = useState(false);
+
+    const handleSelectFilm = useCallback((filmId) => {
+        setShowSearch(false);
+        navigate(`/watch/${filmId}`);
+    }, [navigate]);
 
     // =====================================================
     // CHARGEMENT LISTE VIDÉOS
@@ -496,6 +561,48 @@ const WatchFilm = () => {
     }, [currentIndex, videos]);
 
     // =====================================================
+    // AWARDS — chargement liste complète (admin)
+    // =====================================================
+    useEffect(() => {
+        if (!isAdminUser) return;
+        videoApi.getAllAwards()
+            .then((res) => setAllAwards(res?.data || []))
+            .catch(() => setAllAwards([]));
+    }, [isAdminUser]);
+
+    // Initialise les cases cochées quand le panneau s'ouvre
+    useEffect(() => {
+        if (!showAwardPanel || !video?.id) return;
+        videoApi.getVideoAwards(video.id)
+            .then((res) => {
+                const ids = (res?.data || []).map((a) => a.id);
+                setSelectedAwardIds(ids);
+            })
+            .catch(() => setSelectedAwardIds([]));
+        setAwardSaved(false);
+    }, [showAwardPanel, video?.id]);
+
+    const handleToggleAward = (awardId) => {
+        setAwardSaved(false);
+        setSelectedAwardIds((prev) =>
+            prev.includes(awardId) ? prev.filter((id) => id !== awardId) : [...prev, awardId]
+        );
+    };
+
+    const handleSaveAwards = async () => {
+        if (!video?.id) return;
+        setSavingAwards(true);
+        try {
+            await videoApi.setVideoAwards(video.id, selectedAwardIds);
+            setAwardSaved(true);
+        } catch {
+            setAwardSaved(false);
+        } finally {
+            setSavingAwards(false);
+        }
+    };
+
+    // =====================================================
     // DÉFILEMENT AUTOMATIQUE DES STILLS
     // =====================================================
     const stillUrls = useMemo(() => {
@@ -538,7 +645,7 @@ const WatchFilm = () => {
     const { scrollDirection, touchHandlers } = useScrollNav({
         onNext: () => setCurrentIndex((prev) => Math.min(prev + 1, videos.length - 1)),
         onPrev: () => setCurrentIndex((prev) => Math.max(prev - 1, 0)),
-        panelSelector: '.wf-admin-panel, .watch-film-memo-modal, .lightbox-overlay',
+        panelSelector: '.wf-admin-panel, .wf-search-panel, .watch-film-memo-modal, .lightbox-overlay',
         lockMs: SCROLL_LOCK_MS,
         enabled: videos.length > 0,
     });
@@ -606,6 +713,13 @@ const WatchFilm = () => {
                                         <Link to={ROUTES.GALLERY_FILMS} className="watch-film-back">
                                             ← Galerie
                                         </Link>
+                                        <button
+                                            className="wf-search-trigger"
+                                            onClick={() => setShowSearch(true)}
+                                            aria-label="Rechercher"
+                                        >
+                                            <FiSearch size={17} strokeWidth={2} />
+                                        </button>
                                         <Link to={ROUTES.HOME} className="watch-film-home">
                                             Accueil
                                         </Link>
@@ -650,8 +764,22 @@ const WatchFilm = () => {
                                                 icon="ℹ️"
                                                 label={t('watchFilm.infosTitle')}
                                                 className={`wf-action-btn--admin ${showAdminPanel ? 'wf-action-btn--active' : ''}`}
-                                                onClick={() => setShowAdminPanel((prev) => !prev)}
+                                                onClick={() => {
+                                                    setShowAdminPanel((prev) => !prev);
+                                                    setShowAwardPanel(false);
+                                                }}
                                             />
+                                            {isAdminUser && (
+                                                <ActionBtn
+                                                    icon="🏆"
+                                                    label="Attribuer prix"
+                                                    className={`wf-action-btn--award ${showAwardPanel ? 'wf-action-btn--active' : ''}`}
+                                                    onClick={() => {
+                                                        setShowAwardPanel((prev) => !prev);
+                                                        setShowAdminPanel(false);
+                                                    }}
+                                                />
+                                            )}
                                         </div>
                                     )}
 
@@ -713,8 +841,29 @@ const WatchFilm = () => {
                                             onClose={() => setShowAdminPanel(false)}
                                         />
                                     )}
+
+                                    {/* PANNEAU AWARDS — admin uniquement */}
+                                    {isAdminUser && (
+                                        <AwardPanel
+                                            isOpen={showAwardPanel}
+                                            onClose={() => setShowAwardPanel(false)}
+                                            allAwards={allAwards}
+                                            selectedIds={selectedAwardIds}
+                                            onToggle={handleToggleAward}
+                                            onSave={handleSaveAwards}
+                                            saving={savingAwards}
+                                            saved={awardSaved}
+                                        />
+                                    )}
                                 </div>
                             )}
+
+                            {/* PANNEAU RECHERCHE — slide depuis la droite comme InfoPanel */}
+                            <SearchOverlay
+                                isOpen={showSearch}
+                                onClose={() => setShowSearch(false)}
+                                onSelectFilm={handleSelectFilm}
+                            />
 
                             {/* MODALE NOTATION — à l'intérieur du wrap pour fullscreen */}
                             {showMemoModal && isSelector && (

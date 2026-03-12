@@ -19,6 +19,13 @@ export const assignmentService = {
         method: 'GET',
     }),
 
+    //récuperer l'assignation automatique :
+    autoAssignment: (videoIdsArray) => api(`/admin/auto_assignment/`, {
+        method: 'POST',
+        body: JSON.stringify({ video_ids: videoIdsArray })
+
+    }),
+
     //modification d'une assignation par l'admin
     updateAssignment: (id, data) => api(`/admin/assignment/${id}`, {
         method: 'PUT',

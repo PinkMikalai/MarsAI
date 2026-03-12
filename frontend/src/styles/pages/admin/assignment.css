@@ -164,6 +164,121 @@
     transform: translateY(-2px);
 }
 
+/* Positionne la checkbox sur la carte */
+.admin-selection-check {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+}
+
+.admin-selection-check input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/* Bordure visuelle si sélectionné */
+.galerie-card.selected {
+    outline: 3px solid #3498db;
+}
+
+/* Barre d'action en bas de l'écran */
+.admin-mass-action-bar {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c3e50;
+    padding: 15px 30px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 100;
+}
+/* Container de la checkbox sur la carte */
+.admin-selection-check {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.2s ease;
+}
+
+.admin-selection-check:hover {
+    background: rgba(52, 152, 219, 0.8);
+}
+
+.admin-selection-check input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #3498db; /* Couleur bleue pour la coche */
+}
+
+/* Bannière flottante en bas de l'écran */
+.admin-selection-banner {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    border: 1px solid #3498db;
+    padding: 12px 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    animation: slideUp 0.3s ease-out;
+}
+
+.admin-selection-banner button {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.admin-selection-banner button:hover {
+    background: #2980b9;
+}
+.quick-assign-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.assign-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+@keyframes slideUp {
+    from { transform: translate(-50%, 100px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
 /* Responsive Mobile */
 @media (max-width: 768px) {
     .wf-admin-panel {

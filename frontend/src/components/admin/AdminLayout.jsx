@@ -13,16 +13,6 @@ const AdminLayout = ({ children }) => {
               Vue d&apos;ensemble et outils de pilotage du festival.
             </p>
           </div>
-          <div className="admin-main-header-actions">
-            <div className="admin-main-search">
-              <input
-                type="text"
-                placeholder="Rechercher…"
-                className="admin-main-search-input"
-                aria-label="Recherche"
-              />
-            </div>
-          </div>
         </header>
         <main className="admin-main-content">
           {children}
