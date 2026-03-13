@@ -408,6 +408,29 @@
   50%       { opacity: 0.65; }
 }
 
+/* ── Illustration de la phase ── */
+.home-cms-illustration {
+  margin: 1rem 0;
+  border-radius: 10px;
+  overflow: hidden;
+  max-width: 280px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.home-cms-illustration-media {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: zoom-in;
+  transition: opacity 0.2s ease;
+}
+
+.home-cms-illustration-media:hover {
+  opacity: 0.85;
+}
+
 /* ── Boutons d'action de la phase ── */
 .home-cms-actions {
   display: flex;

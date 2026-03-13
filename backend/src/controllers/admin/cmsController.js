@@ -9,12 +9,14 @@ import {
 
 async function createCmsController(req, res, next){
     try {
-        const { element, english_content, french_content, illustration, is_active, start_date, end_date, components } = req.body;
+        const { element, english_content, french_content, is_active, start_date, end_date, components } = req.body;
+        // Illustration : URL S3 si fichier uploadé, sinon valeur body (keep existing), sinon null
+        const illustration = req.files?.illustration?.[0]?.filename ?? req.body.illustration ?? null;
         const result = await createCmsModel({
             element,
             english_content:  english_content  ?? null,
             french_content:   french_content   ?? null,
-            illustration:     illustration      ?? null,
+            illustration,
             user_id:          req.user.id,
             is_active:        is_active         ?? 0,
             start_date:       start_date        || null,
@@ -73,12 +75,14 @@ async function getCmsByIdController(req, res, next){
 async function updateCmsController(req, res, next){
     try {   
         const { id } = req.params;
-        const { element, english_content, french_content, illustration, is_active, start_date, end_date, components } = req.body;
+        const { element, english_content, french_content, is_active, start_date, end_date, components } = req.body;
+        // Illustration : URL S3 si nouveau fichier, sinon valeur body (keep existing), sinon null
+        const illustration = req.files?.illustration?.[0]?.filename ?? req.body.illustration ?? null;
         const result = await updateCmsModel(id, {
             element,
             english_content:  english_content  ?? null,
             french_content:   french_content   ?? null,
-            illustration:     illustration      ?? null,
+            illustration,
             user_id:          req.user.id,
             is_active:        is_active         ?? 0,
             start_date:       start_date        || null,

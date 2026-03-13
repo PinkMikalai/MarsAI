@@ -313,3 +313,8 @@ ON DUPLICATE KEY UPDATE name=VALUES(name);
 INSERT INTO role (name) VALUES 
     ('Admin'), ('Selector'), ('Super_admin')
 ON DUPLICATE KEY UPDATE name=VALUES(name);
+
+
+INSERT INTO cms (element, english_content, french_content, is_active, user_id)
+SELECT 'gallery_visibility', 'Gallery public access', 'Accès public à la galerie', 0, id
+FROM user WHERE email = 'superadmin@marsai.com';

@@ -787,7 +787,8 @@ UNION ALL SELECT 'contact_info', 'Email: contact@marsai-festival.com | Phone: +3
 UNION ALL SELECT 'footer_text', '© 2026 Mars AI Film Festival. All rights reserved. Made with AI and human creativity.', '© 2026 Festival Mars AI. Tous droits réservés. Fait avec l''IA et la créativité humaine.', NULL, id, 0, NULL, NULL, NULL FROM user WHERE email = 'superadmin@marsai.com'
 UNION ALL SELECT 'sponsors_section', 'Thanks to our amazing sponsors who make this festival possible.', 'Merci à nos incroyables sponsors qui rendent ce festival possible.', 'sponsors_bg.jpg', id, 0, NULL, NULL, NULL FROM user WHERE email = 'admin@marsai.com'
 UNION ALL SELECT 'newsletter_cta', 'Subscribe to our newsletter for exclusive updates and early bird tickets!', 'Abonnez-vous à notre newsletter pour des mises à jour exclusives et des billets en avant-première !', NULL, id, 0, NULL, NULL, NULL FROM user WHERE email = 'admin@marsai.com'
-UNION ALL SELECT 'phase_participation', 'participation phase en', 'Participation phase fr', NULL, id, 1, '2025-12-03', '2026-03-10', '["participate"]' FROM user WHERE email = 'superadmin2@marsai.com';
+UNION ALL SELECT 'phase_participation', 'participation phase en', 'Participation phase fr', NULL, id, 1, '2025-12-03', '2026-03-10', '["participate"]' FROM user WHERE email = 'superadmin2@marsai.com'
+UNION ALL SELECT 'gallery_visibility', 'Gallery public access', 'Accès public à la galerie', NULL, id, 0, NULL, NULL, NULL FROM user WHERE email = 'superadmin@marsai.com';
 
 -- =====================================================
 -- VÉRIFICATION FINALE

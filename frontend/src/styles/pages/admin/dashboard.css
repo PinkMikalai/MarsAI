@@ -1635,3 +1635,152 @@
   height: 16px;
   cursor: pointer;
 }
+
+/* ── Illustration CMS ── */
+.admin-cms-illustration-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.admin-cms-illustration-preview {
+  position: relative;
+  display: inline-block;
+  max-width: 320px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-cms-illustration-media {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.admin-cms-illustration-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-cms-illustration-remove:hover {
+  background: rgba(220, 38, 38, 0.8);
+}
+
+.admin-cms-illustration-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: fit-content;
+}
+
+.admin-cms-illustration-btn:hover {
+  background: rgba(173, 70, 255, 0.1);
+  border-color: rgba(173, 70, 255, 0.4);
+  color: #c4b5fd;
+}
+
+/* ── Toggle galerie publique ── */
+.admin-cms-gallery-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.admin-cms-gallery-toggle__info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.admin-cms-gallery-toggle__icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.admin-cms-gallery-toggle__title {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.admin-cms-gallery-toggle__desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.admin-cms-gallery-toggle__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  flex-shrink: 0;
+}
+
+.admin-cms-gallery-toggle__btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.admin-cms-gallery-toggle__btn--on {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+}
+
+.admin-cms-gallery-toggle__btn--off {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.admin-cms-gallery-toggle__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
