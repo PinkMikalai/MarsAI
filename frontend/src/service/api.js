@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const api = async ( endpoint , options = {}) => {
   const { checkAuth = true , ... fetchOptions } = options;

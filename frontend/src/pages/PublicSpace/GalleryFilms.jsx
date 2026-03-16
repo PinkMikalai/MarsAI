@@ -8,6 +8,7 @@ import Icons from '../../components/ui/common/Icons';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AdminAssignment from '../Admin/AdminAssignments.jsx';
+import cmsService from '../../service/cmsService';
 
 let _cachedVideos = null;
 
@@ -17,11 +18,28 @@ let _cachedVideos = null;
 
 const GalleryFilms = () => {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { user, isAdmin, isSuperAdmin, isSelector } = useAuth();
+    const isPrivileged = isAdmin || isSuperAdmin || isSelector;
+
+    const [galleryLocked, setGalleryLocked] = useState(false);
+    const [lockChecked,   setLockChecked]   = useState(false);
+
     const [isAssignmentOpen, setIsAssignmentOpen] = useState(false);
     const [selectedVideos, setSelectedVideos] = useState([]);
     const [selectedVideoIds, setSelectedVideoIds] = useState(new Set());
     const canAssign = user && (user.role_id === 1 || user.role_id === 3);
+
+    // Vérification de l'accès public à la galerie
+    useEffect(() => {
+        if (isPrivileged) { setLockChecked(true); return; }
+        cmsService.getAllCms()
+            .then((data) => {
+                const entry = (data.result ?? []).find((e) => e.element === 'gallery_visibility');
+                setGalleryLocked(!entry || entry.is_active !== 1);
+            })
+            .catch(() => setGalleryLocked(true))
+            .finally(() => setLockChecked(true));
+    }, [isPrivileged]);
 
     const [videos, setVideos] = useState(_cachedVideos || []);
     const [loading, setLoading] = useState(!_cachedVideos);
@@ -162,6 +180,25 @@ const GalleryFilms = () => {
     //=====================================================
     // RENDER
     //=====================================================
+
+    // Galerie verrouillée pour le public
+    if (lockChecked && galleryLocked && !isPrivileged) {
+        return (
+            <div className="gallery-locked">
+                <div className="gallery-locked__inner">
+                    <span className="gallery-locked__icon">🔒</span>
+                    <h2 className="gallery-locked__title">Galerie non disponible</h2>
+                    <p className="gallery-locked__desc">
+                        La galerie de films n'est pas encore accessible au public.<br />
+                        Revenez pendant la phase de diffusion.
+                    </p>
+                    <Link to="/" className="gallery-locked__btn">← Retour à l'accueil</Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (!lockChecked) return null;
 
     return (
         <div className="galerie-page">

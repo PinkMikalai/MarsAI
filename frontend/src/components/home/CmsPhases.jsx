@@ -1,11 +1,22 @@
 // Affiche sur l'accueil les phases actives autorisées par l'admin
 
 import React, { useEffect, useState } from "react";
-import { ROUTES } from "../../constants/routes";
+import { useTranslation } from "react-i18next";
 import cmsService from "../../service/cmsService";
 import FilmsCompetition from "./FilmsCompetition";
 import AwardsWinners from "./AwardsWinners";
 import OnboardingModal from "../ui/modal/OnboardingModal";
+import { useAuth } from "../../context/AuthContext";
+import { useLightbox } from "../../hooks/useLightbox";
+import Lightbox from "../ui/display/Lightbox";
+
+const getIllustrationUrl = (val) => {
+    if (!val) return null;
+    if (/^https?:\/\//.test(val)) return val;
+    const base = import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
+    return `${base}/assets/uploads/images/${val}`;
+};
+
 
 const parseComponents = (raw) => {
     if (!raw) return [];
@@ -36,16 +47,26 @@ const getCountdown = (phase) => {
 };
 
 const CmsPhases = () => {
-    const [phases, setPhases] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    const { i18n, t } = useTranslation();
+    const { isAdmin, isSuperAdmin, isSelector } = useAuth();
+    const isPrivileged = isAdmin || isSuperAdmin || isSelector;
+
+    const [phases, setPhases]               = useState([]);
+    const [galleryPublic, setGalleryPublic] = useState(false);
+    const [isLoading, setIsLoading]         = useState(true);
     const [showOnboarding, setShowOnboarding] = useState(false);
+    const { lightboxProps, openLightbox }   = useLightbox();
 
     useEffect(() => {
         const fetchPhases = async () => {
             try {
                 const data = await cmsService.getAllCms();
                 const all = data.result ?? [];
-                const active = all.filter((e) => e.is_active === 1 && (e.start_date || e.end_date));
+                const galleryEntry = all.find((e) => e.element === 'gallery_visibility');
+                setGalleryPublic(galleryEntry?.is_active === 1);
+                const active = all.filter(
+                    (e) => e.is_active === 1 && (e.start_date || e.end_date) && e.element !== 'gallery_visibility'
+                );
                 setPhases(active);
             } catch (err) {
                 console.error('CmsPhases fetch error:', err.message);
@@ -63,12 +84,18 @@ const CmsPhases = () => {
             {showOnboarding && (
                 <OnboardingModal onClose={() => setShowOnboarding(false)} />
             )}
+            <Lightbox {...lightboxProps} />
             {phases.map((phase) => {
                 const components       = parseComponents(phase.components);
                 const hasParticipation = components.includes('participation');
                 const hasGallery       = components.includes('gallery');
                 const hasAwards        = components.includes('awards');
                 const countdown        = getCountdown(phase);
+                const isFr            = i18n.language?.startsWith('fr');
+                const content         = isFr
+                    ? (phase.french_content  || phase.english_content || phase.element.replace(/_/g, ' '))
+                    : (phase.english_content || phase.french_content  || phase.element.replace(/_/g, ' '));
+                const illustrationUrl  = getIllustrationUrl(phase.illustration);
 
                 return (
                     <React.Fragment key={phase.id}>
@@ -77,9 +104,7 @@ const CmsPhases = () => {
                         <section className="home-section home-cms-phases">
                             <div className="home-container">
                                 <div className="home-cms-phase-header">
-                                    <h2 className="home-section-title">
-                                        {phase.french_content || phase.element.replace(/_/g, ' ')}
-                                    </h2>
+                                    <h2 className="home-section-title">{content}</h2>
                                     {countdown && (
                                         <span className={`home-cms-countdown home-cms-countdown--${countdown.type}`}>
                                             {countdown.label}
@@ -87,13 +112,25 @@ const CmsPhases = () => {
                                     )}
                                 </div>
 
+                                {/* ── Illustration ── */}
+                                {illustrationUrl && (
+                                    <div className="home-cms-illustration">
+                                        <img
+                                            src={illustrationUrl}
+                                            alt={content}
+                                            className="home-cms-illustration-media"
+                                            onClick={() => openLightbox([illustrationUrl], 0)}
+                                        />
+                                    </div>
+                                )}
+
                                 {hasParticipation && (
                                     <div className="home-cms-actions">
                                         <button
                                             className="home-btn-gradient"
                                             onClick={() => setShowOnboarding(true)}
                                         >
-                                            Participer
+                                            {isFr ? 'Participer' : 'Participate'}
                                         </button>
                                     </div>
                                 )}
@@ -101,7 +138,7 @@ const CmsPhases = () => {
                         </section>
 
                         {/* ── Sections pleine largeur (ont leur propre container) ── */}
-                        {hasGallery && <FilmsCompetition />}
+                        {hasGallery && (galleryPublic || isPrivileged) && <FilmsCompetition />}
                         {hasAwards  && <AwardsWinners />}
 
                     </React.Fragment>
