@@ -27,4 +27,10 @@ export const selectorService = {
     getSelectionStatuses: () => api('/selection-status', {
         method: 'GET',
     }),
+
+    // Récupérer la liste des vidéos assignées au selesctionneur
+
+    getSelectorAssignments: () => api('/profile/selector/assignments', {
+        method: 'GET',
+    }),
 };

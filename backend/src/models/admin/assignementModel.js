@@ -61,15 +61,18 @@ async function getAssignmentByVideoModel(video_id) {
 async function getAssignmentByUserModel(user_id) {
 
     try {
-        const query = `SELECT a.id , a.assignate_at , 
-                        v.title AS video_title , 
-                        admin.firstname AS admin_firstname
-            FROM  assignation a
-            JOIN video v ON a.video_id = v.id
-            LEFT JOIN user admin ON a.assigned_by = admin.id
-            WHERE a.user_id = ? `
-
+        const query = `
+    SELECT a.id, a.assignate_at, 
+           v.title AS video_title, 
+           admin.firstname AS admin_firstname
+    FROM assignation a
+    LEFT JOIN video v ON a.video_id = v.id  
+    LEFT JOIN user admin ON a.assigned_by = admin.id
+    WHERE a.user_id = ?
+`;
+        console.log("Requête SQL exécutée :", "SELECT * FROM assignation WHERE user_id = ?", [user_id]);
         const [rows] = await pool.execute(query, [user_id]);
+        console.log("Résultats trouvés en base :", rows);
         return rows;
     } catch (error) {
         console.error('Fetching assignement by user error', error);
@@ -133,7 +136,7 @@ async function deleteAssignmentModel(id) {
 
 async function getSelectorLoadModel() {
 
-    try { 
+    try {
         const query = `SELECT user.id, user.firstname , user.lastname, user.email,
             COUNT(assignation.id) as current_load
             FROM  user

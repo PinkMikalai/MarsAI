@@ -11,7 +11,7 @@ export const assignmentService = {
         method: 'GET',
     }),
     // récupérer toutes les assignations pour un selectionneur
-    getAssignmentByUser: (user_id) => api(`/admin/assignment/video/${user_id}`, {
+    getAssignmentByUser: (user_id) => api(`/admin/assignment/user/${user_id}`, {
         method: 'GET',
     }),
       // récupérer toutes la data d'une assignation 

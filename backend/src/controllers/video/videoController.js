@@ -17,6 +17,7 @@ import {
 } from "../../models/video/stillModel.js";
 import { deleteYouTubeVideo } from "../../services/video/youtubeService.js";
 import { getFullVideoDetailsModel } from "../../models/video/videoModel.js";
+import { getAssignmentByUserModel } from "../../models/admin/assignementModel.js";
 
 
 //=====================================================
@@ -177,10 +178,12 @@ async function deleteVideo(req, res) {
     }
 }
 
+
 export {
     createVideo,
     getSearchVideos,
     getVideoById,
     updateVideo,
-    deleteVideo,
+    deleteVideo
+   
 };
