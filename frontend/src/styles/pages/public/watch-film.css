@@ -1015,14 +1015,40 @@
   flex-shrink: 0;
 }
 
-/* SearchBar occupe toute la largeur, sans margin-bottom */
+/* SearchBar occupe toute la largeur du panel */
 .wf-search-panel-bar .gsearch-wrap {
   margin-bottom: 0;
   flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-/* compteur de résultats discret */
-.wf-search-panel-bar .gsearch-results-info {
+/* input prend toute la largeur sur la 1ère ligne */
+.wf-search-panel-bar .gsearch-inner {
+  flex: 1 1 100%;
+}
+
+/* les filtres wrappent et remplissent la largeur */
+.wf-search-panel-bar .gsearch-filters-wrap {
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* selects et bouton se répartissent sur la largeur disponible */
+.wf-search-panel-bar .gsearch-select,
+.wf-search-panel-bar .gsearch-assignment-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* badge résultats discret, pleine largeur */
+.wf-search-panel-bar .gsearch-results-badge {
+  flex: 1 1 100%;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  padding: 0 0.25rem;
+  height: auto;
   font-size: 0.72rem;
 }
 

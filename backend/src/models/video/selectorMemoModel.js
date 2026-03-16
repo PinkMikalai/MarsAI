@@ -117,6 +117,25 @@ async function getVideoMemoStatsModel(videoId) {
     );
     return rows[0];
 }
+// recuperer les la liste des videos assignées au selectionneur
+async function getVideoForSelectorModel(userId) {
+    const [rows] = await pool.execute(
+        `SELECT 
+            video.*, 
+            assignation.assignate_at, 
+            selector_memo.id as memo_id, -- Utile pour savoir si un mémo existe déjà
+            selector_memo.selection_status_id,
+            selector_memo.rating,
+            selector_memo.comment as selector_comment
+         FROM video
+         INNER JOIN assignation ON video.id = assignation.video_id
+         LEFT JOIN selector_memo ON (video.id = selector_memo.video_id AND selector_memo.user_id = ?)
+         WHERE assignation.user_id = ?`,
+        [userId, userId]
+    );
+    return rows;
+}
+
 
 export {
     createSelectorMemoModel,
@@ -128,5 +147,6 @@ export {
     updateSelectorMemoModel,
     deleteSelectorMemoModel,
     deleteMemosByVideoIdModel,
-    getVideoMemoStatsModel
+    getVideoMemoStatsModel,
+    getVideoForSelectorModel
 }

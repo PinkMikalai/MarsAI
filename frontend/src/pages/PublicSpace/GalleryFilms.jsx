@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { videoApi, getCoverUrl } from '../../service/galleryService';
+import { assignmentService } from '../../service/assignmentService.js';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import SearchBar from '../../components/ui/search/SearchBar';
-import Icons from '../../components/ui/common/Icons';
+import Icons from '../../components/ui/common/Icons.jsx';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AdminAssignment from '../Admin/AdminAssignments.jsx';
+import cmsService from '../../service/cmsService';
 
 let _cachedVideos = null;
 
@@ -17,11 +19,31 @@ let _cachedVideos = null;
 
 const GalleryFilms = () => {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { user, isAdmin, isSuperAdmin, isSelector } = useAuth();
+    const isPrivileged = isAdmin || isSuperAdmin || isSelector;
+
+    const [galleryLocked, setGalleryLocked] = useState(false);
+    const [lockChecked,   setLockChecked]   = useState(false);
+
     const [isAssignmentOpen, setIsAssignmentOpen] = useState(false);
     const [selectedVideos, setSelectedVideos] = useState([]);
     const [selectedVideoIds, setSelectedVideoIds] = useState(new Set());
     const canAssign = user && (user.role_id === 1 || user.role_id === 3);
+
+    const [isFilteringAssignments, setIsFilteringAssignments] = useState(false);
+
+    // Vérification de l'accès public à la galerie
+    useEffect(() => {
+        if (isPrivileged) { setLockChecked(true); return; }
+        cmsService.getAllCms()
+            .then((data) => {
+                const entry = (data.result ?? []).find((e) => e.element === 'gallery_visibility');
+                setGalleryLocked(!entry || entry.is_active !== 1);
+            })
+            .catch(() => setGalleryLocked(true))
+            .finally(() => setLockChecked(true));
+    }, [isPrivileged]);
+
 
     const [videos, setVideos] = useState(_cachedVideos || []);
     const [loading, setLoading] = useState(!_cachedVideos);
@@ -35,13 +57,11 @@ const GalleryFilms = () => {
 
     // chargement initial de toutes les videos (melangees, mises en cache)
     async function fetchAllVideos() {
-        console.log("fetchAllVideos — chargement initial");
         setLoading(true);
         setError(null);
 
         try {
             const res = await videoApi.getAllVideos();
-            console.log("videos recuperees:", res);
 
             if (res?.success && Array.isArray(res.data)) {
                 const shuffled = [...res.data];
@@ -66,13 +86,11 @@ const GalleryFilms = () => {
 
     // recherche via api — tags, admin_status et selection_status geres cote backend
     async function fetchSearchVideos(query, activeFilters) {
-        console.log("fetchSearchVideos — query:", query, "| filters:", activeFilters);
         setSearchLoading(true);
         setError(null);
 
         try {
             const res = await videoApi.searchVideos(query, activeFilters);
-            console.log("resultats recherche:", res);
 
             if (res?.success && Array.isArray(res.data)) {
                 setVideos(res.data);
@@ -92,6 +110,43 @@ const GalleryFilms = () => {
         setSelectedVideos([film]);
         setIsAssignmentOpen(true);
     };
+    // Récupeation des assignations (Bouton spécifique sélectionneur)
+   const handleFetchMyAssignments = async () => {
+   
+    if (isFilteringAssignments) {
+        setIsFilteringAssignments(false);
+        setVideos(_cachedVideos || []);
+        return;
+    }
+
+    setLoading(true);
+    try {
+        const res = await assignmentService.getAssignmentByUser(user.id);
+
+        if (res?.success && Array.isArray(res.result)) {
+            const mappedVideos = res.result.map(item => ({
+                id:                    item.video_id,
+                title:                 item.video_title || "Sans titre",
+                cover:                 item.cover        || null,
+                country:               item.country       || '',
+                realisator_firstname:  item.realisator_firstname || '',
+                realisator_lastname:   item.realisator_lastname  || '',
+            }));
+            
+            setVideos(mappedVideos);
+            setIsFilteringAssignments(true); 
+            setCurrentPage(1);
+        } else {
+            setVideos([]);
+            setIsFilteringAssignments(true);
+        }
+    } catch (err) {
+        console.error("Error :", err);
+        setError("Fetching assignments error.");
+    } finally {
+        setLoading(false);
+    }
+};
     // chargement initial
     useEffect(() => {
         if (_cachedVideos) { setVideos(_cachedVideos); return; }
@@ -100,6 +155,7 @@ const GalleryFilms = () => {
 
     // declenchement recherche ou filtre
     useEffect(() => {
+        if (isFilteringAssignments) return;
         const hasFilter = filters.adminStatus || filters.selectionStatus || filters.rated;
         if (!search.trim() && !hasFilter) {
             setError(null);
@@ -123,13 +179,14 @@ const GalleryFilms = () => {
     }, []);
 
     function handleSearch(query) {
-        console.log("handleSearch — query:", query);
+        if (query.trim() !== "") {
+            setIsFilteringAssignments(false);
+        }
         setSearch(query);
         setCurrentPage(1);
     }
 
     function handleFilterChange(newFilters) {
-        console.log("handleFilterChange — filters:", newFilters);
         setFilters(prev => ({ ...prev, ...newFilters }));
         setCurrentPage(1);
     }
@@ -163,6 +220,25 @@ const GalleryFilms = () => {
     // RENDER
     //=====================================================
 
+    // Galerie verrouillée pour le public
+    if (lockChecked && galleryLocked && !isPrivileged) {
+        return (
+            <div className="gallery-locked">
+                <div className="gallery-locked__inner">
+                    <span className="gallery-locked__icon">🔒</span>
+                    <h2 className="gallery-locked__title">Galerie non disponible</h2>
+                    <p className="gallery-locked__desc">
+                        La galerie de films n'est pas encore accessible au public.<br />
+                        Revenez pendant la phase de diffusion.
+                    </p>
+                    <Link to="/" className="gallery-locked__btn">← Retour à l'accueil</Link>
+                </div>
+            </div>
+        );
+    }
+
+    if (!lockChecked) return null;
+
     return (
         <div className="galerie-page">
             <div
@@ -184,12 +260,13 @@ const GalleryFilms = () => {
                         className="my-8 w-full"
                     />
                 )}
-
                 <SearchBar
                     onSearch={handleSearch}
                     onFilterChange={handleFilterChange}
                     loading={searchLoading}
                     resultsCount={videos.length}
+                    onMyAssignments={isSelector ? handleFetchMyAssignments : undefined}
+                    isFilteringAssignments={isFilteringAssignments}
                 />
 
                 {error && <p className="galerie-error" role="alert">{error}</p>}
@@ -201,8 +278,7 @@ const GalleryFilms = () => {
                         ) : (
                             <>
                                 <div className="galerie-grid">
-                                    {filmsOnPage.map((film) => {
-                                        console.log("Données du film :", film)
+                                    {filmsOnPage.map((film, index) => {
                                         const title = film.title || film.title_en || t('gallery.noTitle');
                                         const director = [film.realisator_firstname, film.realisator_lastname]
                                             .filter(Boolean).join(' ') || '–';
@@ -210,7 +286,7 @@ const GalleryFilms = () => {
                                         const hasImageError = imageErrors.has(film.id);
 
                                         return (
-                                            <article key={film.id} className={`galerie-card ${selectedVideoIds.has(film.id) ? 'selected' : ''}`} style={{ position: 'relative' }}>
+                                            <article key={`${film.id}-${index}`} className={`galerie-card ${selectedVideoIds.has(film.id) ? 'selected' : ''}`} style={{ position: 'relative' }}>
 
                                                 {canAssign && (
                                                     <div className="admin-selection-check">
@@ -265,7 +341,7 @@ const GalleryFilms = () => {
                                                         }}
                                                     >
                                                         Assign
-                                                        
+
                                                         {film.assignment_count > 0 && (
                                                             <span className="assign-badge">
                                                                 ({film.assignment_count})
@@ -352,4 +428,3 @@ const GalleryFilms = () => {
 };
 
 export default GalleryFilms;
-

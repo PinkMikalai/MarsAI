@@ -364,6 +364,11 @@
   height: 100%;
   min-height: 360px;
   overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.ev-featured__img-wrap--clickable:hover {
+  transform: scale(1.02);
 }
 
 .ev-featured__img {
@@ -457,6 +462,11 @@
 .ev-card__img-wrap {
   position: relative;
   overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.ev-card__img-wrap--clickable:hover {
+  transform: scale(1.05);
 }
 
 .ev-card__img {

@@ -6,7 +6,11 @@ import { eventService } from '../../service/eventService';
 const getImageUrl = (filename) => {
   if (!filename) return null;
   if (/^https?:\/\//.test(filename)) return filename;
+<<<<<<< HEAD
   const base = (import.meta.env.VITE_API_URL || '/api/marsai').replace(/\/marsai\/?$/, '');
+=======
+  const base = import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
+>>>>>>> 2437a5db3edb9f9c8da92c22b2884f150008991a
   return `${base}/assets/uploads/images/${filename}`;
 };
 

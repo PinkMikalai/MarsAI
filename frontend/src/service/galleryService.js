@@ -1,6 +1,6 @@
 import api from './api';
 
-const getOrigin = () => (import.meta.env.VITE_API_URL || '/api/marsai').replace(/\/marsai\/?$/, '');
+const getOrigin = () => import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
 
 const buildUploadUrl = (value, folder) => {
   if (!value) return null;

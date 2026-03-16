@@ -63,16 +63,25 @@ const getAssignmentByVideoController = async (req, res, next) => {
 const getAssignmentByUserController = async (req, res, next) => {
     try {
         const { user_id } = req.params;
+        const user = req.user; 
+
+        // Si c'est un sélectionneur (rôle 2), il ne peut connaitre que ses propres assignations
+        if (user.role_id === 2 && user.id !== parseInt(user_id)) {
+            return res.status(403).json({
+                success: false,
+                message: "Access denied: you can only view your own assignments"
+            });
+        }
+
         const result = await getAssignmentByUser(user_id);
         res.status(200).json({
             success: true,
-            result: result
-        })
+            result: result 
+        });
 
     } catch (error) {
-        next(error)
+        next(error);
     }
-
 }
 
 const updateAssignmentController = async (req, res, next) => {

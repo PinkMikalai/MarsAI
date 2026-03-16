@@ -1,6 +1,6 @@
 import api from './api';
 
-const getApi = () => (import.meta.env.VITE_API_URL || '/api/marsai').replace(/\/marsai\/?$/, '');
+const getApi = () => import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
 
 const buildSponsorImageUrl = (filename) => {
   if (!filename) return null;

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { 
     createCmsController, 
     getAllCmsController, 
+    getActiveCmsController,
     getCmsByIdController, 
     updateCmsController, 
     deleteCmsController 
@@ -9,12 +10,14 @@ import {
 
 import authMiddleware from "../../middlewares/authMiddleware.js";
 import checkRole from "../../middlewares/checkRoleMiddleware.js";
+import { uploadFields, processS3Uploads } from "../../middlewares/uploadMiddleware.js";
 const router = Router();
 
-router.post('/create', authMiddleware, checkRole([1, 3]), createCmsController);
+router.post('/create', authMiddleware, checkRole([1, 3]), uploadFields, processS3Uploads, createCmsController);
 router.get('/all', getAllCmsController);
+router.get('/active', getActiveCmsController);
 router.get('/:id', getCmsByIdController);
-router.put('/:id', authMiddleware, checkRole([1, 3]), updateCmsController);
+router.put('/:id', authMiddleware, checkRole([1, 3]), uploadFields, processS3Uploads, updateCmsController);
 router.delete('/:id', authMiddleware, checkRole([1, 3]), deleteCmsController);
 
 

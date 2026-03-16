@@ -6,12 +6,15 @@ import { ROUTES } from '../../constants/routes';
 import { juryService } from '../../service/juryService';
 import Reveal from '../ui/common/Reveal';
 import { fadeUp, scaleIn } from '../../utils/animations';
+import { useLightbox } from '../../hooks/useLightbox';
+import Lightbox from '../ui/display/Lightbox';
 
 const JuryPreview = () => {
   const { t } = useTranslation();
   const [members, setMembers]   = useState([]);
   const [loading, setLoading]   = useState(true);
   const [imgErrors, setImgErrors] = useState(new Set());
+  const { lightboxProps, openLightbox } = useLightbox();
 
   useEffect(() => {
     let cancelled = false;
@@ -38,12 +41,27 @@ const JuryPreview = () => {
           </div>
         ) : members.length === 0 ? null : (
           <Reveal stagger as="div" className="home-jury-preview__grid">
-            {members.map((m) => {
+            {members.map((m, index) => {
               const imgUrl   = juryService.getJuryImageUrl(m.illustration);
               const hasError = imgErrors.has(m.id);
+              const allImages = members
+                .map((member) => juryService.getJuryImageUrl(member.illustration))
+                .filter(Boolean);
+              
+              const handleImageClick = () => {
+                if (imgUrl && !hasError && allImages.length > 0) {
+                  const clickedIndex = allImages.findIndex(url => url === imgUrl);
+                  openLightbox(allImages, clickedIndex >= 0 ? clickedIndex : index);
+                }
+              };
+
               return (
                 <motion.div key={m.id} className="home-jury-avatar" variants={scaleIn}>
-                  <div className="home-jury-avatar__img-wrap">
+                  <div 
+                    className={`home-jury-avatar__img-wrap ${imgUrl && !hasError ? 'home-jury-avatar__img-wrap--clickable' : ''}`}
+                    onClick={handleImageClick}
+                    style={{ cursor: imgUrl && !hasError ? 'pointer' : 'default' }}
+                  >
                     {imgUrl && !hasError ? (
                       <img
                         src={imgUrl}
@@ -74,6 +92,7 @@ const JuryPreview = () => {
           </Link>
         </Reveal>
       </div>
+      <Lightbox {...lightboxProps} />
     </section>
   );
 };

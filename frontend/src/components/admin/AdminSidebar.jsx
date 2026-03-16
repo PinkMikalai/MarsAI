@@ -40,8 +40,8 @@ const AdminSidebar = () => {
 
   const NAV_ITEMS = [
     { id: 'overview', label: t('admin.navItems.overview'), path: ROUTES.PROFILE },
-    { id: 'films', label: t('admin.navItems.films'), path: ROUTES.PROFILE },
-    { id: 'participations', label: 'Participations', path: ROUTES.ADMIN_PARTICIPATIONS },
+    { id: 'films', label: t('admin.navItems.films'), path: ROUTES.GALLERY_FILMS },
+    { id: 'participations', label: 'Gestion de participation', path: ROUTES.ADMIN_PARTICIPATIONS },
     { id: 'jury', label: t('admin.navItems.jury'), path: ROUTES.ADMIN_JURY },
     { id: 'results', label: t('admin.navItems.results'), path: ROUTES.PROFILE },
     { id: 'leaderboard', label: t('admin.navItems.leaderboard'), path: ROUTES.PROFILE },
@@ -50,8 +50,6 @@ const AdminSidebar = () => {
     { id: 'cms', label: t('admin.navItems.cms'), path: ROUTES.ADMIN_CMS },
     { id: 'invitations', label: t('admin.navItems.invitations'), path: ROUTES.ADMIN_INVITATIONS },
     { id: 'messages', label: t('admin.navItems.messages'), path: ROUTES.PROFILE },
-    { id: 'festival-box', label: t('admin.navItems.festivalBox'), path: ROUTES.PROFILE },
-    { id: 'settings', label: t('admin.navItems.settings'), path: ROUTES.PROFILE },
   ];
 
   const navItems = NAV_ITEMS.filter((item) => {
