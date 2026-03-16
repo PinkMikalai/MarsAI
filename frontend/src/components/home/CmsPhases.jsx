@@ -9,20 +9,7 @@ import OnboardingModal from "../ui/modal/OnboardingModal";
 import { useAuth } from "../../context/AuthContext";
 import { useLightbox } from "../../hooks/useLightbox";
 import Lightbox from "../ui/display/Lightbox";
-
-const getIllustrationUrl = (val) => {
-    if (!val) return null;
-    if (/^https?:\/\//.test(val)) return val;
-    const base = import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
-    return `${base}/assets/uploads/images/${val}`;
-};
-
-
-const parseComponents = (raw) => {
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw;
-    try { return JSON.parse(raw); } catch { return []; }
-};
+import { getIllustrationUrl, parseComponents } from "../../utils/cmsUtils";
 
 const getCountdown = (phase) => {
     const today = new Date();

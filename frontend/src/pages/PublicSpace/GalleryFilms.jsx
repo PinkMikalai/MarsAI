@@ -57,13 +57,11 @@ const GalleryFilms = () => {
 
     // chargement initial de toutes les videos (melangees, mises en cache)
     async function fetchAllVideos() {
-        console.log("fetchAllVideos — chargement initial");
         setLoading(true);
         setError(null);
 
         try {
             const res = await videoApi.getAllVideos();
-            console.log("videos recuperees:", res);
 
             if (res?.success && Array.isArray(res.data)) {
                 const shuffled = [...res.data];
@@ -88,13 +86,11 @@ const GalleryFilms = () => {
 
     // recherche via api — tags, admin_status et selection_status geres cote backend
     async function fetchSearchVideos(query, activeFilters) {
-        console.log("fetchSearchVideos — query:", query, "| filters:", activeFilters);
         setSearchLoading(true);
         setError(null);
 
         try {
             const res = await videoApi.searchVideos(query, activeFilters);
-            console.log("resultats recherche:", res);
 
             if (res?.success && Array.isArray(res.data)) {
                 setVideos(res.data);
@@ -126,7 +122,6 @@ const GalleryFilms = () => {
     setLoading(true);
     try {
         const res = await assignmentService.getAssignmentByUser(user.id);
-        console.log("Données reçues de l'API assignation :", res);
 
         if (res?.success && Array.isArray(res.result)) {
             const mappedVideos = res.result.map(item => ({
@@ -167,7 +162,7 @@ const GalleryFilms = () => {
             setVideos(_cachedVideos || []);
             return;
         }
-        fetchSearchVideos(search, filters, isFilteringAssignments);
+        fetchSearchVideos(search, filters);
     }, [search, filters]);
 
     // parallax scroll
@@ -184,7 +179,6 @@ const GalleryFilms = () => {
     }, []);
 
     function handleSearch(query) {
-        console.log("handleSearch — query:", query);
         if (query.trim() !== "") {
             setIsFilteringAssignments(false);
         }
@@ -193,7 +187,6 @@ const GalleryFilms = () => {
     }
 
     function handleFilterChange(newFilters) {
-        console.log("handleFilterChange — filters:", newFilters);
         setFilters(prev => ({ ...prev, ...newFilters }));
         setCurrentPage(1);
     }
@@ -286,7 +279,6 @@ const GalleryFilms = () => {
                             <>
                                 <div className="galerie-grid">
                                     {filmsOnPage.map((film, index) => {
-                                        console.log("Données du film :", film)
                                         const title = film.title || film.title_en || t('gallery.noTitle');
                                         const director = [film.realisator_firstname, film.realisator_lastname]
                                             .filter(Boolean).join(' ') || '–';

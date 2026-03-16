@@ -55,6 +55,7 @@
 
 .home-sponsors {
   background: linear-gradient(180deg, #080610 0%, #050505 100%);
+  padding: 56px 0 64px;
 }
 
 /* ---------- TITRES & TEXTES SECTION ---------- */
@@ -523,6 +524,10 @@
   .home-protocole-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
+@media (max-width: 500px) {
+  .home-protocole-grid { grid-template-columns: 1fr; }
+}
+
 /* ---------- CONFÉRENCES ---------- */
 .home-conferences-grid {
   display: grid;
@@ -740,10 +745,6 @@
 }
 
 /* ---------- SPONSORS ---------- */
-.home-sponsors {
-  padding: 56px 0 64px;
-}
-
 .home-sponsors-container {
   display: flex;
   flex-direction: column;
