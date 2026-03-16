@@ -4,7 +4,6 @@ import { videoApi, getCoverUrl } from '../../../service/galleryService';
 import SearchBar from './SearchBar';
 import { assignmentService } from '../../../service/assignmentService';
 import { useAuth } from '../../../context/AuthContext';
-import Button from '../actions/Button';
 
 
 // =====================================================
@@ -13,13 +12,11 @@ import Button from '../actions/Button';
 // =====================================================
 const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
     const timerRef = useRef(null);
-    const {user} = useAuth();
+    const { user, isSelector } = useAuth();
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [filters, setFilters] = useState({ adminStatus: '', selectionStatus: '', rated: '' });
-    const [isAssigned, setIsAssigned] = useState(false);
-    const isSelector = user && user.role_id === 2;
     const [isFilteringAssignments, setIsFilteringAssignments] = useState(false);
 
     // chargement initial — toutes les vidéos dès l'ouverture
@@ -75,12 +72,6 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
     const handleSearch = useCallback((q) => setSearch(q), []);
     const handleFilterChange = useCallback((f) => setFilters((prev) => ({ ...prev, ...f })), []);
 
-    const toggleAssignment = () => {
-        const newValue = !isAssigned;
-        setIsAssigned(newValue);
-        handleFilterChange({ myAssignment: newValue });
-    };
-
     // Récupeation des assignations (Bouton spécifique sélectionneur)
        const handleFetchMyAssignments = async () => {
         // Si on était déjà en mode filtre, on revient aux vidéos du cache
@@ -96,12 +87,12 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
             
             if (res?.success && Array.isArray(res.result)) {
                 const mappedVideos = res.result.map(item => ({
-                    // item.id est l'ID de l'assignation, item.video_id est l'ID du film
-                    id: item.video_id || item.id, 
-                    title: item.video_title || item.title || "Sans titre",
-                    cover: item.cover || item.video_cover, 
-                    realisator_firstname: item.admin_firstname || "",
-                    realisator_lastname: item.realisator_lastname || ""
+                    id:                   item.video_id,
+                    title:                item.video_title              || "Sans titre",
+                    cover:                item.cover                    || null,
+                    country:              item.country                  || '',
+                    realisator_firstname: item.realisator_firstname      || '',
+                    realisator_lastname:  item.realisator_lastname       || '',
                 }));
                 
                 setVideos(mappedVideos);
@@ -132,24 +123,15 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
 
             {/* SearchBar avec droits (admin / selector / public) */}
             <div className="wf-search-panel-bar">
-                <div className="search-controls-container">
                 <SearchBar
                     onSearch={handleSearch}
                     onFilterChange={handleFilterChange}
                     loading={loading}
                     resultsCount={videos.length}
                     debounceMs={350}
+                    onMyAssignments={isSelector ? handleFetchMyAssignments : undefined}
+                    isFilteringAssignments={isFilteringAssignments}
                 />
-               <Button
-                        variant={isFilteringAssignments ? 'primary' : 'outline'}
-                        onClick={handleFetchMyAssignments}
-                    >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-
-                            {isFilteringAssignments ? 'All the videos' : 'My assignments'}
-                        </div>
-                    </Button>
-                </div>
             </div>
 
             {/* liste des résultats — scroll interne */}

@@ -5,7 +5,6 @@ import { videoApi, getCoverUrl } from '../../service/galleryService';
 import { assignmentService } from '../../service/assignmentService.js';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import SearchBar from '../../components/ui/search/SearchBar';
-import Button from '../../components/ui/actions/Button.jsx';
 import Icons from '../../components/ui/common/Icons.jsx';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -30,7 +29,7 @@ const GalleryFilms = () => {
     const [selectedVideos, setSelectedVideos] = useState([]);
     const [selectedVideoIds, setSelectedVideoIds] = useState(new Set());
     const canAssign = user && (user.role_id === 1 || user.role_id === 3);
-    const isSelector = user && user.role_id === 2;
+
     const [isFilteringAssignments, setIsFilteringAssignments] = useState(false);
 
     // Vérification de l'accès public à la galerie
@@ -131,12 +130,12 @@ const GalleryFilms = () => {
 
         if (res?.success && Array.isArray(res.result)) {
             const mappedVideos = res.result.map(item => ({
-                id: item.video_id,
-                title: item.video_title || item.title || "Sans titre",
-                cover: item.cover, 
-                realisator_firstname: item.admin_firstname,
-                realisator_lastname: item.realisator_lastname
-
+                id:                    item.video_id,
+                title:                 item.video_title || "Sans titre",
+                cover:                 item.cover        || null,
+                country:               item.country       || '',
+                realisator_firstname:  item.realisator_firstname || '',
+                realisator_lastname:   item.realisator_lastname  || '',
             }));
             
             setVideos(mappedVideos);
@@ -268,27 +267,14 @@ const GalleryFilms = () => {
                         className="my-8 w-full"
                     />
                 )}
-                <div className="search-controls-container">
                 <SearchBar
                     onSearch={handleSearch}
                     onFilterChange={handleFilterChange}
                     loading={searchLoading}
                     resultsCount={videos.length}
-
+                    onMyAssignments={isSelector ? handleFetchMyAssignments : undefined}
+                    isFilteringAssignments={isFilteringAssignments}
                 />
-                {/* BOUTON MES ASSIGNATIONS (Visible uniquement pour role_id 2) */}
-                {isSelector && (
-                    <Button
-                        variant={isFilteringAssignments ? 'primary' : 'outline'}
-                        onClick={handleFetchMyAssignments}
-                    >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-
-                            {isFilteringAssignments ? 'All the videos' : 'My assignments'}
-                        </div>
-                    </Button>
-                )}
-                </div>
 
                 {error && <p className="galerie-error" role="alert">{error}</p>}
 
