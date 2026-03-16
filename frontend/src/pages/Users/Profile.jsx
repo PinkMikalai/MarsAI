@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../constants/routes';
 import { authService } from '../../service/authService';
+import { selectorService } from '../../service/selectorService';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,15 +15,30 @@ const getRoleLabel = (role, t) => {
   return role || '—';
 };
 
-const AdminProfileContent = ({ profile, loading }) => {
+const AdminProfileContent = ({ profile, loading, isSelector }) => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [selectorStats, setSelectorStats] = useState(null);
   const [modalEdit, setModalEdit] = useState(false);
   const [modalPassword, setModalPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('');
   const [passwordLinkSent, setPasswordLinkSent] = useState(false);
   const [passwordSending, setPasswordSending] = useState(false);
+
+  useEffect(() => {
+    if (!isSelector) return;
+    selectorService.getSelectorMemos()
+      .then((res) => {
+        const memos = res?.memos ?? [];
+        const rated = memos.filter((m) => m.rating != null);
+        const avg = rated.length
+          ? (rated.reduce((sum, m) => sum + Number(m.rating), 0) / rated.length).toFixed(1)
+          : null;
+        setSelectorStats({ count: rated.length, avg });
+      })
+      .catch(() => setSelectorStats({ count: 0, avg: null }));
+  }, [isSelector]);
 
   const closePasswordModal = () => {
     setModalPassword(false);
@@ -43,9 +59,11 @@ const AdminProfileContent = ({ profile, loading }) => {
         <div className="admin-overview-header">
           <div>
             <p className="admin-overview-kicker">{t('profile.overview')}</p>
-            <h2 className="admin-overview-title">{t('profile.adminProfileTitle')}</h2>
+            <h2 className="admin-overview-title">
+              {isSelector ? t('profile.selectorProfileTitle') : t('profile.adminProfileTitle')}
+            </h2>
             <p className="admin-overview-text">
-              {t('profile.adminProfileText')}
+              {isSelector ? t('profile.selectorProfileText') : t('profile.adminProfileText')}
             </p>
           </div>
         </div>
@@ -110,6 +128,29 @@ const AdminProfileContent = ({ profile, loading }) => {
         </div>
 
         {loading && <p className="admin-profile-loading">{t('profile.loadingData')}</p>}
+
+        {isSelector && selectorStats && (
+          <div className="admin-profile-stats">
+            <h3 className="admin-profile-stats__title">{t('profile.selectorStatsTitle')}</h3>
+            {selectorStats.count === 0 ? (
+              <p className="admin-profile-stats__empty">{t('profile.selectorStatsNoData')}</p>
+            ) : (
+              <div className="admin-profile-stats__grid">
+                <div className="admin-profile-stat-card">
+                  <span className="admin-profile-stat-card__value">{selectorStats.count}</span>
+                  <span className="admin-profile-stat-card__label">{t('profile.selectorStatsRated')}</span>
+                </div>
+                <div className="admin-profile-stat-card">
+                  <span className="admin-profile-stat-card__value">
+                    {selectorStats.avg ?? '—'}
+                    {selectorStats.avg && <span className="admin-profile-stat-card__unit"> / 10</span>}
+                  </span>
+                  <span className="admin-profile-stat-card__label">{t('profile.selectorStatsAvg')}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </section>
 
       {modalEdit && (
@@ -227,7 +268,7 @@ const Profile = () => {
   }
 
   if (isAdminProfile) {
-    return <AdminProfileContent profile={profile} loading={loading} />;
+    return <AdminProfileContent profile={profile} loading={loading} isSelector={isSelector} />;
   }
 
   return (

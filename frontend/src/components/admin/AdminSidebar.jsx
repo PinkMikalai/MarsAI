@@ -41,7 +41,7 @@ const AdminSidebar = () => {
   const NAV_ITEMS = [
     { id: 'overview', label: t('admin.navItems.overview'), path: ROUTES.PROFILE },
     { id: 'films', label: t('admin.navItems.films'), path: ROUTES.GALLERY_FILMS },
-    { id: 'participations', label: 'Participations', path: ROUTES.ADMIN_PARTICIPATIONS },
+    { id: 'participations', label: 'Gestion de participation', path: ROUTES.ADMIN_PARTICIPATIONS },
     { id: 'jury', label: t('admin.navItems.jury'), path: ROUTES.ADMIN_JURY },
     { id: 'results', label: t('admin.navItems.results'), path: ROUTES.PROFILE },
     { id: 'leaderboard', label: t('admin.navItems.leaderboard'), path: ROUTES.PROFILE },
