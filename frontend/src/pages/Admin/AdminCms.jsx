@@ -1,6 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import cmsService from '../../service/cmsService';
+
+const getIllustrationUrl = (val) => {
+  if (!val) return null;
+  if (/^https?:\/\//.test(val)) return val;
+  const base = import.meta.env.VITE_API_URL.replace(/\/marsai\/?$/, '');
+  return `${base}/assets/uploads/images/${val}`;
+};
 
 const COMPONENTS_OPTIONS = [
   { value: 'gallery',       label: 'Galerie de films' },
@@ -45,12 +52,19 @@ const AdminCms = () => {
   const [editingId,  setEditingId ] = useState(null);
   const [form,       setForm      ] = useState(EMPTY_FORM);
 
+  const [galleryEntry,      setGalleryEntry     ] = useState(null);
+  const [illustrationFile,  setIllustrationFile ] = useState(null);
+  const [illustrationPreview, setIllustrationPreview] = useState(null);
+  const fileInputRef = useRef(null);
+
   const loadPhases = async () => {
     setLoading(true);
     setError('');
     try {
       const data = await cmsService.getAllCms();
-      setPhases(data.result ?? []);
+      const all  = data.result ?? [];
+      setGalleryEntry(all.find((e) => e.element === 'gallery_visibility') ?? null);
+      setPhases(all.filter((e) => e.element !== 'gallery_visibility'));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -71,10 +85,17 @@ const AdminCms = () => {
     });
   };
 
+  const resetIllustration = () => {
+    setIllustrationFile(null);
+    setIllustrationPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const openCreate = () => {
     setForm(EMPTY_FORM);
     setEditingId(null);
     setFormError('');
+    resetIllustration();
     setShowForm(true);
   };
 
@@ -87,9 +108,13 @@ const AdminCms = () => {
       start_date:      formatDateForInput(phase.start_date),
       end_date:        formatDateForInput(phase.end_date),
       components:      parseComponents(phase.components),
+      illustration:    phase.illustration || '',
     });
     setEditingId(phase.id);
     setFormError('');
+    setIllustrationFile(null);
+    setIllustrationPreview(getIllustrationUrl(phase.illustration));
+    if (fileInputRef.current) fileInputRef.current.value = '';
     setShowForm(true);
   };
 
@@ -97,6 +122,14 @@ const AdminCms = () => {
     setShowForm(false);
     setEditingId(null);
     setFormError('');
+    resetIllustration();
+  };
+
+  const handleIllustrationChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setIllustrationFile(file);
+    setIllustrationPreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -104,15 +137,33 @@ const AdminCms = () => {
     if (!form.element.trim()) return;
     setFormError('');
     setSubmitting(true);
-    const payload = {
-      element:         form.element.trim(),
-      english_content: form.english_content,
-      french_content:  form.french_content,
-      is_active:       form.is_active ? 1 : 0,
-      start_date:      form.start_date || null,
-      end_date:        form.end_date   || null,
-      components:      JSON.stringify(form.components),
-    };
+
+    let payload;
+    if (illustrationFile) {
+      // FormData quand un nouveau fichier est sélectionné
+      payload = new FormData();
+      payload.append('element',          form.element.trim());
+      payload.append('english_content',  form.english_content  || '');
+      payload.append('french_content',   form.french_content   || '');
+      payload.append('is_active',        form.is_active ? '1' : '0');
+      payload.append('start_date',       form.start_date || '');
+      payload.append('end_date',         form.end_date   || '');
+      payload.append('components',       JSON.stringify(form.components));
+      payload.append('illustration',     illustrationFile, illustrationFile.name);
+    } else {
+      // JSON classique (on passe l'URL existante pour la conserver)
+      payload = {
+        element:         form.element.trim(),
+        english_content: form.english_content,
+        french_content:  form.french_content,
+        is_active:       form.is_active ? 1 : 0,
+        start_date:      form.start_date || null,
+        end_date:        form.end_date   || null,
+        components:      JSON.stringify(form.components),
+        illustration:    form.illustration || null,
+      };
+    }
+
     try {
       if (editingId) {
         await cmsService.updateCms(editingId, payload);
@@ -139,6 +190,25 @@ const AdminCms = () => {
         end_date:        phase.end_date     || null,
         components:      JSON.stringify(parseComponents(phase.components)),
         is_active:       phase.is_active ? 0 : 1,
+      });
+      loadPhases();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleToggleGallery = async () => {
+    if (!galleryEntry) return;
+    try {
+      await cmsService.updateCms(galleryEntry.id, {
+        element:         galleryEntry.element,
+        english_content: galleryEntry.english_content,
+        french_content:  galleryEntry.french_content,
+        illustration:    null,
+        start_date:      null,
+        end_date:        null,
+        components:      null,
+        is_active:       galleryEntry.is_active ? 0 : 1,
       });
       loadPhases();
     } catch (err) {
@@ -178,6 +248,31 @@ const AdminCms = () => {
           </button>
         </div>
       </div>
+
+      {/* ── Toggle galerie publique ── */}
+      {galleryEntry && (
+        <div className="admin-cms-gallery-toggle">
+          <div className="admin-cms-gallery-toggle__info">
+            <span className="admin-cms-gallery-toggle__icon">🎬</span>
+            <div>
+              <h4 className="admin-cms-gallery-toggle__title">Galerie publique</h4>
+              <p className="admin-cms-gallery-toggle__desc">
+                {galleryEntry.is_active
+                  ? 'La galerie est visible par tous les visiteurs.'
+                  : 'La galerie est cachée au public. Seuls les admins et sélecteurs y ont accès.'}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className={`admin-cms-gallery-toggle__btn ${galleryEntry.is_active ? 'admin-cms-gallery-toggle__btn--on' : 'admin-cms-gallery-toggle__btn--off'}`}
+            onClick={handleToggleGallery}
+          >
+            <span className="admin-cms-gallery-toggle__dot" />
+            {galleryEntry.is_active ? 'Visible' : 'Cachée'}
+          </button>
+        </div>
+      )}
 
       {/* ── Formulaire création / édition ── */}
       {showForm && (
@@ -258,6 +353,43 @@ const AdminCms = () => {
                   onChange={(e) => set('french_content', e.target.value)}
                 />
               </label>
+
+              {/* ── Illustration ── */}
+              <div className="admin-events-form-label admin-events-form-label--full">
+                <span>Illustration (image)</span>
+                <div className="admin-cms-illustration-wrap">
+                  {illustrationPreview && (
+                    <div className="admin-cms-illustration-preview">
+                      <img
+                        src={illustrationPreview}
+                        alt="Illustration"
+                        className="admin-cms-illustration-media"
+                      />
+                      <button
+                        type="button"
+                        className="admin-cms-illustration-remove"
+                        onClick={() => {
+                          resetIllustration();
+                          setForm((prev) => ({ ...prev, illustration: '' }));
+                        }}
+                        title="Supprimer l'illustration"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                  <label className="admin-cms-illustration-btn">
+                    {illustrationPreview ? '🔄 Changer' : '📎 Ajouter une illustration'}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={handleIllustrationChange}
+                    />
+                  </label>
+                </div>
+              </div>
 
               <div className="admin-events-form-label admin-events-form-label--full">
                 <span>Sections visibles dans cette phase</span>

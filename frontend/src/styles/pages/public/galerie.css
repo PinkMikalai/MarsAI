@@ -555,6 +555,7 @@
   font-weight: 600;
 }
 
+/////////////////////
 .gsearch-filter-btn {
   height: 36px;
   padding: 0 1rem;
@@ -638,3 +639,68 @@
         width: 100%;            /* Bouton pleine largeur sur mobile */
     }
 }
+
+/* ── Galerie verrouillée (accès public désactivé) ── */
+.gallery-locked {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #080510 0%, #0c0820 60%, #080614 100%);
+  padding: 2rem;
+}
+
+.gallery-locked__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+  max-width: 420px;
+}
+
+.gallery-locked__icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.gallery-locked__title {
+  font-family: 'Arimo', sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  margin: 0;
+}
+
+.gallery-locked__desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.gallery-locked__btn {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.65rem 1.5rem;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%);
+  color: #ffffff;
+  border-radius: 999px;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.gallery-locked__btn:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+}
+
