@@ -62,12 +62,18 @@ async function getAssignmentByUserModel(user_id) {
 
     try {
         const query = `
-    SELECT a.id, a.assignate_at, 
-           v.title AS video_title, 
-           admin.firstname AS admin_firstname
+    SELECT a.id,
+           a.video_id,
+           a.assignate_at,
+           v.title          AS video_title,
+           v.cover          AS cover,
+           v.country        AS country,
+           v.realisator_firstname,
+           v.realisator_lastname,
+           admin.firstname  AS admin_firstname
     FROM assignation a
-    LEFT JOIN video v ON a.video_id = v.id  
-    LEFT JOIN user admin ON a.assigned_by = admin.id
+    LEFT JOIN video v     ON a.video_id = v.id
+    LEFT JOIN user admin  ON a.assigned_by = admin.id
     WHERE a.user_id = ?
 `;
         console.log("Requête SQL exécutée :", "SELECT * FROM assignation WHERE user_id = ?", [user_id]);

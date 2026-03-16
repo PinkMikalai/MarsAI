@@ -18,6 +18,8 @@ const SearchBar = ({
     resultsCount = null,
     placeholder,
     debounceMs = 400,
+    onMyAssignments,
+    isFilteringAssignments = false,
 }) => {
     const { t } = useTranslation();
     const { isAdmin, isSuperAdmin, isSelector } = useAuth();
@@ -134,7 +136,7 @@ const SearchBar = ({
             {/* --- filtres selector (role 2) --- */}
             {isSelector && (
                 <div className="gsearch-filters-wrap">
-                    
+
                     {/* filtre : videos notees ou non notees (statique) */}
                     <select
                         value={rated}
@@ -158,6 +160,17 @@ const SearchBar = ({
                         ))}
                     </select>
 
+                    {/* bouton mes assignations */}
+                    {onMyAssignments && (
+                        <button
+                            type="button"
+                            className={`gsearch-assignment-btn ${isFilteringAssignments ? 'gsearch-assignment-btn--active' : ''}`}
+                            onClick={onMyAssignments}
+                        >
+                            {isFilteringAssignments ? 'Toutes les vidéos' : 'Mes assignations'}
+                        </button>
+                    )}
+
                 </div>
             )}
 
@@ -178,16 +191,15 @@ const SearchBar = ({
             )}
 
             {/* --- compteur de resultats --- */}
-            <div className="gsearch-results-info-wrap">
-                {resultsCount !== null && (
-                    <p className="gsearch-results-info">
-                        {value.trim()
-                            ? <><strong>{resultsCount}</strong> résultat{resultsCount !== 1 ? 's' : ''} pour « {value.trim()} »</>
-                            : <><strong>{resultsCount}</strong> film{resultsCount !== 1 ? 's' : ''}</>
-                        }
-                    </p>
-                )}
-            </div>
+            {resultsCount !== null && (
+                <span className="gsearch-results-badge">
+                    <strong>{resultsCount}</strong>
+                    {value.trim()
+                        ? ` résultat${resultsCount !== 1 ? 's' : ''}`
+                        : ` film${resultsCount !== 1 ? 's' : ''}`
+                    }
+                </span>
+            )}
 
         </div>
     );

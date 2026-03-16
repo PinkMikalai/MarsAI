@@ -387,10 +387,15 @@
 
 /* ─── SEARCH BAR ─────────────────────────────────────────────── */
 .gsearch-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-bottom: 1.25rem;
 }
 
 .gsearch-inner {
+  flex: 1 1 200px;
   position: relative;
   display: flex;
   align-items: center;
@@ -475,19 +480,102 @@
 }
 
 /* badge résultats de recherche */
-.gsearch-results-info {
+/* ── Bouton "Mes assignations" inline ── */
+.gsearch-assignment-btn {
+  height: 36px;
+  padding: 0 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.gsearch-assignment-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.gsearch-assignment-btn--active {
+  background: rgba(43, 127, 255, 0.12);
+  border-color: rgba(43, 127, 255, 0.45);
+  color: #5fa3ff;
+}
+
+.gsearch-assignment-btn--active:hover {
+  background: rgba(43, 127, 255, 0.2);
+  border-color: rgba(43, 127, 255, 0.65);
+}
+
+/* ── Badge compteur de résultats ── */
+.gsearch-results-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 36px;
+  padding: 0 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
   font-family: 'Arimo', sans-serif;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.45);
-  margin: -0.75rem 0 1rem;
+  white-space: nowrap;
+  flex: 0 0 auto;
 }
 
-.gsearch-results-info strong {
+.gsearch-results-badge strong {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+/* ── Filtres (admin / selector) ── */
+.gsearch-filters-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+}
+
+.gsearch-select {
+  height: 36px;
+  padding: 0 2rem 0 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.75);
-  font-weight: 600;
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.4)' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
 }
 
-/////////////////////
+.gsearch-select:hover,
+.gsearch-select:focus {
+  border-color: rgba(43, 127, 255, 0.5);
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.gsearch-select option {
+  background: #0d0d1a;
+  color: #ffffff;
+}
+
 .gsearch-filter-btn {
   height: 36px;
   padding: 0 1rem;
