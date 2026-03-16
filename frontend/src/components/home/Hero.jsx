@@ -3,7 +3,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { ROUTES } from '../../constants/routes';
 import Navbar from '../layout/Navbar';
 import OnboardingModal from '../ui/modal/OnboardingModal';
 import heroVideo from '../../assets/videos/videoloop3.mp4';
@@ -11,15 +10,38 @@ import { fadeUp, staggerContainer } from '../../utils/animations';
 
 const USE_VIDEO_BACKGROUND = true;
 const PARALLAX_FACTOR = 0.25;
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3000/marsai');
+
+const parseComponents = (raw) => {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  try { return JSON.parse(raw); } catch { return []; }
+};
 
 const Hero = () => {
   const { t } = useTranslation();
   const videoHome = useRef(null);
-  const [scrollY,   setScrollY]   = useState(0);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [scrollY,       setScrollY]       = useState(0);
+  const [modalOpen,     setModalOpen]     = useState(false);
+  const [showParticip,  setShowParticip]  = useState(false);
+  const [showLearnMore, setShowLearnMore] = useState(false);
 
   const openModal  = useCallback(() => setModalOpen(true),  []);
   const closeModal = useCallback(() => setModalOpen(false), []);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/admin/cms/all`)
+      .then((r) => r.json())
+      .then((data) => {
+        const all    = data.result ?? [];
+        const active = all.filter((e) => Number(e.is_active) === 1);
+        const comps  = active.flatMap((e) => parseComponents(e.components));
+        const unique = [...new Set(comps)];
+        setShowParticip(unique.includes('participation'));
+        setShowLearnMore(unique.includes('learn_more'));
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!USE_VIDEO_BACKGROUND) return;
@@ -73,7 +95,6 @@ const Hero = () => {
         <Navbar />
       </div>
 
-      {/* Contenu animé au montage (pas whileInView — toujours visible) */}
       <motion.div
         className="hero-content"
         variants={staggerContainer}
@@ -90,14 +111,26 @@ const Hero = () => {
         <motion.p className="hero-description" variants={fadeUp}>
           {t('hero.description')}
         </motion.p>
-        <motion.div className="hero-cta" variants={fadeUp}>
-          <button type="button" className="hero-btn hero-btn-primary" onClick={openModal}>
-            {t('hero.ctaParticipate')}
-          </button>
-          <button type="button" className="hero-btn hero-btn-secondary" onClick={openModal}>
-            {t('hero.ctaLearnMore')}
-          </button>
-        </motion.div>
+
+        {(showParticip || showLearnMore) && (
+          <motion.div
+            className="hero-cta"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            {showParticip && (
+              <button type="button" className="hero-btn hero-btn-primary" onClick={openModal}>
+                {t('hero.ctaParticipate')}
+              </button>
+            )}
+            {showLearnMore && (
+              <button type="button" className="hero-btn hero-btn-secondary" onClick={openModal}>
+                {t('hero.ctaLearnMore')}
+              </button>
+            )}
+          </motion.div>
+        )}
       </motion.div>
 
       {modalOpen && <OnboardingModal onClose={closeModal} />}

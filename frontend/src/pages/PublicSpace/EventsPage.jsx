@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EventCard, { isUpcoming } from '../../components/events/EventCard';
 import { eventService } from '../../service/eventService';
 import { fadeUp, fadeIn } from '../../utils/animations';
+import { useLightbox } from '../../hooks/useLightbox';
+import Lightbox from '../../components/ui/display/Lightbox';
 
 /* ─── Skeleton card ──────────────────────────────────── */
 const SkeletonCard = ({ featured = false }) => (
@@ -19,6 +21,7 @@ const EventsPage = () => {
   const [loading, setLoading]     = useState(true);
   const [imgErrors, setImgErrors] = useState(new Set());
   const [filter, setFilter]       = useState('upcoming');
+  const { lightboxProps, openLightbox } = useLightbox();
 
   useEffect(() => {
     let cancelled = false;
@@ -30,6 +33,17 @@ const EventsPage = () => {
   }, []);
 
   const addImgError = (key) => setImgErrors((p) => new Set([...p, key]));
+
+  const handleImageClick = (eventId, allEvents) => {
+    const allImages = allEvents
+      .map((ev) => eventService.getEventImageUrl(ev.illustration))
+      .filter(Boolean);
+    
+    if (allImages.length > 0) {
+      const clickedIndex = allEvents.findIndex(ev => ev.id === eventId);
+      openLightbox(allImages, clickedIndex >= 0 ? clickedIndex : 0);
+    }
+  };
 
   /* Tri par date décroissante (les plus récents en premier) */
   const sorted = useMemo(() => (
@@ -134,6 +148,7 @@ const EventsPage = () => {
                       variant="featured"
                       imgError={imgErrors.has(`feat-${featured.id}`)}
                       onImgError={() => addImgError(`feat-${featured.id}`)}
+                      onImageClick={() => handleImageClick(featured.id, filtered)}
                     />
                   </motion.div>
                 )}
@@ -153,6 +168,7 @@ const EventsPage = () => {
                           variant="compact"
                           imgError={imgErrors.has(`c-${ev.id}`)}
                           onImgError={() => addImgError(`c-${ev.id}`)}
+                          onImageClick={() => handleImageClick(ev.id, filtered)}
                         />
                       </motion.div>
                     ))}
@@ -164,6 +180,7 @@ const EventsPage = () => {
         </div>
       </section>
 
+      <Lightbox {...lightboxProps} />
     </div>
   );
 };

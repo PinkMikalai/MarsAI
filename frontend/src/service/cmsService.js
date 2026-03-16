@@ -11,9 +11,14 @@ const getAllCms = () => api('/admin/cms/all', {
     method: 'GET',
 });
 
+const getActiveCms = () => api('/admin/cms/active', {
+    method: 'GET',
+});
+
 const getCmsById = (id) => api(`/admin/cms/${id}`, {
     method: 'GET',
 });
+
 
 const updateCms = (id, data) => api(`/admin/cms/${id}`, {
     method: 'PUT',
@@ -27,6 +32,7 @@ const deleteCms = (id) => api(`/admin/cms/${id}`, {
 export default {
     createCms,
     getAllCms,
+    getActiveCms,
     getCmsById,
     updateCms,
     deleteCms

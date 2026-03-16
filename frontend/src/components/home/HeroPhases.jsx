@@ -77,6 +77,15 @@ const HeroPhases = () => {
                                     Participer
                                 </button>
                             )}
+                            {comps.includes('learn_more') && (
+  <button
+    type="button"
+    className="hero-btn hero-btn-secondary hero-phase-card__cta"
+    onClick={openModal}
+  >
+    En savoir plus
+  </button>
+)}
                         </div>
                     );
                 })}
