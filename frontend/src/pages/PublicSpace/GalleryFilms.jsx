@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { videoApi, getCoverUrl } from '../../service/galleryService';
+import { assignmentService } from '../../service/assignmentService.js';
 import ProgressBar from '../../components/ui/feedback/ProgressBar';
 import SearchBar from '../../components/ui/search/SearchBar';
-import Icons from '../../components/ui/common/Icons';
+import Button from '../../components/ui/actions/Button.jsx';
+import Icons from '../../components/ui/common/Icons.jsx';
 import { FILMS_PER_PAGE } from '../../constants/galleryData';
 import { useAuth } from '../../context/AuthContext.jsx';
 import AdminAssignment from '../Admin/AdminAssignments.jsx';
@@ -22,7 +24,8 @@ const GalleryFilms = () => {
     const [selectedVideos, setSelectedVideos] = useState([]);
     const [selectedVideoIds, setSelectedVideoIds] = useState(new Set());
     const canAssign = user && (user.role_id === 1 || user.role_id === 3);
-
+    const isSelector = user && user.role_id === 2;
+    const [isFilteringAssignments, setIsFilteringAssignments] = useState(false);
     const [videos, setVideos] = useState(_cachedVideos || []);
     const [loading, setLoading] = useState(!_cachedVideos);
     const [searchLoading, setSearchLoading] = useState(false);
@@ -92,6 +95,44 @@ const GalleryFilms = () => {
         setSelectedVideos([film]);
         setIsAssignmentOpen(true);
     };
+    // Récupeation des assignations (Bouton spécifique sélectionneur)
+   const handleFetchMyAssignments = async () => {
+   
+    if (isFilteringAssignments) {
+        setIsFilteringAssignments(false);
+        setVideos(_cachedVideos || []);
+        return;
+    }
+
+    setLoading(true);
+    try {
+        const res = await assignmentService.getAssignmentByUser(user.id);
+        console.log("Données reçues de l'API assignation :", res);
+
+        if (res?.success && Array.isArray(res.result)) {
+            const mappedVideos = res.result.map(item => ({
+                id: item.video_id,
+                title: item.video_title || item.title || "Sans titre",
+                cover: item.cover, 
+                realisator_firstname: item.admin_firstname,
+                realisator_lastname: item.realisator_lastname
+
+            }));
+            
+            setVideos(mappedVideos);
+            setIsFilteringAssignments(true); 
+            setCurrentPage(1);
+        } else {
+            setVideos([]);
+            setIsFilteringAssignments(true);
+        }
+    } catch (err) {
+        console.error("Error :", err);
+        setError("Fetching assignments error.");
+    } finally {
+        setLoading(false);
+    }
+};
     // chargement initial
     useEffect(() => {
         if (_cachedVideos) { setVideos(_cachedVideos); return; }
@@ -100,13 +141,14 @@ const GalleryFilms = () => {
 
     // declenchement recherche ou filtre
     useEffect(() => {
+        if (isFilteringAssignments) return;
         const hasFilter = filters.adminStatus || filters.selectionStatus || filters.rated;
         if (!search.trim() && !hasFilter) {
             setError(null);
             setVideos(_cachedVideos || []);
             return;
         }
-        fetchSearchVideos(search, filters);
+        fetchSearchVideos(search, filters, isFilteringAssignments);
     }, [search, filters]);
 
     // parallax scroll
@@ -124,6 +166,9 @@ const GalleryFilms = () => {
 
     function handleSearch(query) {
         console.log("handleSearch — query:", query);
+        if (query.trim() !== "") {
+            setIsFilteringAssignments(false);
+        }
         setSearch(query);
         setCurrentPage(1);
     }
@@ -184,13 +229,27 @@ const GalleryFilms = () => {
                         className="my-8 w-full"
                     />
                 )}
-
+                <div className="search-controls-container">
                 <SearchBar
                     onSearch={handleSearch}
                     onFilterChange={handleFilterChange}
                     loading={searchLoading}
                     resultsCount={videos.length}
+
                 />
+                {/* BOUTON MES ASSIGNATIONS (Visible uniquement pour role_id 2) */}
+                {isSelector && (
+                    <Button
+                        variant={isFilteringAssignments ? 'primary' : 'outline'}
+                        onClick={handleFetchMyAssignments}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+                            {isFilteringAssignments ? 'All the videos' : 'My assignments'}
+                        </div>
+                    </Button>
+                )}
+                </div>
 
                 {error && <p className="galerie-error" role="alert">{error}</p>}
 
@@ -201,7 +260,7 @@ const GalleryFilms = () => {
                         ) : (
                             <>
                                 <div className="galerie-grid">
-                                    {filmsOnPage.map((film) => {
+                                    {filmsOnPage.map((film, index) => {
                                         console.log("Données du film :", film)
                                         const title = film.title || film.title_en || t('gallery.noTitle');
                                         const director = [film.realisator_firstname, film.realisator_lastname]
@@ -210,7 +269,7 @@ const GalleryFilms = () => {
                                         const hasImageError = imageErrors.has(film.id);
 
                                         return (
-                                            <article key={film.id} className={`galerie-card ${selectedVideoIds.has(film.id) ? 'selected' : ''}`} style={{ position: 'relative' }}>
+                                            <article key={`${film.id}-${index}`} className={`galerie-card ${selectedVideoIds.has(film.id) ? 'selected' : ''}`} style={{ position: 'relative' }}>
 
                                                 {canAssign && (
                                                     <div className="admin-selection-check">
@@ -265,7 +324,7 @@ const GalleryFilms = () => {
                                                         }}
                                                     >
                                                         Assign
-                                                        
+
                                                         {film.assignment_count > 0 && (
                                                             <span className="assign-badge">
                                                                 ({film.assignment_count})
@@ -352,4 +411,3 @@ const GalleryFilms = () => {
 };
 
 export default GalleryFilms;
-

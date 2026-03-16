@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import api from '../../../service/api';
+import Button from '../actions/Button.jsx';
+import { assignmentService } from '../../../service/assignmentService.js';
 
 
 //=====================================================
@@ -19,12 +21,14 @@ const SearchBar = ({
 }) => {
     const { t } = useTranslation();
     const { isAdmin, isSuperAdmin, isSelector } = useAuth();
+  
 
     const [value, setValue] = useState('');
     const [adminStatus, setAdminStatus] = useState('');
     const [selectionStatus, setSelectionStatus] = useState('');
     const [rated, setRated] = useState('');
     const timerRef = useRef(null);
+
 
     // fetch des options depuis la BDD
     const [selectionStatusOptions, setSelectionStatusOptions] = useState([]);
@@ -81,6 +85,7 @@ const SearchBar = ({
         setRated(val);
         onFilterChange?.({ rated: val });
     }
+    
 
     const ph = placeholder ?? t('gallery.searchPlaceholder', { defaultValue: 'Rechercher un film, réalisateur, tag…' });
 
@@ -129,7 +134,7 @@ const SearchBar = ({
             {/* --- filtres selector (role 2) --- */}
             {isSelector && (
                 <div className="gsearch-filters-wrap">
-
+                    
                     {/* filtre : videos notees ou non notees (statique) */}
                     <select
                         value={rated}

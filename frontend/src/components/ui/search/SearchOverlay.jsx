@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { videoApi, getCoverUrl } from '../../../service/galleryService';
 import SearchBar from './SearchBar';
+import { assignmentService } from '../../../service/assignmentService';
+import { useAuth } from '../../../context/AuthContext';
+import Button from '../actions/Button';
+
 
 // =====================================================
 // PANNEAU RECHERCHE — même comportement que InfoPanel
@@ -9,10 +13,14 @@ import SearchBar from './SearchBar';
 // =====================================================
 const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
     const timerRef = useRef(null);
-    const [videos, setVideos]   = useState([]);
+    const {user} = useAuth();
+    const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [search, setSearch]   = useState('');
+    const [search, setSearch] = useState('');
     const [filters, setFilters] = useState({ adminStatus: '', selectionStatus: '', rated: '' });
+    const [isAssigned, setIsAssigned] = useState(false);
+    const isSelector = user && user.role_id === 2;
+    const [isFilteringAssignments, setIsFilteringAssignments] = useState(false);
 
     // chargement initial — toutes les vidéos dès l'ouverture
     useEffect(() => {
@@ -31,7 +39,7 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
 
     // recherche/filtres avec debounce
     useEffect(() => {
-        const hasFilter = filters.adminStatus || filters.selectionStatus || filters.rated;
+        const hasFilter = filters.adminStatus || filters.selectionStatus || filters.rated || filters.myAssignment;
         if (!search.trim() && !hasFilter) {
             // reset → recharge toutes les vidéos
             setLoading(true);
@@ -64,8 +72,52 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
         return () => document.removeEventListener('keydown', onKey);
     }, [isOpen, onClose]);
 
-    const handleSearch       = useCallback((q) => setSearch(q), []);
+    const handleSearch = useCallback((q) => setSearch(q), []);
     const handleFilterChange = useCallback((f) => setFilters((prev) => ({ ...prev, ...f })), []);
+
+    const toggleAssignment = () => {
+        const newValue = !isAssigned;
+        setIsAssigned(newValue);
+        handleFilterChange({ myAssignment: newValue });
+    };
+
+    // Récupeation des assignations (Bouton spécifique sélectionneur)
+       const handleFetchMyAssignments = async () => {
+        // Si on était déjà en mode filtre, on revient aux vidéos du cache
+        if (isFilteringAssignments) {
+            setIsFilteringAssignments(false);
+            setVideos(allVideosCache); 
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await assignmentService.getAssignmentByUser(user.id);
+            
+            if (res?.success && Array.isArray(res.result)) {
+                const mappedVideos = res.result.map(item => ({
+                    // item.id est l'ID de l'assignation, item.video_id est l'ID du film
+                    id: item.video_id || item.id, 
+                    title: item.video_title || item.title || "Sans titre",
+                    cover: item.cover || item.video_cover, 
+                    realisator_firstname: item.admin_firstname || "",
+                    realisator_lastname: item.realisator_lastname || ""
+                }));
+                
+                setVideos(mappedVideos);
+                setIsFilteringAssignments(true); 
+                // Suppression de setCurrentPage(1) qui causait l'erreur
+            } else {
+                setVideos([]);
+                setIsFilteringAssignments(true);
+            }
+        } catch (err) {
+            console.error("Fetching assignment error :", err);
+        
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div
@@ -80,6 +132,7 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
 
             {/* SearchBar avec droits (admin / selector / public) */}
             <div className="wf-search-panel-bar">
+                <div className="search-controls-container">
                 <SearchBar
                     onSearch={handleSearch}
                     onFilterChange={handleFilterChange}
@@ -87,6 +140,16 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
                     resultsCount={videos.length}
                     debounceMs={350}
                 />
+               <Button
+                        variant={isFilteringAssignments ? 'primary' : 'outline'}
+                        onClick={handleFetchMyAssignments}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+                            {isFilteringAssignments ? 'All the videos' : 'My assignments'}
+                        </div>
+                    </Button>
+                </div>
             </div>
 
             {/* liste des résultats — scroll interne */}
@@ -100,9 +163,9 @@ const SearchOverlay = ({ isOpen, onClose, onSelectFilm }) => {
                     </p>
                 )}
                 {videos.map((film) => {
-                    const title    = film.title || film.title_en || 'Sans titre';
+                    const title = film.title || film.title_en || 'Sans titre';
                     const director = [film.realisator_firstname, film.realisator_lastname].filter(Boolean).join(' ') || '—';
-                    const cover    = getCoverUrl(film.cover);
+                    const cover = getCoverUrl(film.cover);
                     return (
                         <button
                             key={film.id}

@@ -554,3 +554,87 @@
   color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
 }
+
+.gsearch-filter-btn {
+  height: 36px;
+  padding: 0 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: 'Arimo', sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.gsearch-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.gsearch-filter-btn.active {
+  background: rgba(43, 127, 255, 0.2);
+  border-color: #2B7FFF;
+  color: #ffffff;
+}
+
+.status-badge-assigned {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  background: rgba(43, 127, 255, 0.15);
+  border: 1px solid rgba(43, 127, 255, 0.4);
+  color: #2B7FFF;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.65rem;
+  font-family: 'Arimo', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-badge-assigned .dot {
+  width: 6px;
+  height: 6px;
+  background: #2B7FFF;
+  border-radius: 50%;
+}
+
+.search-controls-container {
+    display: flex;
+    flex-wrap: wrap;       /* Permet de passer à la ligne si pas assez de place */
+    align-items: center;   /* Aligne verticalement */
+    gap: 10px;             /* Espace entre les éléments */
+    width: 100%;
+    margin-bottom: 2%;
+}
+
+/* La SearchBar prend la priorité en largeur */
+.search-controls-container .gsearch-wrap {
+    flex: 1 1 300px;       /* Grandit (1), rétrécit (1), base 300px */
+}
+
+/* Le bouton reste compact */
+.search-controls-container .button-style {
+    flex: 0 0 auto;        /* Empêche le bouton de s'étirer */
+    padding: 10px 20px;
+    white-space: nowrap;   /* Le texte ne passe pas à la ligne dans le bouton */
+}
+
+/* --- Adaptation mobile --- */
+@media (max-width: 600px) {
+    .search-controls-container {
+        flex-direction: column; /* Force la colonne */
+        align-items: stretch;   /* Étire les éléments pour remplir la largeur */
+    }
+    
+    .search-controls-container .button-style {
+        width: 100%;            /* Bouton pleine largeur sur mobile */
+    }
+}

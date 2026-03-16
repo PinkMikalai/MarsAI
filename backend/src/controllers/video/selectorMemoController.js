@@ -5,7 +5,8 @@ import {
     updateSelectorMemoModel, 
     deleteSelectorMemoModel, 
     getMemosByUserIdModel,
-    getMemoByUserAndVideoModel
+    getMemoByUserAndVideoModel,
+    getVideoForSelectorModel
 } from "../../models/video/selectorMemoModel.js";
 
 //=====================================================
@@ -239,6 +240,28 @@ async function deleteSelectorMemo(req, res) {
     }
 }
 
+async function getSelectorAssignments (req, res , next) {
+    try{
+        const userId = req.user.id;
+        const assignateVideo = await getVideoForSelectorModel(userId);
+
+        res.status(200).json({
+            success:true,
+            data: assignateVideo
+        })
+    } catch(error){
+        console.error("erreur getSelectorAssignment:", error);
+        res.status(500).json({
+            message: "Fetching selector assignments error",
+            status: false,
+            error: error.message
+
+        })
+
+    }
+
+}
+
 export {
     createSelectorMemo,
     getAllSelectorMemos,
@@ -246,4 +269,5 @@ export {
     getSelectorMemoById,
     updateSelectorMemo,
     deleteSelectorMemo,
+    getSelectorAssignments
 };
