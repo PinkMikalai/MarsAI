@@ -879,13 +879,14 @@ a:hover .home-sponsor-img {
 }
 
 .home-jury-preview__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
   gap: 1.25rem 1.5rem;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  justify-items: center;
 }
 
 /* Avatar carte */
@@ -908,6 +909,14 @@ a:hover .home-sponsor-img {
   background-clip: content-box;
   outline: 2px solid rgba(255, 255, 255, 0.1);
   transition: outline-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.home-jury-avatar__img-wrap--clickable {
+  cursor: pointer;
+}
+
+.home-jury-avatar__img-wrap--clickable:hover {
+  transform: scale(1.05);
 }
 
 .home-jury-avatar:hover .home-jury-avatar__img-wrap {
@@ -979,14 +988,13 @@ a:hover .home-sponsor-img {
 
 @media (max-width: 768px) {
   .home-jury-preview__grid {
-    grid-template-columns: repeat(3, 1fr);
     max-width: 420px;
+    gap: 1.25rem;
   }
 }
 
 @media (max-width: 480px) {
   .home-jury-preview__grid {
-    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
   }
 }

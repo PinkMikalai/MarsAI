@@ -83,7 +83,7 @@ const DetailsPanel = ({ event, t }) => (
    variant="featured"  → grande carte horizontale (1ère)
    variant="compact"   → carte liste (les suivantes)
 ───────────────────────────────────────────────────────── */
-const EventCard = ({ event, imageUrl, variant = 'compact', imgError, onImgError }) => {
+const EventCard = ({ event, imageUrl, variant = 'compact', imgError, onImgError, onImageClick }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const upcoming = isUpcoming(event?.date);
@@ -102,7 +102,11 @@ const EventCard = ({ event, imageUrl, variant = 'compact', imgError, onImgError 
         </span>
 
         {/* Image */}
-        <div className="ev-featured__img-wrap">
+        <div 
+          className={`ev-featured__img-wrap ${imageUrl && !imgError && onImageClick ? 'ev-featured__img-wrap--clickable' : ''}`}
+          onClick={imageUrl && !imgError && onImageClick ? onImageClick : undefined}
+          style={imageUrl && !imgError && onImageClick ? { cursor: 'pointer' } : {}}
+        >
           {imageUrl && !imgError ? (
             <img src={imageUrl} alt={event.title} className="ev-featured__img" onError={onImgError} />
           ) : (
@@ -172,7 +176,11 @@ const EventCard = ({ event, imageUrl, variant = 'compact', imgError, onImgError 
   /* ── Variant compact ── */
   return (
     <article className={`ev-card${open ? ' ev-card--open' : ''}`}>
-      <div className="ev-card__img-wrap">
+      <div 
+        className={`ev-card__img-wrap ${imageUrl && !imgError && onImageClick ? 'ev-card__img-wrap--clickable' : ''}`}
+        onClick={imageUrl && !imgError && onImageClick ? onImageClick : undefined}
+        style={imageUrl && !imgError && onImageClick ? { cursor: 'pointer' } : {}}
+      >
         {imageUrl && !imgError ? (
           <img src={imageUrl} alt={event?.title} className="ev-card__img" onError={onImgError} loading="lazy" />
         ) : (

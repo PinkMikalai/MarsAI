@@ -1,6 +1,7 @@
 import { 
     createCmsModel, 
     getAllCmsModel, 
+    getActiveCmsModel,
     getCmsByIdModel, 
     updateCmsModel, 
     deleteCmsModel 
@@ -49,6 +50,19 @@ async function getAllCmsController(req, res, next){
         res.status(500).json({
             status: "error",
             message: "Internal server error",
+            error: error.message
+        });
+    }
+}
+
+async function getActiveCmsController(req, res, next){
+    try {
+        const result =await getActiveCmsModel();
+        res.status(200).json({ status: "success", result: result }); 
+    } catch (error) {
+        res.status(500).json({
+            status: "error",
+            message: "error cms not found",
             error: error.message
         });
     }
@@ -124,6 +138,7 @@ async function deleteCmsController(req, res, next){
 export {
     createCmsController,
     getAllCmsController,
+    getActiveCmsController,
     getCmsByIdController,
     updateCmsController,
     deleteCmsController

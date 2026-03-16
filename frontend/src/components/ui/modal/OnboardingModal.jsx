@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FilmIcon, BoltIcon, XMarkIcon, ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
@@ -51,7 +52,7 @@ const OnboardingModal = ({ onClose }) => {
     [],
   ];
 
-  return (
+  return ReactDOM.createPortal(
     <div
       className="onboarding-overlay"
       onClick={onClose}
@@ -128,7 +129,8 @@ const OnboardingModal = ({ onClose }) => {
         </div>
 
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

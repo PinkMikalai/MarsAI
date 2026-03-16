@@ -2,6 +2,7 @@ import { Router } from "express";
 import { 
     createCmsController, 
     getAllCmsController, 
+    getActiveCmsController,
     getCmsByIdController, 
     updateCmsController, 
     deleteCmsController 
@@ -14,6 +15,7 @@ const router = Router();
 
 router.post('/create', authMiddleware, checkRole([1, 3]), uploadFields, processS3Uploads, createCmsController);
 router.get('/all', getAllCmsController);
+router.get('/active', getActiveCmsController);
 router.get('/:id', getCmsByIdController);
 router.put('/:id', authMiddleware, checkRole([1, 3]), uploadFields, processS3Uploads, updateCmsController);
 router.delete('/:id', authMiddleware, checkRole([1, 3]), deleteCmsController);

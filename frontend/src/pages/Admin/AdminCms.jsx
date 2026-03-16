@@ -12,7 +12,9 @@ const getIllustrationUrl = (val) => {
 const COMPONENTS_OPTIONS = [
   { value: 'gallery',       label: 'Galerie de films' },
   { value: 'participation', label: 'Participation' },
+  { value: 'learn_more',    label: 'En savoir plus' },
   { value: 'awards',        label: 'Palmarès / Gagnants' },
+ 
 ];
 
 const formatDate = (d) => {
