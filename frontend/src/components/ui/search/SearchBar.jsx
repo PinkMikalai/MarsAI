@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
 import { useAuth } from '../../../context/AuthContext.jsx';
 import api from '../../../service/api';
-import Button from '../actions/Button.jsx';
-import { assignmentService } from '../../../service/assignmentService.js';
 
 
 //=====================================================
@@ -76,14 +74,12 @@ const SearchBar = ({
     // filtre pour les selectors
     function handleSelectionStatusChange(e) {
         const val = e.target.value;
-        console.log("SearchBar — selectionStatus:", val);
         setSelectionStatus(val);
         onFilterChange?.({ selectionStatus: val });
     }
 
     function handleRatedChange(e) {
         const val = e.target.value;
-        console.log("SearchBar — rated:", val);
         setRated(val);
         onFilterChange?.({ rated: val });
     }

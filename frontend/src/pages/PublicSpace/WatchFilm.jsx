@@ -121,7 +121,7 @@ const InfoPanel = ({
                             <div className="wf-admin-row wf-admin-row--selector">
                                 <span className="wf-admin-label">{t('watchFilm.statusLabel')}</span>
                                 <span className="wf-admin-value">
-                                    {existingMemo?.selection_status?.name ?? (memoStatus ?? '—')}
+                                    {existingMemo?.selection_status?.name ?? 'Non notée'}
                                 </span>
                             </div>
                             {existingMemo?.created_at && (
@@ -745,7 +745,7 @@ const WatchFilm = () => {
                                                     </div>
                                                     <div className="wf-stat-box wf-stat-box--status">
                                                         <span className="wf-stat-box-value wf-stat-box-value--sm">
-                                                            {existingMemo?.selection_status?.name ?? (memoStatus ?? '—')}
+                                                            {existingMemo?.selection_status?.name ?? 'Non notée'}
                                                         </span>
                                                         <span className="wf-stat-box-label">statut</span>
                                                     </div>

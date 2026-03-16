@@ -1015,38 +1015,41 @@
   flex-shrink: 0;
 }
 
-/* SearchBar occupe toute la largeur, sans margin-bottom */
+/* SearchBar occupe toute la largeur du panel */
 .wf-search-panel-bar .gsearch-wrap {
   margin-bottom: 0;
   flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-/* compteur de résultats discret */
-.wf-search-panel-bar .gsearch-results-info {
+/* input prend toute la largeur sur la 1ère ligne */
+.wf-search-panel-bar .gsearch-inner {
+  flex: 1 1 100%;
+}
+
+/* les filtres wrappent et remplissent la largeur */
+.wf-search-panel-bar .gsearch-filters-wrap {
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* selects et bouton se répartissent sur la largeur disponible */
+.wf-search-panel-bar .gsearch-select,
+.wf-search-panel-bar .gsearch-assignment-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* badge résultats discret, pleine largeur */
+.wf-search-panel-bar .gsearch-results-badge {
+  flex: 1 1 100%;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  padding: 0 0.25rem;
+  height: auto;
   font-size: 0.72rem;
-}
-
-.wf-search-panel-bar .search-controls-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    padding: 0 16px; 
-}
-
-.wf-toggle-btn {
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    cursor: pointer;
-    background: #fff;
-    white-space: nowrap;
-}
-
-.wf-toggle-btn.active {
-    background: #007bff;
-    color: white;
-    border-color: #0056b3;
 }
 
 /* ── liste des résultats ── */

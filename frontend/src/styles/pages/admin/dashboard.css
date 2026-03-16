@@ -600,6 +600,68 @@
   color: var(--color-mars-muted-40);
 }
 
+/* ── Statistiques sélecteur ── */
+.admin-profile-stats {
+  margin-top: 2rem;
+  padding: 1.5rem 1.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+}
+
+.admin-profile-stats__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-mars-muted-40, rgba(255,255,255,0.45));
+  margin: 0 0 1.25rem;
+}
+
+.admin-profile-stats__empty {
+  font-size: 0.9rem;
+  color: var(--color-mars-muted-40, rgba(255,255,255,0.4));
+  margin: 0;
+}
+
+.admin-profile-stats__grid {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.admin-profile-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.1rem 1.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  min-width: 140px;
+}
+
+.admin-profile-stat-card__value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.admin-profile-stat-card__unit {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.admin-profile-stat-card__label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
 /* Modales interactivité (Modifier profil / Changer mot de passe) */
 .admin-profile-modal-overlay {
   position: fixed;
@@ -860,7 +922,7 @@
 
   /* ── Toutes les pages admin : nav horizontale réduite ── */
   .admin-sidebar {
-    padding: 0;
+    padding: 8px 12px;
   }
 
   .admin-sidebar-header {
@@ -869,6 +931,18 @@
 
   .admin-sidebar-user-meta {
     display: none;
+  }
+
+  .admin-sidebar-logo-text {
+    display: none;
+  }
+
+  .admin-sidebar-nav-bullet {
+    display: none;
+  }
+
+  .admin-sidebar-nav-label {
+    font-size: 0.76rem;
   }
 
   /* ── TOUTES LES PAGES ADMIN : burger remplace la nav horizontale sur mobile ── */
@@ -1008,7 +1082,13 @@
 
 /* ---- ≤ 480px : Petit mobile ---- */
 @media (max-width: 480px) {
+  .admin-sidebar { padding: 6px 10px; }
   .admin-sidebar-header { padding: 8px 12px; }
+
+  .admin-sidebar-nav-item {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
 
   .admin-main { padding: 12px 12px 20px; }
   .admin-overview-grid { grid-template-columns: minmax(0, 1fr); }
@@ -1022,169 +1102,6 @@
 
   .admin-profile-modal,
   .admin-events-modal { padding: 16px; border-radius: 14px; max-width: 95vw; margin: 10px; }
-}
-
-/* ---- ≤ 768px : Mobile moyen ---- */
-@media (max-width: 768px) {
-  .admin-sidebar {
-    padding: 8px 12px;
-  }
-
-  .admin-sidebar-user-meta {
-    display: none;
-  }
-
-  .admin-sidebar-logo-text {
-    display: none;
-  }
-
-  .admin-sidebar-nav-bullet {
-    display: none;
-  }
-
-  .admin-sidebar-nav-label {
-    font-size: 0.76rem;
-  }
-
-  .admin-main {
-    padding: 14px 14px 20px;
-    gap: 12px;
-  }
-
-  .admin-main-title {
-    font-size: 1rem;
-  }
-
-  .admin-main-subtitle {
-    font-size: 0.78rem;
-  }
-
-  .admin-overview-kicker {
-    font-size: 0.7rem;
-  }
-
-  .admin-overview-title {
-    font-size: 1.2rem;
-  }
-
-  .admin-overview-text {
-    font-size: 0.83rem;
-    max-width: 100%;
-  }
-
-  .admin-profile-card {
-    padding: 16px;
-    border-radius: 16px;
-  }
-
-  .admin-profile-username {
-    font-size: 1rem;
-    word-break: break-word;
-  }
-
-  .admin-profile-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .admin-profile-actions .admin-profile-btn {
-    width: 100%;
-    min-width: 0;
-    text-align: center;
-  }
-
-  .admin-profile-dl dd {
-    font-size: 0.88rem;
-    word-break: break-word;
-  }
-
-  .admin-profile-modal {
-    padding: 20px;
-    max-width: 92vw;
-    border-radius: 16px;
-    margin: 16px;
-    box-sizing: border-box;
-  }
-
-  .admin-profile-modal-actions {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .admin-profile-modal-actions .admin-profile-btn {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .admin-events-modal {
-    max-width: 92vw;
-    padding: 20px;
-    margin: 16px;
-    box-sizing: border-box;
-  }
-
-  .admin-events-modal-actions {
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .admin-events-modal-actions .admin-events-btn {
-    width: 100%;
-    margin-left: 0;
-  }
-}
-
-/* ---- ≤ 480px : Petit mobile ---- */
-@media (max-width: 480px) {
-  .admin-sidebar {
-    padding: 6px 10px;
-  }
-
-  .admin-sidebar-nav-item {
-    padding: 5px 8px;
-    font-size: 0.72rem;
-  }
-
-  .admin-main {
-    padding: 12px 12px 20px;
-  }
-
-  .admin-overview-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .admin-overview-title {
-    font-size: 1.1rem;
-  }
-
-  .admin-profile-card {
-    padding: 14px;
-    border-radius: 14px;
-  }
-
-  .admin-profile-grid {
-    gap: 14px 0;
-  }
-
-  .admin-profile-head {
-    gap: 12px;
-  }
-
-  .admin-profile-username {
-    font-size: 0.95rem;
-  }
-
-  .admin-profile-role-label {
-    font-size: 0.78rem;
-  }
-
-  .admin-profile-modal,
-  .admin-events-modal {
-    padding: 16px;
-    border-radius: 14px;
-    max-width: 95vw;
-    margin: 10px;
-  }
 }
 
 /* ---------- Admin overview header actions ---------- */
