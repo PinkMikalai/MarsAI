@@ -78,10 +78,10 @@ const InfoPanel = ({
     isOpen,
     onClose,
 }) => {
-    const adminContributors = adminData?.contributors ?? null;
-    const selectorContributors = video?.contributors ?? null;
+    const adminContributors = adminData?.contributors || [];
+    const selectorContributors = video?.contributors || [];
     const contributors = isAdmin ? adminContributors : selectorContributors;
-    const adminVideos  = adminData?.admin_videos ?? null;
+    const adminVideos  = adminData?.admin_videos || [];
 
     return (
         <div
