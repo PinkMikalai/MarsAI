@@ -56,7 +56,6 @@ function parseVideoResponse(res, fallback) {
         stills: videoJson?.still ?? [],
         adminData,
         selectorMemo,
-        memoStatus: res?.memo_status ?? null,
     };
 }
 
@@ -70,7 +69,6 @@ const InfoPanel = ({
     adminData,
     video,
     existingMemo,
-    memoStatus,
     stillUrls,
     stillIndex,
     onStillClick,
@@ -465,7 +463,6 @@ const WatchFilm = () => {
     const [showMemoModal, setShowMemoModal]   = useState(false);
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [existingMemo, setExistingMemo]     = useState(null);
-    const [memoStatus, setMemoStatus]         = useState(null);
     const [showSearch, setShowSearch]         = useState(false);
 
     // Awards (admin)
@@ -520,7 +517,6 @@ const WatchFilm = () => {
         setStillIndex(0);
         setIsSwitching(true);
         setExistingMemo(null);
-        setMemoStatus(null);
         setAdminData(null);
         setShowMemoModal(false);
         setShowAdminPanel(false);
@@ -534,7 +530,6 @@ const WatchFilm = () => {
                 setStills(parsed.stills);
                 setAdminData(parsed.adminData);
                 setExistingMemo(parsed.selectorMemo);
-                setMemoStatus(parsed.memoStatus);
             })
             .catch(() => {
                 if (cancelled) return;
@@ -817,7 +812,6 @@ const WatchFilm = () => {
                                             adminData={adminData}
                                             video={video}
                                             existingMemo={existingMemo}
-                                            memoStatus={memoStatus}
                                             stillUrls={stillUrls}
                                             stillIndex={stillIndex}
                                             onStillClick={openLightbox}

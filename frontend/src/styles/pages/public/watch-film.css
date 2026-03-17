@@ -425,7 +425,8 @@
   box-shadow: 0 8px 28px rgba(152,16,250,0.45);
 }
 
-/* Variante : modifier (mémo existant — style bouton doré identique à deposit-btn-submit) */
+/* Variante : noter OU modifier dans le panneau — style bouton doré identique à deposit-btn-submit */
+.wf-action-btn--noter.wf-action-btn--in-panel,
 .wf-action-btn--modifier.wf-action-btn--in-panel {
   width: 100%;
   min-width: unset;
@@ -443,6 +444,7 @@
   gap: 8px;
 }
 
+.wf-action-btn--noter.wf-action-btn--in-panel:hover,
 .wf-action-btn--modifier.wf-action-btn--in-panel:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 28px rgba(251, 199, 0, 0.4);
