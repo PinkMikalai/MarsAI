@@ -1875,3 +1875,71 @@
 [data-theme="light"] .admin-profile-stats__title {
   color: var(--lt-text-subtle) !important;
 }
+
+/* ================================================================
+   PANNEAU RECHERCHE WATCHFILM — thème clair
+   ================================================================ */
+
+/* Panneau + header */
+[data-theme="light"] .wf-search-panel {
+  background: rgba(245, 247, 252, 0.97) !important;
+  border-left-color: var(--lt-border) !important;
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12) !important;
+}
+[data-theme="light"] .wf-search-panel-header {
+  background: rgba(245, 247, 252, 0.99) !important;
+  border-bottom-color: var(--lt-border) !important;
+}
+[data-theme="light"] .wf-search-panel-title {
+  color: var(--lt-accent) !important;
+}
+
+/* Zone SearchBar */
+[data-theme="light"] .wf-search-panel-bar {
+  border-bottom-color: var(--lt-border) !important;
+}
+
+/* Input texte */
+[data-theme="light"] .wf-search-panel-bar .gsearch-input {
+  color: var(--lt-text) !important;
+  background: var(--lt-bg-alt) !important;
+  border-color: var(--lt-border-md) !important;
+}
+[data-theme="light"] .wf-search-panel-bar .gsearch-input::placeholder {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Icône loupe */
+[data-theme="light"] .wf-search-panel-bar .gsearch-icon {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Bouton clear (×) */
+[data-theme="light"] .wf-search-panel-bar .gsearch-clear {
+  color: var(--lt-text-muted) !important;
+}
+
+/* Résultats */
+[data-theme="light"] .wf-search-panel-results {
+  background: transparent !important;
+}
+[data-theme="light"] .wf-search-result-item {
+  border-bottom-color: var(--lt-border) !important;
+}
+[data-theme="light"] .wf-search-result-item:hover {
+  background: var(--lt-bg-alt) !important;
+}
+[data-theme="light"] .wf-search-result-title {
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .wf-search-result-meta {
+  color: var(--lt-text-subtle) !important;
+}
+[data-theme="light"] .wf-search-result-arrow {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Message aucun résultat */
+[data-theme="light"] .wf-search-empty {
+  color: var(--lt-text-muted) !important;
+}
