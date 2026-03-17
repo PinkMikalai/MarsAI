@@ -19,11 +19,13 @@ const Hero = () => {
   const [scrollY,       setScrollY]       = useState(0);
   const [modalOpen,     setModalOpen]     = useState(false);
   const [showLearnMore, setShowLearnMore] = useState(false);
-  const [phaseInfo,     setPhaseInfo]     = useState(null); // { description, countdown }
+  const [activePhase,   setActivePhase]   = useState(null); // phase brute du CMS
+  const [phaseInfo,     setPhaseInfo]     = useState(null); // { countdown } recalculé
 
   const openModal  = useCallback(() => setModalOpen(true),  []);
   const closeModal = useCallback(() => setModalOpen(false), []);
 
+  // Chargement unique des données CMS
   useEffect(() => {
     cmsService.getAllCms()
       .then((data) => {
@@ -34,20 +36,30 @@ const Hero = () => {
         const unique = [...new Set(comps)];
         setShowLearnMore(unique.includes('learn_more'));
 
-        // Première phase active avec une description ou un timer
-        const lang = i18n.language;
-        const isFr = lang?.startsWith('fr');
-        const firstPhase = all.find((e) => e.french_content || e.english_content || e.start_date || e.end_date);
-        if (firstPhase) {
-          const description = isFr
-            ? (firstPhase.french_content  || firstPhase.english_content || '')
-            : (firstPhase.english_content || firstPhase.french_content  || '');
-          const countdown = getCountdown(firstPhase, lang);
-          setPhaseInfo({ description, countdown });
-        }
+        const firstPhase = all.find((e) => {
+          const comps = parseComponents(e.components);
+          return comps.includes('participation') && (e.start_date || e.end_date);
+        });
+        if (firstPhase) setActivePhase(firstPhase);
+        else setActivePhase(null);
       })
       .catch(() => {});
-  }, [i18n.language]);
+  }, []);
+
+  // Recalcul du countdown chaque minute
+  useEffect(() => {
+    if (!activePhase) {
+      setPhaseInfo(null);
+      return;
+    }
+    const compute = () => {
+      const countdown = getCountdown(activePhase, i18n.language);
+      setPhaseInfo(countdown ? { countdown } : null);
+    };
+    compute();
+    const id = setInterval(compute, 30_000);
+    return () => clearInterval(id);
+  }, [activePhase, i18n.language]);
 
   useEffect(() => {
     if (!USE_VIDEO_BACKGROUND) return;
@@ -114,29 +126,28 @@ const Hero = () => {
         <motion.p className="hero-tagline" variants={fadeUp}>
           {t('hero.tagline')}
         </motion.p>
-        {/* ── Phase active : description + timer ── */}
-        {phaseInfo && (
+        <motion.p className="hero-subtitle" variants={fadeUp}>
+          Festival de l'IA 2026 · Marseille
+        </motion.p>
+        {/* ── Phase active : timer inline ── */}
+        {phaseInfo?.countdown && (
           <motion.div
             className="hero-phase-info"
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            {phaseInfo.countdown && (
+            <div className="hero-timer-sentence">
+              <span className="hero-timer-label">Il vous reste</span>
               <div className={`cms-timer cms-timer--${phaseInfo.countdown.type}`}>
                 <svg className="cms-timer__icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
                   <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.8"/>
                   <path d="M12 7v5l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
                 </svg>
-                {phaseInfo.countdown.type === 'upcoming' && (
-                  <span className="cms-timer__prefix">
-                    {phaseInfo.countdown.isFr ? 'Dans' : 'In'}
-                  </span>
-                )}
                 {phaseInfo.countdown.days > 0 && (
                   <span className="cms-timer__unit">
                     <strong>{phaseInfo.countdown.days}</strong>
-                    {phaseInfo.countdown.isFr ? ' J' : ' D'}
+                    {' J'}
                   </span>
                 )}
                 <span className="cms-timer__sep">·</span>
@@ -144,11 +155,14 @@ const Hero = () => {
                   <strong>{phaseInfo.countdown.hours}</strong>
                   {' H'}
                 </span>
+                <span className="cms-timer__sep">·</span>
+                <span className="cms-timer__unit">
+                  <strong>{String(phaseInfo.countdown.minutes).padStart(2, '0')}</strong>
+                  {' MIN'}
+                </span>
               </div>
-            )}
-            {phaseInfo.description && (
-              <p className="hero-phase-desc">{phaseInfo.description}</p>
-            )}
+              <span className="hero-timer-label">pour participer</span>
+            </div>
           </motion.div>
         )}
 
