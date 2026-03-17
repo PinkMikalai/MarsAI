@@ -13,6 +13,12 @@ async function getAllCmsModel(){
     return rows;
 }
 
+async function getActiveCmsModel(){
+    const query = `SELECT * FROM cms WHERE is_active = 1`;
+    const [rows] = await pool.execute(query);
+    return rows[0];
+}
+
 async function getCmsByIdModel(id){
     const query = `SELECT * FROM cms WHERE id = ?`;
     const [rows] = await pool.execute(query, [id]);
@@ -34,6 +40,7 @@ async function deleteCmsModel(id){
 export {
     createCmsModel,
     getAllCmsModel,
+    getActiveCmsModel,
     getCmsByIdModel,
     updateCmsModel,
     deleteCmsModel

@@ -86,7 +86,7 @@ const AdminParticipations = () => {
       <div className="admin-overview-header">
         <div>
           <p className="admin-overview-kicker">Administration</p>
-          <h2 className="admin-overview-title">Participations</h2>
+          <h2 className="admin-overview-title">Gestion de participation</h2>
           <p className="admin-overview-text">
             Gérez les films soumis au festival et envoyez des invitations d'édition aux réalisateurs.
           </p>

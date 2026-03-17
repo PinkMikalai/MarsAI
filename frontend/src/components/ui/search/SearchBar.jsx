@@ -16,15 +16,19 @@ const SearchBar = ({
     resultsCount = null,
     placeholder,
     debounceMs = 400,
+    onMyAssignments,
+    isFilteringAssignments = false,
 }) => {
     const { t } = useTranslation();
     const { isAdmin, isSuperAdmin, isSelector } = useAuth();
+  
 
     const [value, setValue] = useState('');
     const [adminStatus, setAdminStatus] = useState('');
     const [selectionStatus, setSelectionStatus] = useState('');
     const [rated, setRated] = useState('');
     const timerRef = useRef(null);
+
 
     // fetch des options depuis la BDD
     const [selectionStatusOptions, setSelectionStatusOptions] = useState([]);
@@ -70,17 +74,16 @@ const SearchBar = ({
     // filtre pour les selectors
     function handleSelectionStatusChange(e) {
         const val = e.target.value;
-        console.log("SearchBar — selectionStatus:", val);
         setSelectionStatus(val);
         onFilterChange?.({ selectionStatus: val });
     }
 
     function handleRatedChange(e) {
         const val = e.target.value;
-        console.log("SearchBar — rated:", val);
         setRated(val);
         onFilterChange?.({ rated: val });
     }
+    
 
     const ph = placeholder ?? t('gallery.searchPlaceholder', { defaultValue: 'Rechercher un film, réalisateur, tag…' });
 
@@ -153,6 +156,17 @@ const SearchBar = ({
                         ))}
                     </select>
 
+                    {/* bouton mes assignations */}
+                    {onMyAssignments && (
+                        <button
+                            type="button"
+                            className={`gsearch-assignment-btn ${isFilteringAssignments ? 'gsearch-assignment-btn--active' : ''}`}
+                            onClick={onMyAssignments}
+                        >
+                            {isFilteringAssignments ? 'Toutes les vidéos' : 'Mes assignations'}
+                        </button>
+                    )}
+
                 </div>
             )}
 
@@ -173,16 +187,15 @@ const SearchBar = ({
             )}
 
             {/* --- compteur de resultats --- */}
-            <div className="gsearch-results-info-wrap">
-                {resultsCount !== null && (
-                    <p className="gsearch-results-info">
-                        {value.trim()
-                            ? <><strong>{resultsCount}</strong> résultat{resultsCount !== 1 ? 's' : ''} pour « {value.trim()} »</>
-                            : <><strong>{resultsCount}</strong> film{resultsCount !== 1 ? 's' : ''}</>
-                        }
-                    </p>
-                )}
-            </div>
+            {resultsCount !== null && (
+                <span className="gsearch-results-badge">
+                    <strong>{resultsCount}</strong>
+                    {value.trim()
+                        ? ` résultat${resultsCount !== 1 ? 's' : ''}`
+                        : ` film${resultsCount !== 1 ? 's' : ''}`
+                    }
+                </span>
+            )}
 
         </div>
     );

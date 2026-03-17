@@ -34,7 +34,7 @@ const AwardsWinners = () => {
     <section className="home-section home-awards">
       <div className="home-container">
         <Reveal as="h2" className="home-section-title">
-          PALMARÈS{' '}
+          GAGNANTS{' '}
           <span className="home-section-title-accent">DU FESTIVAL</span>
         </Reveal>
 

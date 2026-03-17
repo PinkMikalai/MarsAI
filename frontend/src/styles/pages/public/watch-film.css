@@ -425,6 +425,31 @@
   box-shadow: 0 8px 28px rgba(152,16,250,0.45);
 }
 
+/* Variante : noter OU modifier dans le panneau — style bouton doré identique à deposit-btn-submit */
+.wf-action-btn--noter.wf-action-btn--in-panel,
+.wf-action-btn--modifier.wf-action-btn--in-panel {
+  width: 100%;
+  min-width: unset;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #FBC700 0%, #F0B100 52%, #D08700 100%);
+  border: 1px solid #000000;
+  box-shadow: 0 2px 5px #000000;
+  color: #000000;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.wf-action-btn--noter.wf-action-btn--in-panel:hover,
+.wf-action-btn--modifier.wf-action-btn--in-panel:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(251, 199, 0, 0.4);
+}
+
 /* Variante : noter (déjà noté) */
 .wf-action-btn--noter-done {
   background: var(--wf-grad-done);
@@ -1015,14 +1040,40 @@
   flex-shrink: 0;
 }
 
-/* SearchBar occupe toute la largeur, sans margin-bottom */
+/* SearchBar occupe toute la largeur du panel */
 .wf-search-panel-bar .gsearch-wrap {
   margin-bottom: 0;
   flex-wrap: wrap;
+  gap: 0.4rem;
 }
 
-/* compteur de résultats discret */
-.wf-search-panel-bar .gsearch-results-info {
+/* input prend toute la largeur sur la 1ère ligne */
+.wf-search-panel-bar .gsearch-inner {
+  flex: 1 1 100%;
+}
+
+/* les filtres wrappent et remplissent la largeur */
+.wf-search-panel-bar .gsearch-filters-wrap {
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+/* selects et bouton se répartissent sur la largeur disponible */
+.wf-search-panel-bar .gsearch-select,
+.wf-search-panel-bar .gsearch-assignment-btn {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* badge résultats discret, pleine largeur */
+.wf-search-panel-bar .gsearch-results-badge {
+  flex: 1 1 100%;
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  padding: 0 0.25rem;
+  height: auto;
   font-size: 0.72rem;
 }
 

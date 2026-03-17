@@ -198,6 +198,48 @@
 }
 
 /* =====================================================
+   HERO PHASE INFO — description + timer inline
+   ===================================================== */
+
+.hero-phase-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0.25rem;
+  width: 100%;
+}
+
+/* Timer centré dans le hero */
+.hero-phase-info .cms-timer {
+  align-self: center;
+  font-size: 1rem;
+  padding: 0.65rem 1.4rem;
+  gap: 0.65rem;
+}
+
+.hero-phase-info .cms-timer__icon {
+  width: 17px;
+  height: 17px;
+}
+
+.hero-phase-info .cms-timer__unit strong {
+  font-size: 1.15rem;
+}
+
+/* Description de la phase (fr/en) */
+.hero-phase-desc {
+  font-family: 'Arimo', sans-serif;
+  font-size: clamp(0.88rem, 1.8vw, 1rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  max-width: 560px;
+  text-align: center;
+}
+
+/* =====================================================
    FLIP CLOCK — compte à rebours style cartes
    ===================================================== */
 
@@ -285,15 +327,20 @@
 }
 
 .hero-navbar {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 2;
+  z-index: 1000;
   display: flex;
   justify-content: center;
-  padding: 24px 32px;
+  padding: 16px 32px;
   box-sizing: border-box;
+  pointer-events: none;
+}
+
+.hero-navbar > * {
+  pointer-events: auto;
 }
 
 .hero-navbar .deposit-navbar {

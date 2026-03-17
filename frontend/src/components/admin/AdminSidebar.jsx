@@ -40,8 +40,8 @@ const AdminSidebar = () => {
 
   const NAV_ITEMS = [
     { id: 'overview', label: t('admin.navItems.overview'), path: ROUTES.PROFILE },
-    { id: 'films', label: t('admin.navItems.films'), path: ROUTES.PROFILE },
-    { id: 'participations', label: 'Participations', path: ROUTES.ADMIN_PARTICIPATIONS },
+    { id: 'films', label: t('admin.navItems.films'), path: ROUTES.GALLERY_FILMS },
+    { id: 'participations', label: 'Gestion de participation', path: ROUTES.ADMIN_PARTICIPATIONS },
     { id: 'jury', label: t('admin.navItems.jury'), path: ROUTES.ADMIN_JURY },
     { id: 'results', label: t('admin.navItems.results'), path: ROUTES.PROFILE },
     { id: 'leaderboard', label: t('admin.navItems.leaderboard'), path: ROUTES.PROFILE },
@@ -50,8 +50,6 @@ const AdminSidebar = () => {
     { id: 'cms', label: t('admin.navItems.cms'), path: ROUTES.ADMIN_CMS },
     { id: 'invitations', label: t('admin.navItems.invitations'), path: ROUTES.ADMIN_INVITATIONS },
     { id: 'messages', label: t('admin.navItems.messages'), path: ROUTES.PROFILE },
-    { id: 'festival-box', label: t('admin.navItems.festivalBox'), path: ROUTES.PROFILE },
-    { id: 'settings', label: t('admin.navItems.settings'), path: ROUTES.PROFILE },
   ];
 
   const navItems = NAV_ITEMS.filter((item) => {
@@ -113,12 +111,8 @@ const AdminSidebar = () => {
       ].filter(Boolean).join(' ')}
       ref={sidebarRef}
     >
-      {/* ── Barre du haut (logo + user [+ burger si profil]) ── */}
+      {/* ── Barre du haut (user [+ burger si profil]) ── */}
       <div className="admin-sidebar-header">
-        <Link to={ROUTES.HOME} className="deposit-navbar-logo admin-sidebar-logo-wrap" aria-label={t('navbar.backHome')}>
-          <span className="deposit-navbar-logo-mars">mars</span>
-          <span className="deposit-navbar-logo-ai">AI</span>
-        </Link>
         <div className="admin-sidebar-user">
           <div className="admin-sidebar-user-avatar">{initials}</div>
           <div className="admin-sidebar-user-meta">

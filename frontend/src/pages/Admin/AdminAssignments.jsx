@@ -116,7 +116,7 @@ const AdminAssignment = ({ videos, admin_id, isOpen, onClose, onSuccess }) => {
                             onClick={handleSmartAutoAssign}
                             disabled={loading}
                         >
-                             ✨ {t('smart_auto_assign')}
+                              {t('multi_assignments')}
                         </button>
 
                         {/* Bouton 2: Sélection visuelle de tous les noms */}
@@ -127,7 +127,7 @@ const AdminAssignment = ({ videos, admin_id, isOpen, onClose, onSuccess }) => {
                             {t('assign_all_selectors')}
                         </button>
                         <p className="text-xs text-gray-500 italic">
-                            * L'assignation intelligente répartit les films selon la charge actuelle.
+                            * Fair assignments according to the current workload.
                         </p>
                     </div>
 
