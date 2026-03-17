@@ -14,10 +14,10 @@ export const parseComponents = (raw) => {
 };
 
 /**
- * Retourne le compte à rebours précis (jours + heures) d'une phase.
+ * Retourne le compte à rebours précis (jours + heures + minutes) d'une phase.
  * @param {object} phase - entrée CMS avec start_date / end_date
  * @param {string} lang  - code langue (ex: 'fr', 'en')
- * @returns {{ days: number, hours: number, type: 'upcoming'|'active'|'urgent', isFr: boolean } | null}
+ * @returns {{ days: number, hours: number, minutes: number, type: 'upcoming'|'active'|'urgent', isFr: boolean } | null}
  */
 export const getCountdown = (phase, lang) => {
     const isFr = lang?.startsWith('fr');
@@ -26,23 +26,26 @@ export const getCountdown = (phase, lang) => {
     const start = phase.start_date ? new Date(phase.start_date) : null;
     const end   = phase.end_date   ? new Date(phase.end_date)   : null;
 
-    const toDH = (ms) => {
-        const totalH = Math.max(0, Math.floor(ms / (1000 * 60 * 60)));
-        return { days: Math.floor(totalH / 24), hours: totalH % 24 };
+    const toDHM = (ms) => {
+        const totalMs      = Math.max(0, ms);
+        const totalMinutes = Math.floor(totalMs / (1000 * 60));
+        const days         = Math.floor(totalMinutes / (60 * 24));
+        const hours        = Math.floor((totalMinutes % (60 * 24)) / 60);
+        const minutes      = totalMinutes % 60;
+        return { days, hours, minutes };
     };
 
     if (start && now < start) {
-        const { days, hours } = toDH(start - now);
-        return { days, hours, type: 'upcoming', isFr };
+        const { days, hours, minutes } = toDHM(start - now);
+        return { days, hours, minutes, type: 'upcoming', isFr };
     }
     if (end) {
-        // Fin de journée = minuit du lendemain
         const endOfDay = new Date(end);
         endOfDay.setHours(23, 59, 59, 999);
         if (now <= endOfDay) {
-            const { days, hours } = toDH(endOfDay - now);
+            const { days, hours, minutes } = toDHM(endOfDay - now);
             const type = days === 0 ? 'urgent' : days <= 3 ? 'urgent' : 'active';
-            return { days, hours, type, isFr };
+            return { days, hours, minutes, type, isFr };
         }
     }
     return null;
