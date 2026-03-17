@@ -1704,6 +1704,82 @@
   color: var(--lt-text-muted) !important;
 }
 
+/* ================================================================
+   MODAL "EN SAVOIR PLUS" (OnboardingModal) — thème clair
+   ================================================================ */
+
+/* Overlay : voile blanc translucide */
+[data-theme="light"] .onboarding-overlay {
+  background: rgba(200, 215, 235, 0.65) !important;
+}
+
+/* Carte : fond blanc, bordure douce */
+[data-theme="light"] .onboarding-card {
+  background: #ffffff !important;
+  border-color: var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-lg), 0 0 40px rgba(26, 111, 239, 0.06) !important;
+}
+
+/* Dots de navigation */
+[data-theme="light"] .onboarding-dot {
+  background: rgba(15, 25, 35, 0.15) !important;
+}
+[data-theme="light"] .onboarding-dot--done {
+  background: rgba(15, 25, 35, 0.35) !important;
+}
+
+/* Compteur d'étapes */
+[data-theme="light"] .onboarding-step-counter {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Bouton fermer */
+[data-theme="light"] .onboarding-close {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: var(--lt-border) !important;
+  color: var(--lt-text-muted) !important;
+}
+[data-theme="light"] .onboarding-close:hover {
+  background: rgba(0, 0, 0, 0.09) !important;
+  color: var(--lt-text) !important;
+}
+
+/* Titre et texte */
+[data-theme="light"] .onboarding-step-title {
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .onboarding-step-desc {
+  color: var(--lt-text-muted) !important;
+}
+[data-theme="light"] .onboarding-step-item {
+  color: var(--lt-text-muted) !important;
+}
+
+/* Séparateur footer */
+[data-theme="light"] .onboarding-footer {
+  border-top-color: var(--lt-border) !important;
+}
+
+/* Bouton "Précédent" */
+[data-theme="light"] .onboarding-btn-prev {
+  color: var(--lt-text-subtle) !important;
+}
+[data-theme="light"] .onboarding-btn-prev:hover {
+  color: var(--lt-text-muted) !important;
+}
+
+/* Bouton "Suivant" */
+[data-theme="light"] .onboarding-btn-next {
+  background: rgba(0, 0, 0, 0.05) !important;
+  border-color: var(--lt-border-md) !important;
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .onboarding-btn-next:hover {
+  background: rgba(0, 0, 0, 0.09) !important;
+  border-color: var(--lt-text) !important;
+}
+
+/* ── Gallery locked screen ─────────────────────────────────── */
 /* Gallery locked screen */
 [data-theme="light"] .gallery-locked {
   background: var(--lt-bg) !important;
