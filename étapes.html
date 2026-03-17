@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarsAI — Étapes oral</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #fff;
+  color: #111;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ── SLIDES ── */
+#deck {
+  width: 100%; height: 100vh;
+  position: relative;
+}
+
+.slide {
+  position: absolute; inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 120px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+.slide.active { opacity: 1; pointer-events: all; }
+
+/* ── NAV ── */
+#nav {
+  position: fixed;
+  bottom: 36px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: 20px;
+  z-index: 100;
+}
+
+.nav-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  color: #888;
+  transition: all 0.15s;
+}
+.nav-btn:hover { border-color: #111; color: #111; }
+
+.dots { display: flex; gap: 8px; align-items: center; }
+.dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #ddd;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dot.on { background: #111; }
+
+#counter {
+  position: fixed;
+  bottom: 40px; right: 48px;
+  font-size: 12px; color: #bbb;
+  letter-spacing: 0.05em;
+}
+
+/* ── FIL ROUGE ── */
+.fil {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: #e63946;
+  transition: width 0.4s ease;
+}
+
+/* ── SLIDE 0 · COVER ── */
+#s0 { align-items: flex-start; }
+.cover-tag {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #e63946; margin-bottom: 24px;
+}
+.cover-title {
+  font-size: 72px; font-weight: 700;
+  letter-spacing: -0.04em; line-height: 1;
+  color: #111; margin-bottom: 20px;
+}
+.cover-title span { color: #e63946; }
+.cover-sub {
+  font-size: 18px; color: #888;
+  font-weight: 400; max-width: 500px;
+  line-height: 1.6; margin-bottom: 56px;
+}
+.cover-steps {
+  display: flex; gap: 10px; flex-wrap: wrap;
+}
+.cover-pill {
+  font-size: 12px; color: #555;
+  border: 1px solid #e5e5e5;
+  border-radius: 100px;
+  padding: 5px 14px;
+}
+
+/* ── STEP SLIDES ── */
+.step-num {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: #e63946; margin-bottom: 20px;
+}
+.step-num.blue   { color: #3b82f6; }
+.step-num.purple { color: #a855f7; }
+.step-num.green  { color: #10b981; }
+
+.step-title {
+  font-size: 52px; font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1.05;
+  color: #111; margin-bottom: 10px;
+  max-width: 720px;
+}
+
+.step-role {
+  display: inline-block;
+  font-size: 12px; font-weight: 500;
+  color: #888;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
+  padding: 3px 10px;
+  margin-bottom: 36px;
+}
+
+.step-points {
+  display: flex; flex-direction: column; gap: 16px;
+  max-width: 680px;
+}
+
+.point {
+  display: flex; align-items: flex-start; gap: 16px;
+}
+
+.point-bar {
+  flex-shrink: 0;
+  width: 3px; height: 44px;
+  border-radius: 99px;
+  background: #e63946;
+  margin-top: 2px;
+}
+.point-bar.blue   { background: #3b82f6; }
+.point-bar.purple { background: #a855f7; }
+.point-bar.green  { background: #10b981; }
+
+.point-content {}
+.point-label {
+  font-size: 15px; font-weight: 600;
+  color: #111; margin-bottom: 3px;
+}
+.point-desc {
+  font-size: 13px; color: #888; line-height: 1.5;
+}
+
+/* tip */
+.step-tip {
+  position: absolute;
+  bottom: 80px; right: 120px;
+  max-width: 260px;
+  border-left: 2px solid #f0f0f0;
+  padding-left: 16px;
+  font-size: 13px; color: #aaa;
+  line-height: 1.6;
+}
+.step-tip strong { color: #555; }
+
+/* ── SLIDE FINAL ── */
+#s7 { align-items: center; text-align: center; }
+.end-title {
+  font-size: 64px; font-weight: 700;
+  letter-spacing: -0.03em; color: #111;
+  margin-bottom: 12px;
+}
+.end-title span { color: #e63946; }
+.end-sub { font-size: 16px; color: #999; margin-bottom: 48px; }
+.end-grid {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  justify-content: center; max-width: 640px;
+}
+.end-item {
+  border: 1px solid #eee; border-radius: 12px;
+  padding: 14px 20px; min-width: 150px;
+  text-align: left;
+}
+.end-item-num { font-size: 22px; font-weight: 700; color: #e63946; margin-bottom: 4px; }
+.end-item-label { font-size: 12px; color: #888; }
+
+</style>
+</head>
+<body>
+
+<div class="fil" id="fil"></div>
+
+<div id="deck">
+
+  <!-- COVER -->
+  <div class="slide active" id="s0">
+    <div class="cover-tag">Démonstration — Mars.A.I</div>
+    <div class="cover-title">Étapes de<br>l'<span>oral</span></div>
+    <div class="cover-sub">Fil rouge : du visiteur public jusqu'au super admin, en 6 étapes.</div>
+    <div class="cover-steps">
+      <span class="cover-pill">1 · Home page</span>
+      <span class="cover-pill">2 · Soumission film</span>
+      <span class="cover-pill">3 · Invitation</span>
+      <span class="cover-pill">4 · Assignation</span>
+      <span class="cover-pill">5 · Notation</span>
+      <span class="cover-pill">6 · CMS</span>
+    </div>
+  </div>
+
+  <!-- 1 · HOME -->
+  <div class="slide" id="s1">
+    <div class="step-num">Étape 01</div>
+    <div class="step-title">Page d'accueil &amp; contexte</div>
+    <div class="step-role">👤 Visiteur public</div>
+    <div class="step-points">
+      <div class="point"><div class="point-bar"></div><div class="point-content"><div class="point-label">Hero section</div><div class="point-desc">Vidéo en boucle, boutons Participer / En savoir plus contrôlés par le CMS</div></div></div>
+      <div class="point"><div class="point-bar"></div><div class="point-content"><div class="point-label">Jury &amp; Événements</div><div class="point-desc">Photos des membres du jury, zoom lightbox sur les images</div></div></div>
+      <div class="point"><div class="point-bar"></div><div class="point-content"><div class="point-label">Prix, Carte, Sponsors</div><div class="point-desc">3 prix du festival, carte Marseille avec les salles, partenaires</div></div></div>
+    </div>
+    <div class="step-tip">💡 La home est <strong>entièrement pilotée par le CMS</strong> — on reviendra dessus à l'étape 6.</div>
+  </div>
+
+  <!-- 2 · SOUMISSION -->
+  <div class="slide" id="s2">
+    <div class="step-num blue">Étape 02</div>
+    <div class="step-title">Soumission d'un film</div>
+    <div class="step-role">🎬 Réalisateur</div>
+    <div class="step-points">
+      <div class="point"><div class="point-bar blue"></div><div class="point-content"><div class="point-label">Clic sur "Participer"</div><div class="point-desc">Ouverture du formulaire modal multi-étapes depuis la Hero</div></div></div>
+      <div class="point"><div class="point-bar blue"></div><div class="point-content"><div class="point-label">Remplir le formulaire</div><div class="point-desc">Conditions · Infos réalisateur · Upload MP4 + vignette + sous-titres</div></div></div>
+      <div class="point"><div class="point-bar blue"></div><div class="point-content"><div class="point-label">Validation &amp; envoi</div><div class="point-desc">Confirmation de candidature, validation en temps réel des champs</div></div></div>
+    </div>
+    <div class="step-tip">💡 Montrer le <strong>stepper</strong> et la validation live des champs.</div>
+  </div>
+
+  <!-- 3 · INVITATION -->
+  <div class="slide" id="s3">
+    <div class="step-num purple">Étape 03</div>
+    <div class="step-title">Invitation d'un sélectionneur</div>
+    <div class="step-role">👑 Super Admin</div>
+    <div class="step-points">
+      <div class="point"><div class="point-bar purple"></div><div class="point-content"><div class="point-label">Admin → Invitations</div><div class="point-desc">Générer une invitation avec rôle = Sélectionneur + adresse email</div></div></div>
+      <div class="point"><div class="point-bar purple"></div><div class="point-content"><div class="point-label">Email automatique</div><div class="point-desc">Le sélectionneur reçoit un lien unique valable 48h</div></div></div>
+      <div class="point"><div class="point-bar purple"></div><div class="point-content"><div class="point-label">Création de compte</div><div class="point-desc">Via le lien, il crée son mot de passe et accède à son espace</div></div></div>
+    </div>
+    <div class="step-tip">💡 <strong>Contrôle total</strong> sur les accès — pas d'inscription libre.</div>
+  </div>
+
+  <!-- 4 · ASSIGNATION -->
+  <div class="slide" id="s4">
+    <div class="step-num">Étape 04</div>
+    <div class="step-title">Assignation des vidéos</div>
+    <div class="step-role">🔑 Admin / Super Admin</div>
+    <div class="step-points">
+      <div class="point"><div class="point-bar"></div><div class="point-content"><div class="point-label">Admin → Gestion des films</div><div class="point-desc">Liste des vidéos soumises avec statuts : en attente · assignée · notée</div></div></div>
+      <div class="point"><div class="point-bar"></div><div class="point-content"><div class="point-label">Auto-assignment</div><div class="point-desc">Distribution automatique et équitable entre les sélectionneurs</div></div></div>
+      <div class="point"><div class="point-bar"></div><div class="point-content"><div class="point-label">Suivi de charge</div><div class="point-desc">Visualiser le nombre de films assignés par sélectionneur</div></div></div>
+    </div>
+    <div class="step-tip">💡 L'algorithme <strong>équilibre la charge</strong> automatiquement.</div>
+  </div>
+
+  <!-- 5 · NOTATION -->
+  <div class="slide" id="s5">
+    <div class="step-num green">Étape 05</div>
+    <div class="step-title">Notation du film</div>
+    <div class="step-role">⭐ Sélectionneur</div>
+    <div class="step-points">
+      <div class="point"><div class="point-bar green"></div><div class="point-content"><div class="point-label">Connexion sélectionneur</div><div class="point-desc">Avec le compte créé à l'étape 3 — accès aux films assignés uniquement</div></div></div>
+      <div class="point"><div class="point-bar green"></div><div class="point-content"><div class="point-label">Visionneuse intégrée</div><div class="point-desc">Lecture du film directement dans la plateforme</div></div></div>
+      <div class="point"><div class="point-bar green"></div><div class="point-content"><div class="point-label">Grille de notation</div><div class="point-desc">Critères : art · technique IA · originalité — valider ou refuser avec commentaire</div></div></div>
+    </div>
+    <div class="step-tip">💡 Chaque sélectionneur ne voit <strong>que ses films</strong>.</div>
+  </div>
+
+  <!-- 6 · CMS -->
+  <div class="slide" id="s6">
+    <div class="step-num purple">Étape 06</div>
+    <div class="step-title">Gestion du CMS</div>
+    <div class="step-role">🎛️ Admin</div>
+    <div class="step-points">
+      <div class="point"><div class="point-bar purple"></div><div class="point-content"><div class="point-label">Admin → CMS</div><div class="point-desc">Activer / désactiver des phases avec dates de début et fin</div></div></div>
+      <div class="point"><div class="point-bar purple"></div><div class="point-content"><div class="point-label">Éléments contrôlés</div><div class="point-desc">Bouton Participer · En savoir plus · Timer countdown · Galerie · Palmarès</div></div></div>
+      <div class="point"><div class="point-bar purple"></div><div class="point-content"><div class="point-label">Effet immédiat</div><div class="point-desc">Retourner sur la home — les boutons apparaissent ou disparaissent en live</div></div></div>
+    </div>
+    <div class="step-tip">💡 <strong>Boucler sur l'étape 1</strong> — la home reflète tout sans toucher au code.</div>
+  </div>
+
+  <!-- FIN -->
+  <div class="slide" id="s7">
+    <div class="end-title">6 étapes,<br>un <span>fil rouge</span></div>
+    <div class="end-sub">Visiteur → Réalisateur → Super Admin → Admin → Sélectionneur → Admin</div>
+    <div class="end-grid">
+      <div class="end-item"><div class="end-item-num">01</div><div class="end-item-label">🏠 Home page</div></div>
+      <div class="end-item"><div class="end-item-num">02</div><div class="end-item-label">🎬 Soumission</div></div>
+      <div class="end-item"><div class="end-item-num">03</div><div class="end-item-label">✉️ Invitation</div></div>
+      <div class="end-item"><div class="end-item-num">04</div><div class="end-item-label">📋 Assignation</div></div>
+      <div class="end-item"><div class="end-item-num">05</div><div class="end-item-label">⭐ Notation</div></div>
+      <div class="end-item"><div class="end-item-num">06</div><div class="end-item-label">🎛️ CMS</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- NAV -->
+<div id="nav">
+  <button class="nav-btn" id="prev">←</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="next">→</button>
+</div>
+<div id="counter"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  let cur = 0;
+
+  // dots
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' on' : '');
+    d.onclick = () => go(i);
+    dotsEl.appendChild(d);
+  });
+
+  function go(n) {
+    slides[cur].classList.remove('active');
+    cur = Math.max(0, Math.min(n, total - 1));
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('on', i === cur));
+    document.getElementById('counter').textContent = `${cur + 1} / ${total}`;
+    document.getElementById('fil').style.width = ((cur / (total - 1)) * 100) + '%';
+  }
+
+  document.getElementById('prev').onclick = () => go(cur - 1);
+  document.getElementById('next').onclick = () => go(cur + 1);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(cur + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); }
+  });
+
+  go(0);
+</script>
+</body>
+</html>
