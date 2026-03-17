@@ -111,12 +111,8 @@ const AdminSidebar = () => {
       ].filter(Boolean).join(' ')}
       ref={sidebarRef}
     >
-      {/* ── Barre du haut (logo + user [+ burger si profil]) ── */}
+      {/* ── Barre du haut (user [+ burger si profil]) ── */}
       <div className="admin-sidebar-header">
-        <Link to={ROUTES.HOME} className="deposit-navbar-logo admin-sidebar-logo-wrap" aria-label={t('navbar.backHome')}>
-          <span className="deposit-navbar-logo-mars">mars</span>
-          <span className="deposit-navbar-logo-ai">AI</span>
-        </Link>
         <div className="admin-sidebar-user">
           <div className="admin-sidebar-user-avatar">{initials}</div>
           <div className="admin-sidebar-user-meta">

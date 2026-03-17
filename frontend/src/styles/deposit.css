@@ -1508,6 +1508,38 @@
   opacity: 0.95;
 }
 
+/* Bouton toggle thème (soleil / lune) */
+.deposit-navbar-theme {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.deposit-navbar-theme:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.08);
+  transform: rotate(15deg);
+}
+
+[data-theme="light"] .deposit-navbar-theme {
+  color: #0f1923 !important;
+  border-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="light"] .deposit-navbar-theme:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.6) !important;
+}
+
 .deposit-field-label--hint {
   font-size: 16px;
 }

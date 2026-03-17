@@ -32,15 +32,20 @@
 }
 
 .public-layout__navbar {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 1000;
   display: flex;
   justify-content: center;
-  padding: 24px 32px;
+  padding: 16px 32px;
   box-sizing: border-box;
+  pointer-events: none;
+}
+
+.public-layout__navbar > * {
+  pointer-events: auto;
 }
 
 .public-layout__main {
@@ -70,9 +75,11 @@
   width: 100%;
   max-width: 1128px;
   height: 64px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0px 20px 50px -12px rgba(0, 0, 0, 0.5);
+  background: rgba(8, 6, 20, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0px 8px 32px -4px rgba(0, 0, 0, 0.6);
   border-radius: 60px;
   position: relative;
 }

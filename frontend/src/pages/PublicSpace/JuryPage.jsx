@@ -26,6 +26,7 @@ const JuryPage = () => {
   const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     let cancelled = false;
     juryService.getAll()
       .then((data) => { if (!cancelled) setMembers(data.jurys || []); })

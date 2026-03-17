@@ -1,6 +1,7 @@
 /* point entré pour styles */
 
 @import "tailwindcss";
+@import "./light-theme.css";
 @import "flag-icons/css/flag-icons.min.css";
 @import "./theme.css";
 @import "./utilities.css";

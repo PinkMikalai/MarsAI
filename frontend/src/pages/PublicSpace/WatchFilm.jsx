@@ -16,19 +16,7 @@ import 'flag-icons/css/flag-icons.min.css';
 const STILL_INTERVAL_MS = 5000;
 const SCROLL_LOCK_MS    = 700;
 
-// =====================================================
-// EXTRACTION DES DONNÉES — aligné sur videoController.getVideoById
-//
-// PUBLIC (controller lignes 88-94) :
-//   res.data = basicVideoData (array direct)
-//
-// ADMIN / SUPER-ADMIN (controller lignes 60-70) :
-//   res.data = { basicVideoData, adminVideoData }
-//
-// SELECTOR (controller lignes 72-86) :
-//   res.data = { basicVideoData, selectorVideoData }
-//   res.memo_status = "Vous avez déjà noté..." | "Vous n'avez pas encore noté..."
-// =====================================================
+
 function parseVideoResponse(res, fallback) {
     let videoJson = null;
     let adminData = null;
@@ -68,7 +56,6 @@ function parseVideoResponse(res, fallback) {
         stills: videoJson?.still ?? [],
         adminData,
         selectorMemo,
-        memoStatus: res?.memo_status ?? null,
     };
 }
 
@@ -82,7 +69,6 @@ const InfoPanel = ({
     adminData,
     video,
     existingMemo,
-    memoStatus,
     stillUrls,
     stillIndex,
     onStillClick,
@@ -93,7 +79,7 @@ const InfoPanel = ({
     const adminContributors = adminData?.contributors || [];
     const selectorContributors = video?.contributors || [];
     const contributors = isAdmin ? adminContributors : selectorContributors;
-    const adminVideos  = adminData?.admin_videos  || [];
+    const adminVideos  = adminData?.admin_videos || [];
 
     return (
         <div
@@ -139,7 +125,7 @@ const InfoPanel = ({
                                 </div>
                             )}
                             <button
-                                className="wf-action-btn wf-action-btn--noter wf-action-btn--in-panel"
+                                className={`wf-action-btn wf-action-btn--in-panel ${existingMemo ? 'wf-action-btn--modifier' : 'wf-action-btn--noter'}`}
                                 onClick={onNoterClick}
                             >
                                 <span className="wf-action-btn-icon">{existingMemo ? '✏️' : '⭐'}</span>
@@ -477,7 +463,6 @@ const WatchFilm = () => {
     const [showMemoModal, setShowMemoModal]   = useState(false);
     const [showAdminPanel, setShowAdminPanel] = useState(false);
     const [existingMemo, setExistingMemo]     = useState(null);
-    const [memoStatus, setMemoStatus]         = useState(null);
     const [showSearch, setShowSearch]         = useState(false);
 
     // Awards (admin)
@@ -532,7 +517,6 @@ const WatchFilm = () => {
         setStillIndex(0);
         setIsSwitching(true);
         setExistingMemo(null);
-        setMemoStatus(null);
         setAdminData(null);
         setShowMemoModal(false);
         setShowAdminPanel(false);
@@ -546,7 +530,6 @@ const WatchFilm = () => {
                 setStills(parsed.stills);
                 setAdminData(parsed.adminData);
                 setExistingMemo(parsed.selectorMemo);
-                setMemoStatus(parsed.memoStatus);
             })
             .catch(() => {
                 if (cancelled) return;
@@ -829,7 +812,6 @@ const WatchFilm = () => {
                                             adminData={adminData}
                                             video={video}
                                             existingMemo={existingMemo}
-                                            memoStatus={memoStatus}
                                             stillUrls={stillUrls}
                                             stillIndex={stillIndex}
                                             onStillClick={openLightbox}
