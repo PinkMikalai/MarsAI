@@ -1067,27 +1067,19 @@
 }
 
 .home-sponsors-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
   gap: 1.5rem 2rem;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
-  justify-items: center;
-  align-items: stretch;
-}
-
-@media (min-width: 900px) {
-  .home-sponsors-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 @media (max-width: 768px) {
   .home-sponsors-grid {
-    grid-template-columns: repeat(2, 1fr);
     gap: 1.25rem;
-    max-width: 420px;
   }
 }
 
@@ -1105,9 +1097,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  aspect-ratio: 1.1;
+  flex: 0 0 160px;
+  width: 160px;
   max-width: 180px;
+  aspect-ratio: 1.1;
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
 }
 

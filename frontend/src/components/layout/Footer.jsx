@@ -79,17 +79,8 @@ const Footer = () => {
           <span className="deposit-footer-copyright">
             {t('footer.copyright')}
           </span>
-          <Link to={ROUTES.REGISTER_USER} className="deposit-footer-btn-connexion">
-            {t('footer.connexion')}
-          </Link>
           <div className="footer-admin-stars">
             <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title={t('footer.myProfile')} aria-label={t('footer.goToProfile')}>
-              <span className="footer-admin-star" aria-hidden>★</span>
-            </Link>
-            <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title={t('footer.registerAdminSelector')} aria-label={t('footer.signUpAdminSelector')}>
-              <span className="footer-admin-star" aria-hidden>★</span>
-            </Link>
-            <Link to={ROUTES.LOGIN} className="footer-admin-link" title={t('footer.loginAdminSelector')} aria-label={t('footer.loginAdminSelectorAria')}>
               <span className="footer-admin-star" aria-hidden>★</span>
             </Link>
           </div>
@@ -146,9 +137,6 @@ const Footer = () => {
         <span className="deposit-footer-copyright">
           {t('footer.copyrightAlt')}
         </span>
-        <Link to={ROUTES.REGISTER_USER} className="deposit-footer-btn-connexion">
-          {t('footer.connexion')}
-        </Link>
         <div className="deposit-footer-socials">
           <a href="#" className="deposit-footer-social">{t('footer.twitter')}</a>
           <a href="#" className="deposit-footer-social">{t('footer.instagram')}</a>
@@ -156,12 +144,6 @@ const Footer = () => {
         </div>
         <div className="footer-admin-stars">
           <Link to={ROUTES.PROFILE} className="footer-admin-link footer-admin-link--orange" title={t('footer.myProfile')} aria-label={t('footer.goToProfile')}>
-            <span className="footer-admin-star" aria-hidden>★</span>
-          </Link>
-          <Link to={ROUTES.REGISTER_USER} className="footer-admin-link footer-admin-link--blue" title={t('footer.registerAdminSelector')} aria-label={t('footer.signUpAdminSelector')}>
-            <span className="footer-admin-star" aria-hidden>★</span>
-          </Link>
-          <Link to={ROUTES.LOGIN} className="footer-admin-link" title={t('footer.loginAdminSelector')} aria-label={t('footer.loginAdminSelectorAria')}>
             <span className="footer-admin-star" aria-hidden>★</span>
           </Link>
         </div>

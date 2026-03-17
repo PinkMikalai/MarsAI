@@ -6,12 +6,10 @@ import JuryPreview from '../../components/home/JuryPreview';
 import CmsPhases from '../../components/home/CmsPhases';
 import PrixSection from '../../components/home/PrixSection';
 import Footer from '../../components/layout/Footer';
-import Header from '../../components/layout/Header';
 
 const Home = () => {
   return (
     <div className="home-page">
-      <Header />
       <Hero />
       <PrixSection />
       <CmsPhases />
