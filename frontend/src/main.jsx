@@ -4,9 +4,12 @@ import './styles/base.css';
 import App from './App.jsx';
 import './i18n';
 import "flag-icons/css/flag-icons.min.css";
+import { ThemeProvider } from './context/ThemeContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </StrictMode>,
 );

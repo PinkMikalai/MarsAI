@@ -1,9 +1,18 @@
 /* dashboard.css - Cohérent avec la home (navy, indigo, cartes glass, boutons gradient) */
 
-.admin-dashboard {
+/* Wrapper racine : navbar fixe + body scrollable + footer */
+.admin-layout-root {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   background: linear-gradient(180deg, #0a0a12 0%, #050505 35%, #080510 100%);
+}
+
+.admin-dashboard {
+  flex: 1;
+  display: flex;
+  /* Espace pour la navbar fixe (hauteur ~72px) */
+  padding-top: 72px;
   color: var(--color-mars-white);
   font-family: 'Arimo', system-ui, sans-serif;
 }
