@@ -16,19 +16,7 @@ import 'flag-icons/css/flag-icons.min.css';
 const STILL_INTERVAL_MS = 5000;
 const SCROLL_LOCK_MS    = 700;
 
-// =====================================================
-// EXTRACTION DES DONNÉES — aligné sur videoController.getVideoById
-//
-// PUBLIC (controller lignes 88-94) :
-//   res.data = basicVideoData (array direct)
-//
-// ADMIN / SUPER-ADMIN (controller lignes 60-70) :
-//   res.data = { basicVideoData, adminVideoData }
-//
-// SELECTOR (controller lignes 72-86) :
-//   res.data = { basicVideoData, selectorVideoData }
-//   res.memo_status = "Vous avez déjà noté..." | "Vous n'avez pas encore noté..."
-// =====================================================
+
 function parseVideoResponse(res, fallback) {
     let videoJson = null;
     let adminData = null;
@@ -139,7 +127,7 @@ const InfoPanel = ({
                                 </div>
                             )}
                             <button
-                                className="wf-action-btn wf-action-btn--noter wf-action-btn--in-panel"
+                                className={`wf-action-btn wf-action-btn--in-panel ${existingMemo ? 'wf-action-btn--modifier' : 'wf-action-btn--noter'}`}
                                 onClick={onNoterClick}
                             >
                                 <span className="wf-action-btn-icon">{existingMemo ? '✏️' : '⭐'}</span>

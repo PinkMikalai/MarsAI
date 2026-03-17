@@ -274,7 +274,6 @@ const CmsPhases = () => {
                                             {ctaLabel && (
                                                 ctaLink ? (
                                                     <Link to={ctaLink} className="home-cms-banner__cta">
-                                                        {theme.icon}
                                                         <span>{ctaLabel.toUpperCase()}</span>
                                                     </Link>
                                                 ) : (
@@ -283,7 +282,6 @@ const CmsPhases = () => {
                                                         className="home-cms-banner__cta"
                                                         onClick={ctaAction || undefined}
                                                     >
-                                                        {theme.icon}
                                                         <span>{ctaLabel.toUpperCase()}</span>
                                                     </button>
                                                 )

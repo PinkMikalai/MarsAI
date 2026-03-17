@@ -2,11 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useTheme } from '../../context/ThemeContext.jsx';
 import { ROUTES } from '../../constants/routes';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const { user, isAuthenticated, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -73,6 +75,27 @@ const Navbar = () => {
           {currentLang === 'fr' ? 'EN' : 'FR'}
         </button>
 
+        <button
+          type="button"
+          className="deposit-navbar-theme"
+          onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+          title={theme === 'dark' ? 'Mode clair' : 'Mode sombre'}
+        >
+          {theme === 'dark' ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.8"/>
+              <path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </button>
+
         {isAuthenticated && (
           <div className="deposit-navbar-user">
             <Link to={ROUTES.PROFILE} className="deposit-navbar-avatar" title={`${user?.firstname || ''} ${user?.lastname || ''}`.trim()}>
@@ -126,6 +149,14 @@ const Navbar = () => {
               aria-label={currentLang === 'fr' ? 'Switch to English' : 'Passer en français'}
             >
               {currentLang === 'fr' ? 'EN' : 'FR'}
+            </button>
+            <button
+              type="button"
+              className="deposit-navbar-theme"
+              onClick={() => { toggleTheme(); setMenuOpen(false); }}
+              aria-label={theme === 'dark' ? 'Passer en mode clair' : 'Passer en mode sombre'}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
             </button>
 
             {isAuthenticated && (
