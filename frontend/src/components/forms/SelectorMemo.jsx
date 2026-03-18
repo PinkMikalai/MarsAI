@@ -53,7 +53,6 @@ const CreateSelectorMemoForm = ({ videoId, onSuccess }) => {
 
             const response = await selectorService.createMemo(videoId, memoData);
 
-            console.log("memo cree:", response);
             if (onSuccess) onSuccess(response.memo);
 
         } catch (err) {
@@ -180,7 +179,6 @@ const UpdateSelectorMemoForm = ({ memo, onSuccess }) => {
 
             const response = await selectorService.updateMemo(memo.id, memoData);
 
-            console.log("memo mis a jour:", response);
             if (onSuccess) onSuccess(response.memo);
 
         } catch (err) {

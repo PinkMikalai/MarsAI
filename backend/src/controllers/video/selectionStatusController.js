@@ -3,7 +3,6 @@ import { getAllSelectionStatusModel } from "../../models/video/selectionStatusMo
 async function getAllSelectionStatus(req, res) {
     try {
         const statuses = await getAllSelectionStatusModel();
-        console.log("statuts recuperes:", statuses);
 
         res.status(200).json({
             message: "Statuts recuperes avec succes",

@@ -23,10 +23,8 @@ async function deleteOldFile(fileName, fileType = 'images') {
 
         if (fs.existsSync(filePath)) {
             fs.unlinkSync(filePath);
-            console.log("fichier local supprime:", fileName);
             return true;
         } else {
-            console.log("fichier local non trouve:", fileName);
             return false;
         }
     } catch (error) {

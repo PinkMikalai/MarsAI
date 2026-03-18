@@ -98,7 +98,6 @@ export async function register({ token, firstname, lastname, password }) {
 // login
 export async function login({ email, password }) {
     const user = await getUserByEmailModel(email);
-    console.log("Objet user récupéré :", user);
 
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
         const error = new Error('Invalid credentials');
@@ -197,7 +196,6 @@ export async function profileUser(id) {
     
     const role = await getRoleByIdModel(user.role_id);
 
-   console.log("User Role", role);
 
     return {
         id: user.id,
