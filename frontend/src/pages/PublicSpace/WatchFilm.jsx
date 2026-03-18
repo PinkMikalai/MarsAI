@@ -1,630 +1,75 @@
-import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
-import { useScrollNav } from '../../hooks/useScrollNav';
-import { useLightbox } from '../../hooks/useLightbox';
-import Lightbox from '../../components/ui/display/Lightbox';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import { videoApi, getCoverUrl, getVideoUrl } from '../../service/galleryService';
-import { ROUTES } from '../../constants/routes';
-import { useAuth } from '../../context/AuthContext';
-import { CreateSelectorMemoForm, UpdateSelectorMemoForm } from '../../components/forms/SelectorMemo';
-import { COUNTRIES_ISO3166 } from '../../constants/submitForm';
 import { FiSearch } from 'react-icons/fi';
-import SearchOverlay from '../../components/ui/search/SearchOverlay';
 import 'flag-icons/css/flag-icons.min.css';
 
-const STILL_INTERVAL_MS = 5000;
-const SCROLL_LOCK_MS    = 700;
+import { useAuth } from '../../context/AuthContext';
+import { useScrollNav } from '../../hooks/useScrollNav';
+import { useLightbox } from '../../hooks/useLightbox';
+import { useWatchFilmData } from '../../hooks/useWatchFilmData';
+import { useAwards } from '../../hooks/useAwards';
+import { useStillsCarousel } from '../../hooks/useStillsCarousel';
 
+import { ActionBtn } from '../../components/watchfilm/ActionBtn';
+import { InfoPanel } from '../../components/watchfilm/InfoPanel';
+import { AwardPanel } from '../../components/watchfilm/AwardPanel';
+import Lightbox from '../../components/ui/display/Lightbox';
+import SearchOverlay from '../../components/ui/search/SearchOverlay';
+import { CreateSelectorMemoForm, UpdateSelectorMemoForm } from '../../components/forms/SelectorMemo';
 
-function parseVideoResponse(res, fallback) {
-    let videoJson = null;
-    let adminData = null;
-    let selectorMemo = null;
+import { ROUTES } from '../../constants/routes';
 
-    // Public : data = basicVideoData directement
-    // Admin/Selector : data = { basicVideoData, adminVideoData | selectorVideoData }
-    const basicVideoData = res?.data?.basicVideoData
-        ?? (Array.isArray(res?.data) ? res.data : null);
-    const adminVideoData = res?.data?.adminVideoData;
-    const selectorVideoData = res?.data?.selectorVideoData;
-
-    const basicJson = basicVideoData?.[0]?.video_json ?? null;
-
-    if (basicJson) {
-        // Admin : fusion basicVideoData + adminVideoData
-        if (adminVideoData) {
-            const adminJson = adminVideoData[0]?.video_json ?? null;
-            videoJson = { ...basicJson, ...adminJson };
-            adminData = adminJson;
-        }
-        // Selector : fusion basicVideoData + selectorVideoData
-        else if (selectorVideoData) {
-            const selectorJson = selectorVideoData[0]?.video_json ?? null;
-            videoJson = { ...basicJson, ...selectorJson };
-            selectorMemo = selectorJson?.selector_memo?.id ? selectorJson.selector_memo : null;
-        }
-        // Public : basicVideoData uniquement
-        else {
-            videoJson = basicJson;
-        }
-    }
-
-    return {
-        video: videoJson ?? fallback ?? null,
-        tags: videoJson?.tag ?? [],
-        stills: videoJson?.still ?? [],
-        adminData,
-        selectorMemo,
-    };
-}
-
-// =====================================================
-// PANNEAU INFOS — Admin et Selector (stills, commentaires, données)
-// =====================================================
-const InfoPanel = ({
-    t,
-    isAdmin,
-    isSelector,
-    adminData,
-    video,
-    existingMemo,
-    stillUrls,
-    stillIndex,
-    onStillClick,
-    onNoterClick,
-    isOpen,
-    onClose,
-}) => {
-    const adminContributors = adminData?.contributors || [];
-    const selectorContributors = video?.contributors || [];
-    const contributors = isAdmin ? adminContributors : selectorContributors;
-    const adminVideos  = adminData?.admin_videos || [];
-
-    return (
-        <div
-            className={`wf-admin-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}
-            onClick={(e) => e.stopPropagation()}
-        >
-            <div className="wf-admin-panel-header">
-                <h3 className="wf-admin-panel-title">{t('watchFilm.infosTitle')}</h3>
-                <button className="wf-admin-panel-close" onClick={onClose} aria-label={t('watchFilm.close')}>✕</button>
-            </div>
-
-            <div className="wf-admin-panel-body">
-
-                {/* SELECTOR : Ma notation + Données selectorVideoData */}
-                {isSelector && (
-                    <>
-                        <div className="wf-admin-section">
-                            <h4 className="wf-admin-section-title">{t('watchFilm.myRating')}</h4>
-                            <div className="wf-admin-row wf-admin-row--selector">
-                                <span className="wf-admin-label">{t('watchFilm.ratingLabel')}</span>
-                                <span className="wf-admin-value">
-                                    {existingMemo?.rating ?? '—'} / 10
-                                </span>
-                            </div>
-                            <div className="wf-admin-row wf-admin-row--selector">
-                                <span className="wf-admin-label">{t('watchFilm.statusLabel')}</span>
-                                <span className="wf-admin-value">
-                                    {existingMemo?.selection_status?.name ?? 'Non notée'}
-                                </span>
-                            </div>
-                            {existingMemo?.created_at && (
-                                <div className="wf-admin-row wf-admin-row--selector">
-                                    <span className="wf-admin-label">{t('watchFilm.ratedOn')}</span>
-                                    <span className="wf-admin-value">
-                                        {new Date(existingMemo.created_at).toLocaleDateString('fr-FR')}
-                                    </span>
-                                </div>
-                            )}
-                            {existingMemo?.comment && (
-                                <div className="wf-admin-section">
-                                    <h4 className="wf-admin-section-title">{t('watchFilm.myComment')}</h4>
-                                    <p className="wf-admin-text">{existingMemo.comment}</p>
-                                </div>
-                            )}
-                            <button
-                                className={`wf-action-btn wf-action-btn--in-panel ${existingMemo ? 'wf-action-btn--modifier' : 'wf-action-btn--noter'}`}
-                                onClick={onNoterClick}
-                            >
-                                <span className="wf-action-btn-icon">{existingMemo ? '✏️' : '⭐'}</span>
-                                <span className="wf-action-btn-label">{existingMemo ? t('watchFilm.editMemo') : t('watchFilm.rateMemo')}</span>
-                            </button>
-                        </div>
-                        {/* Description (synopsis) en double */}
-                        {(video?.synopsis_en || video?.synopsis) && (
-                            <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">{t('watchFilm.description')}</h4>
-                                <p className="wf-admin-text">
-                                    {video.synopsis_en || video.synopsis}
-                                </p>
-                            </div>
-                        )}
-                        {/* selectorVideoData : Technique, Contributeurs */}
-                        {(video?.tech_resume || video?.classification || video?.creative_resume) && (
-                            <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">{t('watchFilm.technique')}</h4>
-                                {video?.language && (
-                                    <div className="wf-admin-row">
-                                        <span className="wf-admin-label">{t('watchFilm.language')}</span>
-                                        <span className="wf-admin-value">{video.language}</span>
-                                    </div>
-                                )}
-                                {video.classification && (
-                                    <div className="wf-admin-row">
-                                        <span className="wf-admin-label">{t('watchFilm.classification')}</span>
-                                        <span className="wf-admin-value">{video.classification}</span>
-                                    </div>
-                                )}
-                                {video.tech_resume && (
-                                    <div className="wf-admin-text-block">
-                                        <span className="wf-admin-text-label">{t('watchFilm.techResume')}</span>
-                                        <p className="wf-admin-text">{video.tech_resume}</p>
-                                    </div>
-                                )}
-                                {video.creative_resume && (
-                                    <div className="wf-admin-text-block">
-                                        <span className="wf-admin-text-label">{t('watchFilm.creativeResume')}</span>
-                                        <p className="wf-admin-text">{video.creative_resume}</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        {contributors.length > 0 && (
-                            <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">
-                                    {t('watchFilm.contributors')} <span className="wf-admin-count">{contributors.length}</span>
-                                </h4>
-                                <ul className="wf-admin-list">
-                                    {contributors.map((c) => (
-                                        <li key={c.id} className="wf-admin-list-item">
-                                            <span className="wf-admin-contributor-name">{c.firstname} {c.last_name}</span>
-                                            <span className="wf-admin-contributor-role">{c.production_role}</span>
-                                            {c.email && (
-                                                <a className="wf-admin-link wf-admin-link--email" href={`mailto:${c.email}`}>
-                                                    {c.email}
-                                                </a>
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </>
-                )}
-
-                {/* ADMIN : adminVideoData — Technique, Réalisateur, Contributeurs, Historique */}
-                {isAdmin && adminData && (
-                    <>
-                        <div className="wf-admin-section">
-                            <h4 className="wf-admin-section-title">{t('watchFilm.technique')}</h4>
-                            {video?.language && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.language')}</span>
-                                    <span className="wf-admin-value">{video.language}</span>
-                                </div>
-                            )}
-                            {adminData.classification && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.classification')}</span>
-                                    <span className="wf-admin-value">{adminData.classification}</span>
-                                </div>
-                            )}
-                            {adminData.youtube_url && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.youtube')}</span>
-                                    <a
-                                        className="wf-admin-link"
-                                        href={
-                                            /^https?:\/\//i.test(adminData.youtube_url)
-                                                ? adminData.youtube_url
-                                                : `https://www.youtube.com/watch?v=${adminData.youtube_url}`
-                                        }
-                                        target="_blank"
-                                        rel="noreferrer noopener"
-                                    >
-                                        Voir ↗
-                                    </a>
-                                </div>
-                            )}
-                            {adminData.srt_file_name && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.subtitles')}</span>
-                                    <span className="wf-admin-value">{adminData.srt_file_name}</span>
-                                </div>
-                            )}
-                            {adminData.acquisition_source && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.source')}</span>
-                                    <span className="wf-admin-value">{adminData.acquisition_source.name}</span>
-                                </div>
-                            )}
-                            {adminData.tech_resume && (
-                                <div className="wf-admin-text-block">
-                                    <span className="wf-admin-text-label">{t('watchFilm.techResume')}</span>
-                                    <p className="wf-admin-text">{adminData.tech_resume}</p>
-                                </div>
-                            )}
-                            {adminData.creative_resume && (
-                                <div className="wf-admin-text-block">
-                                    <span className="wf-admin-text-label">{t('watchFilm.creativeResume')}</span>
-                                    <p className="wf-admin-text">{adminData.creative_resume}</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {((video?.realisator_firstname || video?.realisator_lastname) || adminData.realisator_civility || adminData.email || adminData.birthdate || adminData.mobile_number || adminData.phone_number || adminData.address) && (
-                        <div className="wf-admin-section">
-                            <h4 className="wf-admin-section-title">{t('watchFilm.director')}</h4>
-                            <div className="wf-admin-row">
-                                <span className="wf-admin-label">{t('watchFilm.director')}</span>
-                                <span className="wf-admin-value">{video?.realisator_firstname} {video?.realisator_lastname}</span>
-                            </div>
-                            {adminData.realisator_civility && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.civility')}</span>
-                                    <span className="wf-admin-value">{adminData.realisator_civility}</span>
-                                </div>
-                            )}
-                            {adminData.email && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.email')}</span>
-                                    <a className="wf-admin-link" href={`mailto:${adminData.email}`}>
-                                        {adminData.email}
-                                    </a>
-                                </div>
-                            )}
-                            {adminData.birthdate && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.birthdate')}</span>
-                                    <span className="wf-admin-value">
-                                        {new Date(adminData.birthdate).toLocaleDateString('fr-FR')}
-                                    </span>
-                                </div>
-                            )}
-                            {adminData.mobile_number && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.mobile')}</span>
-                                    <span className="wf-admin-value">{adminData.mobile_number}</span>
-                                </div>
-                            )}
-                            {adminData.phone_number && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.landline')}</span>
-                                    <span className="wf-admin-value">{adminData.phone_number}</span>
-                                </div>
-                            )}
-                            {adminData.acquisition_source && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.acquisitionSource')}</span>
-                                    <span className="wf-admin-value">{adminData.acquisition_source.name}</span>
-                                </div>
-                            )}
-                            {adminData.address && (
-                                <div className="wf-admin-row">
-                                    <span className="wf-admin-label">{t('watchFilm.address')}</span>
-                                    <span className="wf-admin-value">{adminData.address}</span>
-                                </div>
-                            )}
-                        </div>
-                        )}
-
-                        {adminContributors.length > 0 && (
-                            <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">
-                                    {t('watchFilm.contributors')} <span className="wf-admin-count">{adminContributors.length}</span>
-                                </h4>
-                                <ul className="wf-admin-list">
-                                    {adminContributors.map((c) => (
-                                        <li key={c.id} className="wf-admin-list-item">
-                                            <span className="wf-admin-contributor-name">{c.firstname} {c.last_name}</span>
-                                            <span className="wf-admin-contributor-role">{c.production_role}</span>
-                                            {c.email && (
-                                                <a className="wf-admin-link wf-admin-link--email" href={`mailto:${c.email}`}>
-                                                    {c.email}
-                                                </a>
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-
-                        {adminVideos.length > 0 && (
-                            <div className="wf-admin-section">
-                                <h4 className="wf-admin-section-title">{t('watchFilm.statusHistory')}</h4>
-                                <ul className="wf-admin-list">
-                                    {adminVideos.map((av) => (
-                                        <li key={av.id} className="wf-admin-list-item">
-                                            <span className={`wf-admin-status-badge wf-admin-status-badge--${av.admin_status?.name?.toLowerCase().replace(/\s+/g, '-') || 'default'}`}>
-                                                {av.admin_status?.name || '—'}
-                                            </span>
-                                            {av.comment && <p className="wf-admin-text">{av.comment}</p>}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </>
-                )}
-
-                {/* STILLS — pour Admin et Selector */}
-                {stillUrls.length > 0 && (
-                    <div className="wf-admin-section">
-                        <h4 className="wf-admin-section-title">{t('watchFilm.stills')}</h4>
-                        <div className="wf-drawer-stills wf-drawer-stills--in-panel">
-                            {stillUrls.map((url, idx) => (
-                                <img
-                                    key={url}
-                                    src={url}
-                                    alt={`still ${idx + 1}`}
-                                    className={`wf-drawer-still-img ${idx === stillIndex ? 'wf-drawer-still-img--active' : ''}`}
-                                    style={{ cursor: 'zoom-in' }}
-                                    onClick={() => onStillClick?.(stillUrls, idx)}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-// =====================================================
-// BOUTON ACTION TIKTOK (colonne droite)
-// =====================================================
-const ActionBtn = ({ icon, label, onClick, className = '' }) => (
-    <button className={`wf-action-btn ${className}`} onClick={onClick} aria-label={label} title={label}>
-        <span className="wf-action-btn-icon">{icon}</span>
-        <span className="wf-action-btn-label">{label}</span>
-    </button>
-);
-
-// =====================================================
-// PANNEAU AWARDS — attribution de prix (admin seulement)
-// =====================================================
-const AwardPanel = ({ isOpen, onClose, allAwards, selectedIds, onToggle, onSave, saving, saved }) => (
-    <div
-        className={`wf-admin-panel wf-award-panel ${isOpen ? 'wf-admin-panel--open' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-    >
-        <div className="wf-admin-panel-header">
-            <h3 className="wf-admin-panel-title">🏆 Attribuer des prix</h3>
-            <button className="wf-admin-panel-close" onClick={onClose} aria-label="Fermer">✕</button>
-        </div>
-
-        <div className="wf-admin-panel-body">
-            {allAwards.length === 0 ? (
-                <p className="wf-admin-text">Aucun prix disponible.</p>
-            ) : (
-                <ul className="wf-award-list">
-                    {allAwards.map((award) => {
-                        const checked = selectedIds.includes(award.id);
-                        return (
-                            <li key={award.id} className={`wf-award-item ${checked ? 'wf-award-item--selected' : ''}`}>
-                                <label className="wf-award-label">
-                                    <input
-                                        type="checkbox"
-                                        className="wf-award-checkbox"
-                                        checked={checked}
-                                        onChange={() => onToggle(award.id)}
-                                    />
-                                    <span className="wf-award-rank">#{award.award_rank ?? '—'}</span>
-                                    <span className="wf-award-title">{award.title}</span>
-                                </label>
-                            </li>
-                        );
-                    })}
-                </ul>
-            )}
-
-            <button
-                className={`wf-award-save-btn ${saved ? 'wf-award-save-btn--saved' : ''}`}
-                onClick={onSave}
-                disabled={saving}
-            >
-                {saving ? 'Enregistrement…' : saved ? '✓ Enregistré !' : 'Enregistrer'}
-            </button>
-        </div>
-    </div>
-);
+const SCROLL_LOCK_MS = 700;
 
 // =====================================================
 // COMPOSANT PRINCIPAL
 // =====================================================
 const WatchFilm = () => {
-    const { t } = useTranslation();
-    const navigate = useNavigate();
-    const { videoId }                           = useParams();
+    const { t }      = useTranslation();
+    const navigate   = useNavigate();
+    const { videoId } = useParams();
     const { isSelector, isAdmin, isSuperAdmin } = useAuth();
     const isAdminUser = isAdmin || isSuperAdmin;
 
-    const videoRef      = useRef(null);
-    const wrapRef       = useRef(null);
+    const videoRef = useRef(null);
+    const wrapRef  = useRef(null);
 
     const { openLightbox, lightboxProps } = useLightbox();
 
-    const [videos, setVideos]             = useState([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [loading, setLoading]           = useState(true);
-    const [error, setError]               = useState('');
-
-    const [video, setVideo]         = useState(null);
-    const [tags, setTags]           = useState([]);
-    const [stills, setStills]       = useState([]);
-    const [adminData, setAdminData] = useState(null);
-
-    const [isPlaying, setIsPlaying]   = useState(false);
-    const [stillIndex, setStillIndex] = useState(0);
-    const [isSwitching, setIsSwitching] = useState(false);
-
-    const [showMemoModal, setShowMemoModal]   = useState(false);
+    // ── États UI ─────────────────────────────────────
     const [showAdminPanel, setShowAdminPanel] = useState(false);
-    const [existingMemo, setExistingMemo]     = useState(null);
-    const [showSearch, setShowSearch]         = useState(false);
+    const [showAwardPanel, setShowAwardPanel] = useState(false);
+    const [showMemoModal,  setShowMemoModal ] = useState(false);
+    const [showSearch,     setShowSearch    ] = useState(false);
 
-    // Awards (admin)
-    const [showAwardPanel, setShowAwardPanel]   = useState(false);
-    const [allAwards, setAllAwards]             = useState([]);
-    const [selectedAwardIds, setSelectedAwardIds] = useState([]);
-    const [savingAwards, setSavingAwards]       = useState(false);
-    const [awardSaved, setAwardSaved]           = useState(false);
+    // ── Données vidéo ────────────────────────────────
+    const {
+        videos, currentIndex, setCurrentIndex,
+        loading, error,
+        video, adminData, existingMemo, setExistingMemo,
+        isPlaying, setIsPlaying, isSwitching,
+        stillUrls, preloadUrls,
+        title, director, countryCode, country, synopsis, coverUrl, videoUrl, awards,
+    } = useWatchFilmData(videoId);
 
-    const handleSelectFilm = useCallback((filmId) => {
-        setShowSearch(false);
-        navigate(`/watch/${filmId}`);
-    }, [navigate]);
+    // ── Awards ───────────────────────────────────────
+    const {
+        allAwards, selectedAwardIds, savingAwards, awardSaved,
+        handleToggleAward, handleSaveAwards,
+    } = useAwards(isAdminUser, video?.id, showAwardPanel);
 
-    // =====================================================
-    // CHARGEMENT LISTE VIDÉOS
-    // =====================================================
+    // ── Stills carousel ──────────────────────────────
+    const stillIndex = useStillsCarousel(stillUrls);
+
+    // ── Ferme les panneaux au changement de vidéo ────
     useEffect(() => {
-        let cancelled = false;
-        setLoading(true);
-        setError('');
-
-        videoApi.getAllVideos()
-            .then((res) => {
-                if (cancelled) return;
-                const list = res?.data || res?.videos || [];
-                setVideos(Array.isArray(list) ? list : []);
-                if (videoId) {
-                    const idx = list.findIndex((v) => String(v.id) === String(videoId));
-                    setCurrentIndex(idx >= 0 ? idx : 0);
-                }
-            })
-            .catch((err) => {
-                if (cancelled) return;
-                setError(err.message || 'Impossible de charger les vidéos.');
-            })
-            .finally(() => { if (!cancelled) setLoading(false); });
-
-        return () => { cancelled = true; };
-    }, [videoId]);
-
-
-    // =====================================================
-    // CHARGEMENT DÉTAILS VIDÉO COURANTE
-    // =====================================================
-    useEffect(() => {
-        let cancelled = false;
-        const current = videos[currentIndex];
-        if (!current?.id) return;
-
-        setIsPlaying(false);
-        setStillIndex(0);
-        setIsSwitching(true);
-        setExistingMemo(null);
-        setAdminData(null);
-        setShowMemoModal(false);
         setShowAdminPanel(false);
+        setShowAwardPanel(false);
+        setShowMemoModal(false);
+    }, [currentIndex]);
 
-        videoApi.getVideoById(current.id)
-            .then((res) => {
-                if (cancelled) return;
-                const parsed = parseVideoResponse(res, current);
-                setVideo(parsed.video);
-                setTags(parsed.tags);
-                setStills(parsed.stills);
-                setAdminData(parsed.adminData);
-                setExistingMemo(parsed.selectorMemo);
-            })
-            .catch(() => {
-                if (cancelled) return;
-                setVideo(current);
-                setTags([]);
-                setStills([]);
-            });
-
-        const timer = setTimeout(() => setIsSwitching(false), 320);
-
-        return () => { cancelled = true; clearTimeout(timer); };
-    }, [currentIndex, videos]);
-
-    // =====================================================
-    // AWARDS — chargement liste complète (admin)
-    // =====================================================
-    useEffect(() => {
-        if (!isAdminUser) return;
-        videoApi.getAllAwards()
-            .then((res) => setAllAwards(res?.data || []))
-            .catch(() => setAllAwards([]));
-    }, [isAdminUser]);
-
-    // Initialise les cases cochées quand le panneau s'ouvre
-    useEffect(() => {
-        if (!showAwardPanel || !video?.id) return;
-        videoApi.getVideoAwards(video.id)
-            .then((res) => {
-                const ids = (res?.data || []).map((a) => a.id);
-                setSelectedAwardIds(ids);
-            })
-            .catch(() => setSelectedAwardIds([]));
-        setAwardSaved(false);
-    }, [showAwardPanel, video?.id]);
-
-    const handleToggleAward = (awardId) => {
-        setAwardSaved(false);
-        setSelectedAwardIds((prev) =>
-            prev.includes(awardId) ? prev.filter((id) => id !== awardId) : [...prev, awardId]
-        );
-    };
-
-    const handleSaveAwards = async () => {
-        if (!video?.id) return;
-        setSavingAwards(true);
-        try {
-            await videoApi.setVideoAwards(video.id, selectedAwardIds);
-            setAwardSaved(true);
-        } catch {
-            setAwardSaved(false);
-        } finally {
-            setSavingAwards(false);
-        }
-    };
-
-    // =====================================================
-    // DÉFILEMENT AUTOMATIQUE DES STILLS
-    // =====================================================
-    const stillUrls = useMemo(() => {
-        return stills.map((s) => getCoverUrl(s.file_name)).filter(Boolean);
-    }, [stills]);
-
-    useEffect(() => {
-        if (stillUrls.length <= 1) return;
-        const timer = setInterval(() => {
-            setStillIndex((prev) => (prev + 1) % stillUrls.length);
-        }, STILL_INTERVAL_MS);
-        return () => clearInterval(timer);
-    }, [stillUrls]);
-
-    // =====================================================
-    // PRÉ-CHARGEMENT VIDÉOS SUIVANTES
-    // =====================================================
-    const preloadUrls = useMemo(() => {
-        return Array.from({ length: 3 }, (_, i) => videos[currentIndex + i])
-            .filter((v) => v?.video_file_name)
-            .map((v) => getVideoUrl(v.video_file_name));
-    }, [videos, currentIndex]);
-
-    // =====================================================
-    // HANDLERS VIDÉO
-    // =====================================================
-    const handlePlay  = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-
-    const handlePlayClick = () => {
-        if (wrapRef.current?.requestFullscreen) {
-            wrapRef.current.requestFullscreen().catch(() => {});
-        }
-        videoRef.current?.play().catch(() => {});
-    };
-
-    // =====================================================
-    // NAVIGATION (scroll / swipe) — via useScrollNav
-    // =====================================================
+    // ── Navigation scroll / swipe ────────────────────
     const { scrollDirection, touchHandlers } = useScrollNav({
         onNext: () => setCurrentIndex((prev) => Math.min(prev + 1, videos.length - 1)),
         onPrev: () => setCurrentIndex((prev) => Math.max(prev - 1, 0)),
@@ -633,21 +78,20 @@ const WatchFilm = () => {
         enabled: videos.length > 0,
     });
 
-    // =====================================================
-    // DONNÉES AFFICHÉES
-    // =====================================================
-    const title    = video?.title    || video?.title_en || 'Titre vidéo';
-    const director = [video?.realisator_firstname, video?.realisator_lastname].filter(Boolean).join(' ') || '—';
-    const countryCode = video?.country || '';
-    const country = COUNTRIES_ISO3166.find(c => c.value === countryCode)?.name || countryCode || '—';
-    const synopsis = video?.synopsis_en || video?.synopsis || '—';
-    const coverUrl = getCoverUrl(video?.cover);
-    const videoUrl = getVideoUrl(video?.video_file_name);
-    const awards   = video?.award || [];
+    // ── Handlers recherche / lecteur ─────────────────
+    const handleSelectFilm = useCallback((filmId) => {
+        setShowSearch(false);
+        navigate(`/watch/${filmId}`);
+    }, [navigate]);
 
-    // =====================================================
-    // RENDU
-    // =====================================================
+    const handlePlayClick = () => {
+        if (wrapRef.current?.requestFullscreen) {
+            wrapRef.current.requestFullscreen().catch(() => {});
+        }
+        videoRef.current?.play().catch(() => {});
+    };
+
+    // ── Rendu ────────────────────────────────────────
     return (
         <div
             className="watch-film-page"
@@ -656,6 +100,7 @@ const WatchFilm = () => {
             onTouchEnd={touchHandlers.onTouchEnd}
         >
             <main className="watch-film-container">
+
                 {loading && (
                     <div className="wf-loading">
                         <div className="wf-loading-spinner" />
@@ -669,33 +114,31 @@ const WatchFilm = () => {
                         <div
                             ref={wrapRef}
                             className={`watch-film-video-wrap
-                                ${isSwitching ? 'is-switching' : ''}
+                                ${isSwitching       ? 'is-switching'      : ''}
                                 ${scrollDirection === 'down' ? 'is-switching-down' : ''}
                                 ${scrollDirection === 'up'   ? 'is-switching-up'   : ''}
                             `}
                             onClick={handlePlayClick}
                         >
-                            {/* VIDEO */}
+                            {/* ── VIDÉO ── */}
                             <video
                                 ref={videoRef}
                                 className="watch-film-video"
                                 src={videoUrl    || undefined}
                                 poster={coverUrl || undefined}
                                 controls
-                                onPlay={handlePlay}
-                                onPause={handlePause}
+                                onPlay={() => setIsPlaying(true)}
+                                onPause={() => setIsPlaying(false)}
                                 preload="metadata"
                             />
 
-                            {/* OVERLAY (visible quand en pause) */}
+                            {/* ── OVERLAY (visible en pause) ── */}
                             {!isPlaying && (
                                 <div className="wf-overlay">
 
-                                    {/* NAV — stopPropagation pour éviter fullscreen au clic sur Galerie/Accueil */}
+                                    {/* Navigation */}
                                     <div className="wf-nav" onClick={(e) => e.stopPropagation()}>
-                                        <Link to={ROUTES.GALLERY_FILMS} className="watch-film-back">
-                                            ← Galerie
-                                        </Link>
+                                        <Link to={ROUTES.GALLERY_FILMS} className="watch-film-back">← Galerie</Link>
                                         <button
                                             className="wf-search-trigger"
                                             onClick={() => setShowSearch(true)}
@@ -703,12 +146,10 @@ const WatchFilm = () => {
                                         >
                                             <FiSearch size={17} strokeWidth={2} />
                                         </button>
-                                        <Link to={ROUTES.HOME} className="watch-film-home">
-                                            Accueil
-                                        </Link>
+                                        <Link to={ROUTES.HOME} className="watch-film-home">Accueil</Link>
                                     </div>
 
-                                    {/* PLAY — absolute centré */}
+                                    {/* Bouton play centré */}
                                     <div className="watch-film-play-center">
                                         <button className="watch-film-play" onClick={handlePlayClick} aria-label={t('watchFilm.loading')}>
                                             <svg className="watch-film-play-icon" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -717,7 +158,7 @@ const WatchFilm = () => {
                                         </button>
                                     </div>
 
-                                    {/* ACTIONS — Note, Statut, Infos, Noter (Selector) */}
+                                    {/* Boutons actions (admin / selector) */}
                                     {(isAdminUser || isSelector) && (
                                         <div className="wf-actions" onClick={(e) => e.stopPropagation()}>
                                             {isSelector && (
@@ -736,10 +177,7 @@ const WatchFilm = () => {
                                                         icon={existingMemo ? '✏️' : '⭐'}
                                                         label={existingMemo ? t('watchFilm.editMemo') : t('watchFilm.rateMemo')}
                                                         className={`wf-action-btn--noter ${existingMemo ? 'wf-action-btn--noter-done' : ''}`}
-                                                        onClick={() => {
-                                                            setShowAdminPanel(false);
-                                                            setShowMemoModal(true);
-                                                        }}
+                                                        onClick={() => { setShowAdminPanel(false); setShowMemoModal(true); }}
                                                     />
                                                 </>
                                             )}
@@ -747,36 +185,26 @@ const WatchFilm = () => {
                                                 icon="ℹ️"
                                                 label={t('watchFilm.infosTitle')}
                                                 className={`wf-action-btn--admin ${showAdminPanel ? 'wf-action-btn--active' : ''}`}
-                                                onClick={() => {
-                                                    setShowAdminPanel((prev) => !prev);
-                                                    setShowAwardPanel(false);
-                                                }}
+                                                onClick={() => { setShowAdminPanel((p) => !p); setShowAwardPanel(false); }}
                                             />
                                             {isAdminUser && (
                                                 <ActionBtn
                                                     icon="🏆"
                                                     label="Attribuer prix"
                                                     className={`wf-action-btn--award ${showAwardPanel ? 'wf-action-btn--active' : ''}`}
-                                                    onClick={() => {
-                                                        setShowAwardPanel((prev) => !prev);
-                                                        setShowAdminPanel(false);
-                                                    }}
+                                                    onClick={() => { setShowAwardPanel((p) => !p); setShowAdminPanel(false); }}
                                                 />
                                             )}
                                         </div>
                                     )}
 
-                                    {/* ZONE BAS — dans le flux flex (meta puis drawer empilés) */}
+                                    {/* Métadonnées vidéo */}
                                     <div className="wf-meta-zone">
-
-                                        {/* Infos vidéo */}
                                         <div className="wf-content">
                                             <span className="watch-film-tag">VIDÉO</span>
                                             <h1 className="watch-film-title">{title}</h1>
                                             <div className="wf-meta-row">
-                                                <p className="watch-film-info">
-                                                    {t('watchFilm.director')} {director}
-                                                </p>
+                                                <p className="watch-film-info">{t('watchFilm.director')} {director}</p>
                                                 <span className="wf-meta-sep">·</span>
                                                 <p className="watch-film-info wf-country">
                                                     {countryCode && (
@@ -786,13 +214,6 @@ const WatchFilm = () => {
                                                 </p>
                                             </div>
                                             <p className="wf-synopsis">{synopsis}</p>
-                                            {tags.length > 0 && (
-                                                <div className="wf-tags">
-                                                    {tags.map((tag, idx) => (
-                                                        <span key={`${tag}-${idx}`} className="wf-tag-pill">{tag}</span>
-                                                    ))}
-                                                </div>
-                                            )}
                                             {awards.length > 0 && (
                                                 <div className="wf-awards">
                                                     {awards.map((a) => (
@@ -801,9 +222,9 @@ const WatchFilm = () => {
                                                 </div>
                                             )}
                                         </div>
-                                    </div>{/* fin wf-meta-zone */}
+                                    </div>
 
-                                    {/* PANNEAU INFOS — Admin et Selector (stills, commentaires, données) */}
+                                    {/* Panneau infos */}
                                     {(isAdminUser || isSelector) && (
                                         <InfoPanel
                                             t={t}
@@ -815,16 +236,13 @@ const WatchFilm = () => {
                                             stillUrls={stillUrls}
                                             stillIndex={stillIndex}
                                             onStillClick={openLightbox}
-                                            onNoterClick={() => {
-                                                setShowAdminPanel(false);
-                                                setShowMemoModal(true);
-                                            }}
+                                            onNoterClick={() => { setShowAdminPanel(false); setShowMemoModal(true); }}
                                             isOpen={showAdminPanel}
                                             onClose={() => setShowAdminPanel(false)}
                                         />
                                     )}
 
-                                    {/* PANNEAU AWARDS — admin uniquement */}
+                                    {/* Panneau awards */}
                                     {isAdminUser && (
                                         <AwardPanel
                                             isOpen={showAwardPanel}
@@ -840,23 +258,17 @@ const WatchFilm = () => {
                                 </div>
                             )}
 
-                            {/* PANNEAU RECHERCHE — slide depuis la droite comme InfoPanel */}
+                            {/* Recherche */}
                             <SearchOverlay
                                 isOpen={showSearch}
                                 onClose={() => setShowSearch(false)}
                                 onSelectFilm={handleSelectFilm}
                             />
 
-                            {/* MODALE NOTATION — à l'intérieur du wrap pour fullscreen */}
+                            {/* Modale notation selector */}
                             {showMemoModal && isSelector && (
-                                <div
-                                    className="watch-film-memo-overlay"
-                                    onClick={() => setShowMemoModal(false)}
-                                >
-                                    <div
-                                        className="watch-film-memo-modal"
-                                        onClick={(e) => e.stopPropagation()}
-                                    >
+                                <div className="watch-film-memo-overlay" onClick={() => setShowMemoModal(false)}>
+                                    <div className="watch-film-memo-modal" onClick={(e) => e.stopPropagation()}>
                                         <button
                                             className="watch-film-memo-close"
                                             onClick={() => setShowMemoModal(false)}
@@ -864,22 +276,15 @@ const WatchFilm = () => {
                                         >
                                             ✕
                                         </button>
-
                                         {existingMemo ? (
                                             <UpdateSelectorMemoForm
                                                 memo={existingMemo}
-                                                onSuccess={(updatedMemo) => {
-                                                    if (updatedMemo) setExistingMemo(updatedMemo);
-                                                    setShowMemoModal(false);
-                                                }}
+                                                onSuccess={(updated) => { if (updated) setExistingMemo(updated); setShowMemoModal(false); }}
                                             />
                                         ) : (
                                             <CreateSelectorMemoForm
                                                 videoId={video?.id || videoId}
-                                                onSuccess={(newMemo) => {
-                                                    if (newMemo) setExistingMemo(newMemo);
-                                                    setShowMemoModal(false);
-                                                }}
+                                                onSuccess={(newMemo) => { if (newMemo) setExistingMemo(newMemo); setShowMemoModal(false); }}
                                             />
                                         )}
                                     </div>
@@ -897,7 +302,7 @@ const WatchFilm = () => {
                 ))}
             </div>
 
-            {/* LIGHTBOX — visionneuse de stills */}
+            {/* Lightbox stills */}
             <Lightbox {...lightboxProps} />
         </div>
     );
