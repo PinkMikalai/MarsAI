@@ -380,8 +380,6 @@ async function updateVideoModel(id, videoData) {
         const query = `UPDATE video SET ${fields.join(', ')} WHERE id = ?`;
         values.push(id);
         
-        console.log('query update', query);
-        console.log('values update', values);
         
         const [result] = await pool.execute(query, values);
         

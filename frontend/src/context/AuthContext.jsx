@@ -45,7 +45,6 @@ export const AuthProvider = ({ children }) => {
 
 
     const login = (token, userData) => {
-        console.log("Context - Début du stockage", { token, userData });
         // nettoyage du token 
         const cleanToken = typeof token === 'object' ? (token.token || token.access_token) : token;
         // stockage token et user dans le local storage

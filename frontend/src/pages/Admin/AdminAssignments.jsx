@@ -59,7 +59,6 @@ const AdminAssignment = ({ videos, admin_id, isOpen, onClose, onSuccess }) => {
         const allVideos = await videoApi.getAllVideos(); 
         const allVideoIds = allVideos.data.map(v => v.id);
 
-        console.log("Assignation massive pour :", allVideoIds.length, "vidéos");
 
      
         await assignmentService.autoAssignment(allVideoIds, admin_id);

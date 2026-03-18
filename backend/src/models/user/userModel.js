@@ -46,7 +46,6 @@ async function getUserByEmailModel(email) {
             'SELECT id, email,firstname,lastname, password_hash, role_id AS role_id FROM user WHERE email = ?',
             [email]
         );
-        console.log("DEBUG SQL", rows[0]);
         return rows[0];
     } catch (error) {
         throw error;
