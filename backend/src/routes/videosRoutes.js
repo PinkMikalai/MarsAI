@@ -28,12 +28,12 @@ const router = Router();
 
 // Routes vidéos
 router.post("/", createVideo);
-router.get("/winners",              getWinnersController);
-router.get("/awards",               getAllAwardsController);
-router.get("/:id/awards",           getVideoAwardsController);
-router.post("/:id/awards",          authMiddleware, checkRole([1, 3]), setVideoAwardsController);
-router.get("/",                     optionalAuthMiddleware, getSearchVideos);
-router.get("/:id",                  optionalAuthMiddleware, getVideoById);
+router.get("/winners",getWinnersController);
+router.get("/awards",getAllAwardsController);
+router.get("/:id/awards",getVideoAwardsController);
+router.post("/:id/awards",authMiddleware, checkRole([1, 3]), setVideoAwardsController);
+router.get("/",optionalAuthMiddleware, getSearchVideos);
+router.get("/:id",optionalAuthMiddleware, getVideoById);
 router.put("/:id", updateVideo);
 router.delete("/:id", authMiddleware, checkRole([1, 3]), deleteVideo);
 
