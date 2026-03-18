@@ -64,7 +64,6 @@ const RegisterForm = () => {
       alert(t('auth.profileCreatedSuccess'));
       navigate(ROUTES.LOGIN);
     } catch (err) {
-      console.log('Détail erreur reçue:', err.response?.data);
       setError(err.response?.data?.message || t('auth.registrationError'));
     }
   };

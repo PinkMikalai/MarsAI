@@ -51,7 +51,6 @@ export function buildSubmitFormData(form) {
   fd.append('acquisition_source_id', String(form.film.acquisition_source_id || '1'));
 
   if (form.tags && Array.isArray(form.tags) && form.tags.length > 0) {
-    console.log("Check form.tags", form.tags);
 
     const tagObjects = form.tags.map(tagName => ({ name: tagName }));
     fd.append('tag', JSON.stringify(tagObjects));

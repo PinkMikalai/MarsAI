@@ -1,7 +1,5 @@
 const validate = (schema, source = 'body') => (req, res, next) => {
   try {
-    console.log("DEBUG - Fichiers dans req.files :", req.files ? Object.keys(req.files) : "Aucun fichier");
-    console.log("DEBUG - Contenu de req.body avant injection :", req.body);
     if (req.files) {
       if (req.files.cover) req.body.cover = req.files.cover[0].filename;
       if (req.files.img) req.body.img = req.files.img[0].filename;
@@ -27,10 +25,8 @@ const validate = (schema, source = 'body') => (req, res, next) => {
     })
 
     const dataToValidate = source === 'query' ? req.query : req.body;
-    console.log("Données reçues pour validation:", dataToValidate); 
     
     const validatedData = schema.parse(dataToValidate);
-    console.log("Données après validation Zod:", validatedData); 
     if (source === 'query') {
       req.query = validatedData;
     } else {
@@ -39,7 +35,6 @@ const validate = (schema, source = 'body') => (req, res, next) => {
     
     next();
   } catch (error) {
-    console.log("Zod a détecté une erreur !", error); 
     
     if (error.errors && Array.isArray(error.errors)) {
       return res.status(400).json({

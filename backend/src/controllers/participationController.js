@@ -32,7 +32,6 @@ function cleanupTempFiles(...paths) {
 }
 
 async function addParticipation(req, res) {
-    console.log("je teste ma route addParticipation");
 
     let tempVideoPath = null;
     let tempCoverPath = null;
@@ -71,7 +70,6 @@ async function addParticipation(req, res) {
         validatedData.duration = meta.duration;
 
         const newVideoId = await videoModel.createVideoModel(validatedData);
-        console.log("id de la video crée : ", newVideoId);
         if (!newVideoId) {
             return res.status(400).json({
                 message: "L'insertion de la video a échoué"
@@ -103,12 +101,10 @@ async function addParticipation(req, res) {
             const allTags = await tagModel.createTagModel(tagNames);
             if (allTags && allTags.length > 0) {
                 const tagIds = allTags.map(t => t.id);
-                console.log("succès tags liés");
                 await tagModel.linkTagsToVideo(newVideoId, tagIds);
             }
         }
 
-        console.log("Préparation de la description Youtube..");
 
         const youtubeDisplayTitle = validatedData.title
             ? `${validatedData.title} || ${validatedData.title_en}`
@@ -130,7 +126,6 @@ async function addParticipation(req, res) {
             ${hashtags}
         `
 
-        console.log('Démarrage de lupload Youtube');
 
         // ecrire cover et srt en fichiers temporaires pour youtube
         const coverFile = req.files['cover'] ? req.files['cover'][0] : null;
@@ -170,7 +165,6 @@ async function addParticipation(req, res) {
                 })
 
             } 
-            console.log("Confirmation participation email send successfully");
             
 
         } catch (emailError) {
@@ -342,7 +336,6 @@ const updateParticipation = async (req, res) => {
                 );
             }
         } catch (ytErr) {
-            console.warn("Mise à jour YouTube échouée (non bloquant):", ytErr.message);
         }
 
         cleanupTempFiles(tempCoverPath, tempSrtPath);

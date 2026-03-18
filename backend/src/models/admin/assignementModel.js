@@ -76,9 +76,7 @@ async function getAssignmentByUserModel(user_id) {
     LEFT JOIN user admin  ON a.assigned_by = admin.id
     WHERE a.user_id = ?
 `;
-        console.log("Requête SQL exécutée :", "SELECT * FROM assignation WHERE user_id = ?", [user_id]);
         const [rows] = await pool.execute(query, [user_id]);
-        console.log("Résultats trouvés en base :", rows);
         return rows;
     } catch (error) {
         console.error('Fetching assignement by user error', error);

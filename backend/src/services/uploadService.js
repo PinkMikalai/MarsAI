@@ -65,7 +65,6 @@ async function deleteFileFromS3(fileUrl) {
         });
 
         await s3Client.send(command);
-        console.log('fichier S3 supprime:', key);
         return true;
     } catch (error) {
         console.error('erreur deleteFileFromS3:', error.message);
