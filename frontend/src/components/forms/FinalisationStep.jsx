@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import FormCard from './FormCard';
 import { useDepositForm } from '../../context/DepositFormContext';
 import Icons from '../ui/common/Icons';
-import { buildSubmitFormData, submitVideoWithProgress } from '../../service/videoService';
+import { buildSubmitFormData, submitVideoWithProgress } from '../../service/submissionService';
 import api from '../../service/api';
 import ErrorMessage from '../ui/feedback/ErrorMessage.jsx';
 

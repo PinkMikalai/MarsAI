@@ -39,14 +39,14 @@ const firstname = z
     .trim()
     .min(1, { message: "Firstname is mandatory" })
     .max(50, { message: "Firstname is too long (max 50 characters)" })
-    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, { message: "Firstname must contain only letters, spaces, hyphens and apostrophes" });
+    .regex(/^[a-zA-ZÀ-ÿ\u0152\u0153\s\-']+$/, { message: "Firstname must contain only letters, spaces, hyphens and apostrophes" });
 
 const lastname = z
     .string()
     .trim()
     .min(1, { message: "Lastname is mandatory" })
     .max(50, { message: "Lastname is too long (max 50 characters)" })
-    .regex(/^[a-zA-ZÀ-ÿ\s\-']+$/, { message: "Lastname must contain only letters, spaces, hyphens and apostrophes" });
+    .regex(/^[a-zA-ZÀ-ÿ\u0152\u0153\s\-']+$/, { message: "Lastname must contain only letters, spaces, hyphens and apostrophes" });
 
 const imageSchema = z
     .string({ required_error: "Image is required" })
@@ -60,7 +60,7 @@ const bioSchema = z
     .trim()
     .min(1, { message: "Bio is mandatory" })
     .max(1000, { message: "Bio is too long (max 1000 characters)" })
-    .regex(/^[a-zA-Z0-9À-ÿ\s\-''\u2018\u2019,.!?()\n:"]+$/, { message: "Bio contains invalid characters" });
+    .regex(/^[a-zA-Z0-9À-ÿ\u0152\u0153\s\-''\u2018\u2019,.!?()\n:"]+$/, { message: "Bio contains invalid characters" });
 
 const nameSchema = z
     .string()

@@ -9,7 +9,6 @@ async function getMostUsedTags(req, res) {
                 status: false
             });
         }
-        console.log(tags);
         res.status(200).json({
             message: "Tags les plus utilises",
             tags: tags,

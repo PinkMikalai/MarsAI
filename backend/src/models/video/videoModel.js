@@ -380,8 +380,6 @@ async function updateVideoModel(id, videoData) {
         const query = `UPDATE video SET ${fields.join(', ')} WHERE id = ?`;
         values.push(id);
         
-        console.log('query update', query);
-        console.log('values update', values);
         
         const [result] = await pool.execute(query, values);
         
@@ -419,26 +417,25 @@ async function updateYoutubeId(videoId, youtubeUrl) {
 }
 
 
-// search videos — recherche textuelle + filtres (adminStatus, selectionStatus, rated)
-// Paramètres : { q, search, adminStatus, selectionStatus, rated }
+// Récupère les vidéos — sans paramètres : toutes les vidéos, avec paramètres : résultats filtrés
+// Paramètres optionnels : { q, adminStatus, selectionStatus, rated, toAssign }
 async function getSearchVideosModel(params = {}) {
     try {
-        const {
-            q, search: searchVal,
-            adminStatus, selectionStatus, rated, toAssign
-        } = params;
-        const searchTerm = (q ?? searchVal ?? '').toString().trim();
+        const { q, adminStatus, selectionStatus, rated, toAssign } = params;
 
-        const hasText    = !!searchTerm;
-        const hasAdmin   = !!adminStatus;
-        const hasSel     = !!selectionStatus;
-        const hasRated   = rated === 'true' || rated === 'false';
-        const hasToAssign = toAssign === 'true'
+        const searchTerm = (q ?? '').toString().trim();
 
-        // Aucun critère → toutes les vidéos
+        // Booléens indiquant quels filtres sont actifs
+        const hasText     = !!searchTerm;
+        const hasAdmin    = !!adminStatus;
+        const hasSel      = !!selectionStatus;
+        const hasRated    = rated === 'true' || rated === 'false';
+        const hasToAssign = toAssign === 'true';
+
+        // Aucun filtre → toutes les vidéos
         if (!hasText && !hasAdmin && !hasSel && !hasRated && !hasToAssign) {
             const query = `
-                SELECT v.*, COUNT(DISTINCT asg.id) as assignment_count
+                SELECT v.*, COUNT(DISTINCT asg.id) AS assignment_count
                 FROM video v
                 LEFT JOIN assignation asg ON v.id = asg.video_id
                 GROUP BY v.id
@@ -448,30 +445,41 @@ async function getSearchVideosModel(params = {}) {
             return rows;
         }
 
+        // ── 1. JOINs (on n'ajoute que ce dont on a besoin) ──────────────────────
+        const joins = [
+            'LEFT JOIN assignation asg ON v.id = asg.video_id',
+        ];
+
+        if (hasText) {
+            joins.push(
+                'LEFT JOIN video_tag vt        ON v.id = vt.video_id',
+                'LEFT JOIN tag t                ON vt.tag_id = t.id',
+                'LEFT JOIN video_award va        ON v.id = va.video_id',
+                'LEFT JOIN award a               ON va.award_id = a.id',
+                'LEFT JOIN contributor c         ON v.id = c.video_id',
+                'LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id',
+            );
+        }
+        if (hasText || hasSel || hasRated) {
+            joins.push(
+                'LEFT JOIN selector_memo sm    ON v.id = sm.video_id',
+                'LEFT JOIN selection_status ss ON sm.selection_status_id = ss.id',
+            );
+        }
+        if (hasText || hasAdmin) {
+            joins.push(
+                'LEFT JOIN admin_video av   ON v.id = av.video_id',
+                'LEFT JOIN admin_status ast ON av.admin_status_id = ast.id',
+            );
+        }
+
+        // ── 2. Conditions WHERE ──────────────────────────────────────────────────
         const conditions = [];
-        const values = [];
+        const values     = [];
 
-        // --- JOINs nécessaires selon les filtres ---
-        
-        const needsTag    = hasText;
-        const needsAward  = hasText;
-        const needsContrib = hasText;
-        const needsSel    = hasText || hasSel || hasRated;
-        const needsAdmin  = hasText || hasAdmin;
-        const needsAcq    = hasText;
-
-        let joins = '\n LEFT JOIN assignation asg ON v.id = asg.video_id';
-        if (needsTag)    joins += '\n            LEFT JOIN video_tag vt ON v.id = vt.video_id LEFT JOIN tag t ON vt.tag_id = t.id';
-        if (needsAward)  joins += '\n            LEFT JOIN video_award va ON v.id = va.video_id LEFT JOIN award a ON va.award_id = a.id';
-        if (needsContrib)joins += '\n            LEFT JOIN contributor c ON v.id = c.video_id';
-        if (needsSel)    joins += '\n            LEFT JOIN selector_memo sm ON v.id = sm.video_id LEFT JOIN selection_status ss ON sm.selection_status_id = ss.id';
-        if (needsAdmin)  joins += '\n            LEFT JOIN admin_video av ON v.id = av.video_id LEFT JOIN admin_status ast ON av.admin_status_id = ast.id';
-        if (needsAcq)    joins += '\n            LEFT JOIN acquisition_source ac ON v.acquisition_source_id = ac.id';
-
-        // --- filtre texte : OR sur tous les champs ---
         if (hasText) {
             const term = `%${searchTerm}%`;
-            const textCols = [
+            const cols = [
                 'v.title', 'v.title_en', 'v.synopsis',
                 'v.realisator_firstname', 'v.realisator_lastname',
                 'v.language', 'v.country', 'v.tech_resume',
@@ -479,48 +487,43 @@ async function getSearchVideosModel(params = {}) {
                 't.name', 'a.title', 'c.firstname', 'c.last_name',
                 'ss.name', 'ast.name', 'ac.name',
             ];
-            conditions.push(`(${textCols.map(col => `${col} LIKE ?`).join(' OR ')})`);
-            textCols.forEach(() => values.push(term));
+            conditions.push(`(${cols.map(col => `${col} LIKE ?`).join(' OR ')})`);
+            cols.forEach(() => values.push(term));
         }
 
-        // --- filtre admin_status ---
         if (hasAdmin) {
             conditions.push('ast.name = ?');
             values.push(adminStatus);
         }
 
-        // --- filtre selection_status ---
         if (hasSel) {
             conditions.push('ss.name = ?');
             values.push(selectionStatus);
         }
 
-        // --- filtre rated (vidéo notée ou non par le selector) ---
         if (hasRated) {
-            if (rated === 'true') {
-                conditions.push('EXISTS (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)');
-            } else {
-                conditions.push('NOT EXISTS (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)');
-            }
+            const keyword = rated === 'true' ? 'EXISTS' : 'NOT EXISTS';
+            conditions.push(`${keyword} (SELECT 1 FROM selector_memo sm2 WHERE sm2.video_id = v.id)`);
         }
 
-        const whereClause = conditions.length ? `WHERE ${conditions.join('\n               AND ')}` : '';
-       
-        // permet d'activer le filtre pour afficher les vidéos assignés < 3 fois
-        const havingClause = hasToAssign ? `HAVING assignment_count < 3` : ``;
+        // ── 3. Construction finale de la requête ─────────────────────────────────
+        const WHERE  = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+        const HAVING = hasToAssign ? 'HAVING assignment_count < 3' : '';
+
         const query = `
-            SELECT v.*, COUNT(DISTINCT asg.id) as assignment_count
-            FROM video v${joins}
-            ${whereClause}
+            SELECT v.*, COUNT(DISTINCT asg.id) AS assignment_count
+            FROM video v
+            ${joins.join('\n            ')}
+            ${WHERE}
             GROUP BY v.id
-            ${havingClause}
+            ${HAVING}
             ORDER BY v.created_at DESC
         `;
 
         const [rows] = await pool.execute(query, values);
         return rows;
     } catch (error) {
-        console.error('erreur lors de la recherche des videos(cote model): ', error);
+        console.error('erreur lors de la recherche des videos: ', error);
         throw error;
     }
 }

@@ -7,7 +7,6 @@ async function assignVideoToUser({ video_id, user_id, admin_id }) {
     const user = await getUserByIdModel(user_id)
     const videoData = await getVideoByIdModel(video_id)
     const videoInfo = videoData[0]?.video_json;
-    console.log("vidéo récupérée :", videoInfo);
     //vérifier si le user existe 
     if (!user) {
         const error = new Error(`User n° ${user_id} doesn't exist`);
@@ -192,8 +191,6 @@ async function syncVideoAssignment({ video_ids, user_ids, admin_id }) {
 }
 // 
 async function autoAssignVideos(videoIds, admin_id) {
-    console.log("DEBUG: videoIds reçus:", videoIds); 
-    console.log("DEBUG: admin_id:", admin_id);       
     // Récupération des charges de travail de chaque selectionneur
     const selectors = await getSelectorLoadModel();
 

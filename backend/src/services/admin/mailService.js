@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 const frontendUrl = process.env.FRONT_URL || 'http://localhost:5173';
 
 // console.log("DEBUG MAIL_USER:", process.env.MAIL_USER);
-console.log("CONFIG TEST:", { host: process.env.EMAIL_HOST, port: process.env.EMAIL_PORT });
 const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST || '127.0.0.1',
 
@@ -64,7 +63,6 @@ const sendInvitationEmail = async ({ email, token, role }) => {
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log(' Mail receptionné  ! ID:', info.messageId);
         return info;
     } catch (error) {
         console.error(" Erreur envi invit  :", error);
@@ -212,7 +210,6 @@ const confirmParticipationEmail = async (email, { title_en, realisator_firstname
     }
     try {
         const info = await transporter.sendMail(mailOptions)
-        console.log('Confirmation participation envoyée !');
         return info;
     } catch (error) {
         console.error(":", error);

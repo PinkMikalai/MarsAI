@@ -71,7 +71,6 @@ async function createSelectorMemo(req, res) {
 async function getAllSelectorMemos(req, res) {
     try {
         const memos = await getAllSelectorMemosModel();
-        console.log("memos recuperes:", memos);
         
         res.status(200).json({
             message: "memos recuperes avec succes",
@@ -107,14 +106,11 @@ async function getSelectorAllMemoByUserId(req, res){
 }
 // Récupérer un memo par son ID
 async function getSelectorMemoById(req, res) {
-    console.log("id:", req.params.id);
     
     try {
         const memo = await getSelectorMemoByIdModel(req.params.id);
-        console.log("memo recupere:", memo);
         
         if (!memo) {
-            console.log("memo non trouve");
             return res.status(404).json({
                 message: "memo non trouve",
                 status: false
@@ -138,15 +134,12 @@ async function getSelectorMemoById(req, res) {
 
 // Mettre à jour un memo
 async function updateSelectorMemo(req, res) {
-    console.log("id:", req.params.id);
     
     try {
-        console.log("req.body:", req.body);
         
         // Vérifier si le memo existe
         const existingMemo = await getSelectorMemoByIdModel(req.params.id);
         if (!existingMemo) {
-            console.log("memo non trouve");
             return res.status(404).json({
                 message: "memo non trouve",
                 status: false
@@ -155,7 +148,6 @@ async function updateSelectorMemo(req, res) {
         
         // Vérifier que c'est bien le propriétaire du memo qui le modifie
         if (existingMemo.user_id !== req.user.id) {
-            console.log("tentative de modification du memo d'un autre selector");
             return res.status(403).json({
                 message: "Vous ne pouvez modifier que vos propres notes",
                 status: false
@@ -164,11 +156,9 @@ async function updateSelectorMemo(req, res) {
         
         // Mettre à jour le memo
         const result = await updateSelectorMemoModel(req.params.id, req.body);
-        console.log("result:", result);
         
         if (result) {
             const updatedMemo = await getSelectorMemoByIdModel(req.params.id);
-            console.log("memo mis a jour:", updatedMemo);
             
             res.status(200).json({
                 message: "memo mis a jour avec succes",
@@ -193,13 +183,11 @@ async function updateSelectorMemo(req, res) {
 
 // Supprimer un memo
 async function deleteSelectorMemo(req, res) {
-    console.log("id:", req.params.id);
     
     try {
         // Vérifier si le memo existe
         const existingMemo = await getSelectorMemoByIdModel(req.params.id);
         if (!existingMemo) {
-            console.log("memo non trouve");
             return res.status(404).json({
                 message: "memo non trouve",
                 status: false
@@ -208,7 +196,6 @@ async function deleteSelectorMemo(req, res) {
         
         // Vérifier que c'est bien le propriétaire du memo qui le supprime
         if (existingMemo.user_id !== req.user.id) {
-            console.log("tentative de suppression du memo d'un autre selector");
             return res.status(403).json({
                 message: "Vous ne pouvez supprimer que vos propres notes",
                 status: false
@@ -217,7 +204,6 @@ async function deleteSelectorMemo(req, res) {
         
         // Supprimer le memo
         const result = await deleteSelectorMemoModel(req.params.id);
-        console.log("result:", result);
         
         if (result) {
             res.status(200).json({

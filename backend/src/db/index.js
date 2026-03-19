@@ -16,7 +16,6 @@ async function testConnection() {
     await new Promise(resolve => setTimeout(resolve, 5000)); 
     try {
         const [rows] = await pool.query('SELECT NOW() AS now');
-        console.log('connexion a la db est Ok avec succes, ', rows[0].now);
     } catch (error) {
         console.error('erreur de connexion a la db: ', error);
         // throw error;

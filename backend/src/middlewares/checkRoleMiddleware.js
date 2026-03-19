@@ -2,8 +2,6 @@
 const checkRole = (allowedRoleIds) => {
     return (req, res, next) => {
 
-        console.log("Rôle de l'utilisateur connecté:", req.user?.role_id);
-        console.log("Rôles autorisés pour cette route:", allowedRoleIds);
       
 
         if (!req.user || !allowedRoleIds.includes(req.user.role_id)) {

@@ -6,7 +6,6 @@ import { UPLOAD_BASE } from '../../middlewares/uploadMiddleware.js';
 
 
 async function uploadToYouTube(videoPath, title, description, coverPath = null, srtPath = null) {
-  console.log("DEBUG - Chemins reçus :", { videoPath, coverPath, srtPath });
     const fullPath = path.join(UPLOAD_BASE, videoPath);
 
   if (!fs.existsSync(fullPath)) {
@@ -44,7 +43,6 @@ async function uploadToYouTube(videoPath, title, description, coverPath = null, 
 
   const fileSize = fs.statSync(fullPath).size;
 
-  console.log(`Début de l'upload : ${title}`);
 
   try {
     const res = await youtube.videos.insert(
@@ -74,7 +72,6 @@ async function uploadToYouTube(videoPath, title, description, coverPath = null, 
     );
 
     // Log de la réponse complète de l'API YouTube
-    console.log('\nRéponse YouTube API:', JSON.stringify(res.data, null, 2));
 
     const videoId = res.data.id;
 
@@ -82,10 +79,8 @@ async function uploadToYouTube(videoPath, title, description, coverPath = null, 
     if (coverPath) {
       try {
         await uploadThumbnail(youtube, videoId, coverPath);
-        console.log('Miniature uploadée');
       } catch (thumbErr) {
         // Si la miniature échoue, on continue (la vidéo est déjà uploadée)
-        console.warn('Erreur upload miniature:', thumbErr.message);
       }
     }
 
@@ -93,10 +88,8 @@ async function uploadToYouTube(videoPath, title, description, coverPath = null, 
     if (srtPath) {
       try {
         await uploadCaption(youtube, videoId, srtPath);
-        console.log('Sous-titres uploadés');
       } catch (captionErr) {
         // Si les sous-titres échouent, on continue (la vidéo est déjà uploadée)
-        console.warn('Erreur upload sous-titres:', captionErr.message);
       }
     }
 
@@ -231,7 +224,6 @@ async function updateYouTubeVideo(youtubeVideoId, title, description, coverPath 
         try {
             await uploadThumbnail(youtube, youtubeVideoId, coverPath);
         } catch (err) {
-            console.warn('Erreur mise à jour miniature YouTube:', err.message);
         }
     }
 
@@ -240,7 +232,6 @@ async function updateYouTubeVideo(youtubeVideoId, title, description, coverPath 
         try {
             await uploadCaption(youtube, youtubeVideoId, srtPath);
         } catch (err) {
-            console.warn('Erreur mise à jour sous-titres YouTube:', err.message);
         }
     }
 }

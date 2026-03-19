@@ -113,6 +113,16 @@
   -webkit-text-fill-color: rgba(255, 255, 255, 0.75) !important;
 }
 
+[data-theme="light"] .hero-subtitle {
+  color: rgba(255, 255, 255, 0.85) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.85) !important;
+}
+
+[data-theme="light"] .hero-timer-label {
+  color: rgba(255, 255, 255, 0.75) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.75) !important;
+}
+
 /* Boutons hero */
 [data-theme="light"] .hero-btn-primary {
   background: #0f1923 !important;
@@ -127,16 +137,17 @@
 }
 
 [data-theme="light"] .hero-btn-secondary {
-  background: #0f1923 !important;
+  background: linear-gradient(135deg, #2B7FFF 0%, #9810FA 100%) !important;
   color: #ffffff !important;
-  border: 2px solid #0f1923 !important;
+  border: none !important;
   backdrop-filter: none !important;
+  box-shadow: 0 4px 20px rgba(43, 127, 255, 0.35) !important;
 }
 
 [data-theme="light"] .hero-btn-secondary:hover {
-  background: #1a2d42 !important;
-  border-color: #1a2d42 !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2) !important;
+  background: linear-gradient(135deg, #1a6fe8 0%, #820de0 100%) !important;
+  box-shadow: 0 8px 28px rgba(152, 16, 250, 0.45) !important;
+  transform: translateY(-2px) !important;
 }
 
 /* ── NAVBAR (dans hero et sur deposit) ───────────────────────── */
@@ -1235,7 +1246,7 @@
 }
 
 /* ── Texte global — filet de sécurité (hors hero) ──────────────── */
-[data-theme="light"] p:not(.hero-tagline):not(.hero-description):not(.hero-phase-desc),
+[data-theme="light"] p:not(.hero-tagline):not(.hero-description):not(.hero-phase-desc):not(.hero-subtitle),
 [data-theme="light"] span:not([class*="gradient"]):not([class*="ai"]):not([class*="hero-title"]):not([class*="hero-tagline"]),
 [data-theme="light"] li,
 [data-theme="light"] td,
@@ -1796,6 +1807,125 @@
 [data-theme="light"] .admin-overview-title  { color: var(--lt-text) !important; }
 [data-theme="light"] .admin-overview-text   { color: var(--lt-text-muted) !important; }
 
+/* ================================================================
+   ADMIN CMS — formulaire, table, badges, galerie toggle
+   ================================================================ */
+
+/* Formulaire wrap */
+[data-theme="light"] .admin-events-form-wrap {
+  background: var(--lt-surface) !important;
+  border: 1px solid var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-sm) !important;
+}
+[data-theme="light"] .admin-events-form-title {
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .admin-events-form-label {
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .admin-events-form-input {
+  background: #ffffff !important;
+  color: #0f1923 !important;
+  border-color: rgba(0,0,0,0.18) !important;
+}
+[data-theme="light"] .admin-events-form-input::placeholder {
+  color: rgba(0,0,0,0.35) !important;
+}
+[data-theme="light"] .admin-events-form-input option {
+  background: #ffffff !important;
+  color: #0f1923 !important;
+}
+[data-theme="light"] .admin-events-form-error {
+  color: #c0175c !important;
+}
+
+/* Table */
+[data-theme="light"] .admin-events-table-wrap {
+  background: var(--lt-surface) !important;
+  border: 1px solid var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-sm) !important;
+}
+[data-theme="light"] .admin-events-table {
+  background: transparent !important;
+}
+[data-theme="light"] .admin-events-th {
+  background: rgba(0,0,0,0.04) !important;
+  color: var(--lt-text) !important;
+  border-bottom-color: var(--lt-border) !important;
+}
+[data-theme="light"] .admin-events-td {
+  color: var(--lt-text) !important;
+  border-bottom-color: var(--lt-border) !important;
+}
+[data-theme="light"] .admin-events-td--title {
+  color: var(--lt-text) !important;
+  font-weight: 600 !important;
+}
+[data-theme="light"] .admin-events-tr:hover {
+  background: rgba(0,0,0,0.025) !important;
+}
+[data-theme="light"] .admin-events-empty {
+  color: var(--lt-text-muted) !important;
+}
+
+/* Boutons de la table */
+[data-theme="light"] .admin-events-btn--edit {
+  background: rgba(43,127,255,0.1) !important;
+  color: #2B7FFF !important;
+  border-color: rgba(43,127,255,0.25) !important;
+}
+[data-theme="light"] .admin-events-btn--edit:hover {
+  background: rgba(43,127,255,0.2) !important;
+}
+[data-theme="light"] .admin-events-btn--delete {
+  background: rgba(192,23,92,0.08) !important;
+  color: #c0175c !important;
+  border-color: rgba(192,23,92,0.2) !important;
+}
+[data-theme="light"] .admin-events-btn--delete:hover {
+  background: rgba(192,23,92,0.16) !important;
+}
+
+/* Badges actif / inactif */
+[data-theme="light"] .admin-cms-badge--active {
+  background: rgba(34,197,94,0.12) !important;
+  color: #16a34a !important;
+}
+[data-theme="light"] .admin-cms-badge--inactive {
+  background: rgba(0,0,0,0.07) !important;
+  color: #6b7280 !important;
+}
+
+/* Checkboxes sections */
+[data-theme="light"] .admin-cms-checkbox-label {
+  color: var(--lt-text) !important;
+}
+
+/* Bouton illustration */
+[data-theme="light"] .admin-cms-illustration-btn {
+  background: rgba(0,0,0,0.05) !important;
+  color: var(--lt-text) !important;
+  border-color: var(--lt-border) !important;
+}
+
+/* Galerie toggle */
+[data-theme="light"] .admin-cms-gallery-toggle {
+  background: var(--lt-surface) !important;
+  border-color: var(--lt-border) !important;
+  box-shadow: var(--lt-shadow-sm) !important;
+}
+[data-theme="light"] .admin-cms-gallery-toggle__title {
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .admin-cms-gallery-toggle__desc {
+  color: var(--lt-text-muted) !important;
+}
+
+/* Actions header */
+[data-theme="light"] .admin-events-modal-actions {
+  border-top-color: var(--lt-border) !important;
+}
+
 /* Carte profil */
 [data-theme="light"] .admin-profile-card {
   background: var(--lt-surface) !important;
@@ -1874,4 +2004,72 @@
 }
 [data-theme="light"] .admin-profile-stats__title {
   color: var(--lt-text-subtle) !important;
+}
+
+/* ================================================================
+   PANNEAU RECHERCHE WATCHFILM — thème clair
+   ================================================================ */
+
+/* Panneau + header */
+[data-theme="light"] .wf-search-panel {
+  background: rgba(245, 247, 252, 0.97) !important;
+  border-left-color: var(--lt-border) !important;
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.12) !important;
+}
+[data-theme="light"] .wf-search-panel-header {
+  background: rgba(245, 247, 252, 0.99) !important;
+  border-bottom-color: var(--lt-border) !important;
+}
+[data-theme="light"] .wf-search-panel-title {
+  color: var(--lt-accent) !important;
+}
+
+/* Zone SearchBar */
+[data-theme="light"] .wf-search-panel-bar {
+  border-bottom-color: var(--lt-border) !important;
+}
+
+/* Input texte */
+[data-theme="light"] .wf-search-panel-bar .gsearch-input {
+  color: var(--lt-text) !important;
+  background: var(--lt-bg-alt) !important;
+  border-color: var(--lt-border-md) !important;
+}
+[data-theme="light"] .wf-search-panel-bar .gsearch-input::placeholder {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Icône loupe */
+[data-theme="light"] .wf-search-panel-bar .gsearch-icon {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Bouton clear (×) */
+[data-theme="light"] .wf-search-panel-bar .gsearch-clear {
+  color: var(--lt-text-muted) !important;
+}
+
+/* Résultats */
+[data-theme="light"] .wf-search-panel-results {
+  background: transparent !important;
+}
+[data-theme="light"] .wf-search-result-item {
+  border-bottom-color: var(--lt-border) !important;
+}
+[data-theme="light"] .wf-search-result-item:hover {
+  background: var(--lt-bg-alt) !important;
+}
+[data-theme="light"] .wf-search-result-title {
+  color: var(--lt-text) !important;
+}
+[data-theme="light"] .wf-search-result-meta {
+  color: var(--lt-text-subtle) !important;
+}
+[data-theme="light"] .wf-search-result-arrow {
+  color: var(--lt-text-subtle) !important;
+}
+
+/* Message aucun résultat */
+[data-theme="light"] .wf-search-empty {
+  color: var(--lt-text-muted) !important;
 }

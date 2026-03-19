@@ -93,6 +93,10 @@ const PhaseTimer = ({ countdown }) => {
             <span className="cms-timer__unit">
                 <strong>{countdown.hours}</strong>{' H'}
             </span>
+            <span className="cms-timer__sep">·</span>
+            <span className="cms-timer__unit">
+                <strong>{String(countdown.minutes).padStart(2, '0')}</strong>{' MIN'}
+            </span>
         </div>
     );
 };
@@ -169,6 +173,7 @@ const CmsPhases = () => {
     const [galleryPublic,  setGalleryPublic]  = useState(false);
     const [isLoading,      setIsLoading]      = useState(true);
     const [showOnboarding, setShowOnboarding] = useState(false);
+    const [tick,           setTick]           = useState(0);
 
     useEffect(() => {
         const fetchPhases = async () => {
@@ -187,6 +192,12 @@ const CmsPhases = () => {
         fetchPhases();
     }, []);
 
+    // Rafraîchit le countdown toutes les 30 secondes
+    useEffect(() => {
+        const id = setInterval(() => setTick((t) => t + 1), 30_000);
+        return () => clearInterval(id);
+    }, []);
+
     if (isLoading || phases.length === 0) return null;
 
     const isFr = i18n.language?.startsWith('fr');
@@ -199,20 +210,10 @@ const CmsPhases = () => {
             <section className="home-section home-cms-phases" aria-label="Phases du festival">
                 <div className="home-container">
 
-                    <Reveal as="div" className="home-cms-phases__header">
-                        <p className="home-section-subtitle">
-                            {isFr ? 'Festival MarsAI' : 'MarsAI Festival'}
-                        </p>
-                        <h2 className="home-section-title">
-                            {isFr ? 'Phases ' : 'Current '}
-                            <span className="home-section-title-accent">
-                                {isFr ? 'en cours' : 'Phases'}
-                            </span>
-                        </h2>
-                    </Reveal>
 
                     <div className="home-cms-phases__list">
                         {phases.map((phase) => {
+                            void tick; // déclenche le re-render à chaque tick du timer
                             const components       = parseComponents(phase.components);
                             const hasParticipation = components.includes('participation');
                             const hasGallery       = components.includes('gallery');

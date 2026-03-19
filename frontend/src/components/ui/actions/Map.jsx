@@ -13,14 +13,15 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-const position = [43.2965, 5.3698];
+const position = [43.3146893, 5.3677456];
 
 export default function Map() {
   return (
     <MapContainer
       center={position}
-      zoom={14}
+      zoom={16}
       scrollWheelZoom={false}
+      attributionControl={false}
       style={{ height: "400px", width: "100%" }}
     >
       <TileLayer
@@ -29,7 +30,13 @@ export default function Map() {
       />
 
       <Marker position={position}>
-        <Popup>Marseille, France</Popup>
+        <Popup><a
+          href="https://www.google.com/maps/dir/?api=1&destination=43.3146893,5.3677456"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Y aller (Google Maps)
+        </a></Popup>
       </Marker>
     </MapContainer>
   );

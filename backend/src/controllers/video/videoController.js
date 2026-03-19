@@ -25,7 +25,6 @@ import { getAssignmentByUserModel } from "../../models/admin/assignementModel.js
 //=====================================================
 
 async function createVideo(req, res) {
-    console.log("test creation de video");
 }
 
 async function getSearchVideos(req, res) {
@@ -49,7 +48,6 @@ async function getSearchVideos(req, res) {
 async function getVideoById(req, res) {
     try {
         const role_id = req.user?.role_id;
-        console.log("getVideoById — role_id:", role_id);
 
         const basicVideoData = await getVideoByIdModel(req.params.id);
 
@@ -63,7 +61,6 @@ async function getVideoById(req, res) {
         else if (role_id === 1 || role_id === 3) {
 
             const adminVideoData = await getAdminVideoDataByIdModel(req.params.id);
-            console.log("admin video data", adminVideoData);
             return res.status(200).json({
                 message: "Video recuperée avec succès",
                 data: {
@@ -75,7 +72,6 @@ async function getVideoById(req, res) {
         }
         else if (role_id === 2) {
             const selectorVideoData = await getSelectorVideoDataByIdModel(req.params.id, req.user?.id);
-            console.log("selector video data", selectorVideoData);
 
             const hasMemo = selectorVideoData[0]?.video_json?.selector_memo?.id !== null;
 
@@ -90,7 +86,6 @@ async function getVideoById(req, res) {
             });
         }
         else {
-            console.log("basic video data", basicVideoData);
             return res.status(200).json({
                 message: "Video recuperée avec succès",
                 data: basicVideoData,
@@ -107,34 +102,25 @@ async function getVideoById(req, res) {
 }
 
 async function updateVideo(req, res) {
-    console.log("test updateVideo");
 
     try {
         const { tags, stills, ...videoData } = req.body;
-        console.log("tags fournis", tags);
-        console.log("stills fournis", stills);
-        console.log("donnees video", videoData);
         
         const updated = await updateVideoModel(req.params.id, videoData);
-        console.log("updated", updated);
         
         let updatedTags = [];
         if (tags && Array.isArray(tags)) {
             updatedTags = await updateTagsService(req.params.id, tags);
-            console.log("tags mis a jour", updatedTags);
         }
         
         let updatedStills = [];
         if (stills && Array.isArray(stills)) {
             updatedStills = await updateStillsByVideoIdModel(req.params.id, stills);
-            console.log("stills mis a jour", updatedStills);
         }
         
         const video = await getVideoByIdModel(req.params.id);
-        console.log("video", video);
         
         const videoTags = await getVideoTagsService(req.params.id);
-        console.log("tous les tags de la video", videoTags);
         
         res.status(200).json({
             message: "Video mise à jour avec succès",
@@ -164,9 +150,7 @@ async function deleteVideo(req, res) {
         if (video.youtube_url) {
             try {
                 await deleteYouTubeVideo(video.youtube_url);
-                console.log(`Vidéo YouTube ${video.youtube_url} supprimée`);
             } catch (ytErr) {
-                console.warn("Suppression YouTube échouée (non bloquant):", ytErr.message);
             }
         }
 
